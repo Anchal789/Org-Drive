@@ -1,0 +1,12 @@
+{
+  "recommendations": [
+    "formulahendry.auto-complete-tag",
+    "streetsidesoftware.code-spell-checker",
+    "editorconfig.editorconfig",
+    "biomejs.biome",
+    "christian-kohler.path-intellisense",
+    "burkeholland.simple-react-snippets",
+    "aaron-bond.better-comments",
+    "eamodio.gitlens"
+  ]
+}

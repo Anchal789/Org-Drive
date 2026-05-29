@@ -1,0 +1,53 @@
+{
+  "name": "next-js-boilerplate",
+  "version": "1.0.0",
+  "private": true,
+  "keywords": [
+    "next.js",
+    "tailwindcss",
+    "biome",
+    "boilerplate"
+  ],
+  "description": "Next.js boilerplate with Tailwind CSS, Biome",
+  "engines": {
+    "node": ">=22"
+  },
+  "scripts": {
+    "dev": "next dev --turbopack",
+    "build": "next build",
+    "start": "next start",
+    "prepare": "husky",
+    "lint": "biome check .",
+    "lint:fix": "biome check --write .",
+    "lint:staged": "lint-staged"
+  },
+  "dependencies": {
+    "critters": "0.0.25",
+    "next": "16.2.6",
+    "next-themes": "0.4.6",
+    "react": "19.2.6",
+    "react-dom": "19.2.6"
+  },
+  "devDependencies": {
+    "@biomejs/biome": "2.3.13",
+    "@tailwindcss/postcss": "4.3.0",
+    "@tailwindcss/typography": "0.5.19",
+    "@types/node": "25.8.0",
+    "@types/react": "19.2.14",
+    "@types/react-dom": "19.2.3",
+    "babel-plugin-react-compiler": "1.0.0",
+    "husky": "9.1.7",
+    "lint-staged": "17.0.5",
+    "postcss": "8.5.14",
+    "tailwindcss": "4.3.0",
+    "tailwindcss-animate": "1.0.7",
+    "typescript": "6.0.3"
+  },
+  "browserslist": "defaults",
+  "pnpm": {
+    "overrides": {
+      "@types/react": "19.2.14",
+      "@types/react-dom": "19.2.3"
+    }
+  }
+}
