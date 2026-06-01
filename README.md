@@ -301,7 +301,7 @@ teldrive/
 ## How Storage Works
 
 ```
-Your File (any size)
+Your Files (any size)
       │
       ▼
 Teldrive Proxy
