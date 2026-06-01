@@ -1,4 +1,4 @@
-# TelDrive — Telegram-Powered Cloud File Storage Platform
+# OrgDrive — Telegram-Powered Cloud File Storage Platform
 
 > A high-performance, workspace-style file storage platform that uses Telegram's cloud infrastructure as a free, permanent storage backend — with optional AI-powered document search.
 
@@ -53,7 +53,7 @@ OrgDrive is an un-nested , highly responsive web workspace that repurposes Teleg
    (Direct File Chunks)                                 (Metadata Sync)
              ▼                                                  ▼
 ┌─────────────────────────┐                        ┌─────────────────────────┐
-│     TELDRIVE PROXY      │                        │   RELATIONAL DATABASE   │
+│     ORGDRIVE PROXY      │                        │   RELATIONAL DATABASE   │
 │ • MTProto Tunneling     │                        │ • Workspace Topologies  │
 │ • Channel Part Slicing  │                        │ • Single-Level Folders  │
 └────────────┬────────────┘                        │ • Optional AI Queue     │
@@ -73,7 +73,7 @@ OrgDrive is an un-nested , highly responsive web workspace that repurposes Teleg
 | Layer              | Component                 | Responsibility                                                               |
 | ------------------ | ------------------------- | ---------------------------------------------------------------------------- |
 | **Web & Server**   | Application Engine        | Frontend UI, JWT auth, metadata orchestration, storage routing               |
-| **Storage Bridge** | Teldrive Middleware Proxy | MTProto tunneling, file chunking (512KB packets), Telegram channel transfers |
+| **Storage Bridge** | Orgdrive Middleware Proxy | MTProto tunneling, file chunking (512KB packets), Telegram channel transfers |
 | **Data Layer**     | Relational Registry       | Folder maps, file metadata, user profiles, vector embeddings (optional)      |
 
 ---
@@ -93,7 +93,7 @@ OrgDrive is an un-nested , highly responsive web workspace that repurposes Teleg
 
 ## Authentication
 
-TelDrive uses **Telegram Login Widget API** — no email, password, or third-party OAuth required.
+OrgDrive uses **Telegram Login Widget API** — no email, password, or third-party OAuth required.
 
 ### Auth Flow
 
@@ -123,7 +123,7 @@ TelDrive uses **Telegram Login Widget API** — no email, password, or third-par
 
 ## File System Design
 
-TelDrive uses a **Strict Single-Level Folder Architecture** to eliminate recursive lookup lag.
+OrgDrive uses a **Strict Single-Level Folder Architecture** to eliminate recursive lookup lag.
 
 ### Rules
 
@@ -167,7 +167,7 @@ Stage 4: Transaction Commit        →  UI: Green checkmark, file becomes intera
 | ------------- | ------------------------------------------------------------------------- | ------------------------------------ |
 | **Pending**   | File dropped, optimistic render begins                                    | Soft-pulsing placeholder row         |
 | **Uploading** | Browser streams bytes to server via HTTP POST                             | Live 0–100% byte counter             |
-| **Indexing**  | Teldrive slices file into 512KB MTProto packets and transfers to Telegram | Infinite marquee badge               |
+| **Indexing**  | Orgdrive slices file into 512KB MTProto packets and transfers to Telegram | Infinite marquee badge               |
 | **Complete**  | Final chunk written; DB record committed with Telegram address            | Solid green checkmark, file unlocked |
 
 ---
@@ -221,7 +221,7 @@ JWT_SECRET=your_jwt_secret_key
 APP_URL=https://your-app-domain.com
 
 # Database
-DATABASE_URL=postgresql://user:password@host:5432/teldrive
+DATABASE_URL=postgresql://user:password@host:5432/orgdrive
 
 # AI (Optional)
 AI_ENABLED=false
@@ -238,14 +238,14 @@ VECTOR_DB_URL=your_vector_db_connection_string
 - PostgreSQL database
 - A Telegram Bot Token (from [@BotFather](https://t.me/BotFather))
 - A dedicated Telegram Channel (for file storage)
-- Teldrive proxy daemon running on your server
+- Orgdrive proxy daemon running on your server
 
 ### Setup Steps
 
 ```bash
 # 1. Clone the repository
-git clone https://github.com/your-org/teldrive.git
-cd teldrive
+git clone https://github.com/your-org/orgdrive.git
+cd orgdrive
 
 # 2. Install dependencies
 npm install
@@ -257,8 +257,8 @@ cp .env.example .env
 # 4. Run database migrations
 npm run db:migrate
 
-# 5. Start the Teldrive proxy daemon
-./teldrive-proxy --config config.yaml
+# 5. Start the Orgdrive proxy daemon
+./orgdrive-proxy --config config.yaml
 
 # 6. Start the application
 npm run dev
@@ -269,7 +269,7 @@ npm run dev
 ## Project Structure
 
 ```
-teldrive/
+orgdrive/
 ├── client/                  # Frontend single-page application
 │   ├── components/
 │   │   ├── FileExplorer/    # Drive-style file browser
@@ -283,7 +283,7 @@ teldrive/
 │   ├── telemetry/           # Bandwidth & storage aggregation
 │   └── ai/                  # Optional async AI ingestion queue
 │
-├── proxy/                   # Teldrive MTProto middleware daemon
+├── proxy/                   # Orgdrive MTProto middleware daemon
 │   ├── chunker/             # 512KB packet splitter
 │   └── telegram/            # MTProto channel transfer handlers
 │
@@ -292,7 +292,7 @@ teldrive/
 │   └── schema/              # Tenants, Folders, Files, Vector tables
 │
 ├── .env.example
-├── config.yaml              # Teldrive proxy configuration
+├── config.yaml              # Orgdrive proxy configuration
 └── README.md
 ```
 
@@ -304,7 +304,7 @@ teldrive/
 Your Files (any size)
       │
       ▼
-Teldrive Proxy
+Orgdrive Proxy
       │  splits into 512KB chunks
       ▼
 Telegram MTProto Channel
@@ -313,10 +313,10 @@ Telegram MTProto Channel
 Database stores pointer/address
       │  e.g. { channel: -1001234, parts: [101, 102, 103] }
       ▼
-Download: DB fetches address → Teldrive reassembles chunks → streams to user
+Download: DB fetches address → Orgdrive reassembles chunks → streams to user
 ```
 
-> Telegram provides **free, permanent, unlimited** binary storage. TelDrive simply uses it as an object store — similar to how you'd use S3, but at zero cost.
+> Telegram provides **free, permanent, unlimited** binary storage. OrgDrive simply uses it as an object store — similar to how you'd use S3, but at zero cost.
 
 ---
 
