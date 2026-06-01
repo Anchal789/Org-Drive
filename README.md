@@ -22,9 +22,9 @@
 
 ---
 
-## Overview 
+## Overview
 
-OrgDrive is an un-nested, highly responsive web workspace that repurposes Telegram's cloud infrastructure as a free, scalable file storage backend. It combines a Google Drive-style UI with Telegram's MTProto protocol to offer permanent, chunked file storage — without any traditional cloud storage costs.
+OrgDrive is an un-nested , highly responsive web workspace that repurposes Telegram's cloud infrastructure as a free, scalable file storage backend. It combines a Google Drive-style UI with Telegram's MTProto protocol to offer permanent, chunked file storage — without any traditional cloud storage costs.
 
 **Core Concept:**
 
