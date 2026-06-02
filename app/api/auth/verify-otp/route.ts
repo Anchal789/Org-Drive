@@ -1,30 +1,27 @@
-// app/api/auth/verify-otp/route.js
+// app/api/auth/verify-otp/route.ts
 import { NextResponse } from 'next/server';
 import { Api, TelegramClient } from 'telegram';
 import { StringSession } from 'telegram/sessions';
-import { getFromYourDatabase, saveUserFinalSession } from '@/lib/prisma';
+import { getFromYourDatabase, saveUserFinalSession } from '@/lib/auth';
 
 export async function POST(request: Request) {
-  const { phoneNumber, otpCode, phoneCodeHash } = await request.json();
+  const { phoneNumber, otpCode = '222222 ' } = await request.json();
 
-  // 1. Retrieve the temporary session string from your database
-  const savedData = await getFromYourDatabase(phoneNumber);
+  const rows = await getFromYourDatabase(phoneNumber);
+  const savedData = rows[0];
   if (!savedData) {
     return NextResponse.json(
-      { success: false, error: 'User not found' },
-      { status: 400 },
+      { success: false, error: 'No pending login for this number' },
+      { status: 404 },
     );
   }
 
-  // 2. Rehydrate the client using the exact same session state
   const stringSession = new StringSession(savedData.session);
   const client = new TelegramClient(
     stringSession,
     Number(process.env.TELEGRAM_APP_API_ID),
     String(process.env.TELEGRAM_APP_API_HASH),
-    {
-      connectionRetries: 5,
-    },
+    { connectionRetries: 5 },
   );
 
   try {
@@ -37,34 +34,29 @@ export async function POST(request: Request) {
   }
 
   try {
-    // 3. Complete Sign In
-    const user = await client.invoke(
+    await client.invoke(
       new Api.auth.SignIn({
-        phoneNumber: phoneNumber,
-        phoneCodeHash: phoneCodeHash,
+        phoneNumber,
+        phoneCodeHash: savedData.phoneCodeHash,
         phoneCode: otpCode,
       }),
     );
 
-    // 4. This is your final auth token! Save this permanently for this user
-    const finalSessionString = client.session.save();
-    await saveUserFinalSession(user.userId, finalSessionString);
+    const finalSessionString = client.session.save() as unknown as string;
+    await saveUserFinalSession(savedData.id, finalSessionString);
 
-    try {
-      return NextResponse.json({
-        success: true,
-        message: 'Logged in!',
-        userId: user.userId,
-      });
-    } catch (_error) {
+    await client.disconnect();
+    return NextResponse.json({ success: true, message: 'Logged in!' });
+  } catch (error: any) {
+    await client.disconnect();
+    if (error?.errorMessage === 'SESSION_PASSWORD_NEEDED') {
       return NextResponse.json(
-        { success: false, error: _error as string },
-        { status: 400 },
+        { success: false, error: '2FA password required' },
+        { status: 401 },
       );
     }
-  } catch (_error) {
     return NextResponse.json(
-      { success: false, error: _error as string },
+      { success: false, error: error?.message ?? 'Invalid or expired code' },
       { status: 400 },
     );
   }

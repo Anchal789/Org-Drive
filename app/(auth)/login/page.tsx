@@ -1,20 +1,17 @@
-'use client';
+import HeroPanel from '@/components/authPages/HeroPanel';
+import LoginForm from '@/components/authPages/LoginForm';
 
-const LoginPage = () => {
-  const response = fetch('/api/auth/request-otp', {
-    method: 'POST',
-    body: JSON.stringify({ phoneNumber: '1234567890' }),
-    headers: {
-      'Content-Type': 'application/json',
-    },
-  });
-
-  console.log(response);
+export default function LoginPage() {
   return (
-    <div>
-      <h1>Login Page</h1>
+    <div
+      className="min-h-screen w-full flex flex-col lg:flex-row bg-background text-foreground font-sans"
+      data-screen-label="00 Login · Split hero"
+    >
+      <HeroPanel />
+
+      <div className="flex-1 flex items-center justify-center p-6 sm:p-12">
+        <LoginForm />
+      </div>
     </div>
   );
-};
-
-export default LoginPage;
+}

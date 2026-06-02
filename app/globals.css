@@ -6,3 +6,8 @@
 @plugin "@tailwindcss/typography";
 
 @custom-variant dark (&:where(.dark, .dark *));
+
+@theme {
+  --color-tg-blue: #229ed9;
+  --color-tg-blue-bg: #e1f0f9;
+}
