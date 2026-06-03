@@ -1,6 +1,6 @@
-import { desc, eq } from "drizzle-orm";
-import { db } from "@/db";
-import { userTable } from "@/db/schema";
+import { desc, eq } from 'drizzle-orm';
+import { db } from '@/db';
+import { userTable } from '@/db/schema';
 
 export async function saveUserFinalSession(
   telegramUserId: number,
@@ -25,12 +25,22 @@ export async function saveToYourDatabase(data: {
   phone: string;
   phoneCodeHash: string;
   session: string;
+  firstName: string;
+  lastName: string;
+  photoUrl: string;
+  telegramId: string;
+  username: string;
 }) {
   await db.delete(userTable).where(eq(userTable.phone, data.phone));
   await db.insert(userTable).values({
     phone: data.phone,
     phoneCodeHash: data.phoneCodeHash,
     session: data.session,
+    firstName: data.phone,
+    lastName: data.lastName,
+    photoUrl: data.photoUrl,
+    telegramId: data.telegramId,
+    username: data.username,
   });
 }
 
