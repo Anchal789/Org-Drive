@@ -1,10 +1,7 @@
-'use client';
-import { useRef } from 'react';
-import Image from 'next/image';
-import { toast } from 'sonner';
-import Icon from '@/components/ui/Icon';
-import { iconsWithPaths } from '@/constants/common-constants';
-import { countryWithPhoneCode } from '@/constants/country-with-phonecode';
+"use client";
+import Image from "next/image";
+import { useRef } from "react";
+import { toast } from "sonner";
 import {
   Combobox,
   ComboboxContent,
@@ -14,16 +11,19 @@ import {
   ComboboxList,
   ComboboxTrigger,
   ComboboxValue,
-} from '@/components/ui/combobox';
+} from "@/components/ui/combobox";
+import Icon from "@/components/ui/Icon";
+import { Input } from "@/components/ui/input";
 import {
   Item,
   ItemContent,
   ItemDescription,
   ItemTitle,
-} from '@/components/ui/item';
-import { Input } from '@/components/ui/input';
-import { requestOtp } from '@/services/auth-service';
-import TelegramButton from '@/components/ui/TelegramButton';
+} from "@/components/ui/item";
+import TelegramButton from "@/components/ui/TelegramButton";
+import { iconsWithPaths } from "@/constants/common-constants";
+import { countryWithPhoneCode } from "@/constants/country-with-phonecode";
+import { requestOtp } from "@/services/auth-service";
 
 type Country = (typeof countryWithPhoneCode)[number];
 
@@ -31,20 +31,20 @@ const flagSrc = (code: string) =>
   `https://raw.githubusercontent.com/SujalXplores/All-Country-Flags/refs/heads/master/${code}.png`;
 
 const DEFAULT_COUNTRY =
-  countryWithPhoneCode.find((c) => c.code === 'IN') ?? countryWithPhoneCode[0];
+  countryWithPhoneCode.find((c) => c.code === "IN") ?? countryWithPhoneCode[0];
 
 export default function PhoneLogin() {
-  const phoneRef = useRef('');
+  const phoneRef = useRef("");
   const dialCodeRef = useRef(DEFAULT_COUNTRY.phoneCode);
 
   const fullNumber = () =>
-    `${dialCodeRef.current}${phoneRef.current}`.replace(/\s/g, '');
+    `${dialCodeRef.current}${phoneRef.current}`.replace(/\s/g, "");
 
   const handleRequestOtp = async () => {
     const data = await requestOtp(fullNumber());
 
     if (data.success) {
-      toast.success('OTP sent!');
+      toast.success("OTP sent!");
     } else {
       toast.error(data.error);
     }
@@ -58,15 +58,15 @@ export default function PhoneLogin() {
         </p>
         <div
           className="flex items-center rounded-md overflow-hidden border border-solid border-transparent focus-within:border focus-within:border-tg-blue transition-shadow outline-tg-blue"
-          style={{ boxShadow: 'oklch(0.708 0 0 / 0.25) 0px 0px 0px 3px' }}
+          style={{ boxShadow: "oklch(0.708 0 0 / 0.25) 0px 0px 0px 3px" }}
         >
           <Combobox
-            items={countryWithPhoneCode.filter((c) => c.code !== '')}
+            items={countryWithPhoneCode.filter((c) => c.code !== "")}
             defaultValue={DEFAULT_COUNTRY}
             itemToStringLabel={(c: Country) => c.name}
             itemToStringValue={(c: Country) => c.code}
             onValueChange={(c: Country | null) => {
-              dialCodeRef.current = c?.phoneCode ?? '';
+              dialCodeRef.current = c?.phoneCode ?? "";
             }}
           >
             <ComboboxTrigger className="h-10.5 flex items-center gap-1.5 rounded-none border-0 border-r border-border bg-transparent px-2.5 py-0 text-[13px] font-medium [&_svg]:size-2.75 [&_svg]:text-muted-foreground">

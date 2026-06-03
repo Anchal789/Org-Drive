@@ -27,10 +27,9 @@ const nextConfig: NextConfig = {
   poweredByHeader: false,
   images: {
     remotePatterns: [
-      {
-        protocol: "https",
-        hostname: "raw.githubusercontent.com",
-      },
+      new URL(
+        "https://raw.githubusercontent.com/SujalXplores/All-Country-Flags/refs/heads/master/*",
+      ),
     ],
   },
   async headers() {
