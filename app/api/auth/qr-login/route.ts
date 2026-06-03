@@ -1,9 +1,9 @@
-import { NextRequest, NextResponse } from 'next/server';
+import { type NextRequest, NextResponse } from 'next/server';
+import QRCode from 'qrcode';
 import { Api, TelegramClient } from 'telegram';
 import { StringSession } from 'telegram/sessions';
-import { qrStore } from '@/lib/telegram-qr-store';
 import { buildTelegramQRUrl } from '@/lib/telegram-qr';
-import QRCode from 'qrcode';
+import { qrStore } from '@/lib/telegram-qr-store';
 
 const API_ID = Number(process.env.TELEGRAM_APP_API_ID);
 const API_HASH = String(process.env.TELEGRAM_APP_API_HASH);
@@ -125,7 +125,7 @@ export async function GET(request: NextRequest) {
 
     await client.disconnect();
     return NextResponse.json(
-      { status: 'error', error: `Unexpected: ${result.className}` },
+      { status: 'error', error: `Unexpected: ${result}` },
       { status: 500 },
     );
   } catch (error: any) {
