@@ -1,19 +1,59 @@
-'use client';
+"use client";
 
-import QR from '@/components/ui/TelegramQR';
-import Link from 'next/link';
+import QR from "@/components/ui/TelegramQR";
+import Link from "next/link";
 
 export function TelegramQrDisplayPanel() {
   return (
     <Link
-      href={'/qr-login'}
-      className="h-full w-full border border-border rounded-lg p-0"
+      href="/qr-login"
+      style={{
+        height: "100%",
+        width: "100%",
+        border: "1px solid var(--border)",
+        borderRadius: "var(--radius-lg)",
+        padding: 0,
+        textDecoration: "none",
+        display: "block",
+      }}
     >
-      <div className="flex items-center gap-3.5 p-3.5 border border-border rounded-lg bg-surface cursor-pointer">
+      <div
+        style={{
+          display: "flex",
+          alignItems: "center",
+          gap: 14,
+          padding: 14,
+          border: "1px solid var(--border)",
+          borderRadius: "var(--radius-lg)",
+          background: "var(--surface)",
+          cursor: "pointer",
+        }}
+      >
         <QR size={84} />
-        <div className="flex-1 min-w-0">
-          <div className="text-[13px] font-semibold">Scan with Telegram</div>
-          <div className="text-[11px] text-muted-foreground mt-0.5 leading-normal">
+
+        <div
+          style={{
+            flex: 1,
+            minWidth: 0,
+          }}
+        >
+          <div
+            style={{
+              fontSize: 13,
+              fontWeight: 600,
+            }}
+          >
+            Scan with Telegram
+          </div>
+
+          <div
+            style={{
+              fontSize: 11,
+              color: "var(--muted-foreground)",
+              marginTop: 2,
+              lineHeight: 1.4,
+            }}
+          >
             Open Telegram → Settings → Devices → Link Desktop.
           </div>
         </div>

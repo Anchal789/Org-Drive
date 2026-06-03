@@ -1,7 +1,7 @@
-import { QRLoginEntry } from "@/types/auth";
+import { OTPLoginEntry } from "@/types/auth";
 import type { TelegramClient } from "telegram";
 
-const store = new Map<string, QRLoginEntry>();
+const store = new Map<string, OTPLoginEntry>();
 const TTL_MS = 5 * 60 * 1000;
 
 async function cleanup() {
@@ -16,11 +16,18 @@ async function cleanup() {
   }
 }
 
-export const qrStore = {
-  set(loginId: string, client: TelegramClient) {
+export const otpStore = {
+  set(
+    loginId: string,
+    client: TelegramClient,
+    phoneNumber: string,
+    phoneCodeHash: string,
+  ) {
     cleanup();
     store.set(loginId, {
       client,
+      phoneNumber,
+      phoneCodeHash,
       createdAt: Date.now(),
       status: "waiting",
       user: null,

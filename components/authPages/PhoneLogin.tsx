@@ -1,7 +1,9 @@
 "use client";
+
 import Image from "next/image";
 import { useRef } from "react";
 import { toast } from "sonner";
+
 import {
   Combobox,
   ComboboxContent,
@@ -24,6 +26,8 @@ import TelegramButton from "@/components/ui/TelegramButton";
 import { iconsWithPaths } from "@/constants/common-constants";
 import { countryWithPhoneCode } from "@/constants/country-with-phonecode";
 import { requestOtp } from "@/services/auth-service";
+import { useRouter } from "next/navigation";
+import { encrypt } from "@/lib/utils";
 
 type Country = (typeof countryWithPhoneCode)[number];
 
@@ -36,6 +40,7 @@ const DEFAULT_COUNTRY =
 export default function PhoneLogin() {
   const phoneRef = useRef("");
   const dialCodeRef = useRef(DEFAULT_COUNTRY.phoneCode);
+  const navigate = useRouter();
 
   const fullNumber = () =>
     `${dialCodeRef.current}${phoneRef.current}`.replace(/\s/g, "");
@@ -44,7 +49,8 @@ export default function PhoneLogin() {
     const data = await requestOtp(fullNumber());
 
     if (data.success) {
-      toast.success("OTP sent!");
+      toast.success("OTP sent successfully");
+      navigate.push(`/verify-otp?phone=${encrypt(fullNumber())}`);
     } else {
       toast.error(data.error);
     }
@@ -53,12 +59,29 @@ export default function PhoneLogin() {
   return (
     <>
       <div>
-        <p className="text-[11px] font-medium text-foreground mb-1.5 block">
+        <p
+          style={{
+            fontSize: 11,
+            fontWeight: 500,
+            color: "var(--foreground)",
+            marginBottom: 6,
+            display: "block",
+          }}
+        >
           Phone number
         </p>
+
         <div
-          className="flex items-center rounded-md overflow-hidden border border-solid border-transparent focus-within:border focus-within:border-tg-blue transition-shadow outline-tg-blue"
-          style={{ boxShadow: "oklch(0.708 0 0 / 0.25) 0px 0px 0px 3px" }}
+          style={{
+            display: "flex",
+            alignItems: "center",
+            borderRadius: 6,
+            overflow: "hidden",
+            border: "1px solid transparent",
+            outlineColor: "var(--tg-blue)",
+            transition: "all 150ms ease",
+            boxShadow: "oklch(0.708 0 0 / 0.25) 0px 0px 0px 3px",
+          }}
         >
           <Combobox
             items={countryWithPhoneCode.filter((c) => c.code !== "")}
@@ -69,17 +92,40 @@ export default function PhoneLogin() {
               dialCodeRef.current = c?.phoneCode ?? "";
             }}
           >
-            <ComboboxTrigger className="h-10.5 flex items-center gap-1.5 rounded-none border-0 border-r border-border bg-transparent px-2.5 py-0 text-[13px] font-medium [&_svg]:size-2.75 [&_svg]:text-muted-foreground">
+            <ComboboxTrigger
+              style={{
+                height: 42,
+                display: "flex",
+                alignItems: "center",
+                gap: 6,
+                borderRadius: 0,
+                border: 0,
+                borderRight: "1px solid var(--border)",
+                background: "transparent",
+                padding: "0 10px",
+                fontSize: 13,
+                fontWeight: 500,
+              }}
+            >
               <ComboboxValue>
                 {(c: Country | null) =>
                   c ? (
-                    <span className="flex items-center gap-1.5">
+                    <span
+                      style={{
+                        display: "flex",
+                        alignItems: "center",
+                        gap: 6,
+                      }}
+                    >
                       <Image
                         src={flagSrc(c.code)}
                         alt={c.name}
                         width={16}
                         height={16}
-                        className="shrink-0 rounded-sm"
+                        style={{
+                          flexShrink: 0,
+                          borderRadius: 2,
+                        }}
                       />
                       {c.phoneCode}
                     </span>
@@ -88,32 +134,64 @@ export default function PhoneLogin() {
               </ComboboxValue>
             </ComboboxTrigger>
 
-            <ComboboxContent className="w-72 bg-white">
+            <ComboboxContent
+              style={{
+                width: 288,
+                background: "#fff",
+              }}
+            >
               <ComboboxInput
                 placeholder="Search countries..."
                 showTrigger={false}
-                className="rounded-none border-0 border-b border-border shadow-none focus-within:ring-0 [&_input]:outline-none [&_input]:focus-visible:ring-0 [&_input]:focus-visible:outline-none"
+                style={{
+                  borderRadius: 0,
+                  border: 0,
+                  borderBottom: "1px solid var(--border)",
+                  boxShadow: "none",
+                  outline: "none",
+                }}
               />
+
               <ComboboxEmpty>No countries found.</ComboboxEmpty>
+
               <ComboboxList>
                 {(country) => (
                   <ComboboxItem key={country.code} value={country}>
-                    <Item size="xs" className="p-0">
-                      <ItemContent className="flex flex-row items-center gap-2.5">
+                    <Item
+                      size="xs"
+                      style={{
+                        padding: 0,
+                      }}
+                    >
+                      <ItemContent
+                        style={{
+                          display: "flex",
+                          flexDirection: "row",
+                          alignItems: "center",
+                          gap: 10,
+                        }}
+                      >
                         <Image
                           src={flagSrc(country.code)}
                           alt={country.name}
                           width={16}
                           height={16}
-                          className="shrink-0 rounded-sm"
+                          style={{
+                            flexShrink: 0,
+                            borderRadius: 2,
+                          }}
                         />
+
                         <span>
-                          <ItemTitle className="whitespace-nowrap">
+                          <ItemTitle
+                            style={{
+                              whiteSpace: "nowrap",
+                            }}
+                          >
                             {country.name}
                           </ItemTitle>
-                          <ItemDescription>
-                            +{country.phoneCode}
-                          </ItemDescription>
+
+                          <ItemDescription>{country.phoneCode}</ItemDescription>
                         </span>
                       </ItemContent>
                     </Item>
@@ -122,18 +200,34 @@ export default function PhoneLogin() {
               </ComboboxList>
             </ComboboxContent>
           </Combobox>
+
           <Input
             type="tel"
             onChange={(e) => (phoneRef.current = e.target.value)}
             placeholder="347 821 4498"
-            className="border-none focus-visible:ring-0"
+            style={{
+              border: "none",
+              boxShadow: "none",
+              marginLeft: 10,
+            }}
           />
         </div>
-        <div className="text-[11px] text-muted-foreground mt-1.5 flex items-center gap-1.5">
+
+        <div
+          style={{
+            fontSize: 11,
+            color: "var(--muted-foreground)",
+            marginTop: 6,
+            display: "flex",
+            alignItems: "center",
+            gap: 6,
+          }}
+        >
           <Icon d={iconsWithPaths.shield} size={11} />
           We never see your messages. Telegram handles the OTP.
         </div>
       </div>
+
       <TelegramButton onClick={handleRequestOtp}>
         Send code on Telegram
       </TelegramButton>

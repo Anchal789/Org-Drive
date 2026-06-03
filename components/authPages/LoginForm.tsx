@@ -1,42 +1,117 @@
-import QR from '@/components/ui/TelegramQR';
-import { TINTS } from '@/constants/common-constants';
-import PhoneLogin from './PhoneLogin';
-import { TelegramQrDisplayPanel } from './TelegramQrDisplayPanel';
+import QR from "@/components/ui/TelegramQR";
+import { TINTS } from "@/constants/common-constants";
+import PhoneLogin from "./PhoneLogin";
+import { TelegramQrDisplayPanel } from "./TelegramQrDisplayPanel";
 
 export default function LoginPage() {
   return (
     <div
-      className="min-h-screen w-full flex flex-col lg:flex-row bg-background text-foreground font-sans"
+      style={{
+        minHeight: "100vh",
+        width: "100%",
+        display: "flex",
+        flexDirection: "row",
+        background: "var(--background)",
+        color: "var(--foreground)",
+        fontFamily: "var(--font-sans)",
+      }}
       data-screen-label="00 Login · Split hero"
     >
-      <div className="flex-1 flex items-center justify-center p-6 sm:p-12">
-        <div className="w-full max-w-95 flex flex-col gap-4.5">
-          {/* Header — static, server-rendered */}
+      <div
+        style={{
+          flex: 1,
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
+          padding: "3rem",
+        }}
+      >
+        <div
+          style={{
+            width: "100%",
+            maxWidth: 380,
+            display: "flex",
+            flexDirection: "column",
+            gap: 18,
+          }}
+        >
+          {/* Header */}
           <div>
-            <div className="text-[11px] font-semibold uppercase tracking-[0.06em] text-tg-blue">
+            <div
+              style={{
+                fontSize: 11,
+                fontWeight: 600,
+                textTransform: "uppercase",
+                letterSpacing: "0.06em",
+                color: "var(--tg-blue)",
+              }}
+            >
               Login
             </div>
-            <h2 className="text-[26px] font-semibold mt-1 mb-1.5 tracking-[-0.02em]">
+
+            <h2
+              style={{
+                fontSize: 26,
+                fontWeight: 600,
+                marginTop: 4,
+                marginBottom: 6,
+                letterSpacing: "-0.02em",
+              }}
+            >
               Welcome back.
             </h2>
-            <p className="text-[13px] text-muted-foreground m-0">
+
+            <p
+              style={{
+                fontSize: 13,
+                color: "var(--muted-foreground)",
+                margin: 0,
+              }}
+            >
               Enter your phone — we'll send a code via Telegram.
             </p>
           </div>
 
-          {/* Interactive island — the only client component */}
           <PhoneLogin />
 
-          {/* Divider — static */}
-          <div className="flex items-center gap-2.5 my-2">
-            <div className="flex-1 h-px bg-border" />
-            <span className="text-[11px] text-muted-foreground uppercase tracking-[0.06em] font-medium">
+          {/* Divider */}
+          <div
+            style={{
+              display: "flex",
+              alignItems: "center",
+              gap: 10,
+              margin: "8px 0",
+            }}
+          >
+            <div
+              style={{
+                flex: 1,
+                height: 1,
+                background: "var(--border)",
+              }}
+            />
+
+            <span
+              style={{
+                fontSize: 11,
+                color: "var(--muted-foreground)",
+                textTransform: "uppercase",
+                letterSpacing: "0.06em",
+                fontWeight: 500,
+              }}
+            >
               or scan QR
             </span>
-            <div className="flex-1 h-px bg-border" />
+
+            <div
+              style={{
+                flex: 1,
+                height: 1,
+                background: "var(--border)",
+              }}
+            />
           </div>
 
-          {/* QR card — static */}
           <TelegramQrDisplayPanel />
         </div>
       </div>

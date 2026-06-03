@@ -1,10 +1,10 @@
 // services/auth.service.ts
 
 export async function requestOtp(phoneNumber: string) {
-  const res = await fetch('/api/auth/request-otp', {
-    method: 'POST',
+  const res = await fetch("/api/auth/request-otp", {
+    method: "POST",
     headers: {
-      'Content-Type': 'application/json',
+      "Content-Type": "application/json",
     },
     body: JSON.stringify({ phoneNumber }),
   });
@@ -13,10 +13,10 @@ export async function requestOtp(phoneNumber: string) {
 }
 
 export async function verifyOtp(phoneNumber: string, otpCode: string) {
-  const res = await fetch('/api/auth/verify-otp', {
-    method: 'POST',
+  const res = await fetch("/api/auth/verify-otp", {
+    method: "POST",
     headers: {
-      'Content-Type': 'application/json',
+      "Content-Type": "application/json",
     },
     body: JSON.stringify({
       phoneNumber,
@@ -27,11 +27,26 @@ export async function verifyOtp(phoneNumber: string, otpCode: string) {
   return res.json();
 }
 
-export async function qrStart() {
-  const res = await fetch('/api/auth/qr-start', {
-    method: 'POST',
+export async function verifyOtpPassword(phoneNumber: string, password: string) {
+  const res = await fetch("/api/auth/verify-otp-password", {
+    method: "POST",
     headers: {
-      'Content-Type': 'application/json',
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({
+      phoneNumber,
+      password,
+    }),
+  });
+
+  return res.json();
+}
+
+export async function qrStart() {
+  const res = await fetch("/api/auth/qr-start", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
     },
   });
 
@@ -40,9 +55,9 @@ export async function qrStart() {
 
 export async function qrLogin(loginId: string) {
   const res = await fetch(`/api/auth/qr-login?loginId=${loginId}`, {
-    method: 'GET',
+    method: "GET",
     headers: {
-      'Content-Type': 'application/json',
+      "Content-Type": "application/json",
     },
   });
 

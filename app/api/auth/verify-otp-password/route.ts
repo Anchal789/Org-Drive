@@ -1,12 +1,9 @@
-// app/api/auth/verify-otp/route.ts
+// app/api/auth/verify-otp-password/route.ts
 import { NextResponse } from "next/server";
 import { Api, TelegramClient } from "telegram";
 import { StringSession } from "telegram/sessions";
-import {
-  getFromYourDatabase,
-  saveUserFinalSession,
-  updatePendingSession,
-} from "@/lib/auth";
+import { computeCheck } from "telegram/Password";
+import { getFromYourDatabase, deletePendingSession } from "@/lib/auth";
 
 const API_ID = Number(process.env.TELEGRAM_APP_API_ID);
 const API_HASH = String(process.env.TELEGRAM_APP_API_HASH);
@@ -19,6 +16,7 @@ async function fetchTelegramUser(client: TelegramClient) {
     lastName: me.lastName ?? null,
     username: me.username ?? null,
     photoUrl: null,
+    phoneNumber: me.phone ?? null,
   };
 
   try {
@@ -36,11 +34,11 @@ async function fetchTelegramUser(client: TelegramClient) {
 }
 
 export async function POST(request: Request) {
-  const { phoneNumber, otpCode } = await request.json();
+  const { phoneNumber, password } = await request.json();
 
-  if (!phoneNumber || !otpCode) {
+  if (!phoneNumber || !password) {
     return NextResponse.json(
-      { success: false, error: "Missing phoneNumber or otpCode" },
+      { success: false, error: "Missing phoneNumber or password" },
       { status: 400 },
     );
   }
@@ -63,32 +61,35 @@ export async function POST(request: Request) {
 
   try {
     await client.connect();
-  } catch (_error) {
-    return NextResponse.json(
-      { success: false, error: "Failed to connect to Telegram" },
-      { status: 500 },
-    );
-  }
 
-  try {
-    await client.invoke(
-      new Api.auth.SignIn({
-        phoneNumber,
-        phoneCodeHash: savedData.phoneCodeHash,
-        phoneCode: otpCode,
-      }),
+    const passwordInfo: any = await client.invoke(
+      new Api.account.GetPassword(),
     );
+    const passwordCheck = await computeCheck(passwordInfo, password);
 
-    // No 2FA — login complete
-    const finalSessionString = client.session.save() as unknown as string;
+    try {
+      await client.invoke(
+        new Api.auth.CheckPassword({ password: passwordCheck }),
+      );
+    } catch (err: any) {
+      await client.disconnect();
+      if (err?.errorMessage === "PASSWORD_HASH_INVALID") {
+        return NextResponse.json(
+          { success: false, error: "Incorrect password" },
+          { status: 401 },
+        );
+      }
+      throw err;
+    }
+
+    // Password accepted — fetch user, log out, clean up
     const user = await fetchTelegramUser(client);
 
-    // Log out to discard the Telegram session — we only want identity
     try {
       await client.invoke(new Api.auth.LogOut());
     } catch {}
 
-    await saveUserFinalSession(savedData.id, finalSessionString);
+    await deletePendingSession(String(savedData.id));
     await client.disconnect();
 
     // TODO: create/update user in DB, set session cookie
@@ -101,31 +102,14 @@ export async function POST(request: Request) {
       user,
     });
   } catch (error: any) {
-    if (error?.errorMessage === "SESSION_PASSWORD_NEEDED") {
-      // 2FA is required — save the updated session and tell the client to prompt
-      const updatedSession = client.session.save() as unknown as string;
-      await updatePendingSession(String(savedData.id), updatedSession);
-
-      let hint: string | null = null;
-      try {
-        const passwordInfo: any = await client.invoke(
-          new Api.account.GetPassword(),
-        );
-        hint = passwordInfo.hint ?? null;
-      } catch {}
-
-      await client.disconnect();
-      return NextResponse.json({
-        success: true,
-        status: "needs_password",
-        passwordHint: hint,
-      });
-    }
-
-    await client.disconnect();
+    await client.disconnect().catch(() => {});
+    console.error("Password verify failed:", error?.message ?? error);
     return NextResponse.json(
-      { success: false, error: error?.message ?? "Invalid or expired code" },
-      { status: 400 },
+      {
+        success: false,
+        error: error?.message ?? "Password verification failed",
+      },
+      { status: 500 },
     );
   }
 }

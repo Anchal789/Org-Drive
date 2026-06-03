@@ -1,6 +1,6 @@
-import { desc, eq } from 'drizzle-orm';
-import { db } from '@/db';
-import { userTable } from '@/db/schema';
+import { desc, eq } from "drizzle-orm";
+import { db } from "@/db";
+import { userTable } from "@/db/schema";
 
 export async function saveUserFinalSession(
   telegramUserId: number,
@@ -32,4 +32,18 @@ export async function saveToYourDatabase(data: {
     phoneCodeHash: data.phoneCodeHash,
     session: data.session,
   });
+}
+
+export async function updatePendingSession(id: string, session: string) {
+  // Prisma example:
+  // await prisma.pendingLogin.update({
+  //   where: { id },
+  //   data: { session },
+  // });
+}
+
+// Delete a pending login row after success
+export async function deletePendingSession(id: string) {
+  // Prisma example:
+  // await prisma.pendingLogin.delete({ where: { id } });
 }
