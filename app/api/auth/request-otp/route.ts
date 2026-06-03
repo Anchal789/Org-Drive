@@ -16,7 +16,7 @@ export async function POST(request: Request) {
     },
   );
 
-  client.session.setDC(2, '149.154.167.40', 80);
+  // client.session.setDC(2, '149.154.167.40', 80);
 
   try {
     await client.connect();

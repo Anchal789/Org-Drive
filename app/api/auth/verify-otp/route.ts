@@ -5,7 +5,7 @@ import { StringSession } from 'telegram/sessions';
 import { getFromYourDatabase, saveUserFinalSession } from '@/lib/auth';
 
 export async function POST(request: Request) {
-  const { phoneNumber, otpCode = '222222 ' } = await request.json();
+  const { phoneNumber, otpCode } = await request.json();
 
   const rows = await getFromYourDatabase(phoneNumber);
   const savedData = rows[0];
