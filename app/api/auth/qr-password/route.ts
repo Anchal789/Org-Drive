@@ -3,6 +3,8 @@ import { computeCheck } from "telegram/Password";
 import { Api } from "telegram";
 import { qrStore } from "@/lib/telegram-qr-store";
 import { finalizeLogin } from "@/lib/telegram-qr";
+import { userRepository } from "@/repositories/user.repository";
+import { createSession } from "@/lib/session";
 
 export async function POST(request: NextRequest) {
   const { loginId, password } = await request.json();
@@ -53,14 +55,29 @@ export async function POST(request: NextRequest) {
       throw err;
     }
 
-    // 4. Password accepted — fetch user info, mark success
     await finalizeLogin(loginId, entry.client);
 
     const updated = qrStore.get(loginId);
     if (updated?.status === "success" && updated.user) {
-      const user = updated.user;
+      const tgUser = updated.user;
       await qrStore.delete(loginId);
-      return NextResponse.json({ success: true, status: "success", user });
+
+      const dbUser = await userRepository.upsert({
+        telegramId: tgUser.telegramId,
+        firstName: tgUser.firstName,
+        lastName: tgUser.lastName,
+        username: tgUser.username,
+        photoUrl: tgUser.photoUrl,
+        phone: tgUser.phone ?? null,
+      });
+
+      await createSession(dbUser.id);
+
+      return NextResponse.json({
+        success: true,
+        status: "success",
+        user: dbUser,
+      });
     }
 
     return NextResponse.json(

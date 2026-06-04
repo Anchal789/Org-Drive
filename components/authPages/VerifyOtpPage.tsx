@@ -1,4 +1,3 @@
-// app/(auth)/verify-otp/page.tsx (or wherever it lives)
 "use client";
 
 import { iconsWithPaths, TG_BLUE } from "@/constants/common-constants";
@@ -6,6 +5,7 @@ import Icon from "../ui/Icon";
 import TelegramButton from "../ui/TelegramButton";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
+import { Controller, useForm } from "react-hook-form";
 import { verifyOtp, verifyOtpPassword } from "@/services/auth-service";
 import { decrypt } from "@/lib/utils";
 
@@ -25,46 +25,59 @@ export default function VerifyOtpPage() {
   const phoneNumber = decrypt(searchParams.get("phone") ?? "");
 
   const [status, setStatus] = useState<Status>("entering_otp");
-  const [digits, setDigits] = useState<string[]>(Array(OTP_LENGTH).fill(""));
   const [activeIndex, setActiveIndex] = useState(0);
-  const [error, setError] = useState<string | null>(null);
+  const [serverError, setServerError] = useState<string | null>(null);
   const [resendIn, setResendIn] = useState(RESEND_SECONDS);
-
-  // 2FA state
-  const [password, setPassword] = useState("");
   const [passwordHint, setPasswordHint] = useState<string | null>(null);
 
   const inputsRef = useRef<(HTMLInputElement | null)[]>([]);
 
-  // Bail out if no phone number — redirect back to phone entry
+  const otpForm = useForm<{
+    otp: string;
+  }>({
+    defaultValues: { otp: "" },
+    mode: "onChange",
+  });
+
+  const otpValue = otpForm.watch("otp");
+  const digits = Array.from(
+    { length: OTP_LENGTH },
+    (_, i) => otpValue[i] ?? "",
+  );
+
+  const passwordForm = useForm<{
+    password: string;
+  }>({
+    defaultValues: { password: "" },
+    mode: "onChange",
+  });
+
   useEffect(() => {
     if (!phoneNumber) {
       router.replace("/login");
     }
   }, [phoneNumber, router]);
 
-  // Resend countdown
   useEffect(() => {
     if (resendIn <= 0) return;
     const id = setInterval(() => setResendIn((s) => s - 1), 1000);
     return () => clearInterval(id);
   }, [resendIn]);
 
-  // ─── OTP input handling ───────────────────────────────────────────────────
-  const handleDigitChange = (index: number, value: string) => {
-    const cleaned = value.replace(/\D/g, "").slice(-1); // last digit only
+  const updateOtpDigit = (index: number, newDigit: string) => {
+    const cleaned = newDigit.replace(/\D/g, "").slice(-1);
     const next = [...digits];
     next[index] = cleaned;
-    setDigits(next);
+    const joined = next.join("");
+    otpForm.setValue("otp", joined, { shouldValidate: true });
 
     if (cleaned && index < OTP_LENGTH - 1) {
       setActiveIndex(index + 1);
       inputsRef.current[index + 1]?.focus();
     }
 
-    // Auto-submit when all filled
     if (cleaned && index === OTP_LENGTH - 1 && next.every((d) => d !== "")) {
-      submitOtp(next.join(""));
+      otpForm.handleSubmit(submitOtp)();
     }
   };
 
@@ -93,23 +106,22 @@ export default function VerifyOtpPage() {
       .replace(/\D/g, "")
       .slice(0, OTP_LENGTH);
     if (!pasted) return;
-    const next = Array(OTP_LENGTH).fill("");
-    for (let i = 0; i < pasted.length; i++) next[i] = pasted[i];
-    setDigits(next);
+
+    otpForm.setValue("otp", pasted, { shouldValidate: true });
     const focusIdx = Math.min(pasted.length, OTP_LENGTH - 1);
     setActiveIndex(focusIdx);
     inputsRef.current[focusIdx]?.focus();
+
     if (pasted.length === OTP_LENGTH) {
-      submitOtp(pasted);
+      otpForm.handleSubmit(submitOtp)();
     }
   };
 
-  // ─── Submission ───────────────────────────────────────────────────────────
-  async function submitOtp(code: string) {
+  async function submitOtp(values: { otp: string }) {
     setStatus("submitting");
-    setError(null);
+    setServerError(null);
     try {
-      const data = await verifyOtp(phoneNumber, code);
+      const data = await verifyOtp(phoneNumber, values.otp);
 
       if (data.success && data.status === "success") {
         setStatus("success");
@@ -119,35 +131,33 @@ export default function VerifyOtpPage() {
         setStatus("needs_password");
       } else {
         setStatus("entering_otp");
-        setError(data.error ?? "Invalid code");
-        setDigits(Array(OTP_LENGTH).fill(""));
+        setServerError(data.error ?? "Invalid code");
+        otpForm.setValue("otp", "");
         setActiveIndex(0);
         inputsRef.current[0]?.focus();
       }
     } catch (e: any) {
       setStatus("entering_otp");
-      setError(e?.message ?? "Network error");
+      setServerError(e?.message ?? "Network error");
     }
   }
 
-  async function submitPassword(e: React.FormEvent) {
-    e.preventDefault();
-    if (!password) return;
+  async function submitPassword(values: { password: string }) {
     setStatus("submitting");
-    setError(null);
+    setServerError(null);
     try {
-      const data = await verifyOtpPassword(phoneNumber, password);
+      const data = await verifyOtpPassword(phoneNumber, values.password);
 
       if (data.success && data.status === "success") {
         setStatus("success");
         setTimeout(() => router.push("/dashboard"), 1000);
       } else {
         setStatus("needs_password");
-        setError(data.error ?? "Incorrect password");
+        setServerError(data.error ?? "Incorrect password");
       }
     } catch (e: any) {
       setStatus("needs_password");
-      setError(e?.message ?? "Network error");
+      setServerError(e?.message ?? "Network error");
     }
   }
 
@@ -201,7 +211,6 @@ export default function VerifyOtpPage() {
           <Icon d={iconsWithPaths.chevLeft} size={13} /> Back
         </button>
 
-        {/* Step header */}
         <div>
           <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
             {[0, 1, 2].map((i) => {
@@ -280,91 +289,99 @@ export default function VerifyOtpPage() {
 
         {/* OTP boxes */}
         {showOtpUi && (
-          <>
-            <div
-              style={{
-                display: "flex",
-                gap: 10,
-                justifyContent: "center",
-                padding: "8px 0",
+          <form
+            onSubmit={otpForm.handleSubmit(submitOtp)}
+            style={{ display: "flex", flexDirection: "column", gap: 18 }}
+          >
+            <Controller
+              control={otpForm.control}
+              name="otp"
+              rules={{
+                required: "OTP is required",
+                minLength: {
+                  value: OTP_LENGTH,
+                  message: `OTP must be ${OTP_LENGTH} digits`,
+                },
+                maxLength: {
+                  value: OTP_LENGTH,
+                  message: `OTP must be ${OTP_LENGTH} digits`,
+                },
+                pattern: {
+                  value: /^\d+$/,
+                  message: "OTP must be digits only",
+                },
               }}
-            >
-              {digits.map((digit, i) => {
-                const active = i === activeIndex;
-                return (
-                  <label
-                    key={i}
-                    style={{
-                      width: 56,
-                      height: 64,
-                      border: `1.5px solid ${active ? TG_BLUE : "var(--input)"}`,
-                      borderRadius: "var(--radius-lg)",
-                      display: "inline-flex",
-                      alignItems: "center",
-                      justifyContent: "center",
-                      fontSize: 26,
-                      fontWeight: 600,
-                      fontVariantNumeric: "tabular-nums",
-                      background: active
-                        ? "var(--background)"
-                        : "var(--background)",
-                      boxShadow: active ? `0 0 0 3px ${TG_BLUE}33` : "none",
-                      color: "var(--foreground)",
-                      position: "relative",
-                      cursor: "text",
-                      transition: "all 150ms ease",
-                    }}
-                  >
-                    <input
-                      ref={(el) => {
-                        inputsRef.current[i] = el;
-                      }}
-                      type="text"
-                      inputMode="numeric"
-                      pattern="[0-9]*"
-                      maxLength={1}
-                      value={digit}
-                      onChange={(e) => handleDigitChange(i, e.target.value)}
-                      onKeyDown={(e) => handleKeyDown(i, e)}
-                      onPaste={handlePaste}
-                      onFocus={() => setActiveIndex(i)}
-                      disabled={status === "submitting"}
-                      autoFocus={i === 0}
-                      style={{
-                        position: "absolute",
-                        inset: 0,
-                        width: "100%",
-                        height: "100%",
-                        background: "transparent",
-                        border: "none",
-                        outline: "none",
-                        textAlign: "center",
-                        fontSize: 26,
-                        fontWeight: 600,
-                        fontVariantNumeric: "tabular-nums",
-                        color: "var(--foreground)",
-                        fontFamily: "inherit",
-                      }}
-                    />
-                    {active && !digit && (
-                      <span
+              render={() => (
+                <div
+                  style={{
+                    display: "flex",
+                    gap: 10,
+                    justifyContent: "center",
+                    padding: "8px 0",
+                  }}
+                >
+                  {digits.map((digit, i) => {
+                    const active = i === activeIndex;
+                    return (
+                      <label
+                        key={i}
                         style={{
-                          position: "absolute",
-                          bottom: 12,
-                          left: "50%",
-                          transform: "translateX(-50%)",
-                          width: 2,
-                          height: 22,
-                          background: TG_BLUE,
-                          animation: "blink 1s steps(2) infinite",
-                          pointerEvents: "none",
+                          width: 56,
+                          height: 64,
+                          border: `1.5px solid ${active ? TG_BLUE : "var(--input)"}`,
+                          borderRadius: "var(--radius-lg)",
+                          display: "inline-flex",
+                          alignItems: "center",
+                          justifyContent: "center",
+                          fontSize: 26,
+                          fontWeight: 600,
+                          fontVariantNumeric: "tabular-nums",
+                          background: "var(--background)",
+                          boxShadow: active ? `0 0 0 3px ${TG_BLUE}33` : "none",
+                          color: "var(--foreground)",
+                          position: "relative",
+                          cursor: "text",
+                          transition: "all 150ms ease",
                         }}
-                      />
-                    )}
-                  </label>
-                );
-              })}
-            </div>
+                      >
+                        <input
+                          ref={(el) => {
+                            inputsRef.current[i] = el;
+                          }}
+                          type="text"
+                          inputMode="numeric"
+                          pattern="[0-9]*"
+                          maxLength={1}
+                          value={digit}
+                          onChange={(e) => updateOtpDigit(i, e.target.value)}
+                          onKeyDown={(e) => handleKeyDown(i, e)}
+                          onPaste={handlePaste}
+                          onFocus={() => setActiveIndex(i)}
+                          disabled={status === "submitting"}
+                          autoFocus={i === 0}
+                          style={{
+                            position: "absolute",
+                            inset: 0,
+                            width: "100%",
+                            height: "100%",
+                            background: "transparent",
+                            border: "none",
+                            outline: "none",
+                            textAlign: "center",
+                            fontSize: 26,
+                            fontWeight: 600,
+                            fontVariantNumeric: "tabular-nums",
+                            color: "var(--foreground)",
+                            fontFamily: "inherit",
+                            caretColor: TG_BLUE,
+                          }}
+                        />
+                      </label>
+                    );
+                  })}
+                </div>
+              )}
+            />
 
             {/* Resend */}
             <div
@@ -396,7 +413,6 @@ export default function VerifyOtpPage() {
                 <button
                   type="button"
                   onClick={() => {
-                    // TODO: call requestOtp(phoneNumber) again
                     setResendIn(RESEND_SECONDS);
                   }}
                   style={{
@@ -413,7 +429,7 @@ export default function VerifyOtpPage() {
               )}
             </div>
 
-            {error && (
+            {(otpForm.formState.errors.otp || serverError) && (
               <p
                 style={{
                   margin: 0,
@@ -422,49 +438,66 @@ export default function VerifyOtpPage() {
                   textAlign: "center",
                 }}
               >
-                {error}
+                {otpForm.formState.errors.otp?.message ?? serverError}
               </p>
             )}
 
             <TelegramButton
-              type="button"
-              disabled={status === "submitting" || digits.some((d) => !d)}
-              onClick={() => submitOtp(digits.join(""))}
+              type="submit"
+              disabled={status === "submitting" || !otpForm.formState.isValid}
+              loading={status === "submitting"}
+              loadingText="Verifying…"
             >
-              {status === "submitting" ? "Verifying…" : "Verify and continue"}
+              Verify and continue
             </TelegramButton>
-          </>
+          </form>
         )}
 
         {/* 2FA password form */}
         {showPasswordUi && (
           <form
-            onSubmit={submitPassword}
+            onSubmit={passwordForm.handleSubmit(submitPassword)}
             style={{
               display: "flex",
               flexDirection: "column",
               gap: 12,
             }}
           >
-            <input
-              type="password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              placeholder="Your Telegram password"
-              autoFocus
-              required
-              style={{
-                padding: "12px 14px",
-                background: "var(--background)",
-                color: "var(--foreground)",
-                border: "1.5px solid var(--input)",
-                borderRadius: "var(--radius-lg)",
-                fontSize: 14,
-                fontFamily: "inherit",
-                outline: "none",
+            <Controller
+              control={passwordForm.control}
+              name="password"
+              rules={{
+                required: "Password is required",
+                minLength: {
+                  value: 1,
+                  message: "Password is required",
+                },
               }}
+              render={({ field }) => (
+                <input
+                  {...field}
+                  type="password"
+                  placeholder="Your Telegram password"
+                  autoFocus
+                  style={{
+                    padding: "12px 14px",
+                    background: "var(--background)",
+                    color: "var(--foreground)",
+                    border: `1.5px solid ${
+                      passwordForm.formState.errors.password
+                        ? "var(--destructive)"
+                        : "var(--input)"
+                    }`,
+                    borderRadius: "var(--radius-lg)",
+                    fontSize: 14,
+                    fontFamily: "inherit",
+                    outline: "none",
+                  }}
+                />
+              )}
             />
-            {error && (
+
+            {(passwordForm.formState.errors.password || serverError) && (
               <p
                 style={{
                   margin: 0,
@@ -473,10 +506,18 @@ export default function VerifyOtpPage() {
                   textAlign: "center",
                 }}
               >
-                {error}
+                {passwordForm.formState.errors.password?.message ?? serverError}
               </p>
             )}
-            <TelegramButton type="submit" disabled={!password}>
+
+            <TelegramButton
+              type="submit"
+              disabled={
+                status === "submitting" || !passwordForm.formState.isValid
+              }
+              loading={status === "submitting"}
+              loadingText="Verifying…"
+            >
               Continue
             </TelegramButton>
           </form>

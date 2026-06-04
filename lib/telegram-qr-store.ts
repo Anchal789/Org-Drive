@@ -1,8 +1,17 @@
 import { QRLoginEntry } from "@/types/auth";
 import type { TelegramClient } from "telegram";
 
-const store = new Map<string, QRLoginEntry>();
+const globalForQRStore = globalThis as unknown as {
+  qrLoginStore: Map<string, QRLoginEntry> | undefined;
+};
+
+const store: Map<string, QRLoginEntry> =
+  globalForQRStore.qrLoginStore ?? new Map<string, QRLoginEntry>();
 const TTL_MS = 5 * 60 * 1000;
+
+if (process.env.NODE_ENV !== "production") {
+  globalForQRStore.qrLoginStore = store;
+}
 
 async function cleanup() {
   const now = Date.now();

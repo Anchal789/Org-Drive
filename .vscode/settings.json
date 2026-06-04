@@ -21,7 +21,7 @@
     "editor.defaultFormatter": "biomejs.biome"
   },
   "[scss]": {
-    "editor.defaultFormatter": "biomejs.biome"
+    "editor.defaultFormatter": "sibiraj-s.vscode-scss-formatter"
   },
   "css.lint.duplicateProperties": "warning",
   "css.lint.emptyRules": "warning",
@@ -50,5 +50,6 @@
   "scss.lint.duplicateProperties": "warning",
   "scss.lint.emptyRules": "warning",
   "workbench.editor.highlightModifiedTabs": true,
-  "cSpell.words": ["EDITMSG", "turbopack", "vercel"]
+  "cSpell.words": ["EDITMSG", "turbopack", "vercel"],
+  "js/ts.tsdk.path": "node_modules\\typescript\\lib"
 }

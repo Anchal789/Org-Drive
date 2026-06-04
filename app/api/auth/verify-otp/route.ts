@@ -1,12 +1,9 @@
-// app/api/auth/verify-otp/route.ts
 import { NextResponse } from "next/server";
 import { Api, TelegramClient } from "telegram";
 import { StringSession } from "telegram/sessions";
-import {
-  getFromYourDatabase,
-  saveUserFinalSession,
-  updatePendingSession,
-} from "@/lib/auth";
+import { pendingLoginRepository } from "@/repositories/pending-login.repository";
+import { userRepository } from "@/repositories/user.repository";
+import { createSession } from "@/lib/session";
 
 const API_ID = Number(process.env.TELEGRAM_APP_API_ID);
 const API_HASH = String(process.env.TELEGRAM_APP_API_HASH);
@@ -19,6 +16,7 @@ async function fetchTelegramUser(client: TelegramClient) {
     lastName: me.lastName ?? null,
     username: me.username ?? null,
     photoUrl: null,
+    phone: me.phone ?? null,
   };
 
   try {
@@ -45,8 +43,7 @@ export async function POST(request: Request) {
     );
   }
 
-  const rows = await getFromYourDatabase(phoneNumber);
-  const savedData = rows[0];
+  const savedData = await pendingLoginRepository.findByPhone(phoneNumber);
   if (!savedData) {
     return NextResponse.json(
       { success: false, error: "No pending login for this number" },
@@ -79,32 +76,36 @@ export async function POST(request: Request) {
       }),
     );
 
-    // No 2FA — login complete
-    const finalSessionString = client.session.save() as unknown as string;
     const user = await fetchTelegramUser(client);
 
-    // Log out to discard the Telegram session — we only want identity
     try {
       await client.invoke(new Api.auth.LogOut());
     } catch {}
 
-    await saveUserFinalSession(savedData.id, finalSessionString);
+    const dbUser = await userRepository.upsert({
+      telegramId: user.telegramId,
+      firstName: user.firstName,
+      lastName: user.lastName,
+      username: user.username,
+      photoUrl: user.photoUrl,
+      phone: phoneNumber,
+    });
+
+    await pendingLoginRepository.delete(savedData.id);
+
     await client.disconnect();
 
-    // TODO: create/update user in DB, set session cookie
-    // const dbUser = await prisma.user.upsert({ ... });
-    // (await cookies()).set("session", await createSession(dbUser.id), { ... });
+    await createSession(dbUser.id);
 
     return NextResponse.json({
       success: true,
       status: "success",
-      user,
+      user: dbUser,
     });
   } catch (error: any) {
     if (error?.errorMessage === "SESSION_PASSWORD_NEEDED") {
-      // 2FA is required — save the updated session and tell the client to prompt
       const updatedSession = client.session.save() as unknown as string;
-      await updatePendingSession(String(savedData.id), updatedSession);
+      await pendingLoginRepository.updateSession(savedData.id, updatedSession);
 
       let hint: string | null = null;
       try {

@@ -1,0 +1,82 @@
+@use "../functions" as *;
+
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid transparent;
+  border-radius: v(radius-md);
+  font-family: inherit;
+  font-weight: v(weight-medium);
+  white-space: nowrap;
+  cursor: pointer;
+  transition:
+    background 120ms ease,
+    opacity 120ms ease;
+
+  &:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+}
+
+// ─── Variants ─────────────────────────────────────────────────────────────
+.default {
+  background: v(primary);
+  color: v(primary-foreground);
+  box-shadow: v(shadow-xs);
+}
+
+.secondary {
+  background: v(secondary);
+  color: v(secondary-foreground);
+}
+
+.outline {
+  background: v(background);
+  color: v(foreground);
+  border-color: v(border);
+}
+
+.ghost {
+  background: transparent;
+  color: v(foreground);
+
+  &:hover {
+    background: v(muted);
+  }
+}
+
+.destructive {
+  background: v(destructive);
+  color: v(destructive-foreground);
+  box-shadow: v(shadow-xs);
+}
+
+// ─── Sizes ────────────────────────────────────────────────────────────────
+.size-sm {
+  height: 28px;
+  padding: 0 10px;
+  font-size: 12px;
+  gap: 6px;
+}
+
+.size-md {
+  height: 34px;
+  padding: 0 14px;
+  font-size: 13px;
+  gap: 8px;
+}
+
+.size-lg {
+  height: 40px;
+  padding: 0 18px;
+  font-size: 14px;
+  gap: 8px;
+}
+
+.size-icon {
+  height: 32px;
+  width: 32px;
+  padding: 0;
+}

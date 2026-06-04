@@ -145,6 +145,7 @@ export default function QrCode() {
   useEffect(() => {
     if (expired && status === "waiting") {
       setStatus("expired");
+      restart();
     }
   }, [expired, status]);
 
@@ -159,10 +160,6 @@ export default function QrCode() {
             alignItems: "center",
             justifyContent: "center",
             padding: 14,
-            background: "#fff",
-            borderRadius: "var(--radius-lg)",
-            border: "1px solid oklch(0.922 0.005 34.3)",
-            position: "relative",
           }}
         >
           {status === "loading" && (
@@ -369,6 +366,7 @@ export default function QrCode() {
           color: "var(--muted-foreground)",
           display: "flex",
           alignItems: "center",
+          justifyContent: "center",
           gap: 6,
           marginTop: 12,
         }}

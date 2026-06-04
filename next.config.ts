@@ -1,4 +1,5 @@
-import type { NextConfig } from 'next';
+import type { NextConfig } from "next";
+import path from "node:path";
 
 const cspHeader = `
   default-src 'self';
@@ -28,34 +29,37 @@ const nextConfig: NextConfig = {
   images: {
     remotePatterns: [
       new URL(
-        'https://raw.githubusercontent.com/SujalXplores/All-Country-Flags/refs/heads/master/*',
+        "https://raw.githubusercontent.com/SujalXplores/All-Country-Flags/refs/heads/master/*",
       ),
     ],
   },
   async headers() {
     return [
       {
-        source: '/(.*)',
+        source: "/(.*)",
         headers: [
           {
-            key: 'Content-Security-Policy',
-            value: cspHeader.replace(/\n/g, ''),
+            key: "Content-Security-Policy",
+            value: cspHeader.replace(/\n/g, ""),
           },
           {
-            key: 'X-Content-Type-Options',
-            value: 'nosniff',
+            key: "X-Content-Type-Options",
+            value: "nosniff",
           },
           {
-            key: 'X-Frame-Options',
-            value: 'DENY',
+            key: "X-Frame-Options",
+            value: "DENY",
           },
           {
-            key: 'Referrer-Policy',
-            value: 'strict-origin-when-cross-origin',
+            key: "Referrer-Policy",
+            value: "strict-origin-when-cross-origin",
           },
         ],
       },
     ];
+  },
+  sassOptions: {
+    includePaths: [path.join(process.cwd(), "styles")],
   },
 };
 

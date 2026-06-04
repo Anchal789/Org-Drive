@@ -1,3 +1,4 @@
+import { countryWithPhoneCode } from "@/constants/country-with-phonecode";
 import { TelegramClient } from "telegram";
 
 export type QRLoginStatus =
@@ -35,3 +36,34 @@ export type OTPLoginEntry = {
   error: string | null;
   passwordHint: string | null;
 };
+
+export type User = {
+  id: number;
+  telegramId: string;
+  firstName: string | null;
+  lastName: string | null;
+  username: string | null;
+  photoUrl: string | null;
+  phone: string | null;
+  createdAt: Date;
+  updatedAt: Date;
+};
+
+export type PendingLogin = {
+  id: number;
+  phone: string;
+  phoneCodeHash: string;
+  session: string;
+  createdAt: Date;
+};
+
+export type UpsertUserInput = {
+  telegramId: string;
+  firstName: string | null;
+  lastName: string | null;
+  username: string | null;
+  photoUrl: string | null;
+  phone?: string | null;
+};
+
+export type CountryType = (typeof countryWithPhoneCode)[number];

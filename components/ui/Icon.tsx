@@ -2,14 +2,16 @@ export default function Icon({
   d,
   size = 16,
   stroke = 1.6,
-  fill = 'none',
-  className = '',
+  fill = "none",
+  className = "",
+  style = {},
 }: {
   d: string;
   size?: number;
   stroke?: number;
   fill?: string;
   className?: string;
+  style?: React.CSSProperties;
 }) {
   return (
     <svg
@@ -22,6 +24,7 @@ export default function Icon({
       strokeLinecap="round"
       strokeLinejoin="round"
       className={`shrink-0 ${className}`}
+      style={style}
     >
       <title>Icon</title>
       <path d={d} />

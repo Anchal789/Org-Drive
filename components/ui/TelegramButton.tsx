@@ -14,6 +14,8 @@ export default function TelegramButton({
   navigateTo = "/",
   type = "button",
   disabled = false,
+  loading = false,
+  loadingText = "Loading...",
 }: {
   children: React.ReactNode;
   size?: "sm" | "lg";
@@ -23,18 +25,19 @@ export default function TelegramButton({
   navigateTo?: Route<string>;
   type?: "submit" | "reset" | "button";
   disabled?: boolean;
+  loading?: boolean;
+  loadingText?: string;
 }) {
   const hClass = size === "lg" ? "h-[44px]" : "h-[36px]";
   const navigate = useRouter();
 
   return (
     <button
-      type={type || "button"}
+      type={type}
       onClick={
         isNavigatingButton ? () => navigate.push(`${navigateTo}`) : onClick
       }
-      disabled={disabled}
-      // className={`inline-flex items-center justify-center gap-2 w-full text-white border-none rounded-md text-sm font-semibold cursor-pointer shadow-sm hover:opacity-90 transition-opacity bg-tg-blue ${hClass} ${className}`}
+      disabled={disabled || loading}
       style={{
         color: "var(--text-white)",
         background: "var(--tg-blue)",
@@ -46,21 +49,41 @@ export default function TelegramButton({
         justifyContent: "center",
         gap: "var(--space-2)",
         fontWeight: "var(--font-semibold)",
-        cursor: "pointer",
+        cursor: disabled || loading ? "not-allowed" : "pointer",
         transition: "opacity 0.2s ease-in-out",
-        opacity: "1",
+        opacity: disabled || loading ? "0.7" : "1",
         borderRadius: "var(--radius-md)",
         width: "100%",
         height: size === "lg" ? "44px" : "36px",
       }}
+      className={className}
     >
-      <Icon
-        d={iconsWithPaths.send}
-        size={16}
-        stroke={2}
-        className="rotate-15"
-      />
-      {children}
+      {loading ? (
+        <>
+          <span
+            style={{
+              width: 16,
+              height: 16,
+              border: "2px solid rgba(255,255,255,0.4)",
+              borderTopColor: "#fff",
+              borderRadius: "50%",
+              display: "inline-block",
+              animation: "spin 0.8s linear infinite",
+            }}
+          />
+          {loadingText}
+        </>
+      ) : (
+        <>
+          <Icon
+            d={iconsWithPaths.send}
+            size={16}
+            stroke={2}
+            className="rotate-15"
+          />
+          {children}
+        </>
+      )}
     </button>
   );
 }

@@ -1,3 +1,4 @@
+// app/api/auth/qr-start/route.ts
 import { NextResponse } from "next/server";
 import { Api, TelegramClient } from "telegram";
 import { StringSession } from "telegram/sessions";

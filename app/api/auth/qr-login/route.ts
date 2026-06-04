@@ -1,8 +1,11 @@
+// app/api/auth/qr-login/route.ts
 import { NextRequest, NextResponse } from "next/server";
 import { Api } from "telegram";
 import QRCode from "qrcode";
 import { qrStore } from "@/lib/telegram-qr-store";
 import { buildTelegramQRUrl } from "@/lib/telegram-qr";
+import { createSession } from "@/lib/session";
+import { userRepository } from "@/repositories/user.repository";
 
 const API_ID = Number(process.env.TELEGRAM_APP_API_ID);
 const API_HASH = String(process.env.TELEGRAM_APP_API_HASH);
@@ -31,15 +34,20 @@ export async function GET(request: NextRequest) {
     });
   }
 
-  // Event handler already saw the scan
   if (entry.status === "success" && entry.user) {
     const user = entry.user;
     await qrStore.delete(loginId);
 
-    // TODO: create/update user in DB, set session cookie
-    console.log("User logged in:", user);
-    // const dbUser = await prisma.user.upsert({ ... });
-    // (await cookies()).set("session", await createSession(dbUser.id), { ... });
+    const dbUser = await userRepository.upsert({
+      telegramId: user.telegramId,
+      firstName: user.firstName,
+      lastName: user.lastName,
+      username: user.username,
+      photoUrl: user.photoUrl,
+      phone: user.phone ?? null,
+    });
+
+    await createSession(dbUser.id);
 
     return NextResponse.json({ status: "success", user });
   }

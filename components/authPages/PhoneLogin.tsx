@@ -1,7 +1,7 @@
 "use client";
 
 import Image from "next/image";
-import { useRef } from "react";
+import { useRef, useState } from "react";
 import { toast } from "sonner";
 
 import {
@@ -28,8 +28,9 @@ import { countryWithPhoneCode } from "@/constants/country-with-phonecode";
 import { requestOtp } from "@/services/auth-service";
 import { useRouter } from "next/navigation";
 import { encrypt } from "@/lib/utils";
-
-type Country = (typeof countryWithPhoneCode)[number];
+import { CountryType } from "@/types/auth";
+import { Controller, useForm } from "react-hook-form";
+import { Route } from "next";
 
 const flagSrc = (code: string) =>
   `https://raw.githubusercontent.com/SujalXplores/All-Country-Flags/refs/heads/master/${code}.png`;
@@ -38,26 +39,51 @@ const DEFAULT_COUNTRY =
   countryWithPhoneCode.find((c) => c.code === "IN") ?? countryWithPhoneCode[0];
 
 export default function PhoneLogin() {
-  const phoneRef = useRef("");
-  const dialCodeRef = useRef(DEFAULT_COUNTRY.phoneCode);
+  const [loading, setLoading] = useState<boolean>(false);
+  const dialCodeRef = useRef<string>(DEFAULT_COUNTRY.phoneCode);
   const navigate = useRouter();
 
-  const fullNumber = () =>
-    `${dialCodeRef.current}${phoneRef.current}`.replace(/\s/g, "");
+  const {
+    formState: { isValid, errors },
+    control,
+    handleSubmit,
+  } = useForm<{ phoneNumber: string }>({
+    defaultValues: {
+      phoneNumber: "",
+    },
+    mode: "onChange",
+  });
 
-  const handleRequestOtp = async () => {
-    const data = await requestOtp(fullNumber());
+  const fullNumber = (phoneNumber?: string) =>
+    `${dialCodeRef.current}${phoneNumber}`.replace(/\s/g, "");
 
+  const onSubmit = async (payload: { phoneNumber: string }) => {
+    setLoading(true);
+    const data = await requestOtp(fullNumber(payload.phoneNumber));
+    if (!isValid) return;
     if (data.success) {
       toast.success("OTP sent successfully");
-      navigate.push(`/verify-otp?phone=${encrypt(fullNumber())}`);
+
+      navigate.push(
+        `/verify-otp?phone=${encrypt(fullNumber(payload.phoneNumber))}`,
+      );
     } else {
       toast.error(data.error);
     }
+
+    setLoading(false);
   };
 
   return (
-    <>
+    <form
+      onSubmit={handleSubmit(onSubmit)}
+      style={{
+        width: "100%",
+        display: "flex",
+        flexDirection: "column",
+        gap: "18px",
+      }}
+    >
       <div>
         <p
           style={{
@@ -86,9 +112,9 @@ export default function PhoneLogin() {
           <Combobox
             items={countryWithPhoneCode.filter((c) => c.code !== "")}
             defaultValue={DEFAULT_COUNTRY}
-            itemToStringLabel={(c: Country) => c.name}
-            itemToStringValue={(c: Country) => c.code}
-            onValueChange={(c: Country | null) => {
+            itemToStringLabel={(c: CountryType) => c.name}
+            itemToStringValue={(c: CountryType) => c.code}
+            onValueChange={(c: CountryType | null) => {
               dialCodeRef.current = c?.phoneCode ?? "";
             }}
           >
@@ -108,7 +134,7 @@ export default function PhoneLogin() {
               }}
             >
               <ComboboxValue>
-                {(c: Country | null) =>
+                {(c: CountryType | null) =>
                   c ? (
                     <span
                       style={{
@@ -201,17 +227,50 @@ export default function PhoneLogin() {
             </ComboboxContent>
           </Combobox>
 
-          <Input
-            type="tel"
-            onChange={(e) => (phoneRef.current = e.target.value)}
-            placeholder="347 821 4498"
-            style={{
-              border: "none",
-              boxShadow: "none",
-              marginLeft: 10,
+          <Controller
+            control={control}
+            name="phoneNumber"
+            rules={{
+              required: "Phone number is required",
+              minLength: {
+                value: 10,
+                message: "Phone number must be at least 10 characters",
+              },
+              maxLength: {
+                value: 15,
+                message: "Phone number must be at most 15 characters",
+              },
             }}
+            render={({ field }) => (
+              <Input
+                value={field.value}
+                onChange={(event) => {
+                  const value = event.target.value
+                    .replace(/\D/g, "")
+                    .slice(0, 15);
+                  field.onChange(value);
+                }}
+                style={{
+                  border: "none",
+                  boxShadow: "none",
+                  marginLeft: 10,
+                }}
+                placeholder="347 821 4498"
+              />
+            )}
           />
         </div>
+        {errors.phoneNumber && (
+          <p
+            style={{
+              fontSize: 11,
+              color: "var(--destructive)",
+              marginTop: 6,
+            }}
+          >
+            {errors.phoneNumber.message}
+          </p>
+        )}
 
         <div
           style={{
@@ -228,9 +287,13 @@ export default function PhoneLogin() {
         </div>
       </div>
 
-      <TelegramButton onClick={handleRequestOtp}>
+      <TelegramButton
+        loading={loading}
+        loadingText="Sending code..."
+        type="submit"
+      >
         Send code on Telegram
       </TelegramButton>
-    </>
+    </form>
   );
 }
