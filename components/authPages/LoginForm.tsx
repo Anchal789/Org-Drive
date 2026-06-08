@@ -1,37 +1,35 @@
-import QR from "@/components/ui/TelegramQR";
-import { TINTS } from "@/constants/common-constants";
-import PhoneLogin from "./PhoneLogin";
-import { TelegramQrDisplayPanel } from "./TelegramQrDisplayPanel";
+import PhoneLogin from './PhoneLogin';
+import { TelegramQrDisplayPanel } from './TelegramQrDisplayPanel';
 
 export default function LoginPage() {
   return (
     <div
       style={{
-        minHeight: "100vh",
-        width: "100%",
-        display: "flex",
-        flexDirection: "row",
-        background: "var(--background)",
-        color: "var(--foreground)",
-        fontFamily: "var(--font-sans)",
+        minHeight: '100vh',
+        width: '100%',
+        display: 'flex',
+        flexDirection: 'row',
+        background: 'var(--background)',
+        color: 'var(--foreground)',
+        fontFamily: 'var(--font-sans)',
       }}
       data-screen-label="00 Login · Split hero"
     >
       <div
         style={{
           flex: 1,
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "center",
-          padding: "3rem",
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          padding: '3rem',
         }}
       >
         <div
           style={{
-            width: "100%",
+            width: '100%',
             maxWidth: 380,
-            display: "flex",
-            flexDirection: "column",
+            display: 'flex',
+            flexDirection: 'column',
             gap: 18,
           }}
         >
@@ -41,9 +39,9 @@ export default function LoginPage() {
               style={{
                 fontSize: 11,
                 fontWeight: 600,
-                textTransform: "uppercase",
-                letterSpacing: "0.06em",
-                color: "var(--tg-blue)",
+                textTransform: 'uppercase',
+                letterSpacing: '0.06em',
+                color: 'var(--tg-blue)',
               }}
             >
               Login
@@ -55,7 +53,7 @@ export default function LoginPage() {
                 fontWeight: 600,
                 marginTop: 4,
                 marginBottom: 6,
-                letterSpacing: "-0.02em",
+                letterSpacing: '-0.02em',
               }}
             >
               Welcome back.
@@ -64,7 +62,7 @@ export default function LoginPage() {
             <p
               style={{
                 fontSize: 13,
-                color: "var(--muted-foreground)",
+                color: 'var(--muted-foreground)',
                 margin: 0,
               }}
             >
@@ -77,26 +75,26 @@ export default function LoginPage() {
           {/* Divider */}
           <div
             style={{
-              display: "flex",
-              alignItems: "center",
+              display: 'flex',
+              alignItems: 'center',
               gap: 10,
-              margin: "8px 0",
+              margin: '8px 0',
             }}
           >
             <div
               style={{
                 flex: 1,
                 height: 1,
-                background: "var(--border)",
+                background: 'var(--border)',
               }}
             />
 
             <span
               style={{
                 fontSize: 11,
-                color: "var(--muted-foreground)",
-                textTransform: "uppercase",
-                letterSpacing: "0.06em",
+                color: 'var(--muted-foreground)',
+                textTransform: 'uppercase',
+                letterSpacing: '0.06em',
                 fontWeight: 500,
               }}
             >
@@ -107,7 +105,7 @@ export default function LoginPage() {
               style={{
                 flex: 1,
                 height: 1,
-                background: "var(--border)",
+                background: 'var(--border)',
               }}
             />
           </div>

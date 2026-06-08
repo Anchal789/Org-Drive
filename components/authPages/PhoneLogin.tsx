@@ -1,9 +1,10 @@
-"use client";
+'use client';
 
-import Image from "next/image";
-import { useRef, useState } from "react";
-import { toast } from "sonner";
-
+import Image from 'next/image';
+import { useRouter } from 'next/navigation';
+import { useRef, useState } from 'react';
+import { Controller, useForm } from 'react-hook-form';
+import { toast } from 'sonner';
 import {
   Combobox,
   ComboboxContent,
@@ -13,30 +14,27 @@ import {
   ComboboxList,
   ComboboxTrigger,
   ComboboxValue,
-} from "@/components/ui/combobox";
-import Icon from "@/components/ui/Icon";
-import { Input } from "@/components/ui/input";
+} from '@/components/ui/combobox';
+import Icon from '@/components/ui/Icon';
+import { Input } from '@/components/ui/input';
 import {
   Item,
   ItemContent,
   ItemDescription,
   ItemTitle,
-} from "@/components/ui/item";
-import TelegramButton from "@/components/ui/TelegramButton";
-import { iconsWithPaths } from "@/constants/common-constants";
-import { countryWithPhoneCode } from "@/constants/country-with-phonecode";
-import { requestOtp } from "@/services/auth-service";
-import { useRouter } from "next/navigation";
-import { encrypt } from "@/lib/utils";
-import { CountryType } from "@/types/auth";
-import { Controller, useForm } from "react-hook-form";
-import { Route } from "next";
+} from '@/components/ui/item';
+import TelegramButton from '@/components/ui/TelegramButton';
+import { iconsWithPaths } from '@/constants/common-constants';
+import { countryWithPhoneCode } from '@/constants/country-with-phonecode';
+import { encrypt } from '@/lib/utils';
+import { requestOtp } from '@/services/auth-service';
+import type { CountryType } from '@/types/auth';
 
 const flagSrc = (code: string) =>
   `https://raw.githubusercontent.com/SujalXplores/All-Country-Flags/refs/heads/master/${code}.png`;
 
 const DEFAULT_COUNTRY =
-  countryWithPhoneCode.find((c) => c.code === "IN") ?? countryWithPhoneCode[0];
+  countryWithPhoneCode.find((c) => c.code === 'IN') ?? countryWithPhoneCode[0];
 
 export default function PhoneLogin() {
   const [loading, setLoading] = useState<boolean>(false);
@@ -49,20 +47,20 @@ export default function PhoneLogin() {
     handleSubmit,
   } = useForm<{ phoneNumber: string }>({
     defaultValues: {
-      phoneNumber: "",
+      phoneNumber: '',
     },
-    mode: "onChange",
+    mode: 'onChange',
   });
 
   const fullNumber = (phoneNumber?: string) =>
-    `${dialCodeRef.current}${phoneNumber}`.replace(/\s/g, "");
+    `${dialCodeRef.current}${phoneNumber}`.replace(/\s/g, '');
 
   const onSubmit = async (payload: { phoneNumber: string }) => {
     setLoading(true);
     const data = await requestOtp(fullNumber(payload.phoneNumber));
     if (!isValid) return;
     if (data.success) {
-      toast.success("OTP sent successfully");
+      toast.success('OTP sent successfully');
 
       navigate.push(
         `/verify-otp?phone=${encrypt(fullNumber(payload.phoneNumber))}`,
@@ -78,10 +76,10 @@ export default function PhoneLogin() {
     <form
       onSubmit={handleSubmit(onSubmit)}
       style={{
-        width: "100%",
-        display: "flex",
-        flexDirection: "column",
-        gap: "18px",
+        width: '100%',
+        display: 'flex',
+        flexDirection: 'column',
+        gap: '18px',
       }}
     >
       <div>
@@ -89,9 +87,9 @@ export default function PhoneLogin() {
           style={{
             fontSize: 11,
             fontWeight: 500,
-            color: "var(--foreground)",
+            color: 'var(--foreground)',
             marginBottom: 6,
-            display: "block",
+            display: 'block',
           }}
         >
           Phone number
@@ -99,36 +97,36 @@ export default function PhoneLogin() {
 
         <div
           style={{
-            display: "flex",
-            alignItems: "center",
+            display: 'flex',
+            alignItems: 'center',
             borderRadius: 6,
-            overflow: "hidden",
-            border: "1px solid transparent",
-            outlineColor: "var(--tg-blue)",
-            transition: "all 150ms ease",
-            boxShadow: "oklch(0.708 0 0 / 0.25) 0px 0px 0px 3px",
+            overflow: 'hidden',
+            border: '1px solid transparent',
+            outlineColor: 'var(--tg-blue)',
+            transition: 'all 150ms ease',
+            boxShadow: 'oklch(0.708 0 0 / 0.25) 0px 0px 0px 3px',
           }}
         >
           <Combobox
-            items={countryWithPhoneCode.filter((c) => c.code !== "")}
+            items={countryWithPhoneCode.filter((c) => c.code !== '')}
             defaultValue={DEFAULT_COUNTRY}
             itemToStringLabel={(c: CountryType) => c.name}
             itemToStringValue={(c: CountryType) => c.code}
             onValueChange={(c: CountryType | null) => {
-              dialCodeRef.current = c?.phoneCode ?? "";
+              dialCodeRef.current = c?.phoneCode ?? '';
             }}
           >
             <ComboboxTrigger
               style={{
                 height: 42,
-                display: "flex",
-                alignItems: "center",
+                display: 'flex',
+                alignItems: 'center',
                 gap: 6,
                 borderRadius: 0,
                 border: 0,
-                borderRight: "1px solid var(--border)",
-                background: "transparent",
-                padding: "0 10px",
+                borderRight: '1px solid var(--border)',
+                background: 'transparent',
+                padding: '0 10px',
                 fontSize: 13,
                 fontWeight: 500,
               }}
@@ -138,8 +136,8 @@ export default function PhoneLogin() {
                   c ? (
                     <span
                       style={{
-                        display: "flex",
-                        alignItems: "center",
+                        display: 'flex',
+                        alignItems: 'center',
                         gap: 6,
                       }}
                     >
@@ -163,7 +161,7 @@ export default function PhoneLogin() {
             <ComboboxContent
               style={{
                 width: 288,
-                background: "#fff",
+                background: '#fff',
               }}
             >
               <ComboboxInput
@@ -172,9 +170,9 @@ export default function PhoneLogin() {
                 style={{
                   borderRadius: 0,
                   border: 0,
-                  borderBottom: "1px solid var(--border)",
-                  boxShadow: "none",
-                  outline: "none",
+                  borderBottom: '1px solid var(--border)',
+                  boxShadow: 'none',
+                  outline: 'none',
                 }}
               />
 
@@ -191,9 +189,9 @@ export default function PhoneLogin() {
                     >
                       <ItemContent
                         style={{
-                          display: "flex",
-                          flexDirection: "row",
-                          alignItems: "center",
+                          display: 'flex',
+                          flexDirection: 'row',
+                          alignItems: 'center',
                           gap: 10,
                         }}
                       >
@@ -211,7 +209,7 @@ export default function PhoneLogin() {
                         <span>
                           <ItemTitle
                             style={{
-                              whiteSpace: "nowrap",
+                              whiteSpace: 'nowrap',
                             }}
                           >
                             {country.name}
@@ -231,14 +229,14 @@ export default function PhoneLogin() {
             control={control}
             name="phoneNumber"
             rules={{
-              required: "Phone number is required",
+              required: 'Phone number is required',
               minLength: {
                 value: 10,
-                message: "Phone number must be at least 10 characters",
+                message: 'Phone number must be at least 10 characters',
               },
               maxLength: {
                 value: 15,
-                message: "Phone number must be at most 15 characters",
+                message: 'Phone number must be at most 15 characters',
               },
             }}
             render={({ field }) => (
@@ -246,13 +244,13 @@ export default function PhoneLogin() {
                 value={field.value}
                 onChange={(event) => {
                   const value = event.target.value
-                    .replace(/\D/g, "")
+                    .replace(/\D/g, '')
                     .slice(0, 15);
                   field.onChange(value);
                 }}
                 style={{
-                  border: "none",
-                  boxShadow: "none",
+                  border: 'none',
+                  boxShadow: 'none',
                   marginLeft: 10,
                 }}
                 placeholder="347 821 4498"
@@ -264,7 +262,7 @@ export default function PhoneLogin() {
           <p
             style={{
               fontSize: 11,
-              color: "var(--destructive)",
+              color: 'var(--destructive)',
               marginTop: 6,
             }}
           >
@@ -275,10 +273,10 @@ export default function PhoneLogin() {
         <div
           style={{
             fontSize: 11,
-            color: "var(--muted-foreground)",
+            color: 'var(--muted-foreground)',
             marginTop: 6,
-            display: "flex",
-            alignItems: "center",
+            display: 'flex',
+            alignItems: 'center',
             gap: 6,
           }}
         >
