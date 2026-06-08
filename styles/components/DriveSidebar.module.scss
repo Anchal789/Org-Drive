@@ -1,0 +1,156 @@
+@use "../functions" as *;
+
+.sidebar {
+  flex-shrink: 0;
+  background: v(sidebar);
+  border-right: 1px solid v(sidebar-border);
+  display: flex;
+  flex-direction: column;
+  padding: 14px 10px;
+  gap: 14px;
+  height: 100dvh;
+}
+
+// .collapsed {
+//   // collapsed state — minor adjustments handled via inline style
+// }
+
+// ─── Org pill ─────────────────────────────────────────────────────────────
+.orgPill {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 8px 12px;
+  border-radius: v(radius-md);
+  background: v(background);
+  border: 1px solid v(sidebar-border);
+  cursor: pointer;
+  font-size: 13px;
+  font-weight: v(weight-medium);
+  color: v(sidebar-foreground);
+  font-family: inherit;
+}
+
+.orgLogo {
+  width: 22px;
+  height: 22px;
+  border-radius: 6px;
+  background: v(foreground);
+  color: v(background);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 11px;
+  font-weight: v(weight-bold);
+}
+
+.orgName {
+  flex: 1;
+  text-align: left;
+}
+
+// ─── + New button ─────────────────────────────────────────────────────────
+.newButton {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  border-radius: v(radius-lg);
+  background: v(primary);
+  border: 1px solid v(primary);
+  color: v(primary-foreground);
+  font-size: 14px;
+  font-weight: v(weight-medium);
+  cursor: pointer;
+  box-shadow: v(shadow-sm);
+  height: 40px;
+  font-family: inherit;
+  transition: background 120ms ease;
+}
+
+// ─── Nav lists ────────────────────────────────────────────────────────────
+.nav {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.navItem {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 8px 12px;
+  border-radius: v(radius-md);
+  background: transparent;
+  color: v(sidebar-foreground);
+  font-size: 13px;
+  font-weight: v(weight-medium);
+  border: none;
+  cursor: pointer;
+  width: 100%;
+  text-align: left;
+  font-family: inherit;
+}
+
+.navItemActive {
+  background: v(sidebar-accent);
+  color: v(sidebar-accent-foreground);
+  font-weight: v(weight-semibold);
+}
+
+.navItemLabel {
+  flex: 1;
+}
+
+.navItemCount {
+  font-size: 11px;
+  color: v(muted-foreground);
+  font-weight: v(weight-medium);
+}
+
+// ─── Section labels ───────────────────────────────────────────────────────
+.sectionLabel {
+  font-size: 10px;
+  font-weight: v(weight-semibold);
+  color: v(muted-foreground);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  padding: 8px 14px 4px;
+}
+
+.spacer {
+  flex: 1;
+}
+
+// ─── Storage card ─────────────────────────────────────────────────────────
+.storage {
+  padding: 12px;
+  background: v(background);
+  border-radius: v(radius-lg);
+  border: 1px solid v(border);
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.storageInfo {
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+  min-width: 0;
+}
+
+.storageLabel {
+  font-size: 11px;
+  color: v(muted-foreground);
+  font-weight: v(weight-medium);
+}
+
+.storageUsed {
+  font-size: 12px;
+  font-weight: v(weight-semibold);
+}
+
+.storageCap {
+  font-size: 10px;
+  color: v(muted-foreground);
+}
