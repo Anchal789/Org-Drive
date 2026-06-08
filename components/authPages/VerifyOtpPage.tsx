@@ -29,6 +29,7 @@ export default function VerifyOtpPage() {
   const [serverError, setServerError] = useState<string | null>(null);
   const [resendIn, setResendIn] = useState(RESEND_SECONDS);
   const [passwordHint, setPasswordHint] = useState<string | null>(null);
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const inputsRef = useRef<(HTMLInputElement | null)[]>([]);
 
@@ -145,6 +146,7 @@ export default function VerifyOtpPage() {
   async function submitPassword(values: { password: string }) {
     setStatus("submitting");
     setServerError(null);
+    setIsSubmitting(true);
     try {
       const data = await verifyOtpPassword(phoneNumber, values.password);
 
@@ -158,6 +160,8 @@ export default function VerifyOtpPage() {
     } catch (e: any) {
       setStatus("needs_password");
       setServerError(e?.message ?? "Network error");
+    } finally {
+      setIsSubmitting(false);
     }
   }
 
@@ -512,10 +516,8 @@ export default function VerifyOtpPage() {
 
             <TelegramButton
               type="submit"
-              disabled={
-                status === "submitting" || !passwordForm.formState.isValid
-              }
-              loading={status === "submitting"}
+              disabled={isSubmitting || !passwordForm.formState.isValid}
+              loading={isSubmitting}
               loadingText="Verifying…"
             >
               Continue

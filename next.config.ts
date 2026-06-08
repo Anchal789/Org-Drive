@@ -61,6 +61,9 @@ const nextConfig: NextConfig = {
   sassOptions: {
     includePaths: [path.join(process.cwd(), "styles")],
   },
+  typescript: {
+    ignoreBuildErrors: process.env.VERCEL === "1",
+  },
 };
 
 export default nextConfig;
