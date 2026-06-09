@@ -1,5 +1,4 @@
 // app/api/auth/qr-start/route.ts
-import { NextResponse } from "next/server";
 import { Api, TelegramClient } from "telegram";
 import { StringSession } from "telegram/sessions";
 import QRCode from "qrcode";
@@ -9,6 +8,7 @@ import {
   buildTelegramQRUrl,
   finalizeLogin,
 } from "@/lib/telegram-qr";
+import { sendError, sendSuccess } from "@/lib/api-response";
 
 const API_ID = Number(process.env.TELEGRAM_APP_API_ID);
 const API_HASH = String(process.env.TELEGRAM_APP_API_HASH);
@@ -31,10 +31,7 @@ export async function POST() {
 
     if (result.className !== "auth.LoginToken") {
       await client.disconnect();
-      return NextResponse.json(
-        { success: false, error: `Unexpected response: ${result.className}` },
-        { status: 500 },
-      );
+      return sendError(`Unexpected response: ${result.className}`, 500);
     }
 
     const token = result.token as Buffer;
@@ -46,11 +43,11 @@ export async function POST() {
 
     qrStore.set(loginId, client);
 
-    client.addEventHandler(async (update: any) => {
+    client.addEventHandler(async (update) => {
       if (update.className !== "UpdateLoginToken") return;
 
       try {
-        let finalResult: any;
+        let finalResult;
 
         try {
           finalResult = await client.invoke(
@@ -60,10 +57,10 @@ export async function POST() {
               exceptIds: [],
             }),
           );
-        } catch (err: any) {
-          // 2FA is enabled — Telegram demands the password before completing login
-          if (err?.errorMessage === "SESSION_PASSWORD_NEEDED") {
-            const passwordInfo: any = await client.invoke(
+        } catch (err: unknown) {
+          const errMsg = err instanceof Error ? err.errorMessage : String(err);
+          if (errMsg === "SESSION_PASSWORD_NEEDED") {
+            const passwordInfo: Api.account.Password = await client.invoke(
               new Api.account.GetPassword(),
             );
             qrStore.markNeedsPassword(loginId, passwordInfo.hint ?? null);
@@ -74,14 +71,16 @@ export async function POST() {
 
         // DC migration
         if (finalResult.className === "auth.LoginTokenMigrateTo") {
-          await (client as any)._switchDC(finalResult.dcId);
+          await client._switchDC(finalResult.dcId);
           try {
             finalResult = await client.invoke(
               new Api.auth.ImportLoginToken({ token: finalResult.token }),
             );
-          } catch (err: any) {
-            if (err?.errorMessage === "SESSION_PASSWORD_NEEDED") {
-              const passwordInfo: any = await client.invoke(
+          } catch (err: unknown) {
+            const errMsg =
+              err instanceof Error ? err.errorMessage : String(err);
+            if (errMsg === "SESSION_PASSWORD_NEEDED") {
+              const passwordInfo: Api.account.Password = await client.invoke(
                 new Api.account.GetPassword(),
               );
               qrStore.markNeedsPassword(loginId, passwordInfo.hint ?? null);
@@ -96,24 +95,29 @@ export async function POST() {
         } else {
           qrStore.markError(loginId, `Unexpected: ${finalResult.className}`);
         }
-      } catch (err: any) {
-        console.error("Scan handler failed:", err?.message ?? err);
-        qrStore.markError(loginId, err?.message ?? "Scan handler failed");
+      } catch (err: unknown) {
+        const errMsg = err instanceof Error ? err.message : String(err);
+        console.error("Scan handler failed:", errMsg);
+        qrStore.markError(loginId, errMsg ?? "Scan handler failed");
       }
     });
 
-    return NextResponse.json({
-      success: true,
-      loginId,
-      qrDataUrl,
-      expiresAt: expires * 1000,
-    });
-  } catch (error: any) {
-    await client.disconnect().catch(() => {});
-    console.error("QR start failed:", error?.message ?? error);
-    return NextResponse.json(
-      { success: false, error: "Failed to start QR login" },
-      { status: 500 },
+    return sendSuccess(
+      {
+        loginId,
+        qrDataUrl,
+        expiresAt: expires * 1000,
+      },
+      "QR login started successfully",
+      200,
     );
+  } catch (err: unknown) {
+    await client.disconnect().catch(() => {});
+    const errMsg = err instanceof Error ? err.message : String(err);
+
+    console.error("QR start failed:", errMsg ?? err);
+    return sendError("Failed to start QR login", 500);
+  } finally {
+    await client.disconnect().catch(() => {});
   }
 }

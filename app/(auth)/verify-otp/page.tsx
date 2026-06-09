@@ -1,4 +1,4 @@
-import VerifyOtpPage from "@/components/authPages/VerifyOtpPage";
+import VerifyOtpPage from "@/components/authPages/PhoneNumberLogin/VerifyOtpPage";
 
 export default async function () {
   return <VerifyOtpPage />;
