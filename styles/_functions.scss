@@ -1,0 +1,16 @@
+@use "sass:math";
+
+@function rem($px) {
+  @return math.div($px, 16) * 1rem;
+}
+
+@function strip-unit($value) {
+  @return math.div($value, ($value * 0 + 1));
+}
+
+@function v($name, $fallback: null) {
+  @if $fallback {
+    @return var(--#{$name}, #{$fallback});
+  }
+  @return var(--#{$name});
+}

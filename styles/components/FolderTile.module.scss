@@ -1,0 +1,46 @@
+@use "../functions" as *;
+
+.tile {
+  padding: 12px 14px;
+  border: 1px solid v(border);
+  border-radius: v(radius-lg);
+  background: v(card);
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  cursor: pointer;
+  box-shadow: v(shadow-xs);
+}
+
+.tileActive {
+  border-color: v(primary);
+  background: color-mix(in oklch, v(primary) 6%, v(card));
+}
+
+.iconBox {
+  width: 32px;
+  height: 32px;
+  border-radius: v(radius-md);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.body {
+  flex: 1;
+  min-width: 0;
+}
+
+.name {
+  font-size: 13px;
+  font-weight: v(weight-medium);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.count {
+  font-size: 10px;
+  color: v(muted-foreground);
+}
