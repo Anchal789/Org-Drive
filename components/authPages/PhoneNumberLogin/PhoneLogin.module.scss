@@ -1,0 +1,102 @@
+@use "../../../styles/functions" as *;
+@use "../../../styles/mixins" as *;
+
+.formWrapper {
+  @include flex(column, stretch, flex-start, 18px);
+  width: 100%;
+}
+
+.label {
+  font-size: 11px;
+  font-weight: v(weight-medium);
+  color: v(foreground);
+  margin-bottom: 6px;
+  display: block;
+}
+
+.inputGroup {
+  @include flex(row, center, flex-start);
+  border-radius: 6px;
+  overflow: hidden;
+  border: 1px solid transparent;
+  outline-color: v(tg-blue);
+  @include transition(all, 150ms);
+
+  box-shadow: oklch(0.708 0 0 / 0.25) 0px 0px 0px 3px;
+
+  &:focus-within {
+    outline: 2px solid v(tg-blue);
+    outline-offset: 1px;
+  }
+}
+
+.comboboxTrigger {
+  height: 42px;
+  @include flex(row, center, flex-start, 6px);
+  border-radius: 0;
+  border: 0;
+  border-right: 1px solid v(border);
+  background: transparent;
+  padding: 0 10px;
+  font-size: 13px;
+  font-weight: v(weight-medium);
+}
+
+.flagWrapper {
+  @include flex(row, center, flex-start, 6px);
+}
+
+.flagIcon {
+  flex-shrink: 0;
+  border-radius: 2px;
+}
+
+.comboboxContent {
+  width: 288px;
+  background: v(surface);
+}
+
+.comboboxSearch {
+  border-radius: 0;
+  border: 0;
+  border-bottom: 1px solid v(border);
+  box-shadow: none;
+  outline: none;
+}
+
+.listItem {
+  padding: 0;
+}
+
+.listContent {
+  @include flex(row, center, flex-start, 10px);
+}
+
+.listTitle {
+  white-space: nowrap;
+}
+
+.phoneInput {
+  border: none;
+  box-shadow: none;
+  margin-left: 10px;
+  flex: 1;
+
+  &:focus-visible {
+    outline: none;
+    box-shadow: none;
+  }
+}
+
+.errorText {
+  font-size: 11px;
+  color: v(destructive);
+  margin-top: 6px;
+}
+
+.shieldHint {
+  font-size: 11px;
+  color: v(muted-foreground);
+  margin-top: 6px;
+  @include flex(row, center, flex-start, 6px);
+}

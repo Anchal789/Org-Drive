@@ -1,11 +1,12 @@
 // app/api/auth/qr-login/route.ts
-import { NextRequest, NextResponse } from "next/server";
+import { NextRequest } from "next/server";
 import { Api } from "telegram";
 import QRCode from "qrcode";
 import { qrStore } from "@/lib/telegram-qr-store";
 import { buildTelegramQRUrl } from "@/lib/telegram-qr";
 import { createSession } from "@/lib/session";
 import { userRepository } from "@/repositories/user.repository";
+import { sendSuccess, sendError } from "@/lib/api-response";
 
 const API_ID = Number(process.env.TELEGRAM_APP_API_ID);
 const API_HASH = String(process.env.TELEGRAM_APP_API_HASH);
@@ -13,25 +14,24 @@ const API_HASH = String(process.env.TELEGRAM_APP_API_HASH);
 export async function GET(request: NextRequest) {
   const loginId = request.nextUrl.searchParams.get("loginId");
   if (!loginId) {
-    return NextResponse.json(
-      { success: false, error: "Missing loginId" },
-      { status: 400 },
-    );
+    return sendError("Missing loginId parameter", 400);
   }
 
   const entry = qrStore.get(loginId);
   if (!entry) {
-    return NextResponse.json(
-      { status: "expired", error: "Login session not found or expired" },
-      { status: 410 },
-    );
+    return sendError("Login session not found or expired", 410, {
+      status: "expired",
+    });
   }
 
   if (entry.status === "needs_password") {
-    return NextResponse.json({
-      status: "needs_password",
-      passwordHint: entry.passwordHint,
-    });
+    return sendSuccess(
+      {
+        step: "needs_password",
+        passwordHint: entry.passwordHint,
+      },
+      "2FA password is required to continue",
+    );
   }
 
   if (entry.status === "success" && entry.user) {
@@ -47,18 +47,28 @@ export async function GET(request: NextRequest) {
       phone: user.phone ?? null,
     });
 
-    await createSession(dbUser.id);
+    await createSession({
+      ...dbUser,
+      userId: String(dbUser.id),
+    });
 
-    return NextResponse.json({ status: "success", user });
+    return sendSuccess(
+      { step: "success", user: dbUser },
+      "Login completed successfully",
+    );
   }
 
   if (entry.status === "error") {
     const error = entry.error;
     await qrStore.delete(loginId);
-    return NextResponse.json({ status: "error", error });
+    return sendError(error || "QR Login failed", 400, { status: "error" });
   }
 
   try {
+    if (!entry.client.connected) {
+      console.log("Client disconnected, reconnecting...");
+      await entry.client.connect();
+    }
     const result = await entry.client.invoke(
       new Api.auth.ExportLoginToken({
         apiId: API_ID,
@@ -74,16 +84,28 @@ export async function GET(request: NextRequest) {
         width: 280,
         margin: 2,
       });
-      return NextResponse.json({
-        status: "waiting",
-        qrDataUrl,
-        expiresAt: result.expires * 1000,
-      });
+
+      return sendSuccess(
+        {
+          step: "waiting",
+          qrDataUrl,
+          expiresAt: result.expires * 1000,
+        },
+        "Waiting for QR scan",
+      );
     }
 
-    return NextResponse.json({ status: "waiting" });
-  } catch (error: any) {
-    console.error("Poll error:", error?.message ?? error);
-    return NextResponse.json({ status: "waiting" });
+    return sendSuccess({ step: "waiting" }, "Waiting for QR scan");
+  } catch (error: unknown) {
+    const errMsg = error instanceof Error ? error?.message : String(error);
+    console.error("Poll error:", errMsg ?? error);
+    try {
+      await entry.client.disconnect();
+    } catch (disconnectError) {}
+
+    return sendSuccess(
+      { step: "waiting" },
+      "Waiting for QR scan (retrying connection)",
+    );
   }
 }

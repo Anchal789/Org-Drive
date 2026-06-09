@@ -1,16 +1,18 @@
-import { NextResponse } from "next/server";
+import { NextRequest } from "next/server";
 import { Api, TelegramClient } from "telegram";
 import { StringSession } from "telegram/sessions";
 import { pendingLoginRepository } from "@/repositories/pending-login.repository";
 import { userRepository } from "@/repositories/user.repository";
 import { createSession } from "@/lib/session";
+import { sendSuccess, sendError } from "@/lib/api-response";
+import { UpsertUserInput } from "@/types/auth";
 
 const API_ID = Number(process.env.TELEGRAM_APP_API_ID);
 const API_HASH = String(process.env.TELEGRAM_APP_API_HASH);
 
 async function fetchTelegramUser(client: TelegramClient) {
-  const me: any = await client.getMe();
-  const user: any = {
+  const me: Api.User = await client.getMe();
+  const user: UpsertUserInput = {
     telegramId: String(me.id),
     firstName: me.firstName ?? null,
     lastName: me.lastName ?? null,
@@ -22,9 +24,7 @@ async function fetchTelegramUser(client: TelegramClient) {
   try {
     const photoBuffer = await client.downloadProfilePhoto(me, { isBig: false });
     if (photoBuffer && photoBuffer.length > 0) {
-      user.photoUrl = `data:image/jpeg;base64,${(
-        photoBuffer as Buffer
-      ).toString("base64")}`;
+      user.photoUrl = `data:image/jpeg;base64,${(photoBuffer as Buffer).toString("base64")}`;
     }
   } catch (err) {
     console.error("Failed to fetch profile photo", err);
@@ -33,22 +33,16 @@ async function fetchTelegramUser(client: TelegramClient) {
   return user;
 }
 
-export async function POST(request: Request) {
+export async function POST(request: NextRequest) {
   const { phoneNumber, otpCode } = await request.json();
 
   if (!phoneNumber || !otpCode) {
-    return NextResponse.json(
-      { success: false, error: "Missing phoneNumber or otpCode" },
-      { status: 400 },
-    );
+    return sendError("Missing phoneNumber or otpCode", 400);
   }
 
   const savedData = await pendingLoginRepository.findByPhone(phoneNumber);
   if (!savedData) {
-    return NextResponse.json(
-      { success: false, error: "No pending login for this number" },
-      { status: 404 },
-    );
+    return sendError("No pending login for this number", 404);
   }
 
   const client = new TelegramClient(
@@ -61,10 +55,7 @@ export async function POST(request: Request) {
   try {
     await client.connect();
   } catch (_error) {
-    return NextResponse.json(
-      { success: false, error: "Failed to connect to Telegram" },
-      { status: 500 },
-    );
+    return sendError("Failed to connect to Telegram infrastructure", 500);
   }
 
   try {
@@ -95,38 +86,50 @@ export async function POST(request: Request) {
 
     await client.disconnect();
 
-    await createSession(dbUser.id);
-
-    return NextResponse.json({
-      success: true,
-      status: "success",
-      user: dbUser,
+    await createSession({
+      ...dbUser,
+      userId: String(dbUser.id),
     });
-  } catch (error: any) {
+
+    return sendSuccess(
+      {
+        step: "success",
+        user: dbUser,
+      },
+      "Login completed successfully",
+    );
+  } catch (error: unknown) {
     if (error?.errorMessage === "SESSION_PASSWORD_NEEDED") {
       const updatedSession = client.session.save() as unknown as string;
       await pendingLoginRepository.updateSession(savedData.id, updatedSession);
 
       let hint: string | null = null;
       try {
-        const passwordInfo: any = await client.invoke(
+        const passwordInfo: Api.account.Password = await client.invoke(
           new Api.account.GetPassword(),
         );
         hint = passwordInfo.hint ?? null;
       } catch {}
 
       await client.disconnect();
-      return NextResponse.json({
-        success: true,
-        status: "needs_password",
-        passwordHint: hint,
-      });
+
+      return sendSuccess(
+        {
+          step: "needs_password",
+          passwordHint: hint,
+        },
+        "2FA password is required to continue",
+      );
     }
 
     await client.disconnect();
-    return NextResponse.json(
-      { success: false, error: error?.message ?? "Invalid or expired code" },
-      { status: 400 },
+    return sendError(
+      error?.message.includes("PHONE_CODE_INVALID")
+        ? "Invalid or expired OTP code"
+        : error?.message,
+      400,
     );
+  } finally {
+    await client.disconnect().catch(() => {});
   }
 }
