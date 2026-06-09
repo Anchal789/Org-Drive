@@ -1,18 +1,18 @@
-import { NextResponse } from "next/server";
 import { Api, TelegramClient } from "telegram";
 import { StringSession } from "telegram/sessions";
 import { computeCheck } from "telegram/Password";
 import { pendingLoginRepository } from "@/repositories/pending-login.repository";
 import { userRepository } from "@/repositories/user.repository";
 import { createSession } from "@/lib/session";
-import { cookies } from "next/headers";
+import { sendError, sendSuccess } from "@/lib/api-response";
+import { UpsertUserInput } from "@/types/auth";
 
 const API_ID = Number(process.env.TELEGRAM_APP_API_ID);
 const API_HASH = String(process.env.TELEGRAM_APP_API_HASH);
 
 async function fetchTelegramUser(client: TelegramClient) {
-  const me: any = await client.getMe();
-  const user: any = {
+  const me: Api.User = await client.getMe();
+  const user: UpsertUserInput = {
     telegramId: String(me.id),
     firstName: me.firstName ?? null,
     lastName: me.lastName ?? null,
@@ -39,18 +39,12 @@ export async function POST(request: Request) {
   const { phoneNumber, password } = await request.json();
 
   if (!phoneNumber || !password) {
-    return NextResponse.json(
-      { success: false, error: "Missing phoneNumber or password" },
-      { status: 400 },
-    );
+    return sendError("Missing phoneNumber or password", 400);
   }
 
   const savedData = await pendingLoginRepository.findByPhone(phoneNumber);
   if (!savedData) {
-    return NextResponse.json(
-      { success: false, error: "No pending login for this number" },
-      { status: 404 },
-    );
+    return sendError("No pending login for this number", 404);
   }
 
   const client = new TelegramClient(
@@ -63,7 +57,7 @@ export async function POST(request: Request) {
   try {
     await client.connect();
 
-    const passwordInfo: any = await client.invoke(
+    const passwordInfo: Api.account.Password = await client.invoke(
       new Api.account.GetPassword(),
     );
     const passwordCheck = await computeCheck(passwordInfo, password);
@@ -72,13 +66,10 @@ export async function POST(request: Request) {
       await client.invoke(
         new Api.auth.CheckPassword({ password: passwordCheck }),
       );
-    } catch (err: any) {
+    } catch (err: unknown) {
       await client.disconnect();
       if (err?.errorMessage === "PASSWORD_HASH_INVALID") {
-        return NextResponse.json(
-          { success: false, error: "Incorrect password" },
-          { status: 401 },
-        );
+        return sendError("Incorrect password", 401);
       }
       throw err;
     }
@@ -101,22 +92,19 @@ export async function POST(request: Request) {
     await pendingLoginRepository.delete(savedData.id);
     await client.disconnect();
 
-    await createSession(dbUser.id);
-
-    return NextResponse.json({
-      success: true,
-      status: "success",
-      user: dbUser,
+    await createSession({
+      ...dbUser,
+      userId: String(dbUser.id),
     });
-  } catch (error: any) {
+
+    return sendSuccess({ step: "success", user: dbUser });
+  } catch (err: unknown) {
+    const errMsg = err instanceof Error ? err.message : String(err);
+
     await client.disconnect().catch(() => {});
-    console.error("Password verify failed:", error?.message ?? error);
-    return NextResponse.json(
-      {
-        success: false,
-        error: error?.message ?? "Password verification failed",
-      },
-      { status: 500 },
-    );
+    console.error("Password verify failed:", errMsg ?? err);
+    return sendError(errMsg ?? "Password verification failed", 500);
+  } finally {
+    await client.disconnect().catch(() => {});
   }
 }

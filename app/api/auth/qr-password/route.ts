@@ -1,41 +1,30 @@
-import { NextRequest, NextResponse } from "next/server";
+import { NextRequest } from "next/server";
 import { computeCheck } from "telegram/Password";
 import { Api } from "telegram";
 import { qrStore } from "@/lib/telegram-qr-store";
 import { finalizeLogin } from "@/lib/telegram-qr";
 import { userRepository } from "@/repositories/user.repository";
 import { createSession } from "@/lib/session";
+import { sendError, sendSuccess } from "@/lib/api-response";
 
 export async function POST(request: NextRequest) {
   const { loginId, password } = await request.json();
 
   if (!loginId || !password) {
-    return NextResponse.json(
-      { success: false, error: "Missing loginId or password" },
-      { status: 400 },
-    );
+    return sendError("Missing loginId or password", 400);
   }
 
   const entry = qrStore.get(loginId);
   if (!entry) {
-    return NextResponse.json(
-      { success: false, error: "Login session not found or expired" },
-      { status: 410 },
-    );
+    return sendError("Login session not found or expired", 410);
   }
 
   if (entry.status !== "needs_password") {
-    return NextResponse.json(
-      {
-        success: false,
-        error: `Cannot submit password in state: ${entry.status}`,
-      },
-      { status: 400 },
-    );
+    return sendError(`Cannot submit password in state: ${entry.status}`, 400);
   }
 
   try {
-    const passwordInfo: any = await entry.client.invoke(
+    const passwordInfo: Api.account.Password = await entry.client.invoke(
       new Api.account.GetPassword(),
     );
 
@@ -45,12 +34,10 @@ export async function POST(request: NextRequest) {
       await entry.client.invoke(
         new Api.auth.CheckPassword({ password: passwordCheck }),
       );
-    } catch (err: any) {
-      if (err?.errorMessage === "PASSWORD_HASH_INVALID") {
-        return NextResponse.json(
-          { success: false, error: "Incorrect password" },
-          { status: 401 },
-        );
+    } catch (err: unknown) {
+      const errMsg = err instanceof Error ? err.errorMessage : String(err);
+      if (errMsg === "PASSWORD_HASH_INVALID") {
+        return sendError("Incorrect password", 401);
       }
       throw err;
     }
@@ -71,24 +58,24 @@ export async function POST(request: NextRequest) {
         phone: tgUser.phone ?? null,
       });
 
-      await createSession(dbUser.id);
-
-      return NextResponse.json({
-        success: true,
-        status: "success",
-        user: dbUser,
+      await createSession({
+        ...dbUser,
+        userId: String(dbUser.id),
       });
+
+      return sendSuccess(
+        {
+          step: "success",
+          user: dbUser,
+        },
+        "Login successful",
+      );
     }
 
-    return NextResponse.json(
-      { success: false, error: "Login finalized in unexpected state" },
-      { status: 500 },
-    );
-  } catch (err: any) {
-    console.error("Password submit failed:", err?.message ?? err);
-    return NextResponse.json(
-      { success: false, error: err?.message ?? "Password submit failed" },
-      { status: 500 },
-    );
+    return sendError("Login finalized in unexpected state", 500);
+  } catch (err: unknown) {
+    const errMsg = err instanceof Error ? err.message : String(err);
+    console.error("Password submit failed:", errMsg ?? err);
+    return sendError(errMsg ?? "Password submit failed", 500);
   }
 }

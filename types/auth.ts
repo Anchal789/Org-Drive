@@ -21,7 +21,7 @@ export type QRLoginEntry = {
   client: TelegramClient;
   createdAt: number;
   status: QRLoginStatus;
-  user: any | null;
+  user: User | null;
   error: string | null;
   passwordHint: string | null;
 };
@@ -32,7 +32,7 @@ export type OTPLoginEntry = {
   phoneCodeHash: string;
   createdAt: number;
   status: "waiting" | "needs_password" | "success" | "error";
-  user: any | null;
+  user: User | null;
   error: string | null;
   passwordHint: string | null;
 };

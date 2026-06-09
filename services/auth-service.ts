@@ -1,65 +1,74 @@
 // services/auth.service.ts
 
+import { fetchData, postData } from "@/lib/api-fn";
+import { User } from "@/types/auth";
+
 export async function requestOtp(phoneNumber: string) {
-  const res = await fetch("/api/auth/request-otp", {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
+  const res = await postData({
+    url: "/api/auth/request-otp",
+    payload: {
+      phoneNumber,
     },
-    body: JSON.stringify({ phoneNumber }),
   });
 
-  return res.json();
+  return res;
 }
 
 export async function verifyOtp(phoneNumber: string, otpCode: string) {
-  const res = await fetch("/api/auth/verify-otp", {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify({
+  const res = await postData<{
+    step?: string;
+    passwordHint?: string;
+    user?: User;
+  }>({
+    url: "/api/auth/verify-otp",
+    payload: {
       phoneNumber,
       otpCode,
-    }),
+    },
   });
 
-  return res.json();
+  return res;
 }
 
 export async function verifyOtpPassword(phoneNumber: string, password: string) {
-  const res = await fetch("/api/auth/verify-otp-password", {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify({
+  const res = await postData<{
+    step?: string;
+    passwordHint?: string;
+    user?: User;
+  }>({
+    url: "/api/auth/verify-otp-password",
+    payload: {
       phoneNumber,
       password,
-    }),
+    },
   });
 
-  return res.json();
+  return res;
 }
 
 export async function qrStart() {
-  const res = await fetch("/api/auth/qr-start", {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-    },
+  const res = await postData<{
+    loginId: string;
+    qrDataUrl: string;
+    expiresAt: number;
+  }>({
+    url: "/api/auth/qr-start",
+    payload: {},
   });
 
-  return res.json();
+  return res;
 }
 
 export async function qrLogin(loginId: string) {
-  const res = await fetch(`/api/auth/qr-login?loginId=${loginId}`, {
-    method: "GET",
-    headers: {
-      "Content-Type": "application/json",
-    },
+  const res = await fetchData<{
+    qrDataUrl: string;
+    expiresAt: number;
+    step: string;
+    passwordHint: string;
+    user: User;
+  }>({
+    url: `/api/auth/qr-login?loginId=${loginId}`,
   });
 
-  return res.json();
+  return res;
 }

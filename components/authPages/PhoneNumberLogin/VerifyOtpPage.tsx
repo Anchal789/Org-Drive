@@ -1,23 +1,19 @@
 "use client";
 
-import { iconsWithPaths, TG_BLUE } from "@/constants/common-constants";
-import Icon from "../ui/Icon";
-import TelegramButton from "../ui/TelegramButton";
+import { iconsWithPaths } from "@/constants/common-constants";
+import Icon from "@/components/ui/Icon";
+import TelegramButton from "@/components/ui/TelegramButton";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
 import { Controller, useForm } from "react-hook-form";
 import { verifyOtp, verifyOtpPassword } from "@/services/auth-service";
 import { decrypt } from "@/lib/utils";
+import styles from "./VerifyOtpPage.module.scss";
 
 const OTP_LENGTH = 5;
 const RESEND_SECONDS = 60;
 
-type Status =
-  | "entering_otp"
-  | "needs_password"
-  | "submitting"
-  | "success"
-  | "error";
+type Status = "entering_otp" | "needs_password" | "success";
 
 export default function VerifyOtpPage() {
   const router = useRouter();
@@ -29,13 +25,10 @@ export default function VerifyOtpPage() {
   const [serverError, setServerError] = useState<string | null>(null);
   const [resendIn, setResendIn] = useState(RESEND_SECONDS);
   const [passwordHint, setPasswordHint] = useState<string | null>(null);
-  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const inputsRef = useRef<(HTMLInputElement | null)[]>([]);
 
-  const otpForm = useForm<{
-    otp: string;
-  }>({
+  const otpForm = useForm<{ otp: string }>({
     defaultValues: { otp: "" },
     mode: "onChange",
   });
@@ -46,9 +39,7 @@ export default function VerifyOtpPage() {
     (_, i) => otpValue[i] ?? "",
   );
 
-  const passwordForm = useForm<{
-    password: string;
-  }>({
+  const passwordForm = useForm<{ password: string }>({
     defaultValues: { password: "" },
     mode: "onChange",
   });
@@ -70,6 +61,7 @@ export default function VerifyOtpPage() {
     const next = [...digits];
     next[index] = cleaned;
     const joined = next.join("");
+
     otpForm.setValue("otp", joined, { shouldValidate: true });
 
     if (cleaned && index < OTP_LENGTH - 1) {
@@ -119,152 +111,87 @@ export default function VerifyOtpPage() {
   };
 
   async function submitOtp(values: { otp: string }) {
-    setStatus("submitting");
     setServerError(null);
     try {
-      const data = await verifyOtp(phoneNumber, values.otp);
+      const response = await verifyOtp(phoneNumber, values.otp);
+      const data = response?.data;
 
-      if (data.success && data.status === "success") {
+      if (response.success && response.status === "success") {
         setStatus("success");
         setTimeout(() => router.push("/dashboard"), 1000);
-      } else if (data.success && data.status === "needs_password") {
+      } else if (response.success && data?.step === "needs_password") {
         setPasswordHint(data.passwordHint ?? null);
         setStatus("needs_password");
       } else {
-        setStatus("entering_otp");
-        setServerError(data.error ?? "Invalid code");
+        setServerError(response.message || "Invalid code");
         otpForm.setValue("otp", "");
         setActiveIndex(0);
         inputsRef.current[0]?.focus();
       }
-    } catch (e: any) {
-      setStatus("entering_otp");
-      setServerError(e?.message ?? "Network error");
+    } catch (err: unknown) {
+      const errMsg = err instanceof Error ? err.message : String(err);
+      setServerError(errMsg ?? "Network error");
     }
   }
 
   async function submitPassword(values: { password: string }) {
-    setStatus("submitting");
     setServerError(null);
-    setIsSubmitting(true);
     try {
-      const data = await verifyOtpPassword(phoneNumber, values.password);
+      const response = await verifyOtpPassword(phoneNumber, values.password);
+      const data = response?.data;
 
-      if (data.success && data.status === "success") {
+      if (response.success && data?.step === "success") {
         setStatus("success");
         setTimeout(() => router.push("/dashboard"), 1000);
       } else {
-        setStatus("needs_password");
-        setServerError(data.error ?? "Incorrect password");
+        setServerError(response.message ?? "Incorrect password");
       }
-    } catch (e: any) {
-      setStatus("needs_password");
-      setServerError(e?.message ?? "Network error");
-    } finally {
-      setIsSubmitting(false);
+    } catch (err: unknown) {
+      const errMsg = err instanceof Error ? err.message : String(err);
+      setServerError(errMsg ?? "Network error");
     }
   }
 
-  const showOtpUi = status === "entering_otp" || status === "submitting";
+  const showOtpUi = status === "entering_otp";
   const showPasswordUi = status === "needs_password";
 
   return (
-    <div
-      style={{
-        height: "100dvh",
-        background: "var(--background)",
-        color: "var(--foreground)",
-        fontFamily: "var(--font-sans)",
-        display: "flex",
-        alignItems: "center",
-        justifyContent: "center",
-        padding: 32,
-      }}
-      data-screen-label="00 Login · OTP step"
-    >
-      <div
-        style={{
-          width: 460,
-          padding: 36,
-          background: "var(--card)",
-          border: "1px solid var(--border)",
-          borderRadius: "var(--radius-2xl)",
-          boxShadow: "var(--shadow-xl)",
-          display: "flex",
-          flexDirection: "column",
-          gap: 18,
-        }}
-      >
+    <div className={styles.pageWrapper} data-screen-label="00 Login · OTP step">
+      <div className={styles.authCard}>
         <button
           type="button"
-          onClick={() => router.back()}
-          style={{
-            alignSelf: "flex-start",
-            display: "flex",
-            alignItems: "center",
-            gap: 6,
-            fontSize: 12,
-            color: "var(--muted-foreground)",
-            background: "none",
-            border: "none",
-            padding: 0,
-            cursor: "pointer",
-            fontWeight: 500,
-          }}
+          onClick={() => router.push("/login")}
+          className={styles.backButton}
         >
           <Icon d={iconsWithPaths.chevLeft} size={13} /> Back
         </button>
 
         <div>
-          <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
+          <div className={styles.progressContainer}>
             {[0, 1, 2].map((i) => {
               const filledThrough = showPasswordUi ? 2 : 1;
               return (
                 <span
                   key={i}
-                  style={{
-                    height: 4,
-                    flex: 1,
-                    borderRadius: 999,
-                    background:
-                      i <= filledThrough ? TG_BLUE : "var(--secondary)",
-                  }}
+                  className={`${styles.progressSegment} ${i <= filledThrough ? styles.active : ""}`}
                 />
               );
             })}
           </div>
-          <div
-            style={{
-              fontSize: 11,
-              color: "var(--muted-foreground)",
-              marginTop: 8,
-              fontWeight: 500,
-            }}
-          >
+
+          <div className={styles.stepLabel}>
             {showPasswordUi
               ? "Step 3 of 3 · Two-factor authentication"
               : "Step 2 of 3 · Verify identity"}
           </div>
-          <h2
-            style={{
-              fontSize: 22,
-              fontWeight: 600,
-              margin: "8px 0 6px",
-              letterSpacing: "-0.02em",
-            }}
-          >
+
+          <h2 className={styles.heading}>
             {showPasswordUi
               ? "Enter your Telegram password."
               : "Check Telegram for a code."}
           </h2>
-          <p
-            style={{
-              fontSize: 13,
-              color: "var(--muted-foreground)",
-              margin: 0,
-              lineHeight: 1.5,
-            }}
-          >
+
+          <p className={styles.description}>
             {showPasswordUi ? (
               <>
                 Two-factor authentication is enabled on your account.
@@ -272,7 +199,7 @@ export default function VerifyOtpPage() {
                   <>
                     {" "}
                     Hint:{" "}
-                    <strong style={{ color: "var(--foreground)" }}>
+                    <strong className={styles.highlightText}>
                       {passwordHint}
                     </strong>
                   </>
@@ -282,7 +209,7 @@ export default function VerifyOtpPage() {
               <>
                 We sent a {OTP_LENGTH}-digit code to your Telegram account
                 ending&nbsp;
-                <strong style={{ color: "var(--foreground)" }}>
+                <strong className={styles.highlightText}>
                   •• {phoneNumber.slice(-4)}
                 </strong>
                 .
@@ -291,11 +218,10 @@ export default function VerifyOtpPage() {
           </p>
         </div>
 
-        {/* OTP boxes */}
         {showOtpUi && (
           <form
             onSubmit={otpForm.handleSubmit(submitOtp)}
-            style={{ display: "flex", flexDirection: "column", gap: 18 }}
+            className={styles.formWrapper}
           >
             <Controller
               control={otpForm.control}
@@ -310,43 +236,16 @@ export default function VerifyOtpPage() {
                   value: OTP_LENGTH,
                   message: `OTP must be ${OTP_LENGTH} digits`,
                 },
-                pattern: {
-                  value: /^\d+$/,
-                  message: "OTP must be digits only",
-                },
+                pattern: { value: /^\d+$/, message: "OTP must be digits only" },
               }}
               render={() => (
-                <div
-                  style={{
-                    display: "flex",
-                    gap: 10,
-                    justifyContent: "center",
-                    padding: "8px 0",
-                  }}
-                >
+                <div className={styles.otpContainer}>
                   {digits.map((digit, i) => {
-                    const active = i === activeIndex;
+                    const isActive = i === activeIndex;
                     return (
                       <label
                         key={i}
-                        style={{
-                          width: 56,
-                          height: 64,
-                          border: `1.5px solid ${active ? TG_BLUE : "var(--input)"}`,
-                          borderRadius: "var(--radius-lg)",
-                          display: "inline-flex",
-                          alignItems: "center",
-                          justifyContent: "center",
-                          fontSize: 26,
-                          fontWeight: 600,
-                          fontVariantNumeric: "tabular-nums",
-                          background: "var(--background)",
-                          boxShadow: active ? `0 0 0 3px ${TG_BLUE}33` : "none",
-                          color: "var(--foreground)",
-                          position: "relative",
-                          cursor: "text",
-                          transition: "all 150ms ease",
-                        }}
+                        className={`${styles.otpLabel} ${isActive ? styles.active : ""}`}
                       >
                         <input
                           ref={(el) => {
@@ -361,24 +260,9 @@ export default function VerifyOtpPage() {
                           onKeyDown={(e) => handleKeyDown(i, e)}
                           onPaste={handlePaste}
                           onFocus={() => setActiveIndex(i)}
-                          disabled={status === "submitting"}
+                          disabled={otpForm.formState.isSubmitting}
                           autoFocus={i === 0}
-                          style={{
-                            position: "absolute",
-                            inset: 0,
-                            width: "100%",
-                            height: "100%",
-                            background: "transparent",
-                            border: "none",
-                            outline: "none",
-                            textAlign: "center",
-                            fontSize: 26,
-                            fontWeight: 600,
-                            fontVariantNumeric: "tabular-nums",
-                            color: "var(--foreground)",
-                            fontFamily: "inherit",
-                            caretColor: TG_BLUE,
-                          }}
+                          className={styles.otpInput}
                         />
                       </label>
                     );
@@ -387,28 +271,12 @@ export default function VerifyOtpPage() {
               )}
             />
 
-            {/* Resend */}
-            <div
-              style={{
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "center",
-                gap: 6,
-                fontSize: 12,
-                color: "var(--muted-foreground)",
-              }}
-            >
+            <div className={styles.resendContainer}>
               <Icon d={iconsWithPaths.clock} size={12} />
               {resendIn > 0 ? (
                 <>
                   Resend code in{" "}
-                  <span
-                    style={{
-                      color: "var(--foreground)",
-                      fontWeight: 500,
-                      fontVariantNumeric: "tabular-nums",
-                    }}
-                  >
+                  <span className={styles.resendTimer}>
                     {String(Math.floor(resendIn / 60)).padStart(2, "0")}:
                     {String(resendIn % 60).padStart(2, "0")}
                   </span>
@@ -416,17 +284,8 @@ export default function VerifyOtpPage() {
               ) : (
                 <button
                   type="button"
-                  onClick={() => {
-                    setResendIn(RESEND_SECONDS);
-                  }}
-                  style={{
-                    background: "none",
-                    border: "none",
-                    color: TG_BLUE,
-                    fontWeight: 500,
-                    cursor: "pointer",
-                    fontSize: 12,
-                  }}
+                  onClick={() => setResendIn(RESEND_SECONDS)}
+                  className={styles.resendButton}
                 >
                   Resend code
                 </button>
@@ -434,22 +293,17 @@ export default function VerifyOtpPage() {
             </div>
 
             {(otpForm.formState.errors.otp || serverError) && (
-              <p
-                style={{
-                  margin: 0,
-                  fontSize: 12,
-                  color: "var(--destructive)",
-                  textAlign: "center",
-                }}
-              >
+              <p className={styles.errorText}>
                 {otpForm.formState.errors.otp?.message ?? serverError}
               </p>
             )}
 
             <TelegramButton
               type="submit"
-              disabled={status === "submitting" || !otpForm.formState.isValid}
-              loading={status === "submitting"}
+              disabled={
+                otpForm.formState.isSubmitting || !otpForm.formState.isValid
+              }
+              loading={otpForm.formState.isSubmitting}
               loadingText="Verifying…"
             >
               Verify and continue
@@ -457,25 +311,17 @@ export default function VerifyOtpPage() {
           </form>
         )}
 
-        {/* 2FA password form */}
         {showPasswordUi && (
           <form
             onSubmit={passwordForm.handleSubmit(submitPassword)}
-            style={{
-              display: "flex",
-              flexDirection: "column",
-              gap: 12,
-            }}
+            className={styles.passwordFormWrapper}
           >
             <Controller
               control={passwordForm.control}
               name="password"
               rules={{
                 required: "Password is required",
-                minLength: {
-                  value: 1,
-                  message: "Password is required",
-                },
+                minLength: { value: 1, message: "Password is required" },
               }}
               render={({ field }) => (
                 <input
@@ -483,68 +329,38 @@ export default function VerifyOtpPage() {
                   type="password"
                   placeholder="Your Telegram password"
                   autoFocus
-                  style={{
-                    padding: "12px 14px",
-                    background: "var(--background)",
-                    color: "var(--foreground)",
-                    border: `1.5px solid ${
-                      passwordForm.formState.errors.password
-                        ? "var(--destructive)"
-                        : "var(--input)"
-                    }`,
-                    borderRadius: "var(--radius-lg)",
-                    fontSize: 14,
-                    fontFamily: "inherit",
-                    outline: "none",
-                  }}
+                  disabled={passwordForm.formState.isSubmitting}
+                  className={`${styles.passwordInput} ${passwordForm.formState.errors.password ? styles.error : ""}`}
                 />
               )}
             />
 
             {(passwordForm.formState.errors.password || serverError) && (
-              <p
-                style={{
-                  margin: 0,
-                  fontSize: 12,
-                  color: "var(--destructive)",
-                  textAlign: "center",
-                }}
-              >
+              <p className={styles.errorText}>
                 {passwordForm.formState.errors.password?.message ?? serverError}
               </p>
             )}
 
             <TelegramButton
               type="submit"
-              disabled={isSubmitting || !passwordForm.formState.isValid}
-              loading={isSubmitting}
+              disabled={
+                passwordForm.formState.isSubmitting ||
+                !passwordForm.formState.isValid
+              }
+              loading={passwordForm.formState.isSubmitting}
               loadingText="Verifying…"
             >
               Continue
             </TelegramButton>
           </form>
         )}
-
         {showOtpUi && (
-          <div
-            style={{
-              fontSize: 11,
-              color: "var(--muted-foreground)",
-              textAlign: "center",
-            }}
-          >
+          <div className={styles.helpContainer}>
             Trouble receiving codes?{" "}
             <button
               type="button"
               onClick={() => router.push("/qr-login")}
-              style={{
-                background: "none",
-                border: "none",
-                color: TG_BLUE,
-                fontWeight: 500,
-                cursor: "pointer",
-                fontSize: 11,
-              }}
+              className={styles.linkButton}
             >
               Use QR code instead →
             </button>

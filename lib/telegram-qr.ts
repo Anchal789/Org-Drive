@@ -1,6 +1,7 @@
 import { randomBytes } from "crypto";
 import { qrStore } from "@/lib/telegram-qr-store";
 import { Api, TelegramClient } from "telegram";
+import { TelegramUser } from "@/types/auth";
 
 export function generateLoginId(): string {
   return randomBytes(16).toString("hex");
@@ -19,9 +20,9 @@ export function buildTelegramQRUrl(token: Buffer): string {
 }
 
 export async function finalizeLogin(loginId: string, client: TelegramClient) {
-  const me: any = await client.getMe();
+  const me: Api.User = await client.getMe();
 
-  const user: any = {
+  const user: TelegramUser = {
     telegramId: String(me.id),
     firstName: me.firstName ?? null,
     lastName: me.lastName ?? null,

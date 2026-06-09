@@ -1,0 +1,40 @@
+@use "../../../styles/functions" as *;
+@use "../../../styles/mixins" as *;
+
+.linkWrapper {
+  display: block;
+  width: 100%;
+  height: 100%;
+  padding: 0;
+  text-decoration: none;
+
+  border: 1px solid v(border);
+  border-radius: v(radius-lg);
+}
+
+.panelCard {
+  @include flex(row, center, flex-start, 14px);
+  padding: 14px;
+  background: v(surface);
+  border: 1px solid v(border);
+  border-radius: v(radius-lg);
+  cursor: pointer;
+  @include transition(background);
+}
+
+.textContainer {
+  flex: 1;
+  min-width: 0;
+}
+
+.title {
+  font-size: 13px;
+  font-weight: v(weight-semibold);
+}
+
+.subtitle {
+  font-size: 11px;
+  color: v(muted-foreground);
+  margin-top: 2px;
+  line-height: 1.4;
+}
