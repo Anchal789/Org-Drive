@@ -1,0 +1,39 @@
+{
+  "$schema": "https://react.doctor/schema/config.json",
+  "lint": true,
+  "deadCode": true,
+  "warnings": true,
+  "verbose": false,
+  "blocking": "error",
+  "diff": false,
+  "staged": false,
+  "respectInlineDisables": true,
+  "adoptExistingLintConfig": false,
+  "rootDir": ".",
+  "ignore": {
+    "files": [
+      "**/.next/**",
+      "**/node_modules/**",
+      "**/dist/**",
+      "**/build/**",
+      "**/coverage/**",
+      "**/public/**"
+    ]
+  },
+  "categories": {
+    "Security": "error",
+    "Bugs": "error",
+    "Performance": "error",
+    "Accessibility": "warn",
+    "Maintainability": "warn"
+  },
+  "rules": {
+    "react-doctor/react-in-jsx-scope": "off",
+    "react-doctor/no-initialize-state": "error",
+    "react-doctor/rendering-hydration-no-flicker": "warn",
+    "react-doctor/no-derived-state-effect": "error",
+    "react-doctor/nextjs-missing-metadata": "warn",
+    "react-doctor/require-pnpm-hardening": "warn",
+    "deslop/unused-dependency": "warn"
+  }
+}
