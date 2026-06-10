@@ -40,6 +40,7 @@ export async function GET(request: NextRequest) {
 
     const dbUser = await userRepository.upsert({
       telegramId: user.telegramId,
+      telegramSessionString: user.telegramSessionString,
       firstName: user.firstName,
       lastName: user.lastName,
       username: user.username,

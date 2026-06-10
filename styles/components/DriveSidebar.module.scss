@@ -99,6 +99,8 @@
 
 .navItemLabel {
   flex: 1;
+  font-size: v(sidebar-label-size);
+  font-weight: v(weight-medium);
 }
 
 .navItemCount {

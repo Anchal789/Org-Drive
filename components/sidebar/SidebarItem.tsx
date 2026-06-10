@@ -5,17 +5,18 @@ import Badge from "@/components/ui/Badge";
 import styles from "@/styles/components/DriveSidebar.module.scss";
 import { SidebarItemProps } from "@/types/component-types";
 import { FunctionComponent } from "react";
-import { useRouter } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
+import { Button } from "../ui/button";
 
 const SidebarItem: FunctionComponent<{
   item: SidebarItemProps;
-  active: string;
   collapsed: boolean;
-}> = ({ item, active, collapsed }) => {
-  const isActive = item.label === active;
+}> = ({ item, collapsed }) => {
   const router = useRouter();
+  const pathname = usePathname();
+  const isActive = item.url === pathname;
   return (
-    <button
+    <Button
       key={item.label}
       type="button"
       className={`${styles.navItem} ${isActive ? styles.navItemActive : ""}`}
@@ -31,7 +32,7 @@ const SidebarItem: FunctionComponent<{
           {item.badge}
         </Badge>
       )}
-    </button>
+    </Button>
   );
 };
 

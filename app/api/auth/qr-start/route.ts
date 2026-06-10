@@ -58,7 +58,10 @@ export async function POST() {
             }),
           );
         } catch (err: unknown) {
-          const errMsg = err instanceof Error ? err.errorMessage : String(err);
+          const errMsg =
+            err instanceof Error
+              ? ((err as { errorMessage?: string }).errorMessage ?? err.message)
+              : String(err);
           if (errMsg === "SESSION_PASSWORD_NEEDED") {
             const passwordInfo: Api.account.Password = await client.invoke(
               new Api.account.GetPassword(),
@@ -78,7 +81,10 @@ export async function POST() {
             );
           } catch (err: unknown) {
             const errMsg =
-              err instanceof Error ? err.errorMessage : String(err);
+              err instanceof Error
+                ? ((err as { errorMessage?: string }).errorMessage ??
+                  err.message)
+                : String(err);
             if (errMsg === "SESSION_PASSWORD_NEEDED") {
               const passwordInfo: Api.account.Password = await client.invoke(
                 new Api.account.GetPassword(),
@@ -117,7 +123,5 @@ export async function POST() {
 
     console.error("QR start failed:", errMsg ?? err);
     return sendError("Failed to start QR login", 500);
-  } finally {
-    await client.disconnect().catch(() => {});
   }
 }

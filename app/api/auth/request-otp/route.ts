@@ -38,12 +38,14 @@ export async function POST(request: NextRequest) {
     );
   } catch (err: unknown) {
     await client.disconnect();
-    const errMsg = err instanceof Error ? err.message : String(err);
-
-    console.error("sendCode failed:", errMsg ?? err?.errorMessage ?? err);
+    const errMsg =
+      err instanceof Error
+        ? ((err as { errorMessage?: string }).errorMessage ?? err.message)
+        : String(err);
+    console.error("sendCode failed:", errMsg ?? errMsg ?? err);
 
     const errorMessage =
-      err?.errorMessage === "PHONE_NUMBER_INVALID"
+      errMsg === "PHONE_NUMBER_INVALID"
         ? "Invalid phone number"
         : "Failed to send code";
 

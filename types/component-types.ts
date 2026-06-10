@@ -1,3 +1,4 @@
+import { Route } from "next";
 import { Tone } from "./dashboard";
 
 export interface InputProps extends React.ComponentProps<"input"> {
@@ -49,10 +50,9 @@ export type SidebarItemProps = {
   label: string;
   count?: number;
   badge?: string;
-  url?: string;
+  url: Route<string>;
 };
 
 export type DriveSidebarProps = {
-  active?: string;
   collapsed?: boolean;
 };

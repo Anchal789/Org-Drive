@@ -10,7 +10,7 @@ const MAIN_ITEMS: SidebarItemProps[] = [
     icon: iconsWithPaths.cloud,
     label: "My drive",
     count: 248,
-    url: "/dashboard",
+    url: "/my-drive",
   },
   {
     icon: iconsWithPaths.users,
@@ -38,20 +38,9 @@ const ADMIN_ITEMS: SidebarItemProps[] = [
   { icon: iconsWithPaths.settings, label: "Settings", url: "/settings" },
 ];
 
-export default function DriveSidebar({
-  active = "My drive",
-  collapsed = false,
-}: DriveSidebarProps) {
+export default function DriveSidebar({ collapsed = false }: DriveSidebarProps) {
   const renderItem = (item: SidebarItemProps) => {
-    const isActive = item.label === active;
-    return (
-      <SidebarItem
-        key={item.label}
-        item={item}
-        active={active}
-        collapsed={collapsed}
-      />
-    );
+    return <SidebarItem key={item.label} item={item} collapsed={collapsed} />;
   };
 
   return (

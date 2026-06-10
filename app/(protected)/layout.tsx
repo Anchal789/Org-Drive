@@ -1,30 +1,22 @@
-import DriveSidebar from "@/components/dashboard/DriveSidebar";
+import DriveSidebar from "@/components/sidebar/DriveSidebar";
 import { getSessionUserId } from "@/lib/session";
 import { redirect } from "next/navigation";
+import styles from "./layout.module.scss";
 
-export default async function Layout({
+export default async function ProtectedLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
   const sessionId = await getSessionUserId();
-
   if (!sessionId) {
     redirect("/login");
   }
+
   return (
-    <div
-      style={{
-        display: "flex",
-        height: "100%",
-        background: "v(background)",
-        color: "v(foreground)",
-        fontFamily: "v(font-sans)",
-        position: "relative",
-      }}
-    >
+    <div className={styles.layoutWrapper}>
       <DriveSidebar />
-      <div style={{ flex: 1 }}>{children}</div>
+      <div className={styles.mainContent}>{children}</div>
     </div>
   );
 }

@@ -7,11 +7,11 @@ import UploadWidget from "./UploadWidget";
 import { DRIVE_FILES, DRIVE_FOLDERS } from "@/constants/dashboard-constants";
 import styles from "@/styles/components/DashGrid.module.scss";
 
-type DashGridProps = {
+export default function DashGrid({
+  showDropOverlay = false,
+}: {
   showDropOverlay?: boolean;
-};
-
-export default function DashGrid({ showDropOverlay = false }: DashGridProps) {
+}) {
   return (
     <div className={styles.shell} data-screen-label="02 Drive · Home (grid)">
       <div className={styles.main}>
@@ -25,7 +25,6 @@ export default function DashGrid({ showDropOverlay = false }: DashGridProps) {
 
         {!showDropOverlay && (
           <div className={styles.content}>
-            {/* Suggested */}
             <div className={styles.sectionLabel}>Suggested</div>
             <div className={`${styles.grid} ${styles.grid4}`}>
               {DRIVE_FILES.slice(0, 4).map((file) => (
@@ -58,7 +57,7 @@ export default function DashGrid({ showDropOverlay = false }: DashGridProps) {
           </div>
         )}
 
-        {/* <UploadWidget /> */}
+        <UploadWidget />
       </div>
     </div>
   );

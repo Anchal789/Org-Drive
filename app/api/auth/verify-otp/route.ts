@@ -14,6 +14,7 @@ async function fetchTelegramUser(client: TelegramClient) {
   const me: Api.User = await client.getMe();
   const user: UpsertUserInput = {
     telegramId: String(me.id),
+    telegramSessionString: client.session.save() as unknown as string,
     firstName: me.firstName ?? null,
     lastName: me.lastName ?? null,
     username: me.username ?? null,
@@ -68,13 +69,11 @@ export async function POST(request: NextRequest) {
     );
 
     const user = await fetchTelegramUser(client);
-
-    try {
-      await client.invoke(new Api.auth.LogOut());
-    } catch {}
+    const finalSessionString = client.session.save() as unknown as string;
 
     const dbUser = await userRepository.upsert({
       telegramId: user.telegramId,
+      telegramSessionString: finalSessionString,
       firstName: user.firstName,
       lastName: user.lastName,
       username: user.username,
@@ -98,8 +97,12 @@ export async function POST(request: NextRequest) {
       },
       "Login completed successfully",
     );
-  } catch (error: unknown) {
-    if (error?.errorMessage === "SESSION_PASSWORD_NEEDED") {
+  } catch (err: unknown) {
+    const errMsg =
+      err instanceof Error
+        ? ((err as { errorMessage?: string }).errorMessage ?? err.message)
+        : String(err);
+    if (errMsg === "SESSION_PASSWORD_NEEDED") {
       const updatedSession = client.session.save() as unknown as string;
       await pendingLoginRepository.updateSession(savedData.id, updatedSession);
 
@@ -124,9 +127,9 @@ export async function POST(request: NextRequest) {
 
     await client.disconnect();
     return sendError(
-      error?.message.includes("PHONE_CODE_INVALID")
+      errMsg.includes("PHONE_CODE_INVALID")
         ? "Invalid or expired OTP code"
-        : error?.message,
+        : errMsg,
       400,
     );
   } finally {

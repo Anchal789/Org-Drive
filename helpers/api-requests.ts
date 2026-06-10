@@ -1,5 +1,5 @@
 // helpers/api-requests.ts
-import { useAuthStore } from "@/store/useAuthStore";
+import { useAuthStore } from "@/store/store";
 import { FailedRequest, FetchOptions } from "@/types/common-types";
 
 let isRefreshing = false;
@@ -34,7 +34,9 @@ const customFetch = async (
   const accessToken = useAuthStore.getState().accessToken;
   const headers = new Headers(options.headers);
 
-  if (!headers.has("Content-Type")) {
+  const isFormData = options.body instanceof FormData;
+
+  if (!isFormData && !headers.has("Content-Type")) {
     headers.set("Content-Type", "application/json");
   }
   if (accessToken) {
@@ -120,11 +122,17 @@ const api = {
   get: <T>(url: string, options?: FetchOptions) =>
     customFetch(url, { ...options, method: "GET" }) as Promise<{ data: T }>,
 
-  post: <T>(url: string, payload: unknown, options?: FetchOptions) =>
+  post: <T>(
+    url: string,
+    payload: unknown,
+    options?: FetchOptions,
+    isFormData?: boolean,
+  ) =>
     customFetch(url, {
       ...options,
       method: "POST",
-      body: JSON.stringify(payload),
+      body: isFormData ? (payload as BodyInit) : JSON.stringify(payload),
+      headers: isFormData ? undefined : options?.headers,
     }) as Promise<{ data: T }>,
 
   put: <T>(url: string, payload: unknown, options?: FetchOptions) =>

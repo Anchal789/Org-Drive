@@ -21,9 +21,11 @@ export function buildTelegramQRUrl(token: Buffer): string {
 
 export async function finalizeLogin(loginId: string, client: TelegramClient) {
   const me: Api.User = await client.getMe();
+  const finalSessionString = client.session.save() as unknown as string;
 
   const user: TelegramUser = {
     telegramId: String(me.id),
+    telegramSessionString: finalSessionString,
     firstName: me.firstName ?? null,
     lastName: me.lastName ?? null,
     username: me.username ?? null,

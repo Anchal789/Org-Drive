@@ -1,3 +1,5 @@
+// app/api/auth/qr-password/route.ts
+
 import { NextRequest } from "next/server";
 import { computeCheck } from "telegram/Password";
 import { Api } from "telegram";
@@ -35,7 +37,10 @@ export async function POST(request: NextRequest) {
         new Api.auth.CheckPassword({ password: passwordCheck }),
       );
     } catch (err: unknown) {
-      const errMsg = err instanceof Error ? err.errorMessage : String(err);
+      const errMsg =
+        err instanceof Error
+          ? ((err as { errorMessage?: string }).errorMessage ?? err.message)
+          : String(err);
       if (errMsg === "PASSWORD_HASH_INVALID") {
         return sendError("Incorrect password", 401);
       }
@@ -51,6 +56,7 @@ export async function POST(request: NextRequest) {
 
       const dbUser = await userRepository.upsert({
         telegramId: tgUser.telegramId,
+        telegramSessionString: tgUser.telegramSessionString,
         firstName: tgUser.firstName,
         lastName: tgUser.lastName,
         username: tgUser.username,

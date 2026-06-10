@@ -29,7 +29,9 @@ export const userRepository = {
       const [updated] = await db
         .update(userTable)
         .set({
+          telegramId: data.telegramId,
           firstName: data.firstName,
+          telegramSessionString: data.telegramSessionString,
           lastName: data.lastName,
           username: data.username,
           photoUrl: data.photoUrl,
@@ -45,6 +47,7 @@ export const userRepository = {
       .insert(userTable)
       .values({
         telegramId: data.telegramId,
+        telegramSessionString: data.telegramSessionString,
         firstName: data.firstName,
         lastName: data.lastName,
         username: data.username,

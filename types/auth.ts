@@ -11,6 +11,7 @@ export type QRLoginStatus =
 
 export type TelegramUser = {
   telegramId: string;
+  telegramSessionString: string;
   firstName: string | null;
   lastName: string | null;
   username: string | null;
@@ -40,6 +41,7 @@ export type OTPLoginEntry = {
 export type User = {
   id: number;
   telegramId: string;
+  telegramSessionString: string;
   firstName: string | null;
   lastName: string | null;
   username: string | null;
@@ -59,6 +61,7 @@ export type PendingLogin = {
 
 export type UpsertUserInput = {
   telegramId: string;
+  telegramSessionString: string;
   firstName: string | null;
   lastName: string | null;
   username: string | null;
