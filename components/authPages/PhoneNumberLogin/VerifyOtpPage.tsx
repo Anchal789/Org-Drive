@@ -116,7 +116,7 @@ export default function VerifyOtpPage() {
       const response = await verifyOtp(phoneNumber, values.otp);
       const data = response?.data;
 
-      if (response.success && response.status === "success") {
+      if (response.success && data.step === "success") {
         setStatus("success");
         setTimeout(() => router.push("/my-drive"), 1000);
       } else if (response.success && data?.step === "needs_password") {
