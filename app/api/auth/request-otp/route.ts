@@ -1,17 +1,22 @@
-import { NextRequest } from "next/server";
-import { TelegramClient } from "telegram";
-import { StringSession } from "telegram/sessions";
-import { pendingLoginRepository } from "@/repositories/pending-login.repository";
-import { sendSuccess, sendError } from "@/lib/api-response";
+import type { NextRequest } from 'next/server';
+import { TelegramClient } from 'telegram';
+import { StringSession } from 'telegram/sessions';
+import { sendError, sendSuccess } from '@/lib/api-response';
+import { pendingLoginRepository } from '@/repositories/pending-login.repository';
 
 export async function POST(request: NextRequest) {
   const { phoneNumber } = await request.json();
 
   if (!phoneNumber) {
-    return sendError("Phone number is required", 400);
+    return sendError('Phone number is required', 400);
   }
 
-  const stringSession = new StringSession("");
+  console.log({
+    apiId: process.env.TELEGRAM_APP_API_ID,
+    hasHash: !!process.env.TELEGRAM_APP_API_HASH,
+  });
+
+  const stringSession = new StringSession('');
   const client = new TelegramClient(
     stringSession,
     Number(process.env.TELEGRAM_APP_API_ID),
@@ -21,10 +26,17 @@ export async function POST(request: NextRequest) {
     },
   );
 
+  console.log('New TelegramClient created');
+
   try {
     await client.connect();
-  } catch (_error) {
-    return sendError("Failed to connect to Telegram", 500);
+  } catch (error) {
+    console.error('Telegram connect error:', error);
+
+    return sendError(
+      error instanceof Error ? error.message : String(error),
+      500,
+    );
   }
 
   let result: { phoneCodeHash: string; isCodeViaApp: boolean } | null = null;
@@ -42,12 +54,12 @@ export async function POST(request: NextRequest) {
       err instanceof Error
         ? ((err as { errorMessage?: string }).errorMessage ?? err.message)
         : String(err);
-    console.error("sendCode failed:", errMsg ?? errMsg ?? err);
+    console.error('sendCode failed:', errMsg ?? errMsg ?? err);
 
     const errorMessage =
-      errMsg === "PHONE_NUMBER_INVALID"
-        ? "Invalid phone number"
-        : "Failed to send code";
+      errMsg === 'PHONE_NUMBER_INVALID'
+        ? 'Invalid phone number'
+        : 'Failed to send code';
 
     return sendError(errorMessage, 400);
   }
@@ -56,7 +68,7 @@ export async function POST(request: NextRequest) {
 
   if (!result?.phoneCodeHash) {
     await client.disconnect();
-    return sendError("Failed to generate phone code hash", 500);
+    return sendError('Failed to generate phone code hash', 500);
   }
 
   await pendingLoginRepository.create({
@@ -72,6 +84,6 @@ export async function POST(request: NextRequest) {
       phoneCodeHash: result.phoneCodeHash,
       isCodeViaApp: result.isCodeViaApp,
     },
-    "OTP sent successfully",
+    'OTP sent successfully',
   );
 }
