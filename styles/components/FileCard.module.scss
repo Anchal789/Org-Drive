@@ -10,10 +10,13 @@
   gap: 10px;
   box-shadow: v(shadow-xs);
   position: relative;
-}
 
-.cardBig {
-  padding: 14px;
+  &.cardBig {
+    padding: 14px;
+    .preview {
+      height: 88px;
+    }
+  }
 }
 
 .header {
@@ -28,6 +31,15 @@
   gap: 4px;
 }
 
+.starIcon {
+  color: var(--amber-bd, #d97706);
+  fill: var(--amber-bg, #fef3c7);
+}
+
+.moreIcon {
+  color: v(muted-foreground);
+}
+
 .preview {
   background: v(secondary);
   border-radius: v(radius-md);
@@ -35,6 +47,12 @@
   align-items: center;
   justify-content: center;
   position: relative;
+  height: 72px;
+  cursor: pointer;
+}
+
+.fileIcon {
+  color: color-mix(in oklch, v(muted-foreground) 45%, transparent);
 }
 
 .name {
@@ -43,6 +61,7 @@
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
+  height: 16px;
 }
 
 .meta {

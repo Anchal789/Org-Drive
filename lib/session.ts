@@ -43,7 +43,7 @@ export async function createSession(props: TelegramUser & { userId: string }) {
   });
 }
 
-export async function getSessionUserId(): Promise<
+export async function getSessionUser(): Promise<
   (TelegramUser & { userId: string }) | null
 > {
   const cookieStore = await cookies();

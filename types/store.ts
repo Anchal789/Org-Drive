@@ -1,4 +1,4 @@
-import { UploadingProgress } from "./files";
+import { UploadItem } from "./dashboard";
 
 export interface AuthStateStore {
   accessToken: string | null;
@@ -11,7 +11,15 @@ export interface DragDropStore {
   setIsDragging: (dragging: boolean) => void;
   files: File[];
   setFiles: (files: File[]) => void;
-  isUploading: boolean;
-  setIsUploading: (uploading: boolean) => void;
-  uploadedFiles: UploadingProgress;
+}
+
+export interface UploadStore {
+  isWidgetVisible: boolean;
+  uploads: Record<string, UploadItem>;
+  pendingQueue: File[];
+  isProcessing: boolean;
+  closeWidget: () => void;
+  abortUpload: (fileName: string) => void;
+  startUploads: (files: File[]) => void;
+  processQueue: () => Promise<void>;
 }

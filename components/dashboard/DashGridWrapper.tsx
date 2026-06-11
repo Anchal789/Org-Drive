@@ -1,47 +1,32 @@
 "use client";
 
-import DashGrid from "@/components/dashboard/DashGrid";
 import { useDragDropStore } from "@/store/store";
-import { useRef } from "react";
 
-export default function DashGridWrapper() {
+export default function DashGridWrapper({
+  children,
+  overlay,
+}: {
+  children: React.ReactNode;
+  overlay: React.ReactNode;
+}) {
   const { isDragging, setIsDragging } = useDragDropStore();
 
-  const dragCounter = useRef(0);
-
-  const handleDragEnter = (e: React.DragEvent) => {
-    e.preventDefault();
-
-    dragCounter.current++;
-
-    if (dragCounter.current === 1) {
-      setIsDragging(true);
-    }
-  };
-
-  const handleDragLeave = (e: React.DragEvent) => {
-    e.preventDefault();
-
-    dragCounter.current--;
-
-    if (dragCounter.current === 0) {
-      setIsDragging(false);
-    }
-  };
-
-  const handleDrop = (e: React.DragEvent) => {
-    e.preventDefault();
-
-    dragCounter.current = 0;
-    setIsDragging(false);
-  };
   return (
     <div
-      onDragEnter={handleDragEnter}
-      onDragLeave={handleDragLeave}
-      onDrop={handleDrop}
+      onDragEnter={(e) => {
+        e.preventDefault();
+        setIsDragging(true);
+      }}
+      onDragLeave={(e) => {
+        e.preventDefault();
+        setIsDragging(false);
+      }}
+      onDrop={(e) => {
+        e.preventDefault();
+        setIsDragging(false);
+      }}
     >
-      <DashGrid showDropOverlay={isDragging} />
+      {isDragging ? overlay : children}
     </div>
   );
 }

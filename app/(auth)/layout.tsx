@@ -1,4 +1,4 @@
-import { getSessionUserId } from "@/lib/session";
+import { getSessionUser } from "@/lib/session";
 import { redirect } from "next/navigation";
 
 export default async function AuthLayout({
@@ -6,10 +6,10 @@ export default async function AuthLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  const sessionId = await getSessionUserId();
+  const sessionId = await getSessionUser();
 
   if (sessionId) {
-    redirect("/dashboard");
+    redirect("/my-drive");
   }
   return <>{children}</>;
 }

@@ -2,7 +2,7 @@ import Btn from "@/components/ui/Btn";
 import Icon from "@/components/ui/Icon";
 import DriveCrumb from "./DriveCrumb";
 import DriveTopbar from "./DriveTopbar";
-import FileCard from "./FileCard";
+import FileCard from "./FileSection/FileCard";
 import UploadWidget from "./UploadWidget";
 import { iconsWithPaths } from "@/constants/common-constants";
 import { DRIVE_FILES } from "@/constants/dashboard-constants";

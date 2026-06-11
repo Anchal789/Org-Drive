@@ -7,21 +7,92 @@ export type Tone =
   | "teal"
   | "sky"
   | "pink"
-  | "slate";
+  | "slate"
+  | "indigo"
+  | "purple"
+  | "orange"
+  | "gray"
+  | "rose"
+  | "violet"
+  | "yellow"
+  | "cyan";
 
 export type FileKind =
   | "pdf"
   | "doc"
+  | "docx"
   | "xls"
-  | "img"
+  | "xlsx"
+  | "csv"
+  | "tsv"
   | "ppt"
   | "txt"
-  | "csv"
-  | "md";
+  | "rtf"
+  | "md"
+  | "json"
+  | "xml"
+  | "yaml"
+  | "sql"
+  | "php"
+  | "bat"
+  | "zip"
+  | "rar"
+  | "7z"
+  | "gzip"
+  | "bzip2"
+  | "tar"
+  | "exe"
+  | "iso"
+  | "png"
+  | "jpg"
+  | "webp"
+  | "svg"
+  | "bmp"
+  | "mp4"
+  | "webm"
+  | "mp3"
+  | "img"
+  | "unknown"
+  | "jpeg"
+  | "gif"
+  | "heic"
+  | "avif"
+  | "mov"
+  | "avi"
+  | "mkv"
+  | "wav"
+  | "aac"
+  | "flac"
+  | "ogg"
+  | "js"
+  | "ts"
+  | "tsx"
+  | "jsx"
+  | "css"
+  | "scss"
+  | "html"
+  | "py"
+  | "java"
+  | "c"
+  | "cpp"
+  | "cs"
+  | "go"
+  | "rs"
+  | "sh"
+  | "apk"
+  | "odt"
+  | "ods"
+  | "odp";
 
 export type FileStatus = "indexed" | "processing" | "failed" | "queued";
 
-export type UploadState = "queued" | "uploading" | "indexing" | "done";
+export type UploadState =
+  | "queued"
+  | "uploading"
+  | "indexing"
+  | "done"
+  | "error"
+  | "aborted";
 
 export type Owner = [initials: string, tone: Tone];
 
@@ -43,12 +114,14 @@ export type DriveFolder = {
   tone: Tone;
 };
 
-export type UploadItem = {
+export interface UploadItem {
+  id: string;
   name: string;
   size: string;
-  pct: number;
   state: UploadState;
-};
+  pct: number;
+  eta?: number;
+}
 
 export type BtnVariant =
   | "default"

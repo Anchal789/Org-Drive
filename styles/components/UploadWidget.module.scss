@@ -18,8 +18,9 @@
   align-items: center;
   gap: 8px;
   padding: 12px 14px;
-  background: v(foreground);
-  color: v(background);
+  background: v(background);
+  border-bottom: 1px solid v(border);
+  color: v(foreground);
 }
 
 .headTitle {
@@ -31,14 +32,6 @@
 .headTime {
   font-size: 11px;
   opacity: 0.75;
-}
-
-.channel {
-  padding: 8px 14px;
-  border-bottom: 1px solid v(border);
-  display: flex;
-  align-items: center;
-  gap: 8px;
 }
 
 .list {

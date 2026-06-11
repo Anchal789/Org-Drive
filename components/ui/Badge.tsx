@@ -8,11 +8,12 @@ export default function Badge({
   className = "",
   style = {},
 }: BadgeProps) {
+  const toneKey = tone as keyof typeof TINTS;
   const toneStyles = tone
     ? {
-        background: outline ? "transparent" : TINTS[tone].bg,
-        color: TINTS[tone].tx,
-        border: `1px solid ${outline ? TINTS[tone].bd : "transparent"}`,
+        background: outline ? "transparent" : TINTS[toneKey]?.bg,
+        color: TINTS[toneKey]?.tx,
+        border: `1px solid ${outline ? TINTS[toneKey]?.bd : "transparent"}`,
       }
     : {};
 

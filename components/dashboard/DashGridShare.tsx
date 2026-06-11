@@ -1,6 +1,6 @@
 import DriveCrumb from "./DriveCrumb";
 import DriveTopbar from "./DriveTopbar";
-import FileCard from "./FileCard";
+import FileCard from "./FileSection/FileCard";
 import FolderTile from "./FolderTile";
 import ShareDialog from "./ShareDialog";
 import { DRIVE_FILES, DRIVE_FOLDERS } from "@/constants/dashboard-constants";

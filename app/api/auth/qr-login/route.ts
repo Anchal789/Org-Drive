@@ -67,7 +67,6 @@ export async function GET(request: NextRequest) {
 
   try {
     if (!entry.client.connected) {
-      console.log("Client disconnected, reconnecting...");
       await entry.client.connect();
     }
     const result = await entry.client.invoke(

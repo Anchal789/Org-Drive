@@ -1,31 +1,40 @@
+"use client";
+
 import Icon from "@/components/ui/Icon";
-import {
-  iconsWithPaths,
-  TG_BLUE,
-  TG_BLUE_BG,
-  TINTS,
-} from "@/constants/common-constants";
-import { UPLOAD_ITEMS } from "@/constants/dashboard-constants";
+import { iconsWithPaths, TINTS } from "@/constants/common-constants";
 import type { UploadItem, Tone } from "@/types/dashboard";
 import styles from "@/styles/components/UploadWidget.module.scss";
+import { useUploadStore } from "@/store/store";
+import { Button } from "@base-ui/react";
 
 const STATE_TO_TONE: Record<UploadItem["state"], Tone> = {
   done: "green",
   indexing: "violet",
   queued: "slate",
   uploading: "sky",
+  error: "red",
+  aborted: "red",
 };
 
 function UploadItemRow({
   item,
   isLast,
+  abortUpload,
 }: {
   item: UploadItem;
   isLast: boolean;
+  abortUpload: (fileName: string) => void;
 }) {
   const tone = STATE_TO_TONE[item.state];
   const tint = TINTS[tone];
-  const stateLabel = item.state === "indexing" ? "Indexing for AI" : item.state;
+  const stateLabel =
+    item.state === "indexing"
+      ? "Indexing for AI"
+      : item.state === "error"
+        ? "Upload Failed"
+        : item.state === "aborted"
+          ? "Upload Cancelled"
+          : item.state;
 
   return (
     <div className={`${styles.itemRow} ${isLast ? styles.itemRowLast : ""}`}>
@@ -72,8 +81,11 @@ function UploadItemRow({
                 transform="rotate(-90 15 15)"
               />
             </svg>
-            <span className={styles.uploadingPct}>{item.pct}</span>
+            <span className={styles.uploadingPct}>{item.pct}%</span>
           </>
+        )}
+        {(item.state === "error" || item.state === "aborted") && (
+          <Icon d={iconsWithPaths.x} size={14} stroke={2.4} />
         )}
       </div>
 
@@ -90,69 +102,95 @@ function UploadItemRow({
         </div>
       </div>
 
-      <Icon
-        d={
-          item.state === "done"
-            ? iconsWithPaths.check
-            : item.state === "uploading" || item.state === "queued"
-              ? iconsWithPaths.x
-              : iconsWithPaths.more
-        }
-        size={13}
-        style={{ color: "var(--muted-foreground)", flexShrink: 0 }}
-      />
+      <Button onClick={() => abortUpload(item.name)}>
+        <Icon
+          d={
+            item.state === "done"
+              ? iconsWithPaths.check
+              : item.state === "uploading" || item.state === "queued"
+                ? iconsWithPaths.x
+                : iconsWithPaths.more
+          }
+          size={13}
+          style={{ color: "var(--muted-foreground)", flexShrink: 0 }}
+        />
+      </Button>
     </div>
   );
 }
 
 export default function UploadWidget() {
-  const items = UPLOAD_ITEMS;
+  const {
+    isWidgetVisible: isVisible,
+    uploads: uploadsRecord,
+    closeWidget,
+    abortUpload,
+  } = useUploadStore();
+
+  const items = Object.values(uploadsRecord);
+
+  const itemsStillUploading = items.filter(
+    (i) =>
+      i.state === "uploading" || i.state === "queued" || i.state === "indexing",
+  );
   const doneCount = items.filter((i) => i.state === "done").length;
+  const estimateTime = items.reduce((acc, i) => acc + (i?.eta || 0) || 0, 0);
+  const estimateHours = Math.floor(estimateTime / 60 / 60);
+  const estimateMinutes = Math.floor((estimateTime / 60) % 60);
+  const estimateSeconds = Math.floor(estimateTime % 60);
+
+  if (!isVisible) return null;
 
   return (
     <div className={styles.widget}>
-      {/* Header */}
       <div className={styles.head}>
-        <Icon
-          d={iconsWithPaths.refresh}
-          size={14}
-          style={{
-            animation: "spin 1.6s linear infinite",
-            color: "var(--primary)",
-          }}
-        />
-        <span className={styles.headTitle}>
-          Uploading {items.length - doneCount} of {items.length}
-        </span>
-        <span className={styles.headTime}>1m 24s left</span>
+        {itemsStillUploading.length > 0 ? (
+          <>
+            <Icon
+              d={iconsWithPaths.refresh}
+              size={14}
+              style={{
+                animation: "spin 1.6s linear infinite",
+                color: "var(--primary)",
+              }}
+            />
+            <span className={styles.headTitle}>
+              Uploading {items.length - doneCount} of {items.length}
+            </span>
+          </>
+        ) : (
+          <>
+            <Icon
+              d={iconsWithPaths.check}
+              size={14}
+              style={{ color: "var(--primary)" }}
+            />
+            <span className={styles.headTitle}>
+              {doneCount} of {items.length} uploaded successfully
+            </span>
+          </>
+        )}
+        {itemsStillUploading.length > 0 && (
+          <span className={styles.headTime}>
+            {estimateHours > 0 && `${estimateHours}h `}
+            {estimateMinutes}m {estimateSeconds}s left
+          </span>
+        )}
         <Icon d={iconsWithPaths.chevDown} size={14} style={{ opacity: 0.8 }} />
-        <Icon d={iconsWithPaths.x} size={14} style={{ opacity: 0.8 }} />
+        <button onClick={closeWidget} className={styles.closeBtn}>
+          <Icon d={iconsWithPaths.x} size={14} />
+        </button>
       </div>
-
-      {/* Channel destination */}
-      <div className={styles.channel} style={{ background: TG_BLUE_BG }}>
-        <Icon
-          d={iconsWithPaths.send}
-          size={12}
-          style={{ color: TG_BLUE, transform: "rotate(15deg)" }}
-        />
-        <span style={{ fontSize: 11, color: TG_BLUE, fontWeight: 500 }}>
-          Streaming to <strong>@zurutech_drive</strong> · node-eu-1
-        </span>
-      </div>
-
-      {/* List */}
       <div className={styles.list}>
         {items.map((item, i) => (
           <UploadItemRow
-            key={item.name}
+            key={item.id}
             item={item}
             isLast={i === items.length - 1}
+            abortUpload={abortUpload}
           />
         ))}
       </div>
-
-      {/* Footer */}
       <div className={styles.footer}>
         <Icon d={iconsWithPaths.shield} size={11} />
         End-to-end encrypted via your Telegram channel.

@@ -1,4 +1,5 @@
 import {
+  boolean,
   integer,
   pgTable,
   serial,
@@ -35,13 +36,49 @@ export const pendingLoginTable = pgTable("pending_logins", {
 });
 
 export const uploadedFilesTable = pgTable("uploaded_files", {
-  id: integer("id").primaryKey().unique().generatedAlwaysAsIdentity(),
-  fileName: text("file_name").notNull(),
-  filePath: text("file_path").notNull(),
-  fileUrl: text("file_url").notNull(),
+  id: integer("id").primaryKey().generatedAlwaysAsIdentity(),
+  userId: integer("user_id").notNull(),
+  telegramMessageId: integer("telegram_message_id").notNull(),
+  documentId: varchar("document_id", { length: 255 }).notNull(),
+  accessHash: varchar("access_hash", { length: 255 }).notNull(),
+  name: varchar("name").notNull(),
   size: integer("size").notNull(),
-  mimeType: text("mimetype").notNull(),
+  mimeType: varchar("mime_type", { length: 255 }).notNull(),
   createdAt: timestamp("created_at", { withTimezone: true })
+    .defaultNow()
+    .notNull(),
+  updatedAt: timestamp("updated_at", { withTimezone: true })
+    .defaultNow()
+    .notNull(),
+  isDeleted: boolean("is_deleted").default(false).notNull(),
+  starred: boolean("starred").default(false).notNull(),
+});
+
+export const uploadFoldersTable = pgTable("upload_folders", {
+  id: integer("id").primaryKey().generatedAlwaysAsIdentity(),
+  userId: integer("user_id").notNull(),
+  name: varchar("name", { length: 255 }).notNull(),
+  fileCount: integer("file_count").notNull().default(0),
+  createdAt: timestamp("created_at", { withTimezone: true })
+    .defaultNow()
+    .notNull(),
+  updatedAt: timestamp("updated_at", { withTimezone: true })
+    .defaultNow()
+    .notNull(),
+});
+
+export const sharedFilesTable = pgTable("shared_files", {
+  id: integer("id").primaryKey().generatedAlwaysAsIdentity(),
+  fileId: integer("file_id")
+    .notNull()
+    .references(() => uploadedFilesTable.id),
+  sharedWithUserId: integer("shared_with_user_id").notNull(),
+  permission: varchar("permission", {
+    length: 20,
+  }).default("viewer"),
+  createdAt: timestamp("created_at", {
+    withTimezone: true,
+  })
     .defaultNow()
     .notNull(),
 });

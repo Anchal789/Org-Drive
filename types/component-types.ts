@@ -50,7 +50,7 @@ export type SidebarItemProps = {
   label: string;
   count?: number;
   badge?: string;
-  url: Route<string>;
+  url: Route;
 };
 
 export type DriveSidebarProps = {

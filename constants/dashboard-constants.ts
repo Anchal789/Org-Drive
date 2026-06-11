@@ -1,4 +1,4 @@
-import type { DriveFile, DriveFolder, UploadItem } from "@/types/dashboard";
+import type { DriveFile, DriveFolder } from "@/types/dashboard";
 
 export const DRIVE_FILES: DriveFile[] = [
   {
@@ -102,17 +102,4 @@ export const DRIVE_FOLDERS: DriveFolder[] = [
   { name: "Marketing", count: 19, owner: ["JT", "amber"], tone: "pink" },
   { name: "Operations", count: 31, owner: ["DV", "teal"], tone: "teal" },
   { name: "Board Docs", count: 7, owner: ["MK", "violet"], tone: "red" },
-];
-
-export const UPLOAD_ITEMS: UploadItem[] = [
-  { name: "Procurement_Q4.pdf", size: "3.4 MB", pct: 62, state: "uploading" },
-  {
-    name: "Vendor_renewals_2026.xlsx",
-    size: "1.2 MB",
-    pct: 100,
-    state: "indexing",
-  },
-  { name: "Photos_offsite.zip", size: "84 MB", pct: 23, state: "uploading" },
-  { name: "Q4_Brief.docx", size: "412 KB", pct: 100, state: "done" },
-  { name: "Site_map_v2.png", size: "2.0 MB", pct: 0, state: "queued" },
 ];

@@ -1,6 +1,7 @@
 import { TINTS } from "@/constants/common-constants";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { UserAvatarProps } from "@/types/component-types";
+import styles from "./Component.module.scss";
 
 export default function UserAvatar({
   initials,
@@ -9,28 +10,21 @@ export default function UserAvatar({
   ring = false,
   className = "",
 }: UserAvatarProps) {
-  const t = TINTS[tone];
+  const t = TINTS[tone as keyof typeof TINTS] ?? TINTS.slate;
+
+  const dynamicStyles = {
+    "--avatar-bg": t.bg,
+    "--avatar-tx": t.tx,
+    "--avatar-bd": t.bd,
+  } as React.CSSProperties;
 
   return (
     <Avatar
       size={size}
-      className={className}
-      style={{
-        boxShadow: ring
-          ? `0 0 0 2px var(--background), 0 0 0 3px ${t.bd}`
-          : undefined,
-      }}
+      className={`${styles.avatar} ${ring ? styles.hasRing : ""} ${className}`.trim()}
+      style={dynamicStyles}
     >
-      <AvatarFallback
-        style={{
-          background: t.bg,
-          color: t.tx,
-          fontWeight: 600,
-          letterSpacing: "-0.02em",
-        }}
-      >
-        {initials}
-      </AvatarFallback>
+      <AvatarFallback className={styles.fallback}>{initials}</AvatarFallback>
     </Avatar>
   );
 }

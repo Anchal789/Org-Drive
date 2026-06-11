@@ -1,5 +1,5 @@
 import DriveSidebar from "@/components/sidebar/DriveSidebar";
-import { getSessionUserId } from "@/lib/session";
+import { getSessionUser } from "@/lib/session";
 import { redirect } from "next/navigation";
 import styles from "./layout.module.scss";
 
@@ -8,7 +8,7 @@ export default async function ProtectedLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  const sessionId = await getSessionUserId();
+  const sessionId = await getSessionUser();
   if (!sessionId) {
     redirect("/login");
   }

@@ -24,3 +24,18 @@
 .overlayActive {
   background-color: v(tint-peach-bg);
 }
+
+.avatar {
+  &.hasRing {
+    box-shadow:
+      0 0 0 2px var(--background),
+      0 0 0 3px var(--avatar-bd);
+  }
+}
+
+.fallback {
+  background: var(--avatar-bg);
+  color: var(--avatar-tx);
+  font-weight: 600;
+  letter-spacing: -0.02em;
+}
