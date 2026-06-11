@@ -118,7 +118,7 @@ export default function VerifyOtpPage() {
 
       if (response.success && response.status === "success") {
         setStatus("success");
-        setTimeout(() => router.push("/dashboard"), 1000);
+        setTimeout(() => router.push("/my-drive"), 1000);
       } else if (response.success && data?.step === "needs_password") {
         setPasswordHint(data.passwordHint ?? null);
         setStatus("needs_password");
@@ -142,7 +142,7 @@ export default function VerifyOtpPage() {
 
       if (response.success && data?.step === "success") {
         setStatus("success");
-        setTimeout(() => router.push("/dashboard"), 1000);
+        setTimeout(() => router.push("/my-drive"), 1000);
       } else {
         setServerError(response.message ?? "Incorrect password");
       }

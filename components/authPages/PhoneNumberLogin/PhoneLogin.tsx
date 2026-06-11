@@ -66,7 +66,7 @@ export default function PhoneLogin() {
       toast.success("OTP sent successfully");
       router.push(`/verify-otp?phone=${encrypt(targetNumber)}`);
     } else {
-      toast.error(data.error);
+      toast.error(data.error ?? "Failed to send OTP");
     }
   };
 

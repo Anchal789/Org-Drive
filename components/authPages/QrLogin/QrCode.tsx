@@ -105,7 +105,7 @@ export default function QrCode() {
           });
         } else if (data.step === "success" && data.user) {
           setState({ status: "success", user: data.user });
-          setTimeout(() => router.push("/dashboard"), 1500);
+          setTimeout(() => router.push("/my-drive"), 1500);
         } else if (data.step === "expired") {
           setState({ status: "expired", loginId: currentLoginId });
         } else if (data.step === "error") {
@@ -161,7 +161,7 @@ export default function QrCode() {
 
         if (response.success && data?.step === "success" && data.user) {
           setState({ status: "success", user: data.user });
-          setTimeout(() => router.push("/dashboard"), 1500);
+          setTimeout(() => router.push("/my-drive"), 1500);
           return null;
         }
         return data?.error ?? "Password failed";
