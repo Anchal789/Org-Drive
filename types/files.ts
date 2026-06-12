@@ -13,6 +13,7 @@ export interface UploadedFile {
   updatedAt: Date;
   isDeleted: boolean;
   starred: boolean;
+  folderId?: number;
 }
 
 export interface UploadedFolder {
@@ -32,6 +33,7 @@ export interface UploadFilesResponse {
   size: number;
   mimeType: string;
   starred?: boolean;
+  folderId?: number;
 }
 
 export interface UploadingProgress {

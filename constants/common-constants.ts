@@ -98,6 +98,7 @@ export const iconsWithPaths = {
   more: "M12 13a1 1 0 1 0 0-2 1 1 0 0 0 0 2zM19 13a1 1 0 1 0 0-2 1 1 0 0 0 0 2zM5 13a1 1 0 1 0 0-2 1 1 0 0 0 0 2z",
   chev: "M9 18l6-6-6-6",
   chevDown: "M6 9l6 6 6-6",
+  chevUp: "M6 15l6-6 6 6",
   chevLeft: "M15 18l-6-6 6-6",
   send: "M22 2L11 13 M22 2l-7 20-4-9-9-4z",
   sparkle: "M12 3l1.9 5.1L19 10l-5.1 1.9L12 17l-1.9-5.1L5 10l5.1-1.9z",

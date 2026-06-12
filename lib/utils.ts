@@ -1,17 +1,19 @@
 import { Tone } from "@/types/dashboard";
 import { type ClassValue, clsx } from "clsx";
 import { twMerge } from "tailwind-merge";
+import CryptoJS from "crypto-js";
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
 }
 
 export function encrypt(text: string) {
-  return btoa(text);
+  return CryptoJS.AES.encrypt(text, text).toString();
 }
 
 export function decrypt(text: string) {
-  return atob(text);
+  const bytes = CryptoJS.AES.decrypt(text, text);
+  return bytes.toString(CryptoJS.enc.Utf8);
 }
 
 export const formatFileDate = (date: string | Date): string => {
@@ -77,3 +79,18 @@ export const getAvatarColor = (seed: string | number): Tone => {
 
   return AVATAR_COLORS[Math.abs(hash) % AVATAR_COLORS.length];
 };
+
+const FOLDER_TONES: Tone[] = [
+  "blue",
+  "violet",
+  "amber",
+  "pink",
+  "teal",
+  "red",
+  "green",
+  "sky",
+];
+
+export function getFolderTone(index: number): Tone {
+  return FOLDER_TONES[index % FOLDER_TONES.length];
+}

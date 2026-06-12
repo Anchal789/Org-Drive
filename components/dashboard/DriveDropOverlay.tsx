@@ -13,7 +13,7 @@ export default function DriveDropOverlay() {
       className={`${styles.overlay} ${isDragging ? styles.overlayActive : ""}`}
     >
       <div className={styles.inner}>
-        <Dropzone onDragging={setIsDragging} />
+        <Dropzone onDraggingAction={setIsDragging} />
         <div className={styles.iconBox}>
           <Icon d={iconsWithPaths.upload} size={28} stroke={2} />
         </div>

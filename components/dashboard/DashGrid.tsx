@@ -1,24 +1,38 @@
+export const dynamic = "force-dynamic";
+
 import { getSessionUser } from "@/lib/session";
 import DriveCrumb from "./DriveCrumb";
 import DriveTopbar from "./DriveTopbar";
 import FileCard from "./FileSection/FileCard";
 import FolderTile from "./FolderTile";
 import UploadWidget from "./UploadWidget";
-import { DRIVE_FILES, DRIVE_FOLDERS } from "@/constants/dashboard-constants";
+import { DRIVE_FILES } from "@/constants/dashboard-constants";
 import styles from "@/styles/components/DashGrid.module.scss";
 import { uploadedFilesRepository } from "@/repositories/uploaded-files.respository";
-import { UploadedFile } from "@/types/files";
+import { UploadedFile, UploadedFolder } from "@/types/files";
+import { uploadedFoldersRepository } from "@/repositories/uploaded-folders.respository";
+import Link from "next/link";
+import { encrypt } from "@/lib/utils";
 
 export default async function DashGrid() {
   const user = await getSessionUser();
   const files = (await uploadedFilesRepository.getFiles(
     Number(user?.userId),
   )) as Array<UploadedFile>;
+  const folders = (await uploadedFoldersRepository.getFolders(
+    Number(user?.userId),
+  )) as Array<UploadedFolder>;
+
+  const filesInFolders = (await uploadedFilesRepository.getFilesInFolder(
+    Number(user?.userId),
+    14,
+  )) as Array<UploadedFile>;
+
   return (
     <div className={styles.shell} data-screen-label="02 Drive · Home (grid)">
       <div className={styles.main}>
         <DriveTopbar />
-        <DriveCrumb />
+        <DriveCrumb inFolder="" />
 
         <div className={styles.content}>
           <div className={styles.sectionLabel}>Suggested</div>
@@ -35,8 +49,13 @@ export default async function DashGrid() {
             </span>
           </div>
           <div className={`${styles.grid} ${styles.grid4}`}>
-            {DRIVE_FOLDERS.map((folder) => (
-              <FolderTile key={folder.name} folder={folder} />
+            {folders.map((folder) => (
+              <Link
+                key={folder.id}
+                href={`/my-drive/folder/${encrypt(String(folder.id))}`}
+              >
+                <FolderTile key={folder.id} folder={folder} user={user} />
+              </Link>
             ))}
           </div>
 

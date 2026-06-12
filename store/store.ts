@@ -1,5 +1,11 @@
 import { UploadItem } from "@/types/dashboard";
-import { AuthStateStore, DragDropStore, UploadStore } from "@/types/store";
+import {
+  AuthStateStore,
+  DragDropStore,
+  QueuedFile,
+  UploadStore,
+} from "@/types/store";
+import { toast } from "sonner";
 import { create } from "zustand";
 
 export const useAuthStore = create<AuthStateStore>((set) => ({
@@ -15,7 +21,7 @@ export const useDragDropStore = create<DragDropStore>((set) => ({
   setFiles: (files) => set({ files }),
 }));
 
-function formatBytes(bytes: number): string {
+export function formatBytes(bytes: number): string {
   if (bytes === 0) return "0 B";
   const k = 1024;
   const sizes = ["B", "KB", "MB", "GB"];
@@ -33,42 +39,54 @@ export const useUploadStore = create<UploadStore>((set, get) => ({
 
   closeWidget: () => set({ isWidgetVisible: false, uploads: {} }),
 
-  abortUpload: (fileName: string) => {
-    const controller = activeControllers.get(fileName);
+  abortUpload: (uniqueId: string) => {
+    const controller = activeControllers.get(uniqueId);
     if (controller) {
       controller.abort();
-      activeControllers.delete(fileName);
+      activeControllers.delete(uniqueId);
     }
 
     set((state) => ({
-      pendingQueue: state.pendingQueue.filter((f) => f.name !== fileName),
+      pendingQueue: state.pendingQueue.filter((f) => f.uniqueId !== uniqueId),
       uploads: {
         ...state.uploads,
-        [fileName]: {
-          ...state.uploads[fileName],
+        [uniqueId]: {
+          ...state.uploads[uniqueId],
           state: "aborted",
         },
       },
     }));
   },
 
-  startUploads: (files: File[]) => {
+  startUploads: (files: File[], folderName?: string, fileCount?: number) => {
     const newUploads: Record<string, UploadItem> = {};
+    const newQueueItems: QueuedFile[] = [];
     files.forEach((file) => {
-      newUploads[file.name] = {
-        id: file.name,
+      const uniqueId = `${file.name}-${Date.now()}-${Math.random().toString(36).slice(2, 9)}`;
+      newUploads[uniqueId] = {
+        id: uniqueId,
         name: file.name,
         size: formatBytes(file.size),
         state: "queued",
         pct: 0,
         eta: undefined,
+        folderName: folderName,
+        rawSize: file.size,
+        isFolderGroup: false,
       };
+      newQueueItems.push({
+        file,
+        folderName,
+        fileCount,
+        isFolder: folderName !== undefined,
+        uniqueId,
+      });
     });
 
     set((state) => ({
       isWidgetVisible: true,
       uploads: { ...state.uploads, ...newUploads },
-      pendingQueue: [...state.pendingQueue, ...files],
+      pendingQueue: [...state.pendingQueue, ...newQueueItems],
     }));
 
     get().processQueue();
@@ -81,13 +99,18 @@ export const useUploadStore = create<UploadStore>((set, get) => ({
 
     set({ isProcessing: true });
 
-    const file = state.pendingQueue[0];
+    const { file, folderName, fileCount, uniqueId } = state.pendingQueue[0];
 
     const controller = new AbortController();
     activeControllers.set(file.name, controller);
 
     const formData = new FormData();
     formData.append("file", file);
+
+    if (folderName) {
+      formData.append("folderName", folderName);
+      formData.append("fileCount", String(fileCount || 0));
+    }
 
     try {
       const response = await fetch("/api/upload-files", {
@@ -96,6 +119,12 @@ export const useUploadStore = create<UploadStore>((set, get) => ({
         signal: controller.signal,
       });
 
+      if (!response.ok) {
+        const errorData = await response.json().catch(() => null);
+        const errorMessage =
+          errorData?.message || errorData?.error || "Server connection failed.";
+        throw new Error(errorMessage);
+      }
       if (!response.body) throw new Error("No stream available");
 
       const reader = response.body.getReader();
@@ -126,6 +155,8 @@ export const useUploadStore = create<UploadStore>((set, get) => ({
             continue;
           }
 
+          let streamError: Error | null = null;
+
           try {
             const event = JSON.parse(jsonString);
 
@@ -133,8 +164,8 @@ export const useUploadStore = create<UploadStore>((set, get) => ({
               set((s) => ({
                 uploads: {
                   ...s.uploads,
-                  [event.name]: {
-                    ...s.uploads[event.name],
+                  [uniqueId]: {
+                    ...s.uploads[uniqueId],
                     state: "uploading",
                     pct: 0,
                     eta: event.eta,
@@ -145,8 +176,8 @@ export const useUploadStore = create<UploadStore>((set, get) => ({
               set((s) => ({
                 uploads: {
                   ...s.uploads,
-                  [event.name]: {
-                    ...s.uploads[event.name],
+                  [uniqueId]: {
+                    ...s.uploads[uniqueId],
                     pct: event.percentage,
                     eta: event.eta,
                   },
@@ -165,9 +196,12 @@ export const useUploadStore = create<UploadStore>((set, get) => ({
                 },
               }));
             } else if (event.type === "error") {
-              throw new Error(event.message);
+              streamError = new Error(event.message);
             }
           } catch (err) {}
+          if (streamError) {
+            throw streamError;
+          }
         }
       }
     } catch (error: any) {
@@ -175,12 +209,13 @@ export const useUploadStore = create<UploadStore>((set, get) => ({
         set((s) => ({
           uploads: {
             ...s.uploads,
-            [file.name]: { ...s.uploads[file.name], state: "error" },
+            [uniqueId]: { ...s.uploads[uniqueId], state: "error" },
           },
         }));
+        toast.error(`Upload failed: ${error.message}`);
       }
     } finally {
-      activeControllers.delete(file.name);
+      activeControllers.delete(uniqueId);
       set((s) => ({
         pendingQueue: s.pendingQueue.slice(1),
         isProcessing: false,

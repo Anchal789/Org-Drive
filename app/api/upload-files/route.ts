@@ -12,6 +12,9 @@ import path from "path";
 import os from "os";
 import { UploadFilesResponse } from "@/types/files";
 import { uploadedFilesRepository } from "@/repositories/uploaded-files.respository";
+import { uploadFoldersTable } from "@/db/schema";
+import { db } from "@/db";
+import { and, eq } from "drizzle-orm";
 
 const API_ID = Number(process.env.TELEGRAM_APP_API_ID);
 const API_HASH = String(process.env.TELEGRAM_APP_API_HASH);
@@ -30,8 +33,40 @@ export async function POST(request: NextRequest) {
 
     const formData = await request.formData();
     const files = formData.getAll("file") as Array<File>;
+    const folderName = formData.get("folderName") as string | null;
+    const fileCount = formData.get("fileCount") as number | null;
     if (!files || files.length === 0)
       return sendError("No files uploaded", 400);
+
+    let resolvedFolderId: number | null = null;
+
+    if (folderName) {
+      const existingFolder = await db
+        .select()
+        .from(uploadFoldersTable)
+        .where(
+          and(
+            eq(uploadFoldersTable.name, folderName),
+            eq(uploadFoldersTable.userId, Number(session.userId)),
+            eq(uploadFoldersTable.fileCount, Number(fileCount)),
+          ),
+        )
+        .limit(1);
+
+      if (existingFolder.length > 0) {
+        resolvedFolderId = existingFolder[0].id;
+      } else {
+        const [newFolder] = await db
+          .insert(uploadFoldersTable)
+          .values({
+            userId: Number(session.userId),
+            name: folderName,
+            fileCount: Number(fileCount),
+          })
+          .returning();
+        resolvedFolderId = newFolder.id;
+      }
+    }
 
     const encoder = new TextEncoder();
 
@@ -44,6 +79,7 @@ export async function POST(request: NextRequest) {
 
     try {
       await client.connect();
+      await client.getDialogs({ limit: 20 });
     } catch (_error) {
       return sendError("Failed to connect to Telegram infrastructure", 500);
     }
@@ -80,14 +116,21 @@ export async function POST(request: NextRequest) {
             );
             await fs.writeFile(tempFilePath, buffer);
 
+            if (file.size === 0) {
+              throw new Error(
+                "Telegram does not allow uploading empty (0 byte) files.",
+              );
+            }
+
             try {
               let lastReportedPercentage = -1;
               const startTime = Date.now();
+              const optimalWorkers = file.size > 10 * 1024 * 1024 ? 4 : 1;
 
               const message = await client?.sendFile(STORAGE_CHANNEL, {
                 file: tempFilePath,
                 forceDocument: true,
-                workers: 4,
+                workers: optimalWorkers,
                 progressCallback: (progress: number) => {
                   const currentPercentage = Math.round(progress * 100);
                   if (currentPercentage !== lastReportedPercentage) {
@@ -125,6 +168,7 @@ export async function POST(request: NextRequest) {
               uploadedFiles.push({
                 userId: dbUser.id,
                 telegramMessageId: message.id,
+                folderId: resolvedFolderId || undefined,
                 documentId: document?.id.toString() || "",
                 accessHash: document?.accessHash.toString(),
                 name: file.name,

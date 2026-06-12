@@ -2,10 +2,12 @@
 
 import Icon from "@/components/ui/Icon";
 import { iconsWithPaths, TINTS } from "@/constants/common-constants";
-import type { UploadItem, Tone } from "@/types/dashboard";
+import type { UploadItem, Tone, DisplayItem } from "@/types/dashboard";
 import styles from "@/styles/components/UploadWidget.module.scss";
-import { useUploadStore } from "@/store/store";
+import { formatBytes, useUploadStore } from "@/store/store";
 import { Button } from "@base-ui/react";
+import { useEffect, useState } from "react";
+import { useRouter } from "next/navigation";
 
 const STATE_TO_TONE: Record<UploadItem["state"], Tone> = {
   done: "green",
@@ -19,11 +21,11 @@ const STATE_TO_TONE: Record<UploadItem["state"], Tone> = {
 function UploadItemRow({
   item,
   isLast,
-  abortUpload,
+  onAbort,
 }: {
-  item: UploadItem;
+  item: DisplayItem;
   isLast: boolean;
-  abortUpload: (fileName: string) => void;
+  onAbort: (item: DisplayItem) => void;
 }) {
   const tone = STATE_TO_TONE[item.state];
   const tint = TINTS[tone];
@@ -90,7 +92,16 @@ function UploadItemRow({
       </div>
 
       <div className={styles.itemBody}>
-        <div className={styles.itemName}>{item.name}</div>
+        <div className={styles.itemName}>
+          {item.isFolderGroup && (
+            <Icon
+              d={iconsWithPaths.folder}
+              size={12}
+              style={{ marginRight: 6, display: "inline" }}
+            />
+          )}
+          {item.name}
+        </div>
         <div className={styles.itemMeta}>
           <span className={styles.itemSize}>{item.size}</span>
           <span className={styles.itemDot} style={{ color: tint.tx }}>
@@ -102,7 +113,7 @@ function UploadItemRow({
         </div>
       </div>
 
-      <Button onClick={() => abortUpload(item.name)}>
+      <Button onClick={() => onAbort(item)}>
         <Icon
           d={
             item.state === "done"
@@ -124,20 +135,84 @@ export default function UploadWidget() {
     isWidgetVisible: isVisible,
     uploads: uploadsRecord,
     closeWidget,
+    isProcessing,
     abortUpload,
   } = useUploadStore();
 
-  const items = Object.values(uploadsRecord);
+  const router = useRouter();
+  const [collapseWidget, setCollapseWidget] = useState<boolean>(false);
 
-  const itemsStillUploading = items.filter(
+  const rawItems: UploadItem[] = Object.values(uploadsRecord);
+  const displayItems: DisplayItem[] = [];
+  const folderMap = new Map<string, UploadItem[]>();
+
+  rawItems.forEach((item) => {
+    if (item.folderName) {
+      if (!folderMap.has(item.folderName)) folderMap.set(item.folderName, []);
+      folderMap.get(item.folderName)!.push(item);
+    } else {
+      displayItems.push(item);
+    }
+  });
+
+  folderMap.forEach((folderFiles, folderName) => {
+    const totalFiles = folderFiles.length;
+    const doneFiles = folderFiles.filter((f) => f.state === "done").length;
+    const errorFiles = folderFiles.filter(
+      (f) => f.state === "error" || f.state === "aborted",
+    ).length;
+    const uploadingFile = folderFiles.find((f) => f.state === "uploading");
+
+    let state: UploadItem["state"] = "queued";
+    if (doneFiles === totalFiles) state = "done";
+    else if (errorFiles + doneFiles === totalFiles) state = "error";
+    else if (uploadingFile || doneFiles > 0) state = "uploading";
+
+    const donePct = (doneFiles / totalFiles) * 100;
+    const uploadingPct = uploadingFile ? uploadingFile.pct / totalFiles : 0;
+    const totalPct = Math.round(donePct + uploadingPct);
+
+    const totalRawSize = folderFiles.reduce(
+      (acc, f) => acc + (f.rawSize || 0),
+      0,
+    );
+
+    displayItems.push({
+      id: folderName,
+      name: folderName,
+      isFolderGroup: true,
+      originalFiles: folderFiles,
+      size: formatBytes(totalRawSize),
+      state: state,
+      pct: totalPct,
+      eta: uploadingFile?.eta,
+    });
+  });
+
+  const itemsStillUploading = displayItems.filter(
     (i) =>
       i.state === "uploading" || i.state === "queued" || i.state === "indexing",
   );
-  const doneCount = items.filter((i) => i.state === "done").length;
-  const estimateTime = items.reduce((acc, i) => acc + (i?.eta || 0) || 0, 0);
+  const doneCount = displayItems.filter((i) => i.state === "done").length;
+
+  const estimateTime = rawItems.reduce((acc, i) => acc + (i?.eta || 0) || 0, 0);
   const estimateHours = Math.floor(estimateTime / 60 / 60);
   const estimateMinutes = Math.floor((estimateTime / 60) % 60);
   const estimateSeconds = Math.floor(estimateTime % 60);
+
+  const handleAbort = (item: DisplayItem) => {
+    if (item.isFolderGroup) {
+      item.originalFiles.forEach((f) => abortUpload(f.id));
+    } else {
+      abortUpload(item.id);
+    }
+  };
+
+  useEffect(() => {
+    if (!isProcessing && rawItems.length > 0) {
+      router.refresh();
+    }
+  }, [isProcessing, rawItems.length, router]);
 
   if (!isVisible) return null;
 
@@ -155,7 +230,8 @@ export default function UploadWidget() {
               }}
             />
             <span className={styles.headTitle}>
-              Uploading {items.length - doneCount} of {items.length}
+              Uploading {displayItems.length - doneCount} of{" "}
+              {displayItems.length}
             </span>
           </>
         ) : (
@@ -166,7 +242,7 @@ export default function UploadWidget() {
               style={{ color: "var(--primary)" }}
             />
             <span className={styles.headTitle}>
-              {doneCount} of {items.length} uploaded successfully
+              {doneCount} of {displayItems.length} uploaded successfully
             </span>
           </>
         )}
@@ -176,21 +252,33 @@ export default function UploadWidget() {
             {estimateMinutes}m {estimateSeconds}s left
           </span>
         )}
-        <Icon d={iconsWithPaths.chevDown} size={14} style={{ opacity: 0.8 }} />
+        <button onClick={() => setCollapseWidget(!collapseWidget)}>
+          <Icon
+            d={collapseWidget ? iconsWithPaths.chevUp : iconsWithPaths.chevDown}
+            size={14}
+            style={{ opacity: 0.8 }}
+          />
+        </button>
         <button onClick={closeWidget} className={styles.closeBtn}>
           <Icon d={iconsWithPaths.x} size={14} />
         </button>
       </div>
-      <div className={styles.list}>
-        {items.map((item, i) => (
-          <UploadItemRow
-            key={item.id}
-            item={item}
-            isLast={i === items.length - 1}
-            abortUpload={abortUpload}
-          />
-        ))}
+
+      <div
+        className={`${styles.list} ${collapseWidget ? styles.listCollapsed : ""}`}
+      >
+        <div className={styles.listInner}>
+          {displayItems.map((item, i) => (
+            <UploadItemRow
+              key={item.id}
+              item={item}
+              isLast={i === displayItems.length - 1}
+              onAbort={handleAbort}
+            />
+          ))}
+        </div>
       </div>
+
       <div className={styles.footer}>
         <Icon d={iconsWithPaths.shield} size={11} />
         End-to-end encrypted via your Telegram channel.

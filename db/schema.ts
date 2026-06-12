@@ -52,6 +52,7 @@ export const uploadedFilesTable = pgTable("uploaded_files", {
     .notNull(),
   isDeleted: boolean("is_deleted").default(false).notNull(),
   starred: boolean("starred").default(false).notNull(),
+  folderId: integer("folder_id").references(() => uploadFoldersTable.id),
 });
 
 export const uploadFoldersTable = pgTable("upload_folders", {

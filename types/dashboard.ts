@@ -121,6 +121,20 @@ export interface UploadItem {
   state: UploadState;
   pct: number;
   eta?: number;
+  folderName?: string;
+  rawSize?: number;
+  isFolderGroup?: false;
+}
+
+export interface FolderGroupItem {
+  id: string;
+  name: string;
+  isFolderGroup: true;
+  originalFiles: UploadItem[];
+  size: string;
+  state: UploadState;
+  pct: number;
+  eta?: number;
 }
 
 export type BtnVariant =
@@ -133,3 +147,5 @@ export type BtnVariant =
 export type BtnSize = "sm" | "md" | "lg" | "icon";
 
 export type AvatarSize = number;
+
+export type DisplayItem = UploadItem | FolderGroupItem;

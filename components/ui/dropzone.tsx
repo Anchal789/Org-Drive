@@ -3,18 +3,96 @@
 import { Input } from "./input";
 import styles from "./Component.module.scss";
 import { useDragDropStore, useUploadStore } from "@/store/store";
+import { toast } from "sonner";
 
-const Dropzone = ({
-  onDragging,
+export default function Dropzone({
+  onDraggingAction,
 }: {
-  onDragging?: (dragging: boolean) => void;
-}) => {
+  onDraggingAction?: (dragging: boolean) => void;
+}) {
   const { setIsDragging } = useDragDropStore();
   const startUploads = useUploadStore((state) => state.startUploads);
 
   const handleDrag = (value: boolean) => {
     setIsDragging(value);
-    onDragging?.(value);
+    onDraggingAction?.(value);
+  };
+
+  const readDirectory = (directoryEntry: any): Promise<File[]> => {
+    return new Promise((resolve, reject) => {
+      const reader = directoryEntry.createReader();
+      reader.readEntries(async (entries: any[]) => {
+        const files: File[] = [];
+
+        for (const entry of entries) {
+          if (entry.isFile) {
+            const file = await new Promise<File>((res) => entry.file(res));
+            files.push(file);
+          } else if (entry.isDirectory) {
+            reject(new Error("Nested folders are not allowed."));
+            return;
+          }
+        }
+        resolve(files);
+      });
+    });
+  };
+
+  const handleDrop = async (e: React.DragEvent) => {
+    e.preventDefault();
+    handleDrag(false);
+
+    const items = e.dataTransfer.items;
+    let extractedFiles: File[] = [];
+    let folderName = "";
+
+    try {
+      const promises = Array.from(items).map(async (item) => {
+        const entry = item.webkitGetAsEntry();
+        if (!entry) return;
+
+        if (entry.isFile) {
+          const file = item.getAsFile();
+          if (file) extractedFiles.push(file);
+        } else if (entry.isDirectory) {
+          folderName = entry.name;
+          const filesInFolder = await readDirectory(entry);
+          extractedFiles = [...extractedFiles, ...filesInFolder];
+        }
+      });
+
+      await Promise.all(promises);
+
+      if (extractedFiles.length > 0) {
+        startUploads(extractedFiles, folderName, extractedFiles.length);
+      }
+    } catch (error: any) {
+      toast.error(error.message || "Failed to read folder contents.");
+    }
+  };
+
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const files = e.target.files;
+    if (!files || files.length === 0) return;
+
+    const fileArray = Array.from(files);
+
+    const hasNestedFolders = fileArray.some(
+      (file) => file.webkitRelativePath.split("/").length > 2,
+    );
+
+    if (hasNestedFolders) {
+      toast.error("Nested folders are not allowed.");
+      e.target.value = "";
+      return;
+    }
+
+    let folderName = undefined;
+    if (fileArray[0].webkitRelativePath) {
+      folderName = fileArray[0].webkitRelativePath.split("/")[0];
+    }
+    startUploads(fileArray, folderName, fileArray.length);
+    e.target.value = "";
   };
 
   return (
@@ -22,11 +100,7 @@ const Dropzone = ({
       type="file"
       multiple
       className={styles.overlayInput}
-      onChange={(e) => {
-        if (e.target.files && e.target.files.length > 0) {
-          startUploads(Array.from(e.target.files));
-        }
-      }}
+      onChange={handleChange}
       onDragOver={(e) => {
         e.preventDefault();
         handleDrag(true);
@@ -35,100 +109,8 @@ const Dropzone = ({
         e.preventDefault();
         handleDrag(false);
       }}
-      onDrop={(e) => {
-        e.preventDefault();
-        handleDrag(false);
-
-        if (e.dataTransfer.files && e.dataTransfer.files.length > 0) {
-          startUploads(Array.from(e.dataTransfer.files));
-        }
-      }}
+      onDrop={handleDrop}
+      {...{ webkitdirectory: "true" }}
     />
   );
-};
-
-export default Dropzone;
-
-// "use client";
-
-// import { Input } from "./input";
-// import styles from "./Component.module.scss";
-// import { useDragDropStore, useUploadStore } from "@/store/store";
-// import { toast } from "sonner"; // Assuming you are using sonner for toasts based on previous code
-
-// const Dropzone = ({
-//   onDragging,
-// }: {
-//   onDragging?: (dragging: boolean) => void;
-// }) => {
-//   const { setIsDragging } = useDragDropStore();
-//   const startUploads = useUploadStore((state) => state.startUploads);
-
-//   const handleDrag = (value: boolean) => {
-//     setIsDragging(value);
-//     onDragging?.(value);
-//   };
-
-//   const processAndValidateFiles = (files: File[]) => {
-//     // 1. Check for nested folders
-//     const hasNestedFolders = files.some((file) => {
-//       if (file.webkitRelativePath) {
-//         // Count how many slashes are in the path
-//         const slashCount = (file.webkitRelativePath.match(/\//g) || []).length;
-
-//         // If there is more than 1 slash, it means there is a sub-folder
-//         return slashCount > 1;
-//       }
-//       return false;
-//     });
-
-//     if (hasNestedFolders) {
-//       toast.error("Nested folders are not allowed. Please upload a single-level folder.");
-//       return; // Instantly abort the upload process
-//     }
-
-//     // 2. Optional: If you want to prevent EMPTY folders from crashing things
-//     if (files.length === 0) {
-//       toast.error("This folder is empty.");
-//       return;
-//     }
-
-//     // 3. If validation passes, send them to the Zustand queue
-//     startUploads(files);
-//   };
-
-//   return (
-//     <Input
-//       type="file"
-//       multiple
-//       // Note: If you want users to be able to CLICK to select a folder instead of just drag-and-drop,
-//       // you need to add the webkitdirectory attribute. Otherwise, leave it as is for just files/drag-and-drop.
-//       // @ts-expect-error - React types don't officially support webkitdirectory yet, but browsers do
-//       webkitdirectory="true"
-//       className={styles.overlayInput}
-//       onChange={(e) => {
-//         if (e.target.files && e.target.files.length > 0) {
-//           processAndValidateFiles(Array.from(e.target.files));
-//         }
-//       }}
-//       onDragOver={(e) => {
-//         e.preventDefault();
-//         handleDrag(true);
-//       }}
-//       onDragLeave={(e) => {
-//         e.preventDefault();
-//         handleDrag(false);
-//       }}
-//       onDrop={(e) => {
-//         e.preventDefault();
-//         handleDrag(false);
-
-//         if (e.dataTransfer.files && e.dataTransfer.files.length > 0) {
-//           processAndValidateFiles(Array.from(e.dataTransfer.files));
-//         }
-//       }}
-//     />
-//   );
-// };
-
-// export default Dropzone;
+}

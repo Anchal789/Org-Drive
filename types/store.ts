@@ -13,13 +13,25 @@ export interface DragDropStore {
   setFiles: (files: File[]) => void;
 }
 
+export interface QueuedFile {
+  file: File;
+  folderName?: string;
+  fileCount?: number;
+  isFolder: boolean;
+  uniqueId: string;
+}
+
 export interface UploadStore {
   isWidgetVisible: boolean;
   uploads: Record<string, UploadItem>;
-  pendingQueue: File[];
+  pendingQueue: QueuedFile[];
   isProcessing: boolean;
   closeWidget: () => void;
-  abortUpload: (fileName: string) => void;
-  startUploads: (files: File[]) => void;
+  abortUpload: (uniqueId: string) => void;
+  startUploads: (
+    files: File[],
+    folderName?: string,
+    fileCount?: number,
+  ) => void;
   processQueue: () => Promise<void>;
 }

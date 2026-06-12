@@ -1,0 +1,16 @@
+import { db } from "@/db";
+import { uploadedFilesTable, uploadFoldersTable } from "@/db/schema";
+import { eq } from "drizzle-orm";
+
+export const uploadedFoldersRepository = {
+  async getFolders(userId: number) {
+    const folders = await db
+      .select()
+      .from(uploadFoldersTable)
+      .where(eq(uploadFoldersTable.userId, userId));
+    return folders;
+  },
+  async deleteFolder(id: number) {
+    await db.delete(uploadedFilesTable).where(eq(uploadedFilesTable.id, id));
+  },
+};
