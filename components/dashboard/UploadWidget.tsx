@@ -1,21 +1,21 @@
-"use client";
+'use client';
 
-import Icon from "@/components/ui/Icon";
-import { iconsWithPaths, TINTS } from "@/constants/common-constants";
-import type { UploadItem, Tone, DisplayItem } from "@/types/dashboard";
-import styles from "@/styles/components/UploadWidget.module.scss";
-import { formatBytes, useUploadStore } from "@/store/store";
-import { Button } from "@base-ui/react";
-import { useEffect, useState } from "react";
-import { useRouter } from "next/navigation";
+import { Button } from '@base-ui/react';
+import { useRouter } from 'next/navigation';
+import { useEffect, useState } from 'react';
+import Icon from '@/components/ui/icon';
+import { iconsWithPaths, TINTS } from '@/constants/common-constants';
+import { formatBytes, useUploadStore } from '@/store/store';
+import styles from '@/styles/components/UploadWidget.module.scss';
+import type { DisplayItem, Tone, UploadItem } from '@/types/dashboard';
 
-const STATE_TO_TONE: Record<UploadItem["state"], Tone> = {
-  done: "green",
-  indexing: "violet",
-  queued: "slate",
-  uploading: "sky",
-  error: "red",
-  aborted: "red",
+const STATE_TO_TONE: Record<UploadItem['state'], Tone> = {
+  done: 'green',
+  indexing: 'violet',
+  queued: 'slate',
+  uploading: 'sky',
+  error: 'red',
+  aborted: 'red',
 };
 
 function UploadItemRow({
@@ -30,32 +30,32 @@ function UploadItemRow({
   const tone = STATE_TO_TONE[item.state];
   const tint = TINTS[tone];
   const stateLabel =
-    item.state === "indexing"
-      ? "Indexing for AI"
-      : item.state === "error"
-        ? "Upload Failed"
-        : item.state === "aborted"
-          ? "Upload Cancelled"
+    item.state === 'indexing'
+      ? 'Indexing for AI'
+      : item.state === 'error'
+        ? 'Upload Failed'
+        : item.state === 'aborted'
+          ? 'Upload Cancelled'
           : item.state;
 
   return (
-    <div className={`${styles.itemRow} ${isLast ? styles.itemRowLast : ""}`}>
+    <div className={`${styles.itemRow} ${isLast ? styles.itemRowLast : ''}`}>
       <div
         className={styles.itemIcon}
         style={{ background: tint.bg, color: tint.tx }}
       >
-        {item.state === "done" && (
+        {item.state === 'done' && (
           <Icon d={iconsWithPaths.check} size={14} stroke={2.4} />
         )}
-        {item.state === "indexing" && (
+        {item.state === 'indexing' && (
           <Icon
             d={iconsWithPaths.sparkle}
             size={13}
-            style={{ animation: "spin 2.4s linear infinite" }}
+            style={{ animation: 'spin 2.4s linear infinite' }}
           />
         )}
-        {item.state === "queued" && <Icon d={iconsWithPaths.clock} size={13} />}
-        {item.state === "uploading" && (
+        {item.state === 'queued' && <Icon d={iconsWithPaths.clock} size={13} />}
+        {item.state === 'uploading' && (
           <>
             <svg
               width="30"
@@ -86,7 +86,7 @@ function UploadItemRow({
             <span className={styles.uploadingPct}>{item.pct}%</span>
           </>
         )}
-        {(item.state === "error" || item.state === "aborted") && (
+        {(item.state === 'error' || item.state === 'aborted') && (
           <Icon d={iconsWithPaths.x} size={14} stroke={2.4} />
         )}
       </div>
@@ -97,7 +97,7 @@ function UploadItemRow({
             <Icon
               d={iconsWithPaths.folder}
               size={12}
-              style={{ marginRight: 6, display: "inline" }}
+              style={{ marginRight: 6, display: 'inline' }}
             />
           )}
           {item.name}
@@ -116,14 +116,14 @@ function UploadItemRow({
       <Button onClick={() => onAbort(item)}>
         <Icon
           d={
-            item.state === "done"
+            item.state === 'done'
               ? iconsWithPaths.check
-              : item.state === "uploading" || item.state === "queued"
+              : item.state === 'uploading' || item.state === 'queued'
                 ? iconsWithPaths.x
                 : iconsWithPaths.more
           }
           size={13}
-          style={{ color: "var(--muted-foreground)", flexShrink: 0 }}
+          style={{ color: 'var(--muted-foreground)', flexShrink: 0 }}
         />
       </Button>
     </div>
@@ -157,16 +157,16 @@ export default function UploadWidget() {
 
   folderMap.forEach((folderFiles, folderName) => {
     const totalFiles = folderFiles.length;
-    const doneFiles = folderFiles.filter((f) => f.state === "done").length;
+    const doneFiles = folderFiles.filter((f) => f.state === 'done').length;
     const errorFiles = folderFiles.filter(
-      (f) => f.state === "error" || f.state === "aborted",
+      (f) => f.state === 'error' || f.state === 'aborted',
     ).length;
-    const uploadingFile = folderFiles.find((f) => f.state === "uploading");
+    const uploadingFile = folderFiles.find((f) => f.state === 'uploading');
 
-    let state: UploadItem["state"] = "queued";
-    if (doneFiles === totalFiles) state = "done";
-    else if (errorFiles + doneFiles === totalFiles) state = "error";
-    else if (uploadingFile || doneFiles > 0) state = "uploading";
+    let state: UploadItem['state'] = 'queued';
+    if (doneFiles === totalFiles) state = 'done';
+    else if (errorFiles + doneFiles === totalFiles) state = 'error';
+    else if (uploadingFile || doneFiles > 0) state = 'uploading';
 
     const donePct = (doneFiles / totalFiles) * 100;
     const uploadingPct = uploadingFile ? uploadingFile.pct / totalFiles : 0;
@@ -191,9 +191,9 @@ export default function UploadWidget() {
 
   const itemsStillUploading = displayItems.filter(
     (i) =>
-      i.state === "uploading" || i.state === "queued" || i.state === "indexing",
+      i.state === 'uploading' || i.state === 'queued' || i.state === 'indexing',
   );
-  const doneCount = displayItems.filter((i) => i.state === "done").length;
+  const doneCount = displayItems.filter((i) => i.state === 'done').length;
 
   const estimateTime = rawItems.reduce((acc, i) => acc + (i?.eta || 0) || 0, 0);
   const estimateHours = Math.floor(estimateTime / 60 / 60);
@@ -225,12 +225,12 @@ export default function UploadWidget() {
               d={iconsWithPaths.refresh}
               size={14}
               style={{
-                animation: "spin 1.6s linear infinite",
-                color: "var(--primary)",
+                animation: 'spin 1.6s linear infinite',
+                color: 'var(--primary)',
               }}
             />
             <span className={styles.headTitle}>
-              Uploading {displayItems.length - doneCount} of{" "}
+              Uploading {displayItems.length - doneCount} of{' '}
               {displayItems.length}
             </span>
           </>
@@ -239,7 +239,7 @@ export default function UploadWidget() {
             <Icon
               d={iconsWithPaths.check}
               size={14}
-              style={{ color: "var(--primary)" }}
+              style={{ color: 'var(--primary)' }}
             />
             <span className={styles.headTitle}>
               {doneCount} of {displayItems.length} uploaded successfully
@@ -265,7 +265,7 @@ export default function UploadWidget() {
       </div>
 
       <div
-        className={`${styles.list} ${collapseWidget ? styles.listCollapsed : ""}`}
+        className={`${styles.list} ${collapseWidget ? styles.listCollapsed : ''}`}
       >
         <div className={styles.listInner}>
           {displayItems.map((item, i) => (

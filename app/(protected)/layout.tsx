@@ -1,7 +1,7 @@
-import DriveSidebar from "@/components/sidebar/DriveSidebar";
-import { getSessionUser } from "@/lib/session";
-import { redirect } from "next/navigation";
-import styles from "./layout.module.scss";
+import { redirect } from 'next/navigation';
+import DriveSidebar from '@/components/sidebar/DriveSidebar';
+import { getSessionUser } from '@/lib/session';
+import styles from './layout.module.scss';
 
 export default async function ProtectedLayout({
   children,
@@ -10,7 +10,7 @@ export default async function ProtectedLayout({
 }>) {
   const sessionId = await getSessionUser();
   if (!sessionId) {
-    redirect("/login");
+    redirect('/login');
   }
 
   return (

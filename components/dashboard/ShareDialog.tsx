@@ -1,42 +1,42 @@
-import Btn from "@/components/ui/Btn";
-import FileType from "@/components/ui/FileType";
-import Icon from "@/components/ui/Icon";
-import UserAvatar from "@/components/ui/UserAvatar";
-import { iconsWithPaths } from "@/constants/common-constants";
-import type { Tone } from "@/types/dashboard";
-import styles from "@/styles/components/ShareDialog.module.scss";
+import Btn from '@/components/ui/btn';
+import FileType from '@/components/ui/fileType';
+import Icon from '@/components/ui/icon';
+import UserAvatar from '@/components/ui/user-avatar';
+import { iconsWithPaths } from '@/constants/common-constants';
+import styles from '@/styles/components/ShareDialog.module.scss';
+import type { Tone } from '@/types/dashboard';
 
 type Person = {
   name: string;
   initials: string;
   tone: Tone;
-  role: "Owner" | "Editor" | "Viewer";
+  role: 'Owner' | 'Editor' | 'Viewer';
   email: string;
   me?: boolean;
 };
 
 const PEOPLE: Person[] = [
   {
-    name: "Marcus Kim",
-    initials: "MK",
-    tone: "violet",
-    role: "Owner",
-    email: "marcus.kim@zuru.com",
+    name: 'Marcus Kim',
+    initials: 'MK',
+    tone: 'violet',
+    role: 'Owner',
+    email: 'marcus.kim@zuru.com',
     me: true,
   },
   {
-    name: "Alia Lopez",
-    initials: "AL",
-    tone: "blue",
-    role: "Editor",
-    email: "alia.lopez@zuru.com",
+    name: 'Alia Lopez',
+    initials: 'AL',
+    tone: 'blue',
+    role: 'Editor',
+    email: 'alia.lopez@zuru.com',
   },
   {
-    name: "Ravi Shah",
-    initials: "RS",
-    tone: "green",
-    role: "Viewer",
-    email: "ravi.shah@zuru.com",
+    name: 'Ravi Shah',
+    initials: 'RS',
+    tone: 'green',
+    role: 'Viewer',
+    email: 'ravi.shah@zuru.com',
   },
 ];
 
@@ -65,7 +65,7 @@ export default function ShareDialog() {
           <Icon
             d={iconsWithPaths.users}
             size={14}
-            style={{ color: "var(--muted-foreground)" }}
+            style={{ color: 'var(--muted-foreground)' }}
           />
           <span className={styles.invitePlaceholder}>
             Add people, groups, or @telegram-handles
@@ -111,7 +111,7 @@ export default function ShareDialog() {
                 <Icon
                   d={iconsWithPaths.chevDown}
                   size={12}
-                  style={{ color: "var(--muted-foreground)" }}
+                  style={{ color: 'var(--muted-foreground)' }}
                 />
               </div>
               <div className={styles.generalSubtitle}>

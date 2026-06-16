@@ -1,16 +1,16 @@
-"use client";
+'use client';
 
-import { useState } from "react";
-import Icon from "@/components/ui/Icon";
-import { iconsWithPaths } from "@/constants/common-constants";
-import styles from "@/styles/components/DriveDropOverlay.module.scss";
-import Dropzone from "../ui/dropzone";
+import { useState } from 'react';
+import Icon from '@/components/ui/icon';
+import { iconsWithPaths } from '@/constants/common-constants';
+import styles from '@/styles/components/DriveDropOverlay.module.scss';
+import Dropzone from '../ui/dropzone';
 
 export default function DriveDropOverlay() {
   const [isDragging, setIsDragging] = useState(false);
   return (
     <div
-      className={`${styles.overlay} ${isDragging ? styles.overlayActive : ""}`}
+      className={`${styles.overlay} ${isDragging ? styles.overlayActive : ''}`}
     >
       <div className={styles.inner}>
         <Dropzone onDraggingAction={setIsDragging} />

@@ -1,12 +1,12 @@
-"use client";
+'use client';
 
-import Icon from "@/components/ui/Icon";
-import Badge from "@/components/ui/Badge";
-import styles from "@/styles/components/DriveSidebar.module.scss";
-import { SidebarItemProps } from "@/types/component-types";
-import { FunctionComponent } from "react";
-import { usePathname, useRouter } from "next/navigation";
-import { Button } from "../ui/button";
+import { usePathname, useRouter } from 'next/navigation';
+import type { FunctionComponent } from 'react';
+import Badge from '@/components/ui/badge';
+import Icon from '@/components/ui/icon';
+import styles from '@/styles/components/DriveSidebar.module.scss';
+import type { SidebarItemProps } from '@/types/component-types';
+import { Button } from '../ui/button';
 
 const SidebarItem: FunctionComponent<{
   item: SidebarItemProps;
@@ -19,7 +19,7 @@ const SidebarItem: FunctionComponent<{
     <Button
       key={item.label}
       type="button"
-      className={`${styles.navItem} ${isActive ? styles.navItemActive : ""}`}
+      className={`${styles.navItem} ${isActive ? styles.navItemActive : ''}`}
       onClick={() => router.push(item.url)}
     >
       <Icon d={item.icon} size={16} />
@@ -28,7 +28,7 @@ const SidebarItem: FunctionComponent<{
         <span className={styles.navItemCount}>{item.count}</span>
       )}
       {!collapsed && item.badge && (
-        <Badge tone="violet" style={{ padding: "1px 6px", fontSize: 9 }}>
+        <Badge tone="violet" style={{ padding: '1px 6px', fontSize: 9 }}>
           {item.badge}
         </Badge>
       )}

@@ -1,4 +1,4 @@
-import { FileKind } from "./dashboard";
+import type { FileKind } from './dashboard';
 
 export interface UploadedFile {
   id: number;
@@ -55,6 +55,6 @@ export interface ShareFileType {
   id: number;
   fileId: number;
   sharedWithUserId: number;
-  permission: "viewer" | "editor";
+  permission: 'viewer' | 'editor';
   createdAt: Date;
 }

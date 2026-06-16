@@ -233,9 +233,7 @@
         "users_telegram_id_unique": {
           "name": "users_telegram_id_unique",
           "nullsNotDistinct": false,
-          "columns": [
-            "telegram_id"
-          ]
+          "columns": ["telegram_id"]
         }
       },
       "policies": {},

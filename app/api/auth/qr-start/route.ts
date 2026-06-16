@@ -1,21 +1,21 @@
 // app/api/auth/qr-start/route.ts
-import { Api, TelegramClient } from "telegram";
-import { StringSession } from "telegram/sessions";
-import QRCode from "qrcode";
-import { qrStore } from "@/lib/telegram-qr-store";
+import QRCode from 'qrcode';
+import { Api, TelegramClient } from 'telegram';
+import { StringSession } from 'telegram/sessions';
+import { sendError, sendSuccess } from '@/lib/api-response';
 import {
-  generateLoginId,
   buildTelegramQRUrl,
   finalizeLogin,
-} from "@/lib/telegram-qr";
-import { sendError, sendSuccess } from "@/lib/api-response";
+  generateLoginId,
+} from '@/lib/telegram-qr';
+import { qrStore } from '@/lib/telegram-qr-store';
 
 const API_ID = Number(process.env.TELEGRAM_APP_API_ID);
 const API_HASH = String(process.env.TELEGRAM_APP_API_HASH);
 
 export async function POST() {
-  const client = new TelegramClient(new StringSession(""), API_ID, API_HASH, {
-    connectionRetries: 3,
+  const client = new TelegramClient(new StringSession(''), API_ID, API_HASH, {
+    connectionRetries: 1,
   });
 
   try {
@@ -29,7 +29,7 @@ export async function POST() {
       }),
     );
 
-    if (result.className !== "auth.LoginToken") {
+    if (result.className !== 'auth.LoginToken') {
       await client.disconnect();
       return sendError(`Unexpected response: ${result.className}`, 500);
     }
@@ -44,10 +44,10 @@ export async function POST() {
     qrStore.set(loginId, client);
 
     client.addEventHandler(async (update) => {
-      if (update.className !== "UpdateLoginToken") return;
+      if (update.className !== 'UpdateLoginToken') return;
 
       try {
-        let finalResult;
+        let finalResult: Api.auth.TypeLoginToken;
 
         try {
           finalResult = await client.invoke(
@@ -62,7 +62,7 @@ export async function POST() {
             err instanceof Error
               ? ((err as { errorMessage?: string }).errorMessage ?? err.message)
               : String(err);
-          if (errMsg === "SESSION_PASSWORD_NEEDED") {
+          if (errMsg === 'SESSION_PASSWORD_NEEDED') {
             const passwordInfo: Api.account.Password = await client.invoke(
               new Api.account.GetPassword(),
             );
@@ -73,7 +73,7 @@ export async function POST() {
         }
 
         // DC migration
-        if (finalResult.className === "auth.LoginTokenMigrateTo") {
+        if (finalResult.className === 'auth.LoginTokenMigrateTo') {
           await client._switchDC(finalResult.dcId);
           try {
             finalResult = await client.invoke(
@@ -85,7 +85,7 @@ export async function POST() {
                 ? ((err as { errorMessage?: string }).errorMessage ??
                   err.message)
                 : String(err);
-            if (errMsg === "SESSION_PASSWORD_NEEDED") {
+            if (errMsg === 'SESSION_PASSWORD_NEEDED') {
               const passwordInfo: Api.account.Password = await client.invoke(
                 new Api.account.GetPassword(),
               );
@@ -96,15 +96,15 @@ export async function POST() {
           }
         }
 
-        if (finalResult.className === "auth.LoginTokenSuccess") {
+        if (finalResult.className === 'auth.LoginTokenSuccess') {
           await finalizeLogin(loginId, client);
         } else {
           qrStore.markError(loginId, `Unexpected: ${finalResult.className}`);
         }
       } catch (err: unknown) {
         const errMsg = err instanceof Error ? err.message : String(err);
-        console.error("Scan handler failed:", errMsg);
-        qrStore.markError(loginId, errMsg ?? "Scan handler failed");
+        console.error('Scan handler failed:', errMsg);
+        qrStore.markError(loginId, errMsg ?? 'Scan handler failed');
       }
     });
 
@@ -114,14 +114,14 @@ export async function POST() {
         qrDataUrl,
         expiresAt: expires * 1000,
       },
-      "QR login started successfully",
+      'QR login started successfully',
       200,
     );
   } catch (err: unknown) {
     await client.disconnect().catch(() => {});
     const errMsg = err instanceof Error ? err.message : String(err);
 
-    console.error("QR start failed:", errMsg ?? err);
-    return sendError("Failed to start QR login", 500);
+    console.error('QR start failed:', errMsg ?? err);
+    return sendError('Failed to start QR login', 500);
   }
 }

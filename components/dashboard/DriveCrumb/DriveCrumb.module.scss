@@ -1,4 +1,4 @@
-@use "../functions" as *;
+@use "../../../styles/functions" as *;
 
 .crumb {
   padding: 16px 24px 4px;
@@ -41,4 +41,13 @@
   background: v(border);
   margin: 0 4px;
   align-self: center;
+}
+
+.chevron {
+  color: v(muted-foreground);
+}
+
+.activeLayout {
+  background: v(primary);
+  color: v(primary-foreground);
 }

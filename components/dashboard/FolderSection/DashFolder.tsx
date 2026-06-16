@@ -1,25 +1,33 @@
-import Btn from "@/components/ui/Btn";
-import Icon from "@/components/ui/Icon";
-import DriveCrumb from "./DriveCrumb";
-import DriveTopbar from "./DriveTopbar";
-import FileCard from "./FileSection/FileCard";
-import UploadWidget from "./UploadWidget";
-import { iconsWithPaths } from "@/constants/common-constants";
-import { DRIVE_FILES } from "@/constants/dashboard-constants";
-import styles from "@/styles/components/DashFolder.module.scss";
+export const dynamic = 'force-dynamic';
 
-type DashFolderProps = {
-  folderName?: string;
-};
+import Btn from '@/components/ui/btn';
+import Icon from '@/components/ui/icon';
+import { iconsWithPaths } from '@/constants/common-constants';
+import type { SessionUser } from '@/types/auth';
+import type { UploadedFile } from '@/types/files';
+import DriveTopbar from '../../Header/DriveTopbar';
+import DriveCrumb from '../DriveCrumb/DriveCrumb';
+import FileCard from '../FileSection/FileCard';
+import UploadWidget from '../UploadWidget';
+import styles from './DashFolder.module.scss';
+import { DownloadAllButton } from './DownloadAllButton';
 
 export default function DashFolder({
-  folderName = "Engineering",
-}: DashFolderProps) {
+  files,
+  folderName,
+  folderId,
+  user,
+}: {
+  files: Array<UploadedFile>;
+  folderName: string;
+  folderId: number;
+  user: SessionUser;
+}) {
   return (
     <div className={styles.shell} data-screen-label="02 Drive · Inside folder">
       <div className={styles.main}>
-        <DriveTopbar />
-        <DriveCrumb inFolder={folderName} />
+        <DriveTopbar user={user} />
+        <DriveCrumb inFolder={folderName ?? 'Folder name'} />
 
         <div className={styles.subHeader}>
           <Icon d={iconsWithPaths.users} size={13} /> Shared with 4 people
@@ -29,9 +37,7 @@ export default function DashFolder({
           <Btn variant="ghost" size="sm" icon={iconsWithPaths.share}>
             Share
           </Btn>
-          <Btn variant="outline" size="sm" icon={iconsWithPaths.download}>
-            Download all
-          </Btn>
+          <DownloadAllButton folderId={folderId} folderName={folderName} />
         </div>
 
         <div className={styles.content}>
@@ -40,7 +46,7 @@ export default function DashFolder({
             <Icon
               d={iconsWithPaths.folder}
               size={14}
-              style={{ color: "var(--primary)" }}
+              className={styles.flatHintIcon}
             />
             <span className={styles.flatHintText}>
               <strong>Flat folder.</strong> Org Drive keeps things simple —
@@ -52,7 +58,7 @@ export default function DashFolder({
 
           {/* Files grid */}
           <div className={styles.filesGrid}>
-            {DRIVE_FILES.slice(0, 10).map((file) => (
+            {files.slice(0, 10).map((file) => (
               <FileCard key={file.id} file={file} />
             ))}
           </div>

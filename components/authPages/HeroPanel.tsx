@@ -1,7 +1,7 @@
-import Badge from "@/components/ui/Badge";
-import Icon from "@/components/ui/Icon";
-import { iconsWithPaths } from "@/constants/common-constants";
-import styles from "./HeroPanel.module.scss";
+import Badge from '@/components/ui/badge';
+import Icon from '@/components/ui/icon';
+import { iconsWithPaths } from '@/constants/common-constants';
+import styles from './HeroPanel.module.scss';
 
 export default function HeroPanel() {
   return (
@@ -30,9 +30,9 @@ export default function HeroPanel() {
 
         <div className={styles.featuresList}>
           {[
-            "Unlimited file storage via your channel",
-            "Folder organization & quick share links",
-            "Optional AI chat & semantic search",
+            'Unlimited file storage via your channel',
+            'Folder organization & quick share links',
+            'Optional AI chat & semantic search',
           ].map((text) => (
             <div key={text} className={styles.featureItem}>
               <span className={styles.featureIconCircle}>
@@ -50,7 +50,7 @@ export default function HeroPanel() {
       </div>
 
       <div className={styles.footer}>
-        © Org Drive 2026 · <span className={styles.footerLink}>Privacy</span> ·{" "}
+        © Org Drive 2026 · <span className={styles.footerLink}>Privacy</span> ·{' '}
         <span className={styles.footerLink}>Terms</span>
       </div>
 

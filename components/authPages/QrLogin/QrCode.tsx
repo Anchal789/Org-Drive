@@ -1,19 +1,19 @@
 "use client";
 
-import { encrypt } from "@/lib/utils";
-import { useCountdown } from "@/hooks/use-countdown";
-import { TelegramUser } from "@/types/auth";
+import Image from "next/image";
 import { useRouter } from "next/navigation";
 import {
+  useActionState,
   useCallback,
   useEffect,
   useRef,
   useState,
-  useActionState,
 } from "react";
-import Image from "next/image";
-import { qrLogin, qrStart } from "@/services/auth-service";
+import { useCountdown } from "@/hooks/use-countdown";
 import { postData } from "@/lib/api-fn";
+import { encrypt } from "@/lib/utils";
+import { qrLogin, qrStart } from "@/services/auth-service";
+import type { TelegramUser } from "@/types/auth";
 import styles from "./QrCode.module.scss";
 
 const POLL_INTERVAL_MS = 2000;

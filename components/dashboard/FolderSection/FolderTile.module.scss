@@ -1,4 +1,4 @@
-@use "../functions" as *;
+@use "../../../styles/functions" as *;
 
 .tile {
   padding: 12px 14px;
@@ -10,6 +10,8 @@
   gap: 10px;
   cursor: pointer;
   box-shadow: v(shadow-xs);
+  width: 100%;
+  text-align: left;
 }
 
 .tileActive {
@@ -35,6 +37,7 @@
 .name {
   font-size: 13px;
   font-weight: v(weight-medium);
+  line-height: 17px;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;

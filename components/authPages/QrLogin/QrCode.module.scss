@@ -21,6 +21,7 @@
 }
 
 .stateWrapper {
+  margin-top: 12px;
   @include flex(column, center, center, 12px);
   text-align: center;
   color: v(muted-foreground);

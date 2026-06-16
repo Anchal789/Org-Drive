@@ -1,4 +1,4 @@
-@use "../functions" as *;
+@use "../../styles/functions" as *;
 
 .topbar {
   padding: 10px 24px;
@@ -29,4 +29,12 @@
 
 .spacer {
   flex: 1;
+}
+
+.icon {
+  color: v(muted-foreground);
+}
+
+.badge {
+  font-size: 10;
 }

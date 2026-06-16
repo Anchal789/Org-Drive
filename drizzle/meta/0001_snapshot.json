@@ -102,12 +102,8 @@
           "name": "shared_files_file_id_uploaded_files_id_fk",
           "tableFrom": "shared_files",
           "tableTo": "uploaded_files",
-          "columnsFrom": [
-            "file_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["file_id"],
+          "columnsTo": ["id"],
           "onDelete": "no action",
           "onUpdate": "no action"
         }
@@ -366,9 +362,7 @@
         "users_telegram_id_unique": {
           "name": "users_telegram_id_unique",
           "nullsNotDistinct": false,
-          "columns": [
-            "telegram_id"
-          ]
+          "columns": ["telegram_id"]
         }
       },
       "policies": {},

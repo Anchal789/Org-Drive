@@ -1,5 +1,5 @@
-import { getSessionUser } from "@/lib/session";
-import { redirect } from "next/navigation";
+import { redirect } from 'next/navigation';
+import { getSessionUser } from '@/lib/session';
 
 export default async function AuthLayout({
   children,
@@ -9,7 +9,7 @@ export default async function AuthLayout({
   const sessionId = await getSessionUser();
 
   if (sessionId) {
-    redirect("/my-drive");
+    redirect('/my-drive');
   }
   return <>{children}</>;
 }

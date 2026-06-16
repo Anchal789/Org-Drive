@@ -1,6 +1,6 @@
-import Icon from "./Icon";
-import type { BtnVariant, BtnSize } from "@/types/dashboard";
-import styles from "@/styles/components/Btn.module.scss";
+import styles from '@/styles/components/Btn.module.scss';
+import type { BtnSize, BtnVariant } from '@/types/dashboard';
+import Icon from './icon';
 
 type BtnProps = React.ButtonHTMLAttributes<HTMLButtonElement> & {
   variant?: BtnVariant;
@@ -10,14 +10,14 @@ type BtnProps = React.ButtonHTMLAttributes<HTMLButtonElement> & {
 };
 
 export default function Btn({
-  variant = "default",
-  size = "md",
+  variant = 'default',
+  size = 'md',
   icon,
   children,
-  className = "",
+  className = '',
   ...rest
 }: BtnProps) {
-  const iconSize = size === "sm" ? 14 : size === "lg" ? 16 : 15;
+  const iconSize = size === 'sm' ? 14 : size === 'lg' ? 16 : 15;
 
   return (
     <button

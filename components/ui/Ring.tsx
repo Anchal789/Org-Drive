@@ -1,10 +1,10 @@
-import { RingProps } from "@/types/component-types";
+import type { RingProps } from '@/types/component-types';
 
 export default function Ring({
   size = 56,
   pct = 64,
-  color = "var(--primary)",
-  className = "",
+  color = 'var(--primary)',
+  className = '',
 }: RingProps) {
   const r = (size - 8) / 2;
   const c = 2 * Math.PI * r;
@@ -15,7 +15,7 @@ export default function Ring({
       height={size}
       viewBox={`0 0 ${size} ${size}`}
       className={className}
-      style={{ display: "block", flexShrink: 0 }}
+      style={{ display: 'block', flexShrink: 0 }}
       data-slot="ring"
       data-pct={pct}
     >

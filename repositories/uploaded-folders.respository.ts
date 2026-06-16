@@ -1,6 +1,6 @@
-import { db } from "@/db";
-import { uploadedFilesTable, uploadFoldersTable } from "@/db/schema";
-import { eq } from "drizzle-orm";
+import { eq } from 'drizzle-orm';
+import { db } from '@/db';
+import { uploadedFilesTable, uploadFoldersTable } from '@/db/schema';
 
 export const uploadedFoldersRepository = {
   async getFolders(userId: number) {

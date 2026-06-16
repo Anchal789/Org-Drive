@@ -1,12 +1,13 @@
-import Icon from "@/components/ui/Icon";
-import UserAvatar from "@/components/ui/UserAvatar";
-import { iconsWithPaths } from "@/constants/common-constants";
-import styles from "@/styles/components/FileCard.module.scss";
-import { UploadedFile } from "@/types/files";
-import FileType from "@/components/ui/FileType";
-import { formatFileDate, getAvatarColor } from "@/lib/utils";
-import { TelegramUser } from "@/types/auth";
-import { FileKind } from "@/types/dashboard";
+import FileType from '@/components/ui/fileType';
+import Icon from '@/components/ui/icon';
+import UserAvatar from '@/components/ui/user-avatar';
+import { iconsWithPaths } from '@/constants/common-constants';
+import { formatFileDate, getAvatarColor } from '@/lib/utils';
+import type { SessionUser } from '@/types/auth';
+import type { FileKind } from '@/types/dashboard';
+import type { UploadedFile } from '@/types/files';
+import styles from './FileCard.module.scss';
+import FileMenu from './FileMenu';
 
 export default function FileCard({
   file,
@@ -14,23 +15,19 @@ export default function FileCard({
   big = false,
 }: {
   file: UploadedFile;
-  user?:
-    | (TelegramUser & {
-        userId: string;
-      })
-    | null;
+  user?: SessionUser;
   big?: boolean;
 }) {
   const createdAt = formatFileDate(file.createdAt);
   const ownerInitials = user
-    ? `${user.firstName?.charAt(0) ?? ""}${user.lastName?.charAt(0) ?? ""}`
-    : "";
+    ? `${user.firstName?.charAt(0) ?? ''}${user.lastName?.charAt(0) ?? ''}`
+    : '';
 
-  const fileExtension = file.name.split(".")[1] as FileKind;
+  const fileExtension = file.name.split('.')[1] as FileKind;
 
   return (
     <div
-      className={`${styles.card} ${big ? styles.cardBig : ""}`.trim()}
+      className={`${styles.card} ${big ? styles.cardBig : ''}`.trim()}
       data-slot="file-card"
     >
       <div className={styles.header}>
@@ -43,7 +40,7 @@ export default function FileCard({
               className={styles.starIcon}
             />
           )}
-          <Icon d={iconsWithPaths.more} size={14} className={styles.moreIcon} />
+          <FileMenu file={file} />
         </div>
       </div>
 
@@ -61,7 +58,7 @@ export default function FileCard({
           <div className={styles.metaLeft}>
             <UserAvatar
               initials={ownerInitials}
-              tone={getAvatarColor(user?.userId ?? "")}
+              tone={getAvatarColor(user?.userId ?? '')}
               size="sm"
             />
             <span className={styles.modTime}>{createdAt}</span>

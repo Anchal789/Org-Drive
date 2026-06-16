@@ -1,7 +1,8 @@
-import { Route } from "next";
-import { Tone } from "./dashboard";
+import type { Route } from 'next';
+import type { ReactNode } from 'react';
+import type { Tone } from './dashboard';
 
-export interface InputProps extends React.ComponentProps<"input"> {
+export interface InputProps extends React.ComponentProps<'input'> {
   helperText?: string;
   error?: boolean;
 }
@@ -31,7 +32,7 @@ export type RingProps = {
 export type UserAvatarProps = {
   initials: string;
   tone?: Tone;
-  size?: "sm" | "default" | "lg";
+  size?: 'sm' | 'default' | 'lg';
   ring?: boolean;
   className?: string;
 };
@@ -56,3 +57,22 @@ export type SidebarItemProps = {
 export type DriveSidebarProps = {
   collapsed?: boolean;
 };
+
+export type AlertActionVariant =
+  | 'default'
+  | 'destructive'
+  | 'success'
+  | 'warning';
+
+export interface AlertModalProps {
+  trigger?: ReactNode;
+  title: string;
+  description?: string;
+  confirmText?: string;
+  confirmVariant?: AlertActionVariant;
+  cancelText?: string;
+  onConfirm?: () => void | Promise<void>;
+  onCancel?: () => void;
+  open?: boolean;
+  onOpenChange?: (open: boolean) => void;
+}

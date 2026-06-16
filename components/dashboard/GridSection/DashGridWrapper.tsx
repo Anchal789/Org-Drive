@@ -1,6 +1,6 @@
-"use client";
+'use client';
 
-import { useDragDropStore } from "@/store/store";
+import { useDragDropStore } from '@/store/store';
 
 export default function DashGridWrapper({
   children,

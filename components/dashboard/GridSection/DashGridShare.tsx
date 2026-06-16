@@ -1,10 +1,10 @@
-import DriveCrumb from "./DriveCrumb";
-import DriveTopbar from "./DriveTopbar";
-import FileCard from "./FileSection/FileCard";
-import FolderTile from "./FolderTile";
-import ShareDialog from "./ShareDialog";
-import { DRIVE_FILES, DRIVE_FOLDERS } from "@/constants/dashboard-constants";
-import styles from "@/styles/components/DashGrid.module.scss";
+import { DRIVE_FILES, DRIVE_FOLDERS } from '@/constants/dashboard-constants';
+import styles from '@/styles/components/DashGrid.module.scss';
+import DriveTopbar from '../../Header/DriveTopbar';
+import DriveCrumb from '../DriveCrumb/DriveCrumb';
+import FileCard from '../FileSection/FileCard';
+import FolderTile from '../FolderSection/FolderTile';
+import ShareDialog from '../ShareDialog';
 
 export default function DashGridShare() {
   return (

@@ -1,8 +1,8 @@
-"use client";
+'use client';
 
-import QR from "@/components/ui/TelegramQR";
-import Link from "next/link";
-import styles from "./TelegramQrDisplayPanel.module.scss";
+import Link from 'next/link';
+import QR from '@/components/ui/telegram-qr';
+import styles from './TelegramQrDisplayPanel.module.scss';
 
 export function TelegramQrDisplayPanel() {
   return (

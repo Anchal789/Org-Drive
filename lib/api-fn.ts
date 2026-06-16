@@ -1,5 +1,5 @@
-import api from "@/helpers/api-requests";
-import { ApiResponse } from "@/types/common-types";
+import api from '@/helpers/api-requests';
+import type { ApiResponse } from '@/types/common-types';
 
 export const fetchData = async <T>({
   url,
@@ -20,21 +20,21 @@ export const postData = async <T>({
   payload,
   params,
   baseUrl,
-  // isFormData,
+  isFormData,
 }: {
   url: string;
   payload: unknown;
   params?: Record<string, unknown>;
   baseUrl?: string;
-  // isFormData?: boolean;
+  isFormData?: boolean;
 }): Promise<ApiResponse<T>> => {
-  const isFormData = payload instanceof FormData;
+  // const isFormData = payload instanceof FormData;
   const res = await api.post<ApiResponse<T>>(
     baseUrl ?? url,
     payload,
     {
       params,
-      headers: isFormData ? undefined : { "Content-Type": "application/json" },
+      headers: isFormData ? undefined : { 'Content-Type': 'application/json' },
     },
     isFormData,
   );

@@ -1,4 +1,4 @@
-import TelegramQrGenerator from "@/components/authPages/QrLogin/TelegramQrGenerator";
+import TelegramQrGenerator from '@/components/authPages/QrLogin/TelegramQrGenerator';
 
 const QRScanPage = () => {
   return <TelegramQrGenerator />;

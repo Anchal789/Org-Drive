@@ -1,10 +1,10 @@
-import Icon from "@/components/ui/Icon";
-import UserAvatar from "@/components/ui/UserAvatar";
-import { iconsWithPaths, TINTS } from "@/constants/common-constants";
-import { getAvatarColor, getFolderTone } from "@/lib/utils";
-import styles from "@/styles/components/FolderTile.module.scss";
-import { TelegramUser } from "@/types/auth";
-import { UploadedFolder } from "@/types/files";
+import Icon from '@/components/ui/icon';
+import UserAvatar from '@/components/ui/user-avatar';
+import { iconsWithPaths, TINTS } from '@/constants/common-constants';
+import { getAvatarColor, getFolderTone } from '@/lib/utils';
+import type { SessionUser } from '@/types/auth';
+import type { UploadedFolder } from '@/types/files';
+import styles from './FolderTile.module.scss';
 
 export default function FolderTile({
   folder,
@@ -13,20 +13,16 @@ export default function FolderTile({
 }: {
   folder: UploadedFolder;
   active?: boolean;
-  user?:
-    | (TelegramUser & {
-        userId: string;
-      })
-    | null;
+  user?: SessionUser;
 }) {
   const tint = TINTS[getFolderTone(folder.id)];
   const ownerInitials = user
-    ? `${user.firstName?.charAt(0) ?? ""}${user.lastName?.charAt(0) ?? ""}`
-    : "";
+    ? `${user.firstName?.charAt(0) ?? ''}${user.lastName?.charAt(0) ?? ''}`
+    : '';
 
   return (
     <div
-      className={`${styles.tile} ${active ? styles.tileActive : ""}`}
+      className={`${styles.tile} ${active ? styles.tileActive : ''}`}
       data-slot="folder-tile"
     >
       <div
@@ -46,7 +42,7 @@ export default function FolderTile({
       </div>
       <UserAvatar
         initials={ownerInitials}
-        tone={getAvatarColor(user?.userId ?? "")}
+        tone={getAvatarColor(user?.userId ?? '')}
         size="sm"
       />
     </div>

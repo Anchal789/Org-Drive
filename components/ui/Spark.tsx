@@ -1,10 +1,10 @@
-import { SparkProps } from "@/types/component-types";
+import type { SparkProps } from '@/types/component-types';
 
 export default function Spark({
   data = [4, 7, 5, 9, 6, 11, 8, 12],
   w = 80,
   h = 24,
-  color = "var(--primary)",
+  color = 'var(--primary)',
 }: SparkProps) {
   const max = Math.max(...data);
   const pts = data
@@ -12,7 +12,7 @@ export default function Spark({
       (val, i) =>
         `${(i / (data.length - 1)) * w},${h - (val / max) * (h - 2) - 1}`,
     )
-    .join(" ");
+    .join(' ');
 
   return (
     <svg width={w} height={h} viewBox={`0 0 ${w} ${h}`} data-slot="spark">

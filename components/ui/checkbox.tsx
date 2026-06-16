@@ -1,7 +1,7 @@
-"use client";
+'use client';
 
-import { CheckboxProps } from "@/types/component-types";
-import { FunctionComponent } from "react";
+import type { FunctionComponent } from 'react';
+import type { CheckboxProps } from '@/types/component-types';
 
 const Checkbox: FunctionComponent<CheckboxProps> = ({
   checked = false,
@@ -15,21 +15,21 @@ const Checkbox: FunctionComponent<CheckboxProps> = ({
   return (
     <span
       role="checkbox"
-      aria-checked={indeterminate ? "mixed" : checked}
+      aria-checked={indeterminate ? 'mixed' : checked}
       onClick={disabled ? undefined : onClick}
       style={{
-        display: "inline-flex",
-        alignItems: "center",
-        justifyContent: "center",
+        display: 'inline-flex',
+        alignItems: 'center',
+        justifyContent: 'center',
         width: size,
         height: size,
         flexShrink: 0,
-        border: `1px solid ${filled ? "var(--primary)" : "var(--border)"}`,
-        background: filled ? "var(--primary)" : "var(--background)",
-        color: "var(--primary-foreground)",
-        borderRadius: "var(--radius-sm)",
-        cursor: disabled ? "not-allowed" : "pointer",
-        transition: "background .12s, border-color .12s",
+        border: `1px solid ${filled ? 'var(--primary)' : 'var(--border)'}`,
+        background: filled ? 'var(--primary)' : 'var(--background)',
+        color: 'var(--primary-foreground)',
+        borderRadius: 'var(--radius-sm)',
+        cursor: disabled ? 'not-allowed' : 'pointer',
+        transition: 'background .12s, border-color .12s',
         opacity: disabled ? 0.5 : 1,
         ...style,
       }}

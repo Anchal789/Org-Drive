@@ -1,7 +1,7 @@
-import { db } from "@/db";
-import { uploadedFilesTable } from "@/db/schema";
-import { UploadFilesResponse } from "@/types/files";
-import { and, eq, isNull } from "drizzle-orm";
+import { and, eq, isNull } from 'drizzle-orm';
+import { db } from '@/db';
+import { uploadedFilesTable } from '@/db/schema';
+import type { UploadFilesResponse } from '@/types/files';
 
 export const uploadedFilesRepository = {
   async uploadFiles(files: Array<UploadFilesResponse & { userId: number }>) {
@@ -33,7 +33,38 @@ export const uploadedFilesRepository = {
         ),
       );
   },
-  async deleteFiles(id: number) {
-    await db.delete(uploadedFilesTable).where(eq(uploadedFilesTable.id, id));
+  async deleteFile(id: number) {
+    const [deletedFile] = await db
+      .update(uploadedFilesTable)
+      .set({ isDeleted: true })
+      .where(eq(uploadedFilesTable.id, id))
+      .returning();
+
+    return deletedFile;
+  },
+  async getFile(userId: number, id: number) {
+    return await db
+      .select()
+      .from(uploadedFilesTable)
+      .where(
+        and(
+          eq(uploadedFilesTable.userId, userId),
+          eq(uploadedFilesTable.id, id),
+          eq(uploadedFilesTable.isDeleted, false),
+        ),
+      );
+  },
+  async totalStorage(userId: number) {
+    return await db
+      .select({
+        size: uploadedFilesTable.size,
+      })
+      .from(uploadedFilesTable)
+      .where(
+        and(
+          eq(uploadedFilesTable.userId, userId),
+          eq(uploadedFilesTable.isDeleted, false),
+        ),
+      );
   },
 };

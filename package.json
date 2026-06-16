@@ -25,6 +25,7 @@
   "dependencies": {
     "@base-ui/react": "1.5.0",
     "@hookform/resolvers": "5.4.0",
+    "archiver": "8.0.0",
     "bcryptjs": "3.0.3",
     "class-variance-authority": "0.7.1",
     "clsx": "2.1.1",
@@ -56,6 +57,7 @@
     "@biomejs/biome": "2.4.16",
     "@tailwindcss/postcss": "4.3.0",
     "@tailwindcss/typography": "0.5.19",
+    "@types/archiver": "8.0.0",
     "@types/bcryptjs": "2.4.6",
     "@types/crypto-js": "4.2.2",
     "@types/node": "25.8.0",

@@ -1,4 +1,4 @@
-import { UploadItem } from "./dashboard";
+import type { UploadItem } from './dashboard';
 
 export interface AuthStateStore {
   accessToken: string | null;
@@ -11,6 +11,11 @@ export interface DragDropStore {
   setIsDragging: (dragging: boolean) => void;
   files: File[];
   setFiles: (files: File[]) => void;
+}
+
+export interface FileLayoutStore {
+  fileLayout: 'list' | 'grid';
+  setFileLayout: (layout: 'list' | 'grid') => void;
 }
 
 export interface QueuedFile {

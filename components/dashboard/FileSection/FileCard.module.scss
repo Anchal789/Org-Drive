@@ -1,4 +1,4 @@
-@use "../functions" as *;
+@use "..../../../../../styles/functions" as *;
 
 .card {
   padding: 10px;
@@ -34,6 +34,10 @@
 .starIcon {
   color: var(--amber-bd, #d97706);
   fill: var(--amber-bg, #fef3c7);
+}
+
+.moreBtn {
+  height: fit-content;
 }
 
 .moreIcon {

@@ -1,4 +1,4 @@
-@use "../functions" as *;
+@use "../../../styles/functions" as *;
 
 .shell {
   display: flex;
@@ -70,4 +70,8 @@
   display: grid;
   grid-template-columns: repeat(5, 1fr);
   gap: 10px;
+}
+
+.flatHintIcon {
+  color: v(primary);
 }
