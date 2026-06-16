@@ -20,7 +20,13 @@
     "prepare": "husky",
     "lint": "biome check .",
     "lint:fix": "biome check --write .",
-    "lint:staged": "lint-staged"
+    "lint:staged": "lint-staged",
+    "doctor": "react-doctor",
+    "doctor:diff": "react-doctor --diff",
+    "doctor:staged": "react-doctor --staged",
+    "doctor:advisory": "react-doctor --blocking none",
+    "doctor:full": "react-doctor --diff false",
+    "doctor:json": "react-doctor --json"
   },
   "dependencies": {
     "@base-ui/react": "1.5.0",
@@ -70,7 +76,7 @@
     "husky": "9.1.7",
     "lint-staged": "17.0.5",
     "postcss": "8.5.14",
-    "sass": "1.100.0",
+    "react-doctor": "0.5.1",
     "tailwindcss": "4.3.0",
     "tailwindcss-animate": "1.0.7",
     "tsx": "4.22.4",

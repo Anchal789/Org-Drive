@@ -30,7 +30,7 @@
   "diffEditor.ignoreTrimWhitespace": false,
   "editor.bracketPairColorization.enabled": true,
   "editor.codeActionsOnSave": {
-    "source.biome": "explicit"
+    "source.fixAll.biome": "explicit"
   },
   "editor.detectIndentation": false,
   "editor.formatOnSave": true,
