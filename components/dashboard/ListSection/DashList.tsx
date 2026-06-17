@@ -1,14 +1,13 @@
-export const dynamic = 'force-dynamic';
+export const dynamic = "force-dynamic";
 
-import Icon from '@/components/ui/icon';
-import { iconsWithPaths, TINTS } from '@/constants/common-constants';
-import { getFolderTone } from '@/lib/utils';
-import type { SessionUser } from '@/types/auth';
-import type { UploadedFile, UploadedFolder } from '@/types/files';
-import DriveTopbar from '../../Header/DriveTopbar';
-import DriveCrumb from '../DriveCrumb/DriveCrumb';
-import styles from './DashList.module.scss';
-import FileTable from './FileTable';
+import Icon from "@/components/ui/icon";
+import { iconsWithPaths, TINTS } from "@/constants/common-constants";
+import { getFolderTone } from "@/lib/utils";
+import type { SessionUser } from "@/types/auth";
+import type { UploadedFile, UploadedFolder } from "@/types/files";
+import DriveCrumb from "../DriveCrumb/DriveCrumb";
+import styles from "./DashList.module.scss";
+import FileTable from "./FileTable";
 
 export default function DashList({
   user,
@@ -25,7 +24,6 @@ export default function DashList({
   return (
     <div className={styles.shell} data-screen-label="02 Drive · List view">
       <div className={styles.main}>
-        <DriveTopbar user={user} />
         <DriveCrumb />
 
         <div className={styles.content}>

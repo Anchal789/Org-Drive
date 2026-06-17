@@ -43,7 +43,7 @@
   "editor.wordWrap": "on",
   "extensions.ignoreRecommendations": false,
   "files.eol": "\n",
-  "js/ts.preferences.quoteStyle": "single",
+  "js/ts.preferences.quoteStyle": "double",
   "js/ts.updateImportsOnFileMove.enabled": "always",
   "less.lint.duplicateProperties": "warning",
   "less.lint.emptyRules": "warning",

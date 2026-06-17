@@ -1,8 +1,8 @@
-import type { Route } from 'next';
-import type { ReactNode } from 'react';
-import type { Tone } from './dashboard';
+import type { Route } from "next";
+import type { ReactNode } from "react";
+import type { Tone } from "./dashboard";
 
-export interface InputProps extends React.ComponentProps<'input'> {
+export interface InputProps extends React.ComponentProps<"input"> {
   helperText?: string;
   error?: boolean;
 }
@@ -32,7 +32,7 @@ export type RingProps = {
 export type UserAvatarProps = {
   initials: string;
   tone?: Tone;
-  size?: 'sm' | 'default' | 'lg';
+  size?: "sm" | "default" | "lg";
   ring?: boolean;
   className?: string;
 };
@@ -42,7 +42,7 @@ export type CheckboxProps = {
   indeterminate?: boolean;
   size?: number;
   disabled?: boolean;
-  onClick?: () => void;
+  onClick?: (e: React.MouseEvent) => void;
   style?: React.CSSProperties;
 };
 
@@ -59,10 +59,10 @@ export type DriveSidebarProps = {
 };
 
 export type AlertActionVariant =
-  | 'default'
-  | 'destructive'
-  | 'success'
-  | 'warning';
+  | "default"
+  | "destructive"
+  | "success"
+  | "warning";
 
 export interface AlertModalProps {
   trigger?: ReactNode;
@@ -75,4 +75,26 @@ export interface AlertModalProps {
   onCancel?: () => void;
   open?: boolean;
   onOpenChange?: (open: boolean) => void;
+}
+
+export interface ColumnDef<T> {
+  id: string;
+  header: ReactNode | string;
+  cell: (row: T, index: number) => ReactNode;
+  className?: string;
+}
+
+export interface DataTableProps<T> {
+  data: T[];
+  columns: ColumnDef<T>[];
+  getRowId: (row: T) => string | number;
+  classes?: {
+    table?: string;
+    header?: string;
+    row?: string;
+    rowLast?: string;
+  };
+  enableSelection?: boolean;
+  selectedIds?: (string | number)[];
+  onSelectionChange?: (ids: (string | number)[]) => void;
 }

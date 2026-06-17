@@ -1,8 +1,8 @@
-import DashFolder from '@/components/dashboard/FolderSection/DashFolder';
-import { getSessionUser } from '@/lib/session';
-import { decrypt } from '@/lib/utils';
-import { uploadedFilesRepository } from '@/repositories/uploaded-files.respository';
-import type { UploadedFile } from '@/types/files';
+import DashFolder from "@/components/dashboard/FolderSection/DashFolder";
+import { getSessionUser } from "@/lib/session";
+import { decrypt } from "@/lib/utils";
+import { uploadedFilesRepository } from "@/repositories/uploaded-files.respository";
+import type { UploadedFile } from "@/types/files";
 
 export default async function FolderPage({
   searchParams,
@@ -23,7 +23,6 @@ export default async function FolderPage({
       files={filesInFolders}
       folderName={folderName}
       folderId={Number(decryptedId)}
-      user={user}
     />
   );
 }
