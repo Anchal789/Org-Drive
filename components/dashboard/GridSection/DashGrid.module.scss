@@ -1,0 +1,66 @@
+@use "../../../styles/functions" as *;
+
+.shell {
+  display: flex;
+  background: v(background);
+  color: v(foreground);
+  font-family: v(font-sans);
+  position: relative;
+  height: 100dvh;
+}
+
+.main {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  position: relative;
+}
+
+.content {
+  flex: 1;
+  overflow: auto;
+  padding: 0 24px 24px;
+}
+
+.sectionLabel {
+  font-size: 12px;
+  font-weight: v(weight-semibold);
+  color: v(muted-foreground);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  margin-top: 16px;
+  margin-bottom: 8px;
+
+  &.spaced {
+    margin-top: 24px;
+    margin-bottom: 10px;
+  }
+}
+
+.sectionHeader {
+  margin-top: 24px;
+  margin-bottom: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+
+  .sectionLabel {
+    margin: 0;
+  }
+}
+
+.sectionMeta {
+  font-size: 11px;
+  color: v(muted-foreground);
+}
+
+.grid {
+  display: grid;
+  gap: 12px;
+}
+
+.grid4 {
+  grid-template-columns: repeat(4, 1fr);
+  gap: 10px;
+}

@@ -47,6 +47,41 @@ export const TINTS = {
     bd: 'var(--tint-slate-bd)',
     tx: 'var(--tint-slate-tx)',
   },
+  indigo: {
+    bg: 'var(--tint-indigo-bg)',
+    bd: 'var(--tint-indigo-bd)',
+    tx: 'var(--tint-indigo-tx)',
+  },
+  purple: {
+    bg: 'var(--tint-purple-bg)',
+    bd: 'var(--tint-purple-bd)',
+    tx: 'var(--tint-purple-tx)',
+  },
+  orange: {
+    bg: 'var(--tint-orange-bg)',
+    bd: 'var(--tint-orange-bd)',
+    tx: 'var(--tint-orange-tx)',
+  },
+  gray: {
+    bg: 'var(--tint-gray-bg)',
+    bd: 'var(--tint-gray-bd)',
+    tx: 'var(--tint-gray-tx)',
+  },
+  rose: {
+    bg: 'var(--tint-rose-bg)',
+    bd: 'var(--tint-rose-bd)',
+    tx: 'var(--tint-rose-tx)',
+  },
+  yellow: {
+    bg: 'var(--tint-yellow-bg)',
+    bd: 'var(--tint-yellow-bd)',
+    tx: 'var(--tint-yellow-tx)',
+  },
+  cyan: {
+    bg: 'var(--tint-cyan-bg)',
+    bd: 'var(--tint-cyan-bd)',
+    tx: 'var(--tint-cyan-tx)',
+  },
 };
 
 export const iconsWithPaths = {
@@ -63,6 +98,7 @@ export const iconsWithPaths = {
   more: 'M12 13a1 1 0 1 0 0-2 1 1 0 0 0 0 2zM19 13a1 1 0 1 0 0-2 1 1 0 0 0 0 2zM5 13a1 1 0 1 0 0-2 1 1 0 0 0 0 2z',
   chev: 'M9 18l6-6-6-6',
   chevDown: 'M6 9l6 6 6-6',
+  chevUp: 'M6 15l6-6 6 6',
   chevLeft: 'M15 18l-6-6 6-6',
   send: 'M22 2L11 13 M22 2l-7 20-4-9-9-4z',
   sparkle: 'M12 3l1.9 5.1L19 10l-5.1 1.9L12 17l-1.9-5.1L5 10l5.1-1.9z',
@@ -101,4 +137,14 @@ export const iconsWithPaths = {
   tag: 'M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z M7 7h.01',
   flame:
     'M8.5 14.5A2.5 2.5 0 0 0 11 12c0-1.38-.5-2-1-3-1.072-2.143-.224-4.054 2-6 .5 2.5 2 4.9 4 6.5 2 1.6 3 3.5 3 5.5a7 7 0 1 1-14 0c0-1.153.433-2.294 1-3a2.5 2.5 0 0 0 2.5 2.5z',
+  image:
+    'M21 19V5a2 2 0 0 0-2-2H5a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2z M8.5 11.5a1.5 1.5 0 1 0 0-3 1.5 1.5 0 0 0 0 3z M21 15l-5-5L5 21',
+  video:
+    'M23 7l-7 5 7 5V7 M14 5H3a2 2 0 0 0-2 2v10a2 2 0 0 0 2 2h11a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2',
+  audio:
+    'M9 18V5l12-2v13 M9 18a3 3 0 1 1-6 0 3 3 0 0 1 6 0 M21 16a3 3 0 1 1-6 0 3 3 0 0 1 6 0',
+  code: 'M16 18l6-6-6-6 M8 6l-6 6 6 6',
+  database:
+    'M12 2C7.58 2 4 3.79 4 6v12c0 2.21 3.58 4 8 4s8-1.79 8-4V6c0-2.21-3.58-4-8-4z M4 12c0 2.21 3.58 4 8 4s8-1.79 8-4 M4 6c0 2.21 3.58 4 8 4s8-1.79 8-4',
+  terminal: 'M4 17l6-6-6-6 M12 19h8',
 };

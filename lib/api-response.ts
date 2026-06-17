@@ -1,12 +1,12 @@
 // lib/api-response.ts
-import { NextResponse } from "next/server";
-import { ApiResponse } from "@/types/common-types";
+import { NextResponse } from 'next/server';
+import type { ApiResponse } from '@/types/common-types';
 
 // Note the order: data first, then message, then HTTP status code
 export function sendSuccess<T>(
   data: T,
-  message: string = "Success",
-  statusCode: number = 200,
+  message = 'Success',
+  statusCode = 200,
 ): NextResponse<ApiResponse<T>> {
   return NextResponse.json(
     {
@@ -20,7 +20,7 @@ export function sendSuccess<T>(
 
 export function sendError(
   message: string,
-  statusCode: number = 400,
+  statusCode = 400,
   errorDetails?: string | Record<string, unknown>,
 ): NextResponse<ApiResponse> {
   return NextResponse.json(

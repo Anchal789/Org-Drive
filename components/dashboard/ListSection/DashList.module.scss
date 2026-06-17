@@ -1,0 +1,139 @@
+@use "../../../styles/functions" as *;
+
+.shell {
+  display: flex;
+  height: 100%;
+  background: v(background);
+  color: v(foreground);
+  font-family: v(font-sans);
+  position: relative;
+}
+
+.main {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  position: relative;
+}
+
+.content {
+  flex: 1;
+  overflow: auto;
+  padding: 8px 24px 24px;
+}
+
+.sectionLabel {
+  margin-bottom: 6px;
+  font-size: 11px;
+  font-weight: v(weight-semibold);
+  color: v(muted-foreground);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+// ─── Folders row ──────────────────────────────────────────────────────────
+.foldersGrid {
+  display: grid;
+  grid-template-columns: repeat(6, 1fr);
+  gap: 8px;
+}
+
+.folderChip {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 10px;
+  border: 1px solid v(border);
+  border-radius: v(radius-md);
+  background: v(card);
+}
+
+.folderName {
+  font-size: 12px;
+  font-weight: v(weight-medium);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+// ─── Table ────────────────────────────────────────────────────────────────
+.table {
+  margin-top: 18px;
+  border: 1px solid v(border);
+  border-radius: v(radius-lg);
+  overflow: hidden;
+  background: v(card);
+}
+
+.tableHeader,
+.tableRow {
+  display: grid;
+  grid-template-columns: 24px 1fr 100px 130px 110px 110px 32px;
+  gap: 12px;
+  padding: 10px 14px;
+  align-items: center;
+}
+
+.tableHeader {
+  background: v(surface);
+  border-bottom: 1px solid v(border);
+  font-size: 10px;
+  font-weight: v(weight-semibold);
+  color: v(muted-foreground);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.tableRow {
+  border-bottom: 1px solid v(border);
+  font-size: 12px;
+}
+
+.tableRowLast {
+  border-bottom: none;
+}
+
+.sortable {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.fileCell {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-width: 0;
+}
+
+.fileName {
+  font-weight: v(weight-medium);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.kindCell {
+  color: v(muted-foreground);
+  text-transform: uppercase;
+  font-size: 11px;
+  font-weight: v(weight-medium);
+}
+
+.ownerCell {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.ownerName {
+  font-size: 11px;
+  color: v(muted-foreground);
+}
+
+.metaCell {
+  color: v(muted-foreground);
+  font-size: 11px;
+  font-variant-numeric: tabular-nums;
+}

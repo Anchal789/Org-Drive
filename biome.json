@@ -1,9 +1,9 @@
 {
   "$schema": "https://biomejs.dev/schemas/2.4.16/schema.json",
   "vcs": {
-    "enabled": false,
+    "enabled": true,
     "clientKind": "git",
-    "useIgnoreFile": false
+    "useIgnoreFile": true
   },
   "files": {
     "ignoreUnknown": false,
@@ -13,7 +13,8 @@
       "!**/dist",
       "!**/public",
       "!**/.next",
-      "!**/content"
+      "!**/content",
+      "!**/.react-doctor-baseline.json"
     ]
   },
   "formatter": {
@@ -26,12 +27,15 @@
     "rules": {
       "recommended": true,
       "suspicious": {
-        "noExplicitAny": "off",
-        "noArrayIndexKey": "off",
-        "noUnknownAtRules": "off"
+        "noExplicitAny": "error",
+        "noArrayIndexKey": "error",
+        "noUnknownAtRules": "off",
+        "noConsole": "warn",
+        "noDebugger": "error",
+        "noEmptyBlockStatements": "error"
       },
       "security": {
-        "noDangerouslySetInnerHtml": "off"
+        "noDangerouslySetInnerHtml": "error"
       },
       "style": {
         "noParameterAssign": "error",
@@ -43,9 +47,25 @@
         "noUnusedTemplateLiteral": "error",
         "useNumberNamespace": "error",
         "noInferrableTypes": "error",
-        "noUselessElse": "error"
+        "noUselessElse": "error",
+        "useImportType": "error",
+        "useExportType": "error"
       },
-      "correctness": {}
+      "correctness": {
+        "noUnusedVariables": "error",
+        "noUnusedImports": "error",
+        "useHookAtTopLevel": "error",
+        "noInvalidUseBeforeDeclaration": "error"
+      },
+      "performance": {
+        "noAccumulatingSpread": "warn",
+        "noDelete": "warn"
+      },
+      "complexity": {
+        "noForEach": "warn",
+        "noStaticOnlyClass": "error",
+        "noUselessTernary": "error"
+      }
     }
   },
   "javascript": {
@@ -55,8 +75,8 @@
   },
   "css": {
     "parser": {
-      "cssModules": true,
-      "tailwindDirectives": true
+      "tailwindDirectives": true,
+      "cssModules": true
     },
     "linter": {
       "enabled": false

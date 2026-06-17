@@ -1,26 +1,26 @@
-"use client";
+'use client';
 
-import { iconsWithPaths } from "@/constants/common-constants";
-import Icon from "@/components/ui/Icon";
-import TelegramButton from "@/components/ui/TelegramButton";
-import { useRouter, useSearchParams } from "next/navigation";
-import { useEffect, useRef, useState } from "react";
-import { Controller, useForm } from "react-hook-form";
-import { verifyOtp, verifyOtpPassword } from "@/services/auth-service";
-import { decrypt } from "@/lib/utils";
-import styles from "./VerifyOtpPage.module.scss";
+import { useRouter, useSearchParams } from 'next/navigation';
+import { useEffect, useRef, useState } from 'react';
+import { Controller, useForm } from 'react-hook-form';
+import Icon from '@/components/ui/icon';
+import TelegramButton from '@/components/ui/telegram-button';
+import { iconsWithPaths } from '@/constants/common-constants';
+import { decrypt } from '@/lib/utils';
+import { verifyOtp, verifyOtpPassword } from '@/services/auth-service';
+import styles from './VerifyOtpPage.module.scss';
 
 const OTP_LENGTH = 5;
 const RESEND_SECONDS = 60;
 
-type Status = "entering_otp" | "needs_password" | "success";
+type Status = 'entering_otp' | 'needs_password' | 'success';
 
 export default function VerifyOtpPage() {
   const router = useRouter();
   const searchParams = useSearchParams();
-  const phoneNumber = decrypt(searchParams.get("phone") ?? "");
+  const phoneNumber = decrypt(searchParams.get('phone') ?? '');
 
-  const [status, setStatus] = useState<Status>("entering_otp");
+  const [status, setStatus] = useState<Status>('entering_otp');
   const [activeIndex, setActiveIndex] = useState(0);
   const [serverError, setServerError] = useState<string | null>(null);
   const [resendIn, setResendIn] = useState(RESEND_SECONDS);
@@ -29,24 +29,24 @@ export default function VerifyOtpPage() {
   const inputsRef = useRef<(HTMLInputElement | null)[]>([]);
 
   const otpForm = useForm<{ otp: string }>({
-    defaultValues: { otp: "" },
-    mode: "onChange",
+    defaultValues: { otp: '' },
+    mode: 'onChange',
   });
 
-  const otpValue = otpForm.watch("otp");
+  const otpValue = otpForm.watch('otp');
   const digits = Array.from(
     { length: OTP_LENGTH },
-    (_, i) => otpValue[i] ?? "",
+    (_, i) => otpValue[i] ?? '',
   );
 
   const passwordForm = useForm<{ password: string }>({
-    defaultValues: { password: "" },
-    mode: "onChange",
+    defaultValues: { password: '' },
+    mode: 'onChange',
   });
 
   useEffect(() => {
     if (!phoneNumber) {
-      router.replace("/login");
+      router.replace('/login');
     }
   }, [phoneNumber, router]);
 
@@ -57,19 +57,19 @@ export default function VerifyOtpPage() {
   }, [resendIn]);
 
   const updateOtpDigit = (index: number, newDigit: string) => {
-    const cleaned = newDigit.replace(/\D/g, "").slice(-1);
+    const cleaned = newDigit.replace(/\D/g, '').slice(-1);
     const next = [...digits];
     next[index] = cleaned;
-    const joined = next.join("");
+    const joined = next.join('');
 
-    otpForm.setValue("otp", joined, { shouldValidate: true });
+    otpForm.setValue('otp', joined, { shouldValidate: true });
 
     if (cleaned && index < OTP_LENGTH - 1) {
       setActiveIndex(index + 1);
       inputsRef.current[index + 1]?.focus();
     }
 
-    if (cleaned && index === OTP_LENGTH - 1 && next.every((d) => d !== "")) {
+    if (cleaned && index === OTP_LENGTH - 1 && next.every((d) => d !== '')) {
       otpForm.handleSubmit(submitOtp)();
     }
   };
@@ -78,15 +78,15 @@ export default function VerifyOtpPage() {
     index: number,
     e: React.KeyboardEvent<HTMLInputElement>,
   ) => {
-    if (e.key === "Backspace" && !digits[index] && index > 0) {
+    if (e.key === 'Backspace' && !digits[index] && index > 0) {
       setActiveIndex(index - 1);
       inputsRef.current[index - 1]?.focus();
     }
-    if (e.key === "ArrowLeft" && index > 0) {
+    if (e.key === 'ArrowLeft' && index > 0) {
       setActiveIndex(index - 1);
       inputsRef.current[index - 1]?.focus();
     }
-    if (e.key === "ArrowRight" && index < OTP_LENGTH - 1) {
+    if (e.key === 'ArrowRight' && index < OTP_LENGTH - 1) {
       setActiveIndex(index + 1);
       inputsRef.current[index + 1]?.focus();
     }
@@ -95,12 +95,12 @@ export default function VerifyOtpPage() {
   const handlePaste = (e: React.ClipboardEvent<HTMLInputElement>) => {
     e.preventDefault();
     const pasted = e.clipboardData
-      .getData("text")
-      .replace(/\D/g, "")
+      .getData('text')
+      .replace(/\D/g, '')
       .slice(0, OTP_LENGTH);
     if (!pasted) return;
 
-    otpForm.setValue("otp", pasted, { shouldValidate: true });
+    otpForm.setValue('otp', pasted, { shouldValidate: true });
     const focusIdx = Math.min(pasted.length, OTP_LENGTH - 1);
     setActiveIndex(focusIdx);
     inputsRef.current[focusIdx]?.focus();
@@ -113,54 +113,57 @@ export default function VerifyOtpPage() {
   async function submitOtp(values: { otp: string }) {
     setServerError(null);
     try {
-      const response = await verifyOtp(phoneNumber, values.otp);
+      const response = await verifyOtp(String(phoneNumber), values.otp);
       const data = response?.data;
 
-      if (response.success && response.status === "success") {
-        setStatus("success");
-        setTimeout(() => router.push("/dashboard"), 1000);
-      } else if (response.success && data?.step === "needs_password") {
+      if (response.success && data.step === 'success') {
+        setStatus('success');
+        setTimeout(() => router.push('/my-drive'), 1000);
+      } else if (response.success && data?.step === 'needs_password') {
         setPasswordHint(data.passwordHint ?? null);
-        setStatus("needs_password");
+        setStatus('needs_password');
       } else {
-        setServerError(response.message || "Invalid code");
-        otpForm.setValue("otp", "");
+        setServerError(response.message || 'Invalid code');
+        otpForm.setValue('otp', '');
         setActiveIndex(0);
         inputsRef.current[0]?.focus();
       }
     } catch (err: unknown) {
       const errMsg = err instanceof Error ? err.message : String(err);
-      setServerError(errMsg ?? "Network error");
+      setServerError(errMsg ?? 'Network error');
     }
   }
 
   async function submitPassword(values: { password: string }) {
     setServerError(null);
     try {
-      const response = await verifyOtpPassword(phoneNumber, values.password);
+      const response = await verifyOtpPassword(
+        String(phoneNumber),
+        values.password,
+      );
       const data = response?.data;
 
-      if (response.success && data?.step === "success") {
-        setStatus("success");
-        setTimeout(() => router.push("/dashboard"), 1000);
+      if (response.success && data?.step === 'success') {
+        setStatus('success');
+        setTimeout(() => router.push('/my-drive'), 1000);
       } else {
-        setServerError(response.message ?? "Incorrect password");
+        setServerError(response.message ?? 'Incorrect password');
       }
     } catch (err: unknown) {
       const errMsg = err instanceof Error ? err.message : String(err);
-      setServerError(errMsg ?? "Network error");
+      setServerError(errMsg ?? 'Network error');
     }
   }
 
-  const showOtpUi = status === "entering_otp";
-  const showPasswordUi = status === "needs_password";
+  const showOtpUi = status === 'entering_otp';
+  const showPasswordUi = status === 'needs_password';
 
   return (
     <div className={styles.pageWrapper} data-screen-label="00 Login · OTP step">
       <div className={styles.authCard}>
         <button
           type="button"
-          onClick={() => router.push("/login")}
+          onClick={() => router.push('/login')}
           className={styles.backButton}
         >
           <Icon d={iconsWithPaths.chevLeft} size={13} /> Back
@@ -173,7 +176,7 @@ export default function VerifyOtpPage() {
               return (
                 <span
                   key={i}
-                  className={`${styles.progressSegment} ${i <= filledThrough ? styles.active : ""}`}
+                  className={`${styles.progressSegment} ${i <= filledThrough ? styles.active : ''}`}
                 />
               );
             })}
@@ -181,14 +184,14 @@ export default function VerifyOtpPage() {
 
           <div className={styles.stepLabel}>
             {showPasswordUi
-              ? "Step 3 of 3 · Two-factor authentication"
-              : "Step 2 of 3 · Verify identity"}
+              ? 'Step 3 of 3 · Two-factor authentication'
+              : 'Step 2 of 3 · Verify identity'}
           </div>
 
           <h2 className={styles.heading}>
             {showPasswordUi
-              ? "Enter your Telegram password."
-              : "Check Telegram for a code."}
+              ? 'Enter your Telegram password.'
+              : 'Check Telegram for a code.'}
           </h2>
 
           <p className={styles.description}>
@@ -197,8 +200,8 @@ export default function VerifyOtpPage() {
                 Two-factor authentication is enabled on your account.
                 {passwordHint && (
                   <>
-                    {" "}
-                    Hint:{" "}
+                    {' '}
+                    Hint:{' '}
                     <strong className={styles.highlightText}>
                       {passwordHint}
                     </strong>
@@ -210,7 +213,7 @@ export default function VerifyOtpPage() {
                 We sent a {OTP_LENGTH}-digit code to your Telegram account
                 ending&nbsp;
                 <strong className={styles.highlightText}>
-                  •• {phoneNumber.slice(-4)}
+                  •• {phoneNumber?.slice(-4)}
                 </strong>
                 .
               </>
@@ -227,7 +230,7 @@ export default function VerifyOtpPage() {
               control={otpForm.control}
               name="otp"
               rules={{
-                required: "OTP is required",
+                required: 'OTP is required',
                 minLength: {
                   value: OTP_LENGTH,
                   message: `OTP must be ${OTP_LENGTH} digits`,
@@ -236,7 +239,7 @@ export default function VerifyOtpPage() {
                   value: OTP_LENGTH,
                   message: `OTP must be ${OTP_LENGTH} digits`,
                 },
-                pattern: { value: /^\d+$/, message: "OTP must be digits only" },
+                pattern: { value: /^\d+$/, message: 'OTP must be digits only' },
               }}
               render={() => (
                 <div className={styles.otpContainer}>
@@ -245,7 +248,7 @@ export default function VerifyOtpPage() {
                     return (
                       <label
                         key={i}
-                        className={`${styles.otpLabel} ${isActive ? styles.active : ""}`}
+                        className={`${styles.otpLabel} ${isActive ? styles.active : ''}`}
                       >
                         <input
                           ref={(el) => {
@@ -275,10 +278,10 @@ export default function VerifyOtpPage() {
               <Icon d={iconsWithPaths.clock} size={12} />
               {resendIn > 0 ? (
                 <>
-                  Resend code in{" "}
+                  Resend code in{' '}
                   <span className={styles.resendTimer}>
-                    {String(Math.floor(resendIn / 60)).padStart(2, "0")}:
-                    {String(resendIn % 60).padStart(2, "0")}
+                    {String(Math.floor(resendIn / 60)).padStart(2, '0')}:
+                    {String(resendIn % 60).padStart(2, '0')}
                   </span>
                 </>
               ) : (
@@ -320,8 +323,8 @@ export default function VerifyOtpPage() {
               control={passwordForm.control}
               name="password"
               rules={{
-                required: "Password is required",
-                minLength: { value: 1, message: "Password is required" },
+                required: 'Password is required',
+                minLength: { value: 1, message: 'Password is required' },
               }}
               render={({ field }) => (
                 <input
@@ -330,7 +333,7 @@ export default function VerifyOtpPage() {
                   placeholder="Your Telegram password"
                   autoFocus
                   disabled={passwordForm.formState.isSubmitting}
-                  className={`${styles.passwordInput} ${passwordForm.formState.errors.password ? styles.error : ""}`}
+                  className={`${styles.passwordInput} ${passwordForm.formState.errors.password ? styles.error : ''}`}
                 />
               )}
             />
@@ -356,10 +359,10 @@ export default function VerifyOtpPage() {
         )}
         {showOtpUi && (
           <div className={styles.helpContainer}>
-            Trouble receiving codes?{" "}
+            Trouble receiving codes?{' '}
             <button
               type="button"
-              onClick={() => router.push("/qr-login")}
+              onClick={() => router.push('/qr-login')}
               className={styles.linkButton}
             >
               Use QR code instead →

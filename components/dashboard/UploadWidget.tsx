@@ -1,50 +1,61 @@
-import Icon from "@/components/ui/Icon";
-import {
-  iconsWithPaths,
-  TG_BLUE,
-  TG_BLUE_BG,
-  TINTS,
-} from "@/constants/common-constants";
-import { UPLOAD_ITEMS } from "@/constants/dashboard-constants";
-import type { UploadItem, Tone } from "@/types/dashboard";
-import styles from "@/styles/components/UploadWidget.module.scss";
+'use client';
 
-const STATE_TO_TONE: Record<UploadItem["state"], Tone> = {
-  done: "green",
-  indexing: "violet",
-  queued: "slate",
-  uploading: "sky",
+import { Button } from '@base-ui/react';
+import { useRouter } from 'next/navigation';
+import { useEffect, useState } from 'react';
+import Icon from '@/components/ui/icon';
+import { iconsWithPaths, TINTS } from '@/constants/common-constants';
+import { formatBytes, useUploadStore } from '@/store/store';
+import styles from '@/styles/components/UploadWidget.module.scss';
+import type { DisplayItem, Tone, UploadItem } from '@/types/dashboard';
+
+const STATE_TO_TONE: Record<UploadItem['state'], Tone> = {
+  done: 'green',
+  indexing: 'violet',
+  queued: 'slate',
+  uploading: 'sky',
+  error: 'red',
+  aborted: 'red',
 };
 
 function UploadItemRow({
   item,
   isLast,
+  onAbort,
 }: {
-  item: UploadItem;
+  item: DisplayItem;
   isLast: boolean;
+  onAbort: (item: DisplayItem) => void;
 }) {
   const tone = STATE_TO_TONE[item.state];
   const tint = TINTS[tone];
-  const stateLabel = item.state === "indexing" ? "Indexing for AI" : item.state;
+  const stateLabel =
+    item.state === 'indexing'
+      ? 'Indexing for AI'
+      : item.state === 'error'
+        ? 'Upload Failed'
+        : item.state === 'aborted'
+          ? 'Upload Cancelled'
+          : item.state;
 
   return (
-    <div className={`${styles.itemRow} ${isLast ? styles.itemRowLast : ""}`}>
+    <div className={`${styles.itemRow} ${isLast ? styles.itemRowLast : ''}`}>
       <div
         className={styles.itemIcon}
         style={{ background: tint.bg, color: tint.tx }}
       >
-        {item.state === "done" && (
+        {item.state === 'done' && (
           <Icon d={iconsWithPaths.check} size={14} stroke={2.4} />
         )}
-        {item.state === "indexing" && (
+        {item.state === 'indexing' && (
           <Icon
             d={iconsWithPaths.sparkle}
             size={13}
-            style={{ animation: "spin 2.4s linear infinite" }}
+            style={{ animation: 'spin 2.4s linear infinite' }}
           />
         )}
-        {item.state === "queued" && <Icon d={iconsWithPaths.clock} size={13} />}
-        {item.state === "uploading" && (
+        {item.state === 'queued' && <Icon d={iconsWithPaths.clock} size={13} />}
+        {item.state === 'uploading' && (
           <>
             <svg
               width="30"
@@ -72,13 +83,25 @@ function UploadItemRow({
                 transform="rotate(-90 15 15)"
               />
             </svg>
-            <span className={styles.uploadingPct}>{item.pct}</span>
+            <span className={styles.uploadingPct}>{item.pct}%</span>
           </>
+        )}
+        {(item.state === 'error' || item.state === 'aborted') && (
+          <Icon d={iconsWithPaths.x} size={14} stroke={2.4} />
         )}
       </div>
 
       <div className={styles.itemBody}>
-        <div className={styles.itemName}>{item.name}</div>
+        <div className={styles.itemName}>
+          {item.isFolderGroup && (
+            <Icon
+              d={iconsWithPaths.folder}
+              size={12}
+              style={{ marginRight: 6, display: 'inline' }}
+            />
+          )}
+          {item.name}
+        </div>
         <div className={styles.itemMeta}>
           <span className={styles.itemSize}>{item.size}</span>
           <span className={styles.itemDot} style={{ color: tint.tx }}>
@@ -90,69 +113,172 @@ function UploadItemRow({
         </div>
       </div>
 
-      <Icon
-        d={
-          item.state === "done"
-            ? iconsWithPaths.check
-            : item.state === "uploading" || item.state === "queued"
-              ? iconsWithPaths.x
-              : iconsWithPaths.more
-        }
-        size={13}
-        style={{ color: "var(--muted-foreground)", flexShrink: 0 }}
-      />
+      <Button onClick={() => onAbort(item)}>
+        <Icon
+          d={
+            item.state === 'done'
+              ? iconsWithPaths.check
+              : item.state === 'uploading' || item.state === 'queued'
+                ? iconsWithPaths.x
+                : iconsWithPaths.more
+          }
+          size={13}
+          style={{ color: 'var(--muted-foreground)', flexShrink: 0 }}
+        />
+      </Button>
     </div>
   );
 }
 
 export default function UploadWidget() {
-  const items = UPLOAD_ITEMS;
-  const doneCount = items.filter((i) => i.state === "done").length;
+  const {
+    isWidgetVisible: isVisible,
+    uploads: uploadsRecord,
+    closeWidget,
+    isProcessing,
+    abortUpload,
+  } = useUploadStore();
+
+  const router = useRouter();
+  const [collapseWidget, setCollapseWidget] = useState<boolean>(false);
+
+  const rawItems: UploadItem[] = Object.values(uploadsRecord);
+  const displayItems: DisplayItem[] = [];
+  const folderMap = new Map<string, UploadItem[]>();
+
+  rawItems.forEach((item) => {
+    if (item.folderName) {
+      if (!folderMap.has(item.folderName)) folderMap.set(item.folderName, []);
+      folderMap.get(item.folderName)!.push(item);
+    } else {
+      displayItems.push(item);
+    }
+  });
+
+  folderMap.forEach((folderFiles, folderName) => {
+    const totalFiles = folderFiles.length;
+    const doneFiles = folderFiles.filter((f) => f.state === 'done').length;
+    const errorFiles = folderFiles.filter(
+      (f) => f.state === 'error' || f.state === 'aborted',
+    ).length;
+    const uploadingFile = folderFiles.find((f) => f.state === 'uploading');
+
+    let state: UploadItem['state'] = 'queued';
+    if (doneFiles === totalFiles) state = 'done';
+    else if (errorFiles + doneFiles === totalFiles) state = 'error';
+    else if (uploadingFile || doneFiles > 0) state = 'uploading';
+
+    const donePct = (doneFiles / totalFiles) * 100;
+    const uploadingPct = uploadingFile ? uploadingFile.pct / totalFiles : 0;
+    const totalPct = Math.round(donePct + uploadingPct);
+
+    const totalRawSize = folderFiles.reduce(
+      (acc, f) => acc + (f.rawSize || 0),
+      0,
+    );
+
+    displayItems.push({
+      id: folderName,
+      name: folderName,
+      isFolderGroup: true,
+      originalFiles: folderFiles,
+      size: formatBytes(totalRawSize),
+      state: state,
+      pct: totalPct,
+      eta: uploadingFile?.eta,
+    });
+  });
+
+  const itemsStillUploading = displayItems.filter(
+    (i) =>
+      i.state === 'uploading' || i.state === 'queued' || i.state === 'indexing',
+  );
+  const doneCount = displayItems.filter((i) => i.state === 'done').length;
+
+  const estimateTime = rawItems.reduce((acc, i) => acc + (i?.eta || 0) || 0, 0);
+  const estimateHours = Math.floor(estimateTime / 60 / 60);
+  const estimateMinutes = Math.floor((estimateTime / 60) % 60);
+  const estimateSeconds = Math.floor(estimateTime % 60);
+
+  const handleAbort = (item: DisplayItem) => {
+    if (item.isFolderGroup) {
+      item.originalFiles.forEach((f) => abortUpload(f.id));
+    } else {
+      abortUpload(item.id);
+    }
+  };
+
+  useEffect(() => {
+    if (!isProcessing && rawItems.length > 0) {
+      router.refresh();
+    }
+  }, [isProcessing, rawItems.length, router]);
+
+  if (!isVisible) return null;
 
   return (
     <div className={styles.widget}>
-      {/* Header */}
       <div className={styles.head}>
-        <Icon
-          d={iconsWithPaths.refresh}
-          size={14}
-          style={{
-            animation: "spin 1.6s linear infinite",
-            color: "var(--primary)",
-          }}
-        />
-        <span className={styles.headTitle}>
-          Uploading {items.length - doneCount} of {items.length}
-        </span>
-        <span className={styles.headTime}>1m 24s left</span>
-        <Icon d={iconsWithPaths.chevDown} size={14} style={{ opacity: 0.8 }} />
-        <Icon d={iconsWithPaths.x} size={14} style={{ opacity: 0.8 }} />
-      </div>
-
-      {/* Channel destination */}
-      <div className={styles.channel} style={{ background: TG_BLUE_BG }}>
-        <Icon
-          d={iconsWithPaths.send}
-          size={12}
-          style={{ color: TG_BLUE, transform: "rotate(15deg)" }}
-        />
-        <span style={{ fontSize: 11, color: TG_BLUE, fontWeight: 500 }}>
-          Streaming to <strong>@zurutech_drive</strong> · node-eu-1
-        </span>
-      </div>
-
-      {/* List */}
-      <div className={styles.list}>
-        {items.map((item, i) => (
-          <UploadItemRow
-            key={item.name}
-            item={item}
-            isLast={i === items.length - 1}
+        {itemsStillUploading.length > 0 ? (
+          <>
+            <Icon
+              d={iconsWithPaths.refresh}
+              size={14}
+              style={{
+                animation: 'spin 1.6s linear infinite',
+                color: 'var(--primary)',
+              }}
+            />
+            <span className={styles.headTitle}>
+              Uploading {displayItems.length - doneCount} of{' '}
+              {displayItems.length}
+            </span>
+          </>
+        ) : (
+          <>
+            <Icon
+              d={iconsWithPaths.check}
+              size={14}
+              style={{ color: 'var(--primary)' }}
+            />
+            <span className={styles.headTitle}>
+              {doneCount} of {displayItems.length} uploaded successfully
+            </span>
+          </>
+        )}
+        {itemsStillUploading.length > 0 && (
+          <span className={styles.headTime}>
+            {estimateHours > 0 && `${estimateHours}h `}
+            {estimateMinutes}m {estimateSeconds}s left
+          </span>
+        )}
+        <button onClick={() => setCollapseWidget(!collapseWidget)}>
+          <Icon
+            d={collapseWidget ? iconsWithPaths.chevUp : iconsWithPaths.chevDown}
+            size={14}
+            style={{ opacity: 0.8 }}
           />
-        ))}
+        </button>
+        <button onClick={closeWidget} className={styles.closeBtn}>
+          <Icon d={iconsWithPaths.x} size={14} />
+        </button>
       </div>
 
-      {/* Footer */}
+      <div
+        className={`${styles.list} ${collapseWidget ? styles.listCollapsed : ''}`}
+      >
+        <div className={styles.listInner}>
+          {displayItems.map((item, i) => (
+            <UploadItemRow
+              key={item.id}
+              item={item}
+              isLast={i === displayItems.length - 1}
+              onAbort={handleAbort}
+            />
+          ))}
+        </div>
+      </div>
+
       <div className={styles.footer}>
         <Icon d={iconsWithPaths.shield} size={11} />
         End-to-end encrypted via your Telegram channel.

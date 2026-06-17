@@ -1,21 +1,21 @@
-import { cookies } from "next/headers";
-import { verifyToken, generateAccessToken } from "@/lib/jwt";
-import { sendError, sendSuccess } from "@/lib/api-response";
+import { cookies } from 'next/headers';
+import { sendError, sendSuccess } from '@/lib/api-response';
+import { generateAccessToken, verifyToken } from '@/lib/jwt';
 
 export async function POST() {
   // 1. Grab the refresh token safely from the httpOnly cookie
   const cookieStore = await cookies();
-  const refreshToken = cookieStore.get("refresh_token")?.value;
+  const refreshToken = cookieStore.get('refresh_token')?.value;
 
   if (!refreshToken) {
-    return sendError("No refresh token found", 401);
+    return sendError('No refresh token found', 401);
   }
 
   // 2. Verify the refresh token is still valid (within the 7 days)
   const payload = await verifyToken(refreshToken);
 
   if (!payload || !payload.userId) {
-    return sendError("Invalid or expired refresh token", 403);
+    return sendError('Invalid or expired refresh token', 403);
   }
 
   const newAccessToken = await generateAccessToken(

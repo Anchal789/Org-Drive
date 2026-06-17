@@ -1,6 +1,6 @@
-import PhoneLogin from "./PhoneNumberLogin/PhoneLogin";
-import { TelegramQrDisplayPanel } from "./QrLogin/TelegramQrDisplayPanel";
-import styles from "./LoginPage.module.scss";
+import styles from './LoginPage.module.scss';
+import PhoneLogin from './PhoneNumberLogin/PhoneLogin';
+import { TelegramQrDisplayPanel } from './QrLogin/TelegramQrDisplayPanel';
 
 export default function LoginPage() {
   return (

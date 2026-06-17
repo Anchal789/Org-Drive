@@ -1,0 +1,87 @@
+@use "..../../../../../styles/functions" as *;
+
+.card {
+  padding: 10px;
+  border: 1px solid v(border);
+  border-radius: v(radius-xl);
+  background: v(card);
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  box-shadow: v(shadow-xs);
+  position: relative;
+
+  &.cardBig {
+    padding: 14px;
+    .preview {
+      height: 88px;
+    }
+  }
+}
+
+.header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.headerActions {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.starIcon {
+  color: var(--amber-bd, #d97706);
+  fill: var(--amber-bg, #fef3c7);
+}
+
+.moreBtn {
+  height: fit-content;
+}
+
+.moreIcon {
+  color: v(muted-foreground);
+}
+
+.preview {
+  background: v(secondary);
+  border-radius: v(radius-md);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  height: 72px;
+  cursor: pointer;
+}
+
+.fileIcon {
+  color: color-mix(in oklch, v(muted-foreground) 45%, transparent);
+}
+
+.name {
+  font-size: 12px;
+  font-weight: v(weight-medium);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  height: 16px;
+}
+
+.meta {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-top: 6px;
+}
+
+.metaLeft {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.modTime {
+  font-size: 10px;
+  color: v(muted-foreground);
+}

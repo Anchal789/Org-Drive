@@ -1,5 +1,5 @@
-import { OTPLoginEntry } from "@/types/auth";
-import type { TelegramClient } from "telegram";
+import type { TelegramClient } from 'telegram';
+import type { OTPLoginEntry } from '@/types/auth';
 
 const store = new Map<string, OTPLoginEntry>();
 const TTL_MS = 5 * 60 * 1000;
@@ -29,7 +29,7 @@ export const otpStore = {
       phoneNumber,
       phoneCodeHash,
       createdAt: Date.now(),
-      status: "waiting",
+      status: 'waiting',
       user: null,
       error: null,
       passwordHint: null,
@@ -43,7 +43,7 @@ export const otpStore = {
   markNeedsPassword(loginId: string, hint: string | null) {
     const entry = store.get(loginId);
     if (entry) {
-      entry.status = "needs_password";
+      entry.status = 'needs_password';
       entry.passwordHint = hint;
     }
   },
@@ -51,7 +51,7 @@ export const otpStore = {
   markSuccess(loginId: string, user: any) {
     const entry = store.get(loginId);
     if (entry) {
-      entry.status = "success";
+      entry.status = 'success';
       entry.user = user;
     }
   },
@@ -59,7 +59,7 @@ export const otpStore = {
   markError(loginId: string, error: string) {
     const entry = store.get(loginId);
     if (entry) {
-      entry.status = "error";
+      entry.status = 'error';
       entry.error = error;
     }
   },

@@ -1,10 +1,10 @@
-"use client";
+'use client';
 
-import Image from "next/image";
-import { useRef } from "react";
-import { toast } from "sonner";
-import { Controller, useForm } from "react-hook-form";
-import { useRouter } from "next/navigation";
+import Image from 'next/image';
+import { useRouter } from 'next/navigation';
+import { useRef } from 'react';
+import { Controller, useForm } from 'react-hook-form';
+import { toast } from 'sonner';
 
 import {
   Combobox,
@@ -15,28 +15,28 @@ import {
   ComboboxList,
   ComboboxTrigger,
   ComboboxValue,
-} from "@/components/ui/combobox";
-import Icon from "@/components/ui/Icon";
-import { Input } from "@/components/ui/input";
+} from '@/components/ui/combobox';
+import Icon from '@/components/ui/icon';
+import { Input } from '@/components/ui/input';
 import {
   Item,
   ItemContent,
   ItemDescription,
   ItemTitle,
-} from "@/components/ui/item";
-import TelegramButton from "@/components/ui/TelegramButton";
-import { iconsWithPaths } from "@/constants/common-constants";
-import { countryWithPhoneCode } from "@/constants/country-with-phonecode";
-import { requestOtp } from "@/services/auth-service";
-import { encrypt } from "@/lib/utils";
-import { CountryType } from "@/types/auth";
-import styles from "./PhoneLogin.module.scss";
+} from '@/components/ui/item';
+import TelegramButton from '@/components/ui/telegram-button';
+import { iconsWithPaths } from '@/constants/common-constants';
+import { countryWithPhoneCode } from '@/constants/country-with-phonecode';
+import { encrypt } from '@/lib/utils';
+import { requestOtp } from '@/services/auth-service';
+import type { CountryType } from '@/types/auth';
+import styles from './PhoneLogin.module.scss';
 
 const flagSrc = (code: string) =>
   `https://raw.githubusercontent.com/SujalXplores/All-Country-Flags/refs/heads/master/${code}.png`;
 
 const DEFAULT_COUNTRY =
-  countryWithPhoneCode.find((c) => c.code === "IN") ?? countryWithPhoneCode[0];
+  countryWithPhoneCode.find((c) => c.code === 'IN') ?? countryWithPhoneCode[0];
 
 export default function PhoneLogin() {
   const dialCodeRef = useRef<string>(DEFAULT_COUNTRY.phoneCode);
@@ -48,13 +48,13 @@ export default function PhoneLogin() {
     handleSubmit,
   } = useForm<{ phoneNumber: string }>({
     defaultValues: {
-      phoneNumber: "",
+      phoneNumber: '',
     },
-    mode: "onChange",
+    mode: 'onChange',
   });
 
   const fullNumber = (phoneNumber?: string) =>
-    `${dialCodeRef.current}${phoneNumber}`.replace(/\s/g, "");
+    `${dialCodeRef.current}${phoneNumber}`.replace(/\s/g, '');
 
   const onSubmit = async (payload: { phoneNumber: string }) => {
     if (!isValid) return;
@@ -63,10 +63,12 @@ export default function PhoneLogin() {
     const data = await requestOtp(targetNumber);
 
     if (data.success) {
-      toast.success("OTP sent successfully");
+      toast.success('OTP sent successfully');
       router.push(`/verify-otp?phone=${encrypt(targetNumber)}`);
     } else {
-      toast.error(data.error);
+      toast.error(
+        typeof data.error === 'string' ? data.error : 'Failed to send OTP',
+      );
     }
   };
 
@@ -77,12 +79,12 @@ export default function PhoneLogin() {
 
         <div className={styles.inputGroup}>
           <Combobox
-            items={countryWithPhoneCode.filter((c) => c.code !== "")}
+            items={countryWithPhoneCode.filter((c) => c.code !== '')}
             defaultValue={DEFAULT_COUNTRY}
             itemToStringLabel={(c: CountryType) => c.name}
             itemToStringValue={(c: CountryType) => c.code}
             onValueChange={(c: CountryType | null) => {
-              dialCodeRef.current = c?.phoneCode ?? "";
+              dialCodeRef.current = c?.phoneCode ?? '';
             }}
           >
             <ComboboxTrigger className={styles.comboboxTrigger}>
@@ -144,14 +146,14 @@ export default function PhoneLogin() {
             control={control}
             name="phoneNumber"
             rules={{
-              required: "Phone number is required",
+              required: 'Phone number is required',
               minLength: {
                 value: 10,
-                message: "Phone number must be at least 10 characters",
+                message: 'Phone number must be at least 10 characters',
               },
               maxLength: {
                 value: 15,
-                message: "Phone number must be at most 15 characters",
+                message: 'Phone number must be at most 15 characters',
               },
             }}
             render={({ field }) => (
@@ -159,7 +161,7 @@ export default function PhoneLogin() {
                 {...field}
                 onChange={(event) => {
                   const value = event.target.value
-                    .replace(/\D/g, "")
+                    .replace(/\D/g, '')
                     .slice(0, 15);
                   field.onChange(value);
                 }}

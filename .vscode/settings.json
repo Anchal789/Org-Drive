@@ -30,7 +30,7 @@
   "diffEditor.ignoreTrimWhitespace": false,
   "editor.bracketPairColorization.enabled": true,
   "editor.codeActionsOnSave": {
-    "source.biome": "explicit"
+    "source.fixAll.biome": "explicit"
   },
   "editor.detectIndentation": false,
   "editor.formatOnSave": true,
@@ -43,7 +43,7 @@
   "editor.wordWrap": "on",
   "extensions.ignoreRecommendations": false,
   "files.eol": "\n",
-  "js/ts.preferences.quoteStyle": "single",
+  "js/ts.preferences.quoteStyle": "double",
   "js/ts.updateImportsOnFileMove.enabled": "always",
   "less.lint.duplicateProperties": "warning",
   "less.lint.emptyRules": "warning",

@@ -65,6 +65,16 @@
   height: 40px;
   font-family: inherit;
   transition: background 120ms ease;
+  justify-content: flex-start;
+  padding: 10px 16px;
+  align-self: stretch;
+}
+
+.newButtonCollapsed {
+  justify-content: center;
+  padding: 0;
+  width: 40;
+  align-self: center;
 }
 
 // ─── Nav lists ────────────────────────────────────────────────────────────
@@ -99,6 +109,8 @@
 
 .navItemLabel {
   flex: 1;
+  font-size: v(sidebar-label-size);
+  font-weight: v(weight-medium);
 }
 
 .navItemCount {

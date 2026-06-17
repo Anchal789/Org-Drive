@@ -1,16 +1,17 @@
-import { countryWithPhoneCode } from "@/constants/country-with-phonecode";
-import { TelegramClient } from "telegram";
+import type { TelegramClient } from 'telegram';
+import type { countryWithPhoneCode } from '@/constants/country-with-phonecode';
 
 export type QRLoginStatus =
-  | "loading"
-  | "waiting"
-  | "needs_password"
-  | "success"
-  | "expired"
-  | "error";
+  | 'loading'
+  | 'waiting'
+  | 'needs_password'
+  | 'success'
+  | 'expired'
+  | 'error';
 
 export type TelegramUser = {
   telegramId: string;
+  telegramSessionString: string;
   firstName: string | null;
   lastName: string | null;
   username: string | null;
@@ -31,7 +32,7 @@ export type OTPLoginEntry = {
   phoneNumber: string;
   phoneCodeHash: string;
   createdAt: number;
-  status: "waiting" | "needs_password" | "success" | "error";
+  status: 'waiting' | 'needs_password' | 'success' | 'error';
   user: User | null;
   error: string | null;
   passwordHint: string | null;
@@ -40,6 +41,7 @@ export type OTPLoginEntry = {
 export type User = {
   id: number;
   telegramId: string;
+  telegramSessionString: string;
   firstName: string | null;
   lastName: string | null;
   username: string | null;
@@ -59,6 +61,7 @@ export type PendingLogin = {
 
 export type UpsertUserInput = {
   telegramId: string;
+  telegramSessionString: string;
   firstName: string | null;
   lastName: string | null;
   username: string | null;
@@ -67,3 +70,9 @@ export type UpsertUserInput = {
 };
 
 export type CountryType = (typeof countryWithPhoneCode)[number];
+
+export type SessionUser =
+  | (TelegramUser & {
+      userId: string;
+    })
+  | null;

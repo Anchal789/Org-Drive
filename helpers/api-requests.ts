@@ -1,6 +1,6 @@
 // helpers/api-requests.ts
-import { useAuthStore } from "@/store/useAuthStore";
-import { FailedRequest, FetchOptions } from "@/types/common-types";
+import { useAuthStore } from '@/store/store';
+import type { FailedRequest, FetchOptions } from '@/types/common-types';
 
 let isRefreshing = false;
 let failedQueue: FailedRequest[] = [];
@@ -14,7 +14,7 @@ const processQueue = (error: unknown, token: string | null = null) => {
 };
 
 const buildUrl = (url: string, params?: Record<string, unknown>): string => {
-  const baseUrl = process.env.NEXT_PUBLIC_API_URL || "";
+  const baseUrl = process.env.NEXT_PUBLIC_API_URL || '';
   const fullUrl = new URL(url, baseUrl || window.location.origin);
 
   if (params) {
@@ -34,17 +34,19 @@ const customFetch = async (
   const accessToken = useAuthStore.getState().accessToken;
   const headers = new Headers(options.headers);
 
-  if (!headers.has("Content-Type")) {
-    headers.set("Content-Type", "application/json");
+  const isFormData = options.body instanceof FormData;
+
+  if (!isFormData && !headers.has('Content-Type')) {
+    headers.set('Content-Type', 'application/json');
   }
   if (accessToken) {
-    headers.set("Authorization", `Bearer ${accessToken}`);
+    headers.set('Authorization', `Bearer ${accessToken}`);
   }
 
   const config: RequestInit = {
     ...options,
     headers,
-    credentials: "include",
+    credentials: 'include',
   };
 
   try {
@@ -55,12 +57,12 @@ const customFetch = async (
       return { data };
     }
 
-    if (response.status === 401 && !url.includes("/auth/refresh")) {
+    if (response.status === 401 && !url.includes('/auth/refresh')) {
       if (isRefreshing) {
         return new Promise((resolve, reject) => {
           failedQueue.push({
             resolve: (token: string) => {
-              headers.set("Authorization", `Bearer ${token}`);
+              headers.set('Authorization', `Bearer ${token}`);
               resolve(customFetch(url, { ...options, headers }));
             },
             reject: (err) => reject(err),
@@ -71,35 +73,35 @@ const customFetch = async (
       isRefreshing = true;
 
       try {
-        const refreshRes = await fetch("/api/auth/refresh", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          credentials: "include",
+        const refreshRes = await fetch('/api/auth/refresh', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          credentials: 'include',
         });
 
         if (!refreshRes.ok) {
-          throw new Error("Refresh token expired or invalid");
+          throw new Error('Refresh token expired or invalid');
         }
 
         const refreshData = await refreshRes.json();
         const newAccessToken = refreshData.data.accessToken;
 
         if (!newAccessToken) {
-          throw new Error("Invalid token update structure");
+          throw new Error('Invalid token update structure');
         }
 
         useAuthStore.getState().setAccessToken(newAccessToken);
 
         processQueue(null, newAccessToken);
 
-        headers.set("Authorization", `Bearer ${newAccessToken}`);
+        headers.set('Authorization', `Bearer ${newAccessToken}`);
         return await customFetch(url, { ...options, headers });
       } catch (refreshError) {
         processQueue(refreshError, null);
         useAuthStore.getState().clearAuth();
 
-        if (typeof window !== "undefined") {
-          window.location.href = "/login";
+        if (typeof window !== 'undefined') {
+          window.location.href = '/login';
         }
         return Promise.reject(refreshError);
       } finally {
@@ -118,24 +120,30 @@ const customFetch = async (
 
 const api = {
   get: <T>(url: string, options?: FetchOptions) =>
-    customFetch(url, { ...options, method: "GET" }) as Promise<{ data: T }>,
+    customFetch(url, { ...options, method: 'GET' }) as Promise<{ data: T }>,
 
-  post: <T>(url: string, payload: unknown, options?: FetchOptions) =>
+  post: <T>(
+    url: string,
+    payload: unknown,
+    options?: FetchOptions,
+    isFormData?: boolean,
+  ) =>
     customFetch(url, {
       ...options,
-      method: "POST",
-      body: JSON.stringify(payload),
+      method: 'POST',
+      body: isFormData ? (payload as BodyInit) : JSON.stringify(payload),
+      headers: isFormData ? undefined : options?.headers,
     }) as Promise<{ data: T }>,
 
   put: <T>(url: string, payload: unknown, options?: FetchOptions) =>
     customFetch(url, {
       ...options,
-      method: "PUT",
+      method: 'PUT',
       body: JSON.stringify(payload),
     }) as Promise<{ data: T }>,
 
   delete: <T>(url: string, options?: FetchOptions) =>
-    customFetch(url, { ...options, method: "DELETE" }) as Promise<{ data: T }>,
+    customFetch(url, { ...options, method: 'DELETE' }) as Promise<{ data: T }>,
 };
 
 export default api;

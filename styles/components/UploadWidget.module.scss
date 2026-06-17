@@ -18,8 +18,9 @@
   align-items: center;
   gap: 8px;
   padding: 12px 14px;
-  background: v(foreground);
-  color: v(background);
+  background: v(background);
+  border-bottom: 1px solid v(border);
+  color: v(foreground);
 }
 
 .headTitle {
@@ -33,17 +34,24 @@
   opacity: 0.75;
 }
 
-.channel {
-  padding: 8px 14px;
-  border-bottom: 1px solid v(border);
-  display: flex;
-  align-items: center;
-  gap: 8px;
-}
-
 .list {
   max-height: 280px;
   overflow: auto;
+  display: grid;
+  grid-template-rows: 1fr;
+  transition:
+    grid-template-rows 0.3s ease,
+    max-height 0.3s ease;
+  opacity: 1;
+}
+
+.listCollapsed {
+  grid-template-rows: 0fr;
+  max-height: 0;
+}
+
+.listInner {
+  // overflow: hidden;
 }
 
 .itemRow {

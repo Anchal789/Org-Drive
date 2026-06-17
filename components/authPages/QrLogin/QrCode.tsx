@@ -1,19 +1,19 @@
 "use client";
 
-import { encrypt } from "@/lib/utils";
-import { useCountdown } from "@/hooks/use-countdown";
-import { TelegramUser } from "@/types/auth";
+import Image from "next/image";
 import { useRouter } from "next/navigation";
 import {
+  useActionState,
   useCallback,
   useEffect,
   useRef,
   useState,
-  useActionState,
 } from "react";
-import Image from "next/image";
-import { qrLogin, qrStart } from "@/services/auth-service";
+import { useCountdown } from "@/hooks/use-countdown";
 import { postData } from "@/lib/api-fn";
+import { encrypt } from "@/lib/utils";
+import { qrLogin, qrStart } from "@/services/auth-service";
+import type { TelegramUser } from "@/types/auth";
 import styles from "./QrCode.module.scss";
 
 const POLL_INTERVAL_MS = 2000;
@@ -105,7 +105,7 @@ export default function QrCode() {
           });
         } else if (data.step === "success" && data.user) {
           setState({ status: "success", user: data.user });
-          setTimeout(() => router.push("/dashboard"), 1500);
+          setTimeout(() => router.push("/my-drive"), 1500);
         } else if (data.step === "expired") {
           setState({ status: "expired", loginId: currentLoginId });
         } else if (data.step === "error") {
@@ -161,7 +161,7 @@ export default function QrCode() {
 
         if (response.success && data?.step === "success" && data.user) {
           setState({ status: "success", user: data.user });
-          setTimeout(() => router.push("/dashboard"), 1500);
+          setTimeout(() => router.push("/my-drive"), 1500);
           return null;
         }
         return data?.error ?? "Password failed";

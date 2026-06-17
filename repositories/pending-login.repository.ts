@@ -1,7 +1,7 @@
-import { desc, eq, lt } from "drizzle-orm";
-import { db } from "@/db";
-import { pendingLoginTable } from "@/db/schema";
-import type { PendingLogin } from "@/types/auth";
+import { desc, eq, lt } from 'drizzle-orm';
+import { db } from '@/db';
+import { pendingLoginTable } from '@/db/schema';
+import type { PendingLogin } from '@/types/auth';
 
 const TTL_MS = 5 * 60 * 1000; // 5 minutes
 
