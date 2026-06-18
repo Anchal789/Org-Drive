@@ -7,7 +7,6 @@ import { iconsWithPaths } from "@/constants/common-constants";
 import AlertModal from "../ui/alert-modal";
 import { useRouter } from "next/navigation";
 import { emptyTrash } from "@/services/trash-service";
-import styles from "./TrashPage.module.scss";
 
 export default function EmptyTrashButton({
   isDisabled,

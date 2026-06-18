@@ -68,9 +68,18 @@ const TrashPage: FunctionComponent<{
       header: "Auto-delete",
       className: styles.metaCell,
       cell: (file) => {
-        const autoDeleteIn =
+        const autoDeleteAt =
           new Date(file.createdAt).getTime() + 30 * 24 * 60 * 60 * 1000;
-        return <span>in {formatFileDate(new Date(autoDeleteIn))}</span>;
+
+        const daysLeft = Math.ceil(
+          (autoDeleteAt - Date.now()) / (1000 * 60 * 60 * 24),
+        );
+
+        return (
+          <span className={daysLeft < 10 ? styles.autoDeleteIn10Days : ""}>
+            {daysLeft > 0 ? `in ${daysLeft} days` : "Expired"}
+          </span>
+        );
       },
     },
     {
