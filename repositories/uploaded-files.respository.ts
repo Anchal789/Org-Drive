@@ -1,7 +1,11 @@
-import { and, eq, isNull } from 'drizzle-orm';
-import { db } from '@/db';
-import { uploadedFilesTable } from '@/db/schema';
-import type { UploadFilesResponse } from '@/types/files';
+import { and, eq, isNull, sql } from "drizzle-orm";
+import { db } from "@/db";
+import {
+  trashedTable,
+  uploadedFilesTable,
+  uploadFoldersTable,
+} from "@/db/schema";
+import type { UploadFilesResponse } from "@/types/files";
 
 export const uploadedFilesRepository = {
   async uploadFiles(files: Array<UploadFilesResponse & { userId: number }>) {
@@ -40,8 +44,32 @@ export const uploadedFilesRepository = {
       .where(eq(uploadedFilesTable.id, id))
       .returning();
 
+    if (deletedFile.folderId) {
+      await db
+        .update(uploadFoldersTable)
+        .set({ fileCount: sql`${uploadFoldersTable.fileCount} - 1` })
+        .where(eq(uploadFoldersTable.id, deletedFile.folderId));
+    }
+    let folderName = "";
+    if (deletedFile.folderId) {
+      const [folder] = await db
+        .select({ name: uploadFoldersTable.name })
+        .from(uploadFoldersTable)
+        .where(eq(uploadFoldersTable.id, deletedFile.folderId));
+      folderName = folder?.name || "";
+    }
+
+    await db.insert(trashedTable).values({
+      userId: deletedFile.userId,
+      fileId: deletedFile.id,
+      folderId: deletedFile.folderId,
+      fileName: deletedFile.name,
+      folderName,
+      size: deletedFile.size,
+    });
     return deletedFile;
   },
+
   async getFile(userId: number, id: number) {
     return await db
       .select()
@@ -55,16 +83,18 @@ export const uploadedFilesRepository = {
       );
   },
   async totalStorage(userId: number) {
-    return await db
+    const files = await db
       .select({
         size: uploadedFilesTable.size,
       })
       .from(uploadedFilesTable)
-      .where(
-        and(
-          eq(uploadedFilesTable.userId, userId),
-          eq(uploadedFilesTable.isDeleted, false),
-        ),
-      );
+      .where(and(eq(uploadedFilesTable.userId, userId)));
+
+    const deletedFiles = await db
+      .select({ size: trashedTable?.size })
+      .from(trashedTable)
+      .where(eq(trashedTable.isDeleted, false));
+    const totalFiles = [...files, ...deletedFiles];
+    return totalFiles;
   },
 };

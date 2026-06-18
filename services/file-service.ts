@@ -1,7 +1,7 @@
-import { toast } from 'sonner';
-import { deleteData } from '@/lib/api-fn';
-import { isTelegramSessionValid } from '@/lib/session';
-import { encrypt } from '@/lib/utils';
+import { toast } from "sonner";
+import { deleteData } from "@/lib/api-fn";
+import { isTelegramSessionValid } from "@/lib/session";
+import { encrypt } from "@/lib/utils";
 
 export const downloadFile = async (fileId: number) => {
   const telegramSession = await isTelegramSessionValid();
@@ -29,15 +29,8 @@ export const downloadAllFolderFiles = async (
 };
 
 export const trashFile = async (fileId: number) => {
-  const telegramSession = await isTelegramSessionValid();
-
-  if (!telegramSession.valid) {
-    toast.error(telegramSession.message);
-    return;
-  }
-
   const response = await deleteData({
-    url: '/api/file/delete-file',
+    url: "/api/file/delete-file",
     params: { fileId: encrypt(String(fileId)) },
   });
 

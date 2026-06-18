@@ -3,7 +3,6 @@ export const dynamic = "force-dynamic";
 import Btn from "@/components/ui/btn";
 import Icon from "@/components/ui/icon";
 import { iconsWithPaths } from "@/constants/common-constants";
-import type { SessionUser } from "@/types/auth";
 import type { UploadedFile } from "@/types/files";
 import DriveCrumb from "../DriveCrumb/DriveCrumb";
 import FileCard from "../FileSection/FileCard";

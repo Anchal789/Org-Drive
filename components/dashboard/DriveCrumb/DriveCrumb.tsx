@@ -1,16 +1,21 @@
-'use client';
+"use client";
 
-import { useRouter } from 'next/navigation';
-import Btn from '@/components/ui/btn';
-import { Button } from '@/components/ui/button';
-import Icon from '@/components/ui/icon';
-import { iconsWithPaths } from '@/constants/common-constants';
-import { useFileLayout } from '@/store/store';
-import styles from './DriveCrumb.module.scss';
+import { useRouter } from "next/navigation";
+import Btn from "@/components/ui/btn";
+import { Button } from "@/components/ui/button";
+import Icon from "@/components/ui/icon";
+import { iconsWithPaths } from "@/constants/common-constants";
+import { useFileLayout } from "@/store/store";
+import styles from "./DriveCrumb.module.scss";
 
 export default function DriveCrumb({ inFolder }: { inFolder?: string }) {
   const { fileLayout, setFileLayout } = useFileLayout();
   const router = useRouter();
+
+  const handleChangeDriveLayout = (layout: "list" | "grid") => {
+    setFileLayout(layout);
+    localStorage.setItem("fileLayout", layout);
+  };
   return (
     <div className={styles.crumb}>
       <div className={styles.title}>
@@ -20,7 +25,7 @@ export default function DriveCrumb({ inFolder }: { inFolder?: string }) {
               type="button"
               className={styles.parentLink}
               onClick={() => {
-                router.push('/my-drive');
+                router.push("/my-drive");
               }}
             >
               My drive
@@ -50,16 +55,16 @@ export default function DriveCrumb({ inFolder }: { inFolder?: string }) {
       </div>
       <div className={styles.actions}>
         <Btn
-          variant={fileLayout === 'list' ? 'default' : 'ghost'}
+          variant={fileLayout === "list" ? "default" : "ghost"}
           size="icon"
           icon={iconsWithPaths.list}
-          onClick={() => setFileLayout('list')}
+          onClick={() => handleChangeDriveLayout("list")}
         />
         <Btn
-          variant={fileLayout === 'grid' ? 'default' : 'ghost'}
+          variant={fileLayout === "grid" ? "default" : "ghost"}
           size="icon"
           icon={iconsWithPaths.grid}
-          onClick={() => setFileLayout('grid')}
+          onClick={() => handleChangeDriveLayout("grid")}
         />
         <span className={styles.divider} />
         <Btn variant="ghost" size="icon" icon={iconsWithPaths.settings} />
