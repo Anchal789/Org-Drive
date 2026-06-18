@@ -2,8 +2,8 @@ export default function Icon({
   d,
   size = 16,
   stroke = 1.6,
-  fill = 'none',
-  className = '',
+  fill = "none",
+  className = "",
   style = {},
 }: {
   d: string;

@@ -1,5 +1,14 @@
 import { Checkbox } from "@/components/ui/checkbox";
 import { DataTableProps } from "@/types/component-types";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
+import styles from "./Component.module.scss";
 
 export default function DataTable<T>({
   data,
@@ -33,51 +42,71 @@ export default function DataTable<T>({
   const isAllSelected = data.length > 0 && selectedIds.length === data.length;
 
   return (
-    <div className={classes?.table}>
-      {/* HEADER ROW */}
-      <div className={classes?.header}>
-        {enableSelection && (
-          <span>
-            <Checkbox
-              checked={isAllSelected}
-              onClick={(checked) => handleSelectAll(!!checked)}
-            />
-          </span>
-        )}
-
-        {columns.map((col) => (
-          <span key={col.id} className={col.className}>
-            {col.header}
-          </span>
-        ))}
-      </div>
-
-      {/* DATA ROWS */}
-      {data.map((row, rowIndex) => {
-        const rowId = getRowId(row);
-        const isSelected = selectedIds.includes(rowId);
-        const isLastRow = rowIndex === data.length - 1;
-
-        return (
-          <div
-            key={rowId}
-            className={`${classes?.row} ${isLastRow ? classes?.rowLast : ""}`}
-          >
+    <div className={`${styles.table} ${classes?.table || ""}`}>
+      <Table>
+        <TableHeader className={classes?.header}>
+          <TableRow className={classes?.header} notApplyBackground={true}>
             {enableSelection && (
-              <Checkbox
-                checked={isSelected}
-                onClick={(checked) => handleSelectRow(rowId, !!checked)}
-              />
+              <TableHead style={{ width: "40px" }} className="px-4">
+                <Checkbox
+                  checked={isAllSelected}
+                  onClick={(checked) => handleSelectAll(!!checked)}
+                />
+              </TableHead>
             )}
 
             {columns.map((col) => (
-              <span key={`${rowId}-${col.id}`} className={col.className}>
-                {col.cell(row, rowIndex)}
-              </span>
+              <TableHead
+                key={col.id}
+                style={{ width: col.width }}
+                className={col.headerClassName}
+              >
+                {col.header}
+              </TableHead>
             ))}
-          </div>
-        );
-      })}
+          </TableRow>
+        </TableHeader>
+
+        <TableBody>
+          {data.length === 0 ? (
+            <TableRow>
+              <TableCell
+                colSpan={columns.length + (enableSelection ? 1 : 0)}
+                noData
+              >
+                No data found
+              </TableCell>
+            </TableRow>
+          ) : (
+            data.map((row, rowIndex) => {
+              const rowId = getRowId(row);
+              const isSelected = selectedIds.includes(rowId);
+
+              return (
+                <TableRow key={rowId} className={classes?.row}>
+                  {enableSelection && (
+                    <TableCell className="px-4">
+                      <Checkbox
+                        checked={isSelected}
+                        onClick={(checked) => handleSelectRow(rowId, !!checked)}
+                      />
+                    </TableCell>
+                  )}
+
+                  {columns.map((col) => (
+                    <TableCell
+                      key={`${rowId}-${col.id}`}
+                      className={col.className}
+                    >
+                      {col.cell(row, rowIndex)}
+                    </TableCell>
+                  ))}
+                </TableRow>
+              );
+            })
+          )}
+        </TableBody>
+      </Table>
     </div>
   );
 }

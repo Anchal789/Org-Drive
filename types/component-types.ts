@@ -82,6 +82,8 @@ export interface ColumnDef<T> {
   header: ReactNode | string;
   cell: (row: T, index: number) => ReactNode;
   className?: string;
+  headerClassName?: string;
+  width?: string | number;
 }
 
 export interface DataTableProps<T> {

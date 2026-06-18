@@ -1,9 +1,9 @@
-'use client';
+"use client";
 
-import { useRouter } from 'next/navigation';
-import { type FunctionComponent, useState } from 'react';
-import AlertModal from '@/components/ui/alert-modal';
-import { Button } from '@/components/ui/button';
+import { useRouter } from "next/navigation";
+import { type FunctionComponent, useState } from "react";
+import AlertModal from "@/components/ui/alert-modal";
+import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -11,12 +11,13 @@ import {
   DropdownMenuItem,
   DropdownMenuShortcut,
   DropdownMenuTrigger,
-} from '@/components/ui/dropdown-menu';
-import Icon from '@/components/ui/icon';
-import { iconsWithPaths } from '@/constants/common-constants';
-import { downloadFile, trashFile } from '@/services/file-service';
-import type { UploadedFile } from '@/types/files';
-import styles from './FileCard.module.scss';
+} from "@/components/ui/dropdown-menu";
+import Icon from "@/components/ui/icon";
+import { iconsWithPaths } from "@/constants/common-constants";
+import { downloadFile, trashFile } from "@/services/file-service";
+import type { UploadedFile } from "@/types/files";
+import styles from "./FileCard.module.scss";
+import { toast } from "sonner";
 
 const FileMenu: FunctionComponent<{ file: UploadedFile }> = ({ file }) => {
   const router = useRouter();
@@ -26,6 +27,7 @@ const FileMenu: FunctionComponent<{ file: UploadedFile }> = ({ file }) => {
     const response = await trashFile(file.id);
     if (response?.success) {
       router.refresh();
+      setOpenDeleteDialog(false);
     }
   };
   return (
@@ -39,6 +41,7 @@ const FileMenu: FunctionComponent<{ file: UploadedFile }> = ({ file }) => {
         confirmVariant="destructive"
         cancelText="Cancel"
         onConfirm={handleDelete}
+        onCancel={() => setOpenDeleteDialog(false)}
       />
       <DropdownMenu>
         <DropdownMenuTrigger asChild>

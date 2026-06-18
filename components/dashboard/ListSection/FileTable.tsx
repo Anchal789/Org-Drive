@@ -12,7 +12,7 @@ import type { SessionUser } from "@/types/auth";
 import type { FileKind } from "@/types/dashboard";
 import type { UploadedFile } from "@/types/files";
 import FileMenu from "../FileSection/FileMenu";
-import styles from "./DashList.module.scss";
+import styles from "./FileTable.module.scss";
 import { ColumnDef } from "@/types/component-types";
 import DataTable from "@/components/ui/datatable";
 
@@ -31,6 +31,7 @@ const FileTable: FunctionComponent<{
   const columns: ColumnDef<UploadedFile>[] = [
     {
       id: "name",
+      width: "100%",
       header: (
         <span className={styles.sortable}>
           Name <Icon d={iconsWithPaths.chevDown} size={10} />
@@ -53,12 +54,14 @@ const FileTable: FunctionComponent<{
     },
     {
       id: "type",
+      width: "100px",
       header: "Type",
       className: styles.kindCell,
       cell: (file) => fileExtension(file),
     },
     {
       id: "owner",
+      width: "130px",
       header: "Owner",
       className: styles.ownerCell,
       cell: () => (
@@ -74,18 +77,21 @@ const FileTable: FunctionComponent<{
     },
     {
       id: "modified",
+      width: "110px",
       header: "Modified",
       className: styles.metaCell,
       cell: (file) => formatFileDate(file.createdAt),
     },
     {
       id: "size",
+      width: "110px",
       header: "Size",
       className: styles.metaCell,
       cell: (file) => formatBytes(file.size),
     },
     {
       id: "actions",
+      width: "48px",
       header: "",
       cell: (file) => <FileMenu file={file} />,
     },
@@ -101,9 +107,6 @@ const FileTable: FunctionComponent<{
       onSelectionChange={setSelectedFiles}
       classes={{
         table: styles.table,
-        header: styles.tableHeader,
-        row: styles.tableRow,
-        rowLast: styles.tableRowLast,
       }}
     />
   );

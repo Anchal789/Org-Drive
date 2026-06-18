@@ -51,15 +51,7 @@ export async function POST(request: NextRequest) {
     API_ID,
     API_HASH,
     {
-      connectionRetries: 1,
-      useWSS: false,
-      proxy: {
-        ip: "123.45.67.89", // Proxy IP
-        port: 1080, // Proxy Port
-        MTProxy: true, // Set to true if using an MTProto proxy
-        secret: "ee123456789...", // Secret (if required by the proxy)
-        socksType: 5, // Or SOCKS5 configuration
-      },
+      connectionRetries: 5,
     },
   );
 
