@@ -1,13 +1,13 @@
-import FileType from '@/components/ui/fileType';
-import Icon from '@/components/ui/icon';
-import UserAvatar from '@/components/ui/user-avatar';
-import { iconsWithPaths, TINTS } from '@/constants/common-constants';
-import { DRIVE_FILES, DRIVE_FOLDERS } from '@/constants/dashboard-constants';
-import styles from '@/styles/components/DashMobile.module.scss';
+import FileType from "@/components/ui/fileType";
+import Icon from "@/components/ui/icon";
+import UserAvatar from "@/components/ui/user-avatar";
+import { iconsWithPaths, TINTS } from "@/constants/common-constants";
+import { DRIVE_FILES, DRIVE_FOLDERS } from "@/constants/dashboard-constants";
+import styles from "@/styles/components/DashMobile.module.scss";
 
 export default function DashMobile() {
   return (
-    <div className={styles.shell} data-screen-label="02 Drive · Mobile">
+    <div className={styles.shell}>
       {/* Top bar */}
       <div className={styles.topbar}>
         <Icon d={iconsWithPaths.list} size={20} />
@@ -21,7 +21,7 @@ export default function DashMobile() {
           <Icon
             d={iconsWithPaths.search}
             size={14}
-            style={{ color: 'var(--muted-foreground)' }}
+            style={{ color: "var(--muted-foreground)" }}
           />
           <span className={styles.searchPlaceholder}>Search files</span>
         </div>
@@ -117,7 +117,7 @@ export default function DashMobile() {
         <Icon
           d={iconsWithPaths.chevDown}
           size={14}
-          style={{ color: 'var(--muted-foreground)' }}
+          style={{ color: "var(--muted-foreground)" }}
         />
       </div>
 
@@ -134,7 +134,7 @@ export default function DashMobile() {
             d={d}
             size={20}
             style={{
-              color: i === 0 ? 'var(--foreground)' : 'var(--muted-foreground)',
+              color: i === 0 ? "var(--foreground)" : "var(--muted-foreground)",
             }}
           />
         ))}

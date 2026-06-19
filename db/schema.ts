@@ -1,6 +1,7 @@
 import {
   boolean,
   integer,
+  pgEnum,
   pgTable,
   serial,
   text,
@@ -69,21 +70,37 @@ export const uploadFoldersTable = pgTable("upload_folders", {
     .notNull(),
 });
 
-export const sharedFilesTable = pgTable("shared_files", {
+const permissionEnum = pgEnum("permission", [
+  "viewer",
+  "owner",
+  "editor",
+  "commenter",
+]);
+
+export const sharedItemsTable = pgTable("shared_items", {
   id: integer("id").primaryKey().generatedAlwaysAsIdentity(),
-  fileId: integer("file_id")
-    .notNull()
-    .references(() => uploadedFilesTable.id),
+  fileId: integer("file_id").references(() => uploadedFilesTable.id),
+  userId: integer("user_id").notNull(),
+  folderId: integer("folder_id").references(() => uploadFoldersTable.id),
   sharedWithUserId: integer("shared_with_user_id").notNull(),
-  permission: varchar("permission", {
-    length: 20,
-  }).default("viewer"),
+  permission: permissionEnum("permission").notNull().default("viewer"),
   createdAt: timestamp("created_at", {
     withTimezone: true,
   })
     .defaultNow()
     .notNull(),
 });
+
+// export const shareWithMeSuggestedPeopleTable = pgTable(
+//   "share_with_me_suggested_people",
+//   {
+//     id: integer("id").primaryKey().generatedAlwaysAsIdentity(),
+//     userId: integer("user_id").notNull(),
+//     suggestedUserId: integer("suggested_user_id").notNull(),
+//     name: varchar("name").notNull(),
+//     email: varchar("email").notNull(),
+//   },
+// );
 
 export const trashedTable = pgTable("trashed", {
   id: integer("id").primaryKey().generatedAlwaysAsIdentity(),

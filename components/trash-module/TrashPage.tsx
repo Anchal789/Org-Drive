@@ -90,6 +90,7 @@ const TrashPage: FunctionComponent<{
       cell: (item) => <TrashTableActionColumn trashed={item} />,
     },
   ];
+
   return (
     <>
       <div className={styles.header}>

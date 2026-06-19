@@ -5,10 +5,10 @@ import Icon from "@/components/ui/icon";
 import { iconsWithPaths } from "@/constants/common-constants";
 import type { UploadedFile } from "@/types/files";
 import DriveCrumb from "../DriveCrumb/DriveCrumb";
-import FileCard from "../FileSection/FileCard";
 import UploadWidget from "../UploadWidget";
 import styles from "./DashFolder.module.scss";
 import { DownloadAllButton } from "./DownloadAllButton";
+import LayoutForInsideFolder from "./LayoutForInsideFolder";
 
 export default function DashFolder({
   files,
@@ -51,11 +51,13 @@ export default function DashFolder({
         </div>
 
         {/* Files grid */}
-        <div className={styles.filesGrid}>
-          {files.slice(0, 10).map((file) => (
+        {/* <div className={styles.filesGrid}>
+          {files?.map((file) => (
             <FileCard key={file.id} file={file} />
           ))}
         </div>
+        <FileTable files={files} /> */}
+        <LayoutForInsideFolder files={files} />
       </div>
 
       <UploadWidget />

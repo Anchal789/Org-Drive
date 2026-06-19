@@ -5,3 +5,24 @@
   height: 100%;
   padding: 0;
 }
+
+// ─── Folders row ──────────────────────────────────────────────────────────
+.folderChip {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 10px;
+  border: 1px solid v(border);
+  border-radius: v(radius-md);
+  background: v(card);
+  width: 100%;
+  height: 100%;
+}
+
+.folderName {
+  font-size: 12px;
+  font-weight: v(weight-medium);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}

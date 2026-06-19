@@ -1,12 +1,9 @@
-import HeroPanel from '@/components/authPages/HeroPanel';
-import LoginForm from '@/components/authPages/LoginForm';
+import HeroPanel from "@/components/authPages/HeroPanel";
+import LoginForm from "@/components/authPages/LoginForm";
 
 export default function LoginPage() {
   return (
-    <div
-      className="min-h-screen w-full flex flex-col lg:flex-row bg-background text-foreground font-sans"
-      data-screen-label="00 Login · Split hero"
-    >
+    <div className="min-h-screen w-full flex flex-col lg:flex-row bg-background text-foreground font-sans">
       <HeroPanel />
 
       <div className="flex-1 flex items-center justify-center p-6 sm:p-12">

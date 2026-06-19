@@ -4,6 +4,7 @@ import { getSessionUser } from "@/lib/session";
 import styles from "./layout.module.scss";
 import DriveTopbar from "@/components/Header/DriveTopbar";
 import { TooltipProvider } from "@/components/ui/tooltip";
+import ShareDialog from "@/components/share-module/ShareDialog";
 
 export default async function ProtectedLayout({
   children,
@@ -19,13 +20,11 @@ export default async function ProtectedLayout({
     <TooltipProvider>
       <div className={styles.layoutWrapper}>
         <DriveSidebar />
-        <div
-          className={styles.shell}
-          data-screen-label="02 Drive · Inside folder"
-        >
+        <div className={styles.shell}>
           <div className={styles.main}>
             <DriveTopbar user={user} />
             <div className={styles.mainContent}>{children}</div>
+            <ShareDialog />
           </div>
         </div>
       </div>

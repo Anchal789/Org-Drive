@@ -1,13 +1,10 @@
-import styles from './LoginPage.module.scss';
-import PhoneLogin from './PhoneNumberLogin/PhoneLogin';
-import { TelegramQrDisplayPanel } from './QrLogin/TelegramQrDisplayPanel';
+import styles from "./LoginPage.module.scss";
+import PhoneLogin from "./PhoneNumberLogin/PhoneLogin";
+import { TelegramQrDisplayPanel } from "./QrLogin/TelegramQrDisplayPanel";
 
 export default function LoginPage() {
   return (
-    <div
-      className={styles.pageWrapper}
-      data-screen-label="00 Login · Split hero"
-    >
+    <div className={styles.pageWrapper}>
       <div className={styles.formSection}>
         <div className={styles.formContainer}>
           {/* Header */}
