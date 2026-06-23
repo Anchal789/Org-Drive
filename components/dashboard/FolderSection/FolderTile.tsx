@@ -4,6 +4,7 @@ import { iconsWithPaths, TINTS } from "@/constants/common-constants";
 import { getAvatarColor, getFolderTone } from "@/lib/utils";
 import type { UploadedFolder } from "@/types/files";
 import styles from "./FolderTile.module.scss";
+import FolderMenu from "./FolderMenu";
 
 export default function FolderTile({
   folder,
@@ -37,11 +38,19 @@ export default function FolderTile({
         <div className={styles.name}>{folder.name}</div>
         <div className={styles.count}>{folder.fileCount} files</div>
       </div>
+      {folder.bookmark && (
+        <Icon
+          d={iconsWithPaths.bookmark}
+          size={13}
+          className={styles.starIcon}
+        />
+      )}
       <UserAvatar
         initials={ownerInitials}
         tone={getAvatarColor(folder?.userId ?? "")}
         size="sm"
       />
+      <FolderMenu folder={folder} />
     </div>
   );
 }

@@ -13,6 +13,7 @@ export const uploadedFoldersRepository = {
         isDeleted: uploadFoldersTable.isDeleted,
         createdAt: uploadFoldersTable.createdAt,
         updatedAt: uploadFoldersTable.updatedAt,
+        bookmark: uploadFoldersTable.bookmark,
         ownerFirstName: userTable.firstName,
         ownerLastName: userTable.lastName,
       })

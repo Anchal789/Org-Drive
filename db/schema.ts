@@ -52,7 +52,7 @@ export const uploadedFilesTable = pgTable("uploaded_files", {
     .defaultNow()
     .notNull(),
   isDeleted: boolean("is_deleted").default(false).notNull(),
-  starred: boolean("starred").default(false).notNull(),
+  bookmark: boolean("bookmark").default(false).notNull(),
   folderId: integer("folder_id").references(() => uploadFoldersTable.id),
 });
 
@@ -65,6 +65,7 @@ export const uploadFoldersTable = pgTable("upload_folders", {
   createdAt: timestamp("created_at", { withTimezone: true })
     .defaultNow()
     .notNull(),
+  bookmark: boolean("bookmark").default(false).notNull(),
   updatedAt: timestamp("updated_at", { withTimezone: true })
     .defaultNow()
     .notNull(),

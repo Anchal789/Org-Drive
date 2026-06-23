@@ -12,7 +12,7 @@ export interface UploadedFile {
   createdAt: Date;
   updatedAt: Date;
   isDeleted: boolean;
-  starred: boolean;
+  bookmark: boolean;
   folderId?: number;
   ownerFirstName?: string;
   ownerLastName?: string;
@@ -26,6 +26,7 @@ export interface UploadedFolder {
   isDeleted: boolean;
   createdAt: Date;
   updatedAt: Date;
+  bookmark: boolean;
   ownerFirstName?: string;
   ownerLastName?: string;
 }
@@ -37,7 +38,7 @@ export interface UploadFilesResponse {
   name: string;
   size: number;
   mimeType: string;
-  starred?: boolean;
+  bookmark?: boolean;
   folderId?: number;
 }
 

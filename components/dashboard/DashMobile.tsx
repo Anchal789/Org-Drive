@@ -56,7 +56,7 @@ export default function DashMobile() {
                 {file.size} · {file.mod}
               </div>
             </div>
-            {file.starred && (
+            {file.bookmark && (
               <Icon
                 d={iconsWithPaths.star}
                 size={13}

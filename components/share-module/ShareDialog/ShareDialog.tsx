@@ -80,14 +80,17 @@ export default function ShareDialog({
   }, [open, file]);
 
   useEffect(() => {
-    if (!open || !file) return;
+    if (!open || !file || !folder) return;
 
     const fetchusersWithAccess = async () => {
-      const result = await getUsersWithAccessAction(file.id, file.userId);
+      const result = await getUsersWithAccessAction(
+        file.id || folder.id,
+        file.userId || folder.userId,
+      );
       setUsersWithAccess(result);
     };
     fetchusersWithAccess();
-  }, [open, file]);
+  }, [open, file, folder]);
 
   useEffect(() => {
     if (!open) {

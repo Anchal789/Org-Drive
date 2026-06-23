@@ -132,8 +132,8 @@
           "notNull": true,
           "default": false
         },
-        "starred": {
-          "name": "starred",
+        "bookmark": {
+          "name": "bookmark",
           "type": "boolean",
           "primaryKey": false,
           "notNull": true,
