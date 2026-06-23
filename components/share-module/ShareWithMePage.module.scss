@@ -1,0 +1,142 @@
+@use "../../styles/functions" as *;
+
+.header {
+  padding: 16px 24px 0;
+}
+
+.headingsContainer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.headings {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.iconBox {
+  width: 38px;
+  height: 38px;
+  border-radius: v(radius-md);
+  background: v(tint-blue-bg);
+  color: v(tint-blue-tx);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.subHeading {
+  font-size: 12.5px;
+  color: v(muted-foreground);
+  margin-top: 3px;
+}
+
+.subHeader {
+  position: relative;
+  padding: 16px 24px 8px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 12px;
+  color: v(muted-foreground);
+}
+
+.divider {
+  width: 1px;
+  height: 12px;
+  background: v(border);
+}
+
+.flex {
+  flex: 1;
+}
+
+.content {
+  flex: 1;
+  overflow: auto;
+  padding: 16px 0 0;
+}
+
+.flatHint {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 14px;
+  border-radius: v(radius-lg);
+  background: color-mix(in oklch, v(destructive) 8%, v(card));
+  color: v(foreground);
+  border: 1px solid color-mix(in oklch, v(destructive) 28%, transparent);
+  font-size: 12px;
+}
+
+.flatHintText {
+  flex: 1;
+}
+
+.flatHintAction {
+  font-size: 11px;
+  font-weight: v(weight-medium);
+  text-decoration: underline;
+  cursor: pointer;
+}
+
+.flatHintIcon {
+  color: v(destructive);
+}
+
+.dataTable {
+  padding: 14px 24px 24px;
+}
+
+.owner {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.sortable {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.fileCell {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-width: 0;
+}
+
+.fileName {
+  color: v(muted-foreground);
+  font-weight: v(weight-medium);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.metaCell {
+  color: v(muted-foreground);
+  font-size: 11.5px;
+  font-variant-numeric: tabular-nums;
+}
+
+.folderIcon {
+  color: v(muted-foreground);
+}
+
+.permission {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 2px 8px;
+  border-radius: v(radius-md);
+  font-size: 11px;
+  font-weight: 500;
+  line-height: 1.4;
+  border: 1px solid transparent;
+  white-space: nowrap;
+}

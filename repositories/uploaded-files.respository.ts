@@ -1,9 +1,10 @@
-import { and, eq, isNull, sql } from "drizzle-orm";
+import { and, eq, inArray, isNull, sql } from "drizzle-orm";
 import { db } from "@/db";
 import {
   trashedTable,
   uploadedFilesTable,
   uploadFoldersTable,
+  userTable,
 } from "@/db/schema";
 import type { UploadFilesResponse } from "@/types/files";
 
@@ -13,8 +14,25 @@ export const uploadedFilesRepository = {
   },
   async getFiles(userId: number) {
     const files = await db
-      .select()
+      .select({
+        id: uploadedFilesTable.id,
+        userId: uploadedFilesTable.userId,
+        telegramMessageId: uploadedFilesTable.telegramMessageId,
+        documentId: uploadedFilesTable.documentId,
+        accessHash: uploadedFilesTable.accessHash,
+        name: uploadedFilesTable.name,
+        size: uploadedFilesTable.size,
+        mimeType: uploadedFilesTable.mimeType,
+        createdAt: uploadedFilesTable.createdAt,
+        updatedAt: uploadedFilesTable.updatedAt,
+        isDeleted: uploadedFilesTable.isDeleted,
+        starred: uploadedFilesTable.starred,
+        folderId: uploadedFilesTable.folderId,
+        ownerFirstName: userTable.firstName,
+        ownerLastName: userTable.lastName,
+      })
       .from(uploadedFilesTable)
+      .leftJoin(userTable, eq(uploadedFilesTable.userId, userTable.id))
       .where(
         and(
           eq(uploadedFilesTable.userId, userId),
@@ -27,8 +45,25 @@ export const uploadedFilesRepository = {
 
   async getFilesInFolder(userId: number, folderId: number) {
     return db
-      .select()
+      .select({
+        id: uploadedFilesTable.id,
+        userId: uploadedFilesTable.userId,
+        telegramMessageId: uploadedFilesTable.telegramMessageId,
+        documentId: uploadedFilesTable.documentId,
+        accessHash: uploadedFilesTable.accessHash,
+        name: uploadedFilesTable.name,
+        size: uploadedFilesTable.size,
+        mimeType: uploadedFilesTable.mimeType,
+        createdAt: uploadedFilesTable.createdAt,
+        updatedAt: uploadedFilesTable.updatedAt,
+        isDeleted: uploadedFilesTable.isDeleted,
+        starred: uploadedFilesTable.starred,
+        folderId: uploadedFilesTable.folderId,
+        ownerFirstName: userTable.firstName,
+        ownerLastName: userTable.lastName,
+      })
       .from(uploadedFilesTable)
+      .leftJoin(userTable, eq(uploadedFilesTable.userId, userTable.id))
       .where(
         and(
           eq(uploadedFilesTable.userId, userId),
@@ -72,13 +107,74 @@ export const uploadedFilesRepository = {
 
   async getFile(userId: number, id: number) {
     return await db
-      .select()
+      .select({
+        id: uploadedFilesTable.id,
+        userId: uploadedFilesTable.userId,
+        telegramMessageId: uploadedFilesTable.telegramMessageId,
+        documentId: uploadedFilesTable.documentId,
+        accessHash: uploadedFilesTable.accessHash,
+        name: uploadedFilesTable.name,
+        size: uploadedFilesTable.size,
+        mimeType: uploadedFilesTable.mimeType,
+        createdAt: uploadedFilesTable.createdAt,
+        updatedAt: uploadedFilesTable.updatedAt,
+        isDeleted: uploadedFilesTable.isDeleted,
+        starred: uploadedFilesTable.starred,
+        folderId: uploadedFilesTable.folderId,
+        ownerFirstName: userTable.firstName,
+        ownerLastName: userTable.lastName,
+      })
       .from(uploadedFilesTable)
+      .leftJoin(userTable, eq(uploadedFilesTable.userId, userTable.id))
       .where(
         and(
           eq(uploadedFilesTable.userId, userId),
           eq(uploadedFilesTable.id, id),
           eq(uploadedFilesTable.isDeleted, false),
+        ),
+      );
+  },
+  async getFilesByIds(fileIds: number[]) {
+    if (!fileIds || fileIds.length === 0) return [];
+
+    return await db
+      .select({
+        id: uploadedFilesTable.id,
+        userId: uploadedFilesTable.userId,
+        telegramMessageId: uploadedFilesTable.telegramMessageId,
+        documentId: uploadedFilesTable.documentId,
+        accessHash: uploadedFilesTable.accessHash,
+        name: uploadedFilesTable.name,
+        size: uploadedFilesTable.size,
+        mimeType: uploadedFilesTable.mimeType,
+        createdAt: uploadedFilesTable.createdAt,
+        updatedAt: uploadedFilesTable.updatedAt,
+        isDeleted: uploadedFilesTable.isDeleted,
+        starred: uploadedFilesTable.starred,
+        folderId: uploadedFilesTable.folderId,
+        ownerFirstName: userTable.firstName,
+        ownerLastName: userTable.lastName,
+      })
+      .from(uploadedFilesTable)
+      .leftJoin(userTable, eq(uploadedFilesTable.userId, userTable.id))
+      .where(
+        and(
+          inArray(uploadedFilesTable.id, fileIds),
+          eq(uploadedFilesTable.isDeleted, false),
+        ),
+      );
+  },
+  async getFilesName(fileIds: number[]) {
+    return await db
+      .select({
+        id: uploadedFilesTable.id,
+        name: uploadedFilesTable.name,
+      })
+      .from(uploadedFilesTable)
+      .where(
+        and(
+          eq(uploadedFilesTable.isDeleted, false),
+          inArray(uploadedFilesTable.id, fileIds),
         ),
       );
   },

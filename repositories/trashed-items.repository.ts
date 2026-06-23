@@ -141,14 +141,12 @@ export const trashedItemsRepository = {
       .from(trashedTable)
       .where(lt(trashedTable.createdAt, thirtyDaysAgo));
 
-    // Return an array of unique user IDs
     return [...new Set(expiredItems.map((item) => item.userId))];
   },
 
   async processExpiredTrashForUser(userId: number) {
     const thirtyDaysAgo = new Date(Date.now() - 30 * 24 * 60 * 60 * 1000);
 
-    // 1. Get ONLY the expired items for this specific user
     const expiredTrashItems = await db
       .select()
       .from(trashedTable)
@@ -173,7 +171,6 @@ export const trashedItemsRepository = {
 
     let telegramIdsToRevoke: number[] = [];
 
-    // 2. Gather Telegram Message IDs
     if (fileIds.length > 0) {
       const files = await db
         .select({ telegramMessageId: uploadedFilesTable.telegramMessageId })
@@ -196,10 +193,8 @@ export const trashedItemsRepository = {
       );
     }
 
-    // 3. Delete from Trash table FIRST to clear Foreign Key constraints
     await db.delete(trashedTable).where(inArray(trashedTable.id, trashIds));
 
-    // 4. Permanently delete from uploaded_files and upload_folders
     if (fileIds.length > 0) {
       await db
         .delete(uploadedFilesTable)

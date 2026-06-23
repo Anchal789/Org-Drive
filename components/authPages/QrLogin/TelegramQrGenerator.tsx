@@ -1,17 +1,14 @@
-'use client';
+"use client";
 
-import Icon from '@/components/ui/icon';
-import TelegramButton from '@/components/ui/telegram-button';
-import { iconsWithPaths } from '@/constants/common-constants';
-import QrCode from './QrCode';
-import styles from './TelegramQrGenerator.module.scss';
+import Icon from "@/components/ui/icon";
+import TelegramButton from "@/components/ui/telegram-button";
+import { iconsWithPaths } from "@/constants/common-constants";
+import QrCode from "./QrCode";
+import styles from "./TelegramQrGenerator.module.scss";
 
 export default function TelegramQrGenerator() {
   return (
-    <div
-      className={styles.pageWrapper}
-      data-screen-label="00 Login · Centered QR"
-    >
+    <div className={styles.pageWrapper}>
       <div className={styles.authCard}>
         <div className={styles.logoRow}>
           <div className={styles.brandSquare}>OD</div>
@@ -43,8 +40,8 @@ export default function TelegramQrGenerator() {
         </TelegramButton>
 
         <div className={styles.termsText}>
-          By continuing you agree to the{' '}
-          <span className={styles.termsLink}>Terms</span> and{' '}
+          By continuing you agree to the{" "}
+          <span className={styles.termsLink}>Terms</span> and{" "}
           <span className={styles.termsLink}>Privacy Policy</span>.
         </div>
       </div>

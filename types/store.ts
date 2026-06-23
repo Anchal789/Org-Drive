@@ -1,4 +1,5 @@
-import type { UploadItem } from './dashboard';
+import type { UploadItem } from "./dashboard";
+import { UploadedFile, UploadedFolder } from "./files";
 
 export interface AuthStateStore {
   accessToken: string | null;
@@ -14,8 +15,8 @@ export interface DragDropStore {
 }
 
 export interface FileLayoutStore {
-  fileLayout: 'list' | 'grid';
-  setFileLayout: (layout: 'list' | 'grid') => void;
+  fileLayout: "list" | "grid";
+  setFileLayout: (layout: "list" | "grid") => void;
 }
 
 export interface QueuedFile {
@@ -39,4 +40,13 @@ export interface UploadStore {
     fileCount?: number,
   ) => void;
   processQueue: () => Promise<void>;
+}
+
+export interface ShareWithMeDialogStore {
+  open: boolean;
+  setOpen: (open: boolean) => void;
+  file: UploadedFile | null;
+  folder: UploadedFolder | null;
+  setFile: (file: UploadedFile) => void;
+  setFolder: (folder: UploadedFolder) => void;
 }

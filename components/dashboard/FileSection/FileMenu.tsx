@@ -17,9 +17,10 @@ import { iconsWithPaths } from "@/constants/common-constants";
 import { downloadFile, trashFile } from "@/services/file-service";
 import type { UploadedFile } from "@/types/files";
 import styles from "./FileCard.module.scss";
-import { toast } from "sonner";
+import { useShareDialogStore } from "@/store/store";
 
 const FileMenu: FunctionComponent<{ file: UploadedFile }> = ({ file }) => {
+  const { setOpen, setFile } = useShareDialogStore();
   const router = useRouter();
   const [openDeleteDialog, setOpenDeleteDialog] = useState<boolean>(false);
 
@@ -61,7 +62,12 @@ const FileMenu: FunctionComponent<{ file: UploadedFile }> = ({ file }) => {
                 <Icon d={iconsWithPaths.download} size={14} />
               </DropdownMenuShortcut>
             </DropdownMenuItem>
-            <DropdownMenuItem>
+            <DropdownMenuItem
+              onClick={() => {
+                setOpen(true);
+                setFile(file);
+              }}
+            >
               Share
               <DropdownMenuShortcut>
                 <Icon d={iconsWithPaths.share} size={14} />

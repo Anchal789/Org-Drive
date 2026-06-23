@@ -103,3 +103,5 @@ export async function isTelegramSessionValid(): Promise<{
     };
   }
 }
+
+export const getUser = async (id: number) => await userRepository.findById(id);

@@ -1,33 +1,30 @@
-import FileType from '@/components/ui/fileType';
-import Icon from '@/components/ui/icon';
-import UserAvatar from '@/components/ui/user-avatar';
-import { iconsWithPaths } from '@/constants/common-constants';
-import { formatFileDate, getAvatarColor } from '@/lib/utils';
-import type { SessionUser } from '@/types/auth';
-import type { FileKind } from '@/types/dashboard';
-import type { UploadedFile } from '@/types/files';
-import styles from './FileCard.module.scss';
-import FileMenu from './FileMenu';
+import FileType from "@/components/ui/fileType";
+import Icon from "@/components/ui/icon";
+import UserAvatar from "@/components/ui/user-avatar";
+import { iconsWithPaths } from "@/constants/common-constants";
+import { formatFileDate, getAvatarColor } from "@/lib/utils";
+import type { FileKind } from "@/types/dashboard";
+import type { UploadedFile } from "@/types/files";
+import styles from "./FileCard.module.scss";
+import FileMenu from "./FileMenu";
 
 export default function FileCard({
   file,
-  user,
   big = false,
 }: {
   file: UploadedFile;
-  user?: SessionUser;
   big?: boolean;
 }) {
   const createdAt = formatFileDate(file.createdAt);
-  const ownerInitials = user
-    ? `${user.firstName?.charAt(0) ?? ''}${user.lastName?.charAt(0) ?? ''}`
-    : '';
+  const ownerInitials = file
+    ? `${file.ownerFirstName?.charAt(0) ?? ""}${file.ownerLastName?.charAt(0) ?? ""}`
+    : "";
 
-  const fileExtension = file.name.split('.')[1] as FileKind;
+  const fileExtension = file.name.split(".")[1] as FileKind;
 
   return (
     <div
-      className={`${styles.card} ${big ? styles.cardBig : ''}`.trim()}
+      className={`${styles.card} ${big ? styles.cardBig : ""}`.trim()}
       data-slot="file-card"
     >
       <div className={styles.header}>
@@ -58,7 +55,7 @@ export default function FileCard({
           <div className={styles.metaLeft}>
             <UserAvatar
               initials={ownerInitials}
-              tone={getAvatarColor(user?.userId ?? '')}
+              tone={getAvatarColor(file?.userId ?? "")}
               size="sm"
             />
             <span className={styles.modTime}>{createdAt}</span>

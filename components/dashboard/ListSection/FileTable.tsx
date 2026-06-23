@@ -8,7 +8,6 @@ import UserAvatar from "@/components/ui/user-avatar";
 import { iconsWithPaths, TINTS } from "@/constants/common-constants";
 import { formatFileDate, getAvatarColor } from "@/lib/utils";
 import { formatBytes } from "@/store/store";
-import type { SessionUser } from "@/types/auth";
 import type { FileKind } from "@/types/dashboard";
 import type { UploadedFile } from "@/types/files";
 import FileMenu from "../FileSection/FileMenu";
@@ -18,15 +17,11 @@ import DataTable from "@/components/ui/datatable";
 
 const FileTable: FunctionComponent<{
   files: UploadedFile[];
-  user: SessionUser;
-}> = ({ files, user }) => {
+}> = ({ files }) => {
   const [selectedFiles, setSelectedFiles] = useState<(string | number)[]>([]);
 
   const fileExtension = (file: UploadedFile) =>
     file.name.split(".")[1] as FileKind;
-  const ownerInitials = user
-    ? `${user.firstName?.charAt(0) ?? ""}${user.lastName?.charAt(0) ?? ""}`
-    : "";
 
   const columns: ColumnDef<UploadedFile>[] = [
     {
@@ -64,16 +59,19 @@ const FileTable: FunctionComponent<{
       width: "130px",
       header: "Owner",
       className: styles.ownerCell,
-      cell: () => (
-        <>
-          <UserAvatar
-            initials={ownerInitials}
-            tone={getAvatarColor(user?.userId ?? "")}
-            size="sm"
-          />
-          <span className={styles.ownerName} />
-        </>
-      ),
+      cell: (file) => {
+        const ownerInitials = `${file.ownerFirstName?.charAt(0) ?? ""}${file.ownerLastName?.charAt(0) ?? ""}`;
+        return (
+          <>
+            <UserAvatar
+              initials={ownerInitials}
+              tone={getAvatarColor(file?.userId ?? "")}
+              size="sm"
+            />
+            <span className={styles.ownerName} />
+          </>
+        );
+      },
     },
     {
       id: "modified",

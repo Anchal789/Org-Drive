@@ -35,6 +35,7 @@ export type UserAvatarProps = {
   size?: "sm" | "default" | "lg";
   ring?: boolean;
   className?: string;
+  src?: string;
 };
 
 export type CheckboxProps = {

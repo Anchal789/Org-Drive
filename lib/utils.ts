@@ -1,26 +1,26 @@
-import { type ClassValue, clsx } from 'clsx';
-import CryptoJS from 'crypto-js';
-import { twMerge } from 'tailwind-merge';
-import type { Tone } from '@/types/dashboard';
+import { type ClassValue, clsx } from "clsx";
+import CryptoJS from "crypto-js";
+import { twMerge } from "tailwind-merge";
+import type { Tone } from "@/types/dashboard";
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
 }
 
 const SECRET_KEY =
-  process.env.NEXT_PUBLIC_CRYPTO_SECRET || 'my-super-secret-passphrase';
+  process.env.NEXT_PUBLIC_CRYPTO_SECRET || "my-super-secret-passphrase";
 
 export function encrypt(text: string) {
   const cipherText = CryptoJS.AES.encrypt(text, SECRET_KEY).toString();
 
-  return cipherText.replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '');
+  return cipherText.replace(/\+/g, "-").replace(/\//g, "_").replace(/=+$/, "");
 }
 
 export function decrypt(safeCipherText: string) {
-  let cipherText = safeCipherText.replace(/-/g, '+').replace(/_/g, '/');
+  let cipherText = safeCipherText.replace(/-/g, "+").replace(/_/g, "/");
 
   while (cipherText.length % 4) {
-    cipherText += '=';
+    cipherText += "=";
   }
 
   try {
@@ -53,14 +53,14 @@ export const formatFileDate = (date: string | Date): string => {
     if (hours < 6) {
       return `${hours}h ago`;
     }
-    return `Today ${targetDate.toLocaleTimeString('en-US', {
-      hour: 'numeric',
-      minute: '2-digit',
+    return `Today ${targetDate.toLocaleTimeString("en-US", {
+      hour: "numeric",
+      minute: "2-digit",
       hour12: false,
     })}`;
   }
   if (isYesterday) {
-    return 'Yesterday';
+    return "Yesterday";
   }
   if (days < 7) {
     return `${days}d ago`;
@@ -68,22 +68,22 @@ export const formatFileDate = (date: string | Date): string => {
   if (days < 30) {
     return `${Math.floor(days / 7)}w ago`;
   }
-  return targetDate.toLocaleDateString('en-US', {
-    month: 'short',
-    day: 'numeric',
+  return targetDate.toLocaleDateString("en-US", {
+    month: "short",
+    day: "numeric",
   });
 };
 
 export const AVATAR_COLORS: Tone[] = [
-  'blue',
-  'green',
-  'amber',
-  'red',
-  'violet',
-  'teal',
-  'sky',
-  'pink',
-  'slate',
+  "blue",
+  "green",
+  "amber",
+  "red",
+  "violet",
+  "teal",
+  "sky",
+  "pink",
+  "slate",
 ];
 
 export const getAvatarColor = (seed: string | number): Tone => {
@@ -99,14 +99,14 @@ export const getAvatarColor = (seed: string | number): Tone => {
 };
 
 const FOLDER_TONES: Tone[] = [
-  'blue',
-  'violet',
-  'amber',
-  'pink',
-  'teal',
-  'red',
-  'green',
-  'sky',
+  "blue",
+  "violet",
+  "amber",
+  "pink",
+  "teal",
+  "red",
+  "green",
+  "sky",
 ];
 
 export function getFolderTone(index: number): Tone {

@@ -14,6 +14,8 @@ export interface UploadedFile {
   isDeleted: boolean;
   starred: boolean;
   folderId?: number;
+  ownerFirstName?: string;
+  ownerLastName?: string;
 }
 
 export interface UploadedFolder {
@@ -24,6 +26,8 @@ export interface UploadedFolder {
   isDeleted: boolean;
   createdAt: Date;
   updatedAt: Date;
+  ownerFirstName?: string;
+  ownerLastName?: string;
 }
 
 export interface UploadFilesResponse {
@@ -56,6 +60,6 @@ export interface ShareFileType {
   id: number;
   fileId: number;
   sharedWithUserId: number;
-  permission: "viewer" | "editor";
+  permission: "viewer" | "editor" | "owner" | "commenter";
   createdAt: Date;
 }
