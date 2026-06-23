@@ -80,8 +80,10 @@ const permissionEnum = pgEnum("permission", [
 export const sharedItemsTable = pgTable("shared_items", {
   id: integer("id").primaryKey().generatedAlwaysAsIdentity(),
   fileId: integer("file_id").references(() => uploadedFilesTable.id),
+  fileName: varchar("file_name", { length: 255 }),
   userId: integer("user_id").notNull(),
   folderId: integer("folder_id").references(() => uploadFoldersTable.id),
+  folderName: varchar("folder_name", { length: 255 }),
   sharedWithUserId: integer("shared_with_user_id").notNull(),
   permission: permissionEnum("permission").notNull().default("viewer"),
   createdAt: timestamp("created_at", {
@@ -90,17 +92,6 @@ export const sharedItemsTable = pgTable("shared_items", {
     .defaultNow()
     .notNull(),
 });
-
-// export const shareWithMeSuggestedPeopleTable = pgTable(
-//   "share_with_me_suggested_people",
-//   {
-//     id: integer("id").primaryKey().generatedAlwaysAsIdentity(),
-//     userId: integer("user_id").notNull(),
-//     suggestedUserId: integer("suggested_user_id").notNull(),
-//     name: varchar("name").notNull(),
-//     email: varchar("email").notNull(),
-//   },
-// );
 
 export const trashedTable = pgTable("trashed", {
   id: integer("id").primaryKey().generatedAlwaysAsIdentity(),

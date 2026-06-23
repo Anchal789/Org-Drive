@@ -1,7 +1,7 @@
-import { eq } from 'drizzle-orm';
-import { db } from '@/db';
-import { userTable } from '@/db/schema';
-import type { UpsertUserInput, User } from '@/types/auth';
+import { eq } from "drizzle-orm";
+import { db } from "@/db";
+import { userTable } from "@/db/schema";
+import type { UpsertUserInput, User } from "@/types/auth";
 
 export const userRepository = {
   async findByTelegramId(telegramId: string): Promise<User | null> {
@@ -60,5 +60,8 @@ export const userRepository = {
 
   async delete(id: number): Promise<void> {
     await db.delete(userTable).where(eq(userTable.id, id));
+  },
+  async getUsers(): Promise<User[]> {
+    return await db.select().from(userTable);
   },
 };

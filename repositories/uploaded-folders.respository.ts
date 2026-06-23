@@ -5,8 +5,19 @@ import { uploadedFilesTable, uploadFoldersTable, userTable } from "@/db/schema";
 export const uploadedFoldersRepository = {
   async getFolders(userId: number) {
     const folders = await db
-      .select()
+      .select({
+        id: uploadFoldersTable.id,
+        userId: uploadFoldersTable.userId,
+        name: uploadFoldersTable.name,
+        fileCount: uploadFoldersTable.fileCount,
+        isDeleted: uploadFoldersTable.isDeleted,
+        createdAt: uploadFoldersTable.createdAt,
+        updatedAt: uploadFoldersTable.updatedAt,
+        ownerFirstName: userTable.firstName,
+        ownerLastName: userTable.lastName,
+      })
       .from(uploadFoldersTable)
+      .leftJoin(userTable, eq(uploadFoldersTable.userId, userTable.id))
       .where(
         and(
           eq(uploadFoldersTable.userId, userId),

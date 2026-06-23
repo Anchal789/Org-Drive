@@ -9,6 +9,7 @@ import FileType from "../ui/fileType";
 import UserAvatar from "../ui/user-avatar";
 import { formatFileDate, getAvatarColor } from "@/lib/utils";
 import { SharedWithMeItemsType } from "@/types/share-with-me";
+import ShareWithMeActionColumn from "./ShareWithMeActionColumn";
 
 const ShareWithMePage: FunctionComponent<{
   sharedItems: Array<SharedWithMeItemsType>;
@@ -122,7 +123,7 @@ const ShareWithMePage: FunctionComponent<{
       width: "32px",
       header: "",
       className: styles.actions,
-      cell: (item) => <></>,
+      cell: (item) => <ShareWithMeActionColumn props={item} />,
     },
   ];
   return (
