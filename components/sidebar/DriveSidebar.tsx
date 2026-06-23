@@ -26,7 +26,12 @@ const MAIN_ITEMS: SidebarItemProps[] = [
     url: "/shared-with-me",
   },
   { icon: iconsWithPaths.clock, label: "Recent", url: "/recent" },
-  { icon: iconsWithPaths.star, label: "Starred", count: 8, url: "/starred" },
+  {
+    icon: iconsWithPaths.bookmark,
+    label: "Bookmark",
+    count: 8,
+    url: "/bookmark",
+  },
   { icon: iconsWithPaths.trash, label: "Trash", url: "/trash" },
 ];
 

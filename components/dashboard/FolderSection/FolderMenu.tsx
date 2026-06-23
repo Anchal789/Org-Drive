@@ -13,27 +13,19 @@ import {
 } from "@/components/ui/dropdown-menu";
 import Icon from "@/components/ui/icon";
 import { iconsWithPaths } from "@/constants/common-constants";
-import { bookmarkItem, downloadFile, trashFile } from "@/services/file-service";
-import type { UploadedFile } from "@/types/files";
-import styles from "./FileCard.module.scss";
+import styles from "./FolderContainer.module.scss";
 import { useShareDialogStore } from "@/store/store";
+import { UploadedFolder } from "@/types/files";
 import { Separator } from "@/components/ui/separator";
+import { bookmarkItem } from "@/services/file-service";
 
-const FileMenu: FunctionComponent<{ file: UploadedFile }> = ({ file }) => {
-  const { setOpen, setFile } = useShareDialogStore();
+const FolderMenu = ({ folder }: { folder: UploadedFolder }) => {
+  const { setOpen, setFolder } = useShareDialogStore();
   const router = useRouter();
   const [openDeleteDialog, setOpenDeleteDialog] = useState<boolean>(false);
 
-  const handleDelete = async () => {
-    const response = await trashFile(file.id);
-    if (response?.success) {
-      router.refresh();
-      setOpenDeleteDialog(false);
-    }
-  };
-
   const handleBookmark = async () => {
-    const response = await bookmarkItem(file.id, true, !file.bookmark);
+    const response = await bookmarkItem(folder.id, false, !folder.bookmark);
     if (response?.success) {
       router.refresh();
     }
@@ -43,17 +35,21 @@ const FileMenu: FunctionComponent<{ file: UploadedFile }> = ({ file }) => {
       <AlertModal
         open={openDeleteDialog}
         onOpenChange={setOpenDeleteDialog}
-        title="Delete file?"
-        description={`Are you sure you want to delete "${file.name}"?`}
+        title="Delete folder?"
+        description={`Are you sure you want to delete "${folder.name}"?`}
         confirmText="Delete"
         confirmVariant="destructive"
         cancelText="Cancel"
-        onConfirm={handleDelete}
+        // onConfirm={handleDelete}
         onCancel={() => setOpenDeleteDialog(false)}
       />
       <DropdownMenu>
         <DropdownMenuTrigger asChild>
-          <Button type="button" className={styles.moreBtn}>
+          <Button
+            type="button"
+            className={styles.moreBtn}
+            onClick={(e) => e.stopPropagation()}
+          >
             <Icon
               d={iconsWithPaths.more}
               size={14}
@@ -64,7 +60,10 @@ const FileMenu: FunctionComponent<{ file: UploadedFile }> = ({ file }) => {
         <DropdownMenuContent className={styles.menuContent} align="start">
           <DropdownMenuGroup>
             <DropdownMenuItem
-              onClick={() => downloadFile(file.id)}
+              onClick={(e) => {
+                e.stopPropagation();
+                downloadFolder(folder.id);
+              }}
               className={styles.menuItem}
             >
               <Icon
@@ -75,9 +74,10 @@ const FileMenu: FunctionComponent<{ file: UploadedFile }> = ({ file }) => {
               Download
             </DropdownMenuItem>
             <DropdownMenuItem
-              onClick={() => {
+              onClick={(e) => {
+                e.stopPropagation();
                 setOpen(true);
-                setFile(file);
+                setFolder(folder);
               }}
               className={styles.menuItem}
             >
@@ -89,7 +89,8 @@ const FileMenu: FunctionComponent<{ file: UploadedFile }> = ({ file }) => {
               Share
             </DropdownMenuItem>
             <DropdownMenuItem
-              onClick={() => {
+              onClick={(e) => {
+                e.stopPropagation();
                 handleBookmark();
               }}
               className={styles.menuItem}
@@ -103,7 +104,10 @@ const FileMenu: FunctionComponent<{ file: UploadedFile }> = ({ file }) => {
             </DropdownMenuItem>
             <Separator className={styles.separator} />
             <DropdownMenuItem
-              onClick={() => setOpenDeleteDialog(true)}
+              onClick={(e) => {
+                e.stopPropagation();
+                setOpenDeleteDialog(true);
+              }}
               className={`${styles.menuItem} ${styles.deleteItem}`}
             >
               <Icon
@@ -120,4 +124,4 @@ const FileMenu: FunctionComponent<{ file: UploadedFile }> = ({ file }) => {
   );
 };
 
-export default FileMenu;
+export default FolderMenu;

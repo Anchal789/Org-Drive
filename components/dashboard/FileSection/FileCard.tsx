@@ -30,9 +30,9 @@ export default function FileCard({
       <div className={styles.header}>
         <FileType kind={fileExtension} />
         <div className={styles.headerActions}>
-          {file.starred && (
+          {file.bookmark && (
             <Icon
-              d={iconsWithPaths.star}
+              d={iconsWithPaths.bookmark}
               size={13}
               className={styles.starIcon}
             />

@@ -37,11 +37,11 @@ const FileTable: FunctionComponent<{
         <>
           <FileType kind={fileExtension(file)} />
           <span className={styles.fileName}>{file.name}</span>
-          {file.starred && (
+          {file.bookmark && (
             <Icon
-              d={iconsWithPaths.star}
+              d={iconsWithPaths.bookmark}
               size={12}
-              style={{ color: TINTS.amber.bd, fill: TINTS.amber.bg }}
+              style={{ color: TINTS.amber.bd }}
             />
           )}
         </>

@@ -2,7 +2,6 @@
 
 import { useRouter } from "next/navigation";
 import type { FunctionComponent } from "react";
-import { Button } from "@/components/ui/button";
 import { encrypt, getFolderTone } from "@/lib/utils";
 import type { UploadedFolder } from "@/types/files";
 import styles from "./FolderContainer.module.scss";
@@ -21,8 +20,9 @@ const FolderContainer: FunctionComponent<{
 
   if (layout === "grid")
     return (
-      <Button
-        type="button"
+      <div
+        role="button"
+        tabIndex={0}
         className={styles.folderContainer}
         onClick={() => {
           router.push(
@@ -31,13 +31,14 @@ const FolderContainer: FunctionComponent<{
         }}
       >
         <FolderTile folder={folder} />
-      </Button>
+      </div>
     );
 
   if (layout === "list")
     return (
-      <Button
-        type="button"
+      <div
+        role="button"
+        tabIndex={0}
         className={styles.folderContainer}
         onClick={() => {
           router.push(
@@ -54,7 +55,7 @@ const FolderContainer: FunctionComponent<{
           />
           <span className={styles.folderName}>{folder.name}</span>
         </div>
-      </Button>
+      </div>
     );
 };
 

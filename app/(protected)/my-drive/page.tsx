@@ -36,12 +36,12 @@ export default async function Page() {
     sharedFolderIds,
   )) as Array<UploadedFolder>;
 
+  const allFiles = [...files, ...sharedFiles].sort((a, b) => a.id - b.id);
+  const allFolders = [...folders, ...sharedFolders].sort((a, b) => a.id - b.id);
+
   return (
     <DashGridWrapper overlay={<DriveDropOverlay />}>
-      <SwitchLayout
-        files={[...files, ...sharedFiles]}
-        folders={[...folders, ...sharedFolders]}
-      />
+      <SwitchLayout files={allFiles} folders={allFolders} />
       <UploadWidget />
     </DashGridWrapper>
   );

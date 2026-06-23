@@ -1,0 +1,33 @@
+import { sendError, sendSuccess } from "@/lib/api-response";
+import { decrypt } from "@/lib/utils";
+import { bookmarkRepository } from "@/repositories/bookmark.repository";
+import { NextRequest } from "next/server";
+
+export async function POST(request: NextRequest) {
+  const { id, isFile, bookmark } = await request.json();
+
+  if (!id) {
+    return sendError("Missing id", 400);
+  }
+  try {
+    const response = await bookmarkRepository.bookmarkItem(
+      Number(decrypt(id)),
+      isFile,
+      bookmark,
+    );
+
+    if (!response) {
+      return sendError("Failed to bookmark item", 500);
+    }
+
+    return sendSuccess(
+      null,
+      `${isFile ? "File" : "Folder"} ${bookmark ? "bookmarked" : "unbookmarked"}`,
+      200,
+    );
+  } catch (error) {
+    if (error instanceof Error) {
+      return sendError(error.message, 500);
+    }
+  }
+}

@@ -1,5 +1,5 @@
 import { toast } from "sonner";
-import { deleteData } from "@/lib/api-fn";
+import { deleteData, postData } from "@/lib/api-fn";
 import { isTelegramSessionValid } from "@/lib/session";
 import { encrypt } from "@/lib/utils";
 
@@ -32,6 +32,24 @@ export const trashFile = async (fileId: number) => {
   const response = await deleteData({
     url: "/api/file/delete-file",
     params: { fileId: encrypt(String(fileId)) },
+  });
+
+  if (response.success) {
+    toast.success(response.message);
+  } else {
+    toast.error(response.message);
+  }
+  return response;
+};
+
+export const bookmarkItem = async (
+  id: number,
+  isFile: boolean,
+  bookmark: boolean,
+) => {
+  const response = await postData({
+    url: "/api/bookmark",
+    payload: { id: encrypt(String(id)), isFile, bookmark },
   });
 
   if (response.success) {
