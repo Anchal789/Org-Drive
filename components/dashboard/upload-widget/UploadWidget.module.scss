@@ -1,4 +1,4 @@
-@use "../functions" as *;
+@use "../../../styles/functions" as *;
 
 .widget {
   position: absolute;
@@ -48,10 +48,6 @@
 .listCollapsed {
   grid-template-rows: 0fr;
   max-height: 0;
-}
-
-.listInner {
-  // overflow: hidden;
 }
 
 .itemRow {

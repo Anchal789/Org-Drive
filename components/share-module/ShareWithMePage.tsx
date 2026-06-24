@@ -38,7 +38,7 @@ const ShareWithMePage: FunctionComponent<{
         };
     }
   };
-  const fileExtension = (name: string) => name.split(".")[1] as FileKind;
+  const fileExtension = (name: string) => name?.split(".")?.[1] as FileKind;
 
   const columns: ColumnDef<SharedWithMeItemsType>[] = [
     {

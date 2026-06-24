@@ -14,97 +14,20 @@ import {
 import { Button } from "../ui/button";
 import Icon from "../ui/icon";
 import { iconsWithPaths } from "@/constants/common-constants";
-import {
-  Dialog,
-  DialogClose,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-} from "../ui/dialog";
-import { Field, FieldError, FieldGroup } from "../ui/field";
-import { Label } from "../ui/label";
-import { Input } from "../ui/input";
-import { renameSharedItem } from "@/services/shared-with-me-service";
-import { toast } from "sonner";
-import { useRouter } from "next/navigation";
+import Rename from "./ShareWithMeActionModals/Rename";
 
 const ShareWithMeActionColumn: FunctionComponent<{
   props: SharedWithMeItemsType;
 }> = ({ props }) => {
-  const router = useRouter();
   const [renameOpen, setRenameOpen] = useState<boolean>(false);
-  const [newNameState, setNewNameState] = useState<{
-    name: string;
-    error: string | null;
-  }>({
-    name: "",
-    error: null,
-  });
-
-  const handleRename = async () => {
-    const response = await renameSharedItem(props.id, newNameState.name);
-    if (response.success) {
-      setRenameOpen(false);
-      toast.success(response.message);
-      router.refresh();
-    } else {
-      toast.error(response.message);
-    }
-  };
 
   return (
     <>
-      <Dialog open={renameOpen} onOpenChange={setRenameOpen} modal>
-        <DialogContent className="sm:max-w-sm">
-          <DialogHeader>
-            <DialogTitle>Rename</DialogTitle>
-            <DialogDescription>
-              Original name: {props.fileName || props.folderName}
-            </DialogDescription>
-          </DialogHeader>
-          <FieldGroup>
-            <Field>
-              <Label htmlFor="name">New name</Label>
-              <Input
-                id="name"
-                name="name"
-                onChange={(event) => {
-                  if (event.target.value) {
-                    setNewNameState({
-                      name: event.target.value,
-                      error: null,
-                    });
-                  } else {
-                    setNewNameState({
-                      name: "",
-                      error: "Name cannot be empty",
-                    });
-                  }
-                }}
-                onBlur={(event) => {
-                  if (!event.target.value) {
-                    setNewNameState({
-                      name: "",
-                      error: "Name cannot be empty",
-                    });
-                  }
-                }}
-              />
-              <FieldError>{newNameState.error}</FieldError>
-            </Field>
-          </FieldGroup>
-          <DialogFooter>
-            <DialogClose asChild>
-              <Button variant="destructive">Cancel</Button>
-            </DialogClose>
-            <Button variant={"primary"} onClick={handleRename}>
-              Save changes
-            </Button>
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
+      <Rename
+        props={props}
+        renameOpen={renameOpen}
+        setRenameOpen={setRenameOpen}
+      />
       <DropdownMenu>
         <DropdownMenuTrigger asChild>
           <Button type="button" className={styles.moreBtn}>

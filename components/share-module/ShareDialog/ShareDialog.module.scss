@@ -221,3 +221,14 @@
   max-height: 300px;
   overflow-y: auto;
 }
+
+.folderIcon {
+  width: 36;
+  height: 36;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: v(muted);
+  border-radius: v(radius-md);
+  color: v(muted-foreground);
+}

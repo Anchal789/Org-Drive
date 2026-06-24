@@ -1,7 +1,7 @@
 "use client";
 
 import { useRouter } from "next/navigation";
-import { type FunctionComponent, useState } from "react";
+import { useState } from "react";
 import AlertModal from "@/components/ui/alert-modal";
 import { Button } from "@/components/ui/button";
 import {
@@ -17,7 +17,8 @@ import styles from "./FolderContainer.module.scss";
 import { useShareDialogStore } from "@/store/store";
 import { UploadedFolder } from "@/types/files";
 import { Separator } from "@/components/ui/separator";
-import { bookmarkItem } from "@/services/file-service";
+import { bookmarkItem, downloadAllFolderFiles } from "@/services/file-service";
+import { encrypt } from "@/lib/utils";
 
 const FolderMenu = ({ folder }: { folder: UploadedFolder }) => {
   const { setOpen, setFolder } = useShareDialogStore();
@@ -62,7 +63,21 @@ const FolderMenu = ({ folder }: { folder: UploadedFolder }) => {
             <DropdownMenuItem
               onClick={(e) => {
                 e.stopPropagation();
-                downloadFolder(folder.id);
+              }}
+              className={styles.menuItem}
+            >
+              <Icon
+                d={iconsWithPaths.pencil}
+                size={14}
+                className={styles.icon}
+              />
+              Rename
+            </DropdownMenuItem>
+            <DropdownMenuItem
+              onClick={(e) => {
+                e.stopPropagation();
+                const encryptedId = encrypt(folder.id.toString());
+                downloadAllFolderFiles(encryptedId, folder.name);
               }}
               className={styles.menuItem}
             >

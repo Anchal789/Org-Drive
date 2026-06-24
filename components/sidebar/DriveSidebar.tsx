@@ -72,12 +72,7 @@ export default async function DriveSidebar({
       {/* Org pill */}
       <button type="button" className={styles.orgPill}>
         <div className={styles.orgLogo}>Z</div>
-        {!collapsed && (
-          <>
-            <span className={styles.orgName}>Zuru Tech</span>
-            <Icon d={iconsWithPaths.chevDown} size={12} />
-          </>
-        )}
+        {!collapsed && <span className={styles.orgName}>Zuru Tech</span>}
       </button>
 
       {/* + New button */}

@@ -1,7 +1,7 @@
 import DriveDropOverlay from "@/components/dashboard/DriveDropOverlay";
 import DashGridWrapper from "@/components/dashboard/GridSection/DashGridWrapper";
 import SwitchLayout from "@/components/dashboard/SwitchLayout";
-import UploadWidget from "@/components/dashboard/UploadWidget";
+import UploadWidget from "@/components/dashboard/upload-widget/UploadWidget";
 import { getSessionUser } from "@/lib/session";
 import { sharedWithMeRepository } from "@/repositories/shared-with-me.repository";
 import { uploadedFilesRepository } from "@/repositories/uploaded-files.respository";
@@ -40,9 +40,11 @@ export default async function Page() {
   const allFolders = [...folders, ...sharedFolders].sort((a, b) => a.id - b.id);
 
   return (
-    <DashGridWrapper overlay={<DriveDropOverlay />}>
-      <SwitchLayout files={allFiles} folders={allFolders} />
+    <>
+      <DashGridWrapper overlay={<DriveDropOverlay />}>
+        <SwitchLayout files={allFiles} folders={allFolders} />
+      </DashGridWrapper>
       <UploadWidget />
-    </DashGridWrapper>
+    </>
   );
 }

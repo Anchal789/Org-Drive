@@ -3,8 +3,9 @@ export const dynamic = "force-dynamic";
 import { NextResponse } from "next/server";
 import { trashedItemsRepository } from "@/repositories/trashed-items.repository";
 import { userRepository } from "@/repositories/user.repository";
-import { TelegramClient } from "telegram";
+import { Api, TelegramClient } from "telegram";
 import { StringSession } from "telegram/sessions";
+import { sendError } from "@/lib/api-response";
 
 const API_ID = Number(process.env.TELEGRAM_APP_API_ID);
 const API_HASH = String(process.env.TELEGRAM_APP_API_HASH);
@@ -30,17 +31,36 @@ export async function GET(request: Request) {
       await trashedItemsRepository.processExpiredTrashForUser(userId);
 
     if (telegramMessageIds.length > 0) {
-      let client = new TelegramClient(
-        new StringSession(dbUser.telegramSessionString),
+      let client: TelegramClient | null = new TelegramClient(
+        new StringSession(""),
         API_ID,
         API_HASH,
-        { connectionRetries: 1 },
+        {
+          connectionRetries: 1,
+        },
       );
+
+      let targetEntity: Api.TypeEntityLike;
+
+      try {
+        await client.start({
+          botAuthToken: process.env.TELEGRAM_BOT_TOKEN as string,
+        });
+        const formattedChannelId = STORAGE_CHANNEL.trim();
+        targetEntity = await client.getEntity(formattedChannelId);
+      } catch (err: unknown) {
+        const errMsg = err instanceof Error ? err.message : String(err);
+        if (client) await client.disconnect().catch(() => {});
+        return sendError(
+          `Bot authorization or channel mapping failed: ${errMsg}`,
+          500,
+        );
+      }
 
       try {
         await client.connect();
 
-        await client.deleteMessages(STORAGE_CHANNEL, telegramMessageIds, {
+        await client.deleteMessages(targetEntity, telegramMessageIds, {
           revoke: true,
         });
 
