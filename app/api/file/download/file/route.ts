@@ -18,10 +18,11 @@ export async function GET(request: NextRequest) {
   if (!session?.userId) return sendError("Unauthorized", 401);
 
   const fileId = searchParams.get("fileId");
+  const userId = searchParams.get("userId");
 
   const fileInfo = (
     await uploadedFilesRepository.getFile(
-      Number(session?.userId),
+      Number(userId || session?.userId),
       Number(fileId),
     )
   )[0] as UploadedFile;

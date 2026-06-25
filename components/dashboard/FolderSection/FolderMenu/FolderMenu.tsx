@@ -13,20 +13,29 @@ import {
 } from "@/components/ui/dropdown-menu";
 import Icon from "@/components/ui/icon";
 import { iconsWithPaths } from "@/constants/common-constants";
-import styles from "./FolderContainer.module.scss";
+import styles from "../FolderContainer.module.scss";
 import { useShareDialogStore } from "@/store/store";
 import { UploadedFolder } from "@/types/files";
 import { Separator } from "@/components/ui/separator";
 import { bookmarkItem, downloadAllFolderFiles } from "@/services/file-service";
 import { encrypt } from "@/lib/utils";
+import RenameItem from "@/components/rename/RenameIterm";
+import { bookmarkSharedItem } from "@/services/shared-with-me-service";
 
-const FolderMenu = ({ folder }: { folder: UploadedFolder }) => {
+const FolderMenu = ({
+  folder,
+}: {
+  folder: UploadedFolder & { shareId?: number };
+}) => {
   const { setOpen, setFolder } = useShareDialogStore();
   const router = useRouter();
+  const [renameOpen, setRenameOpen] = useState<boolean>(false);
   const [openDeleteDialog, setOpenDeleteDialog] = useState<boolean>(false);
 
   const handleBookmark = async () => {
-    const response = await bookmarkItem(folder.id, false, !folder.bookmark);
+    const response = folder.shareId
+      ? await bookmarkSharedItem(folder.shareId as number, !folder.bookmark)
+      : await bookmarkItem(folder.id, false, !folder.bookmark);
     if (response?.success) {
       router.refresh();
     }
@@ -43,6 +52,12 @@ const FolderMenu = ({ folder }: { folder: UploadedFolder }) => {
         cancelText="Cancel"
         // onConfirm={handleDelete}
         onCancel={() => setOpenDeleteDialog(false)}
+      />
+      <RenameItem
+        file={undefined}
+        folder={folder}
+        renameOpen={renameOpen}
+        setRenameOpen={setRenameOpen}
       />
       <DropdownMenu>
         <DropdownMenuTrigger asChild>
@@ -63,6 +78,7 @@ const FolderMenu = ({ folder }: { folder: UploadedFolder }) => {
             <DropdownMenuItem
               onClick={(e) => {
                 e.stopPropagation();
+                setRenameOpen(true);
               }}
               className={styles.menuItem}
             >

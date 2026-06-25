@@ -28,7 +28,10 @@ export async function POST(request: NextRequest) {
 
     console.error("Telegram connect error:", errMsg);
 
-    if (client) await client.disconnect().catch(() => {});
+    if (client)
+      await client.disconnect().catch((error) => {
+        console.error("Telegram disconnect error:", error);
+      });
     if (errMsg?.includes("AUTH_KEY_UNREGISTERED")) {
       return sendError("Telegram session expired. Please log in again.", 401);
     }

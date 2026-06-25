@@ -36,8 +36,30 @@ export default async function Page() {
     sharedFolderIds,
   )) as Array<UploadedFolder>;
 
-  const allFiles = [...files, ...sharedFiles].sort((a, b) => a.id - b.id);
-  const allFolders = [...folders, ...sharedFolders].sort((a, b) => a.id - b.id);
+  const sharedFilesWithAlias = sharedFiles.map((file) => {
+    const shareRecord = sharedItems.find((item) => item.fileId === file.id);
+    return {
+      ...file,
+      name: shareRecord?.fileName || file.name,
+      shareId: shareRecord?.id,
+    };
+  });
+
+  const sharedFoldersWithAlias = sharedFolders.map((folder) => {
+    const shareRecord = sharedItems.find((item) => item.folderId === folder.id);
+    return {
+      ...folder,
+      name: shareRecord?.folderName || folder.name,
+      shareId: shareRecord?.id,
+    };
+  });
+
+  const allFiles = [...files, ...sharedFilesWithAlias].sort(
+    (a, b) => a.id - b.id,
+  );
+  const allFolders = [...folders, ...sharedFoldersWithAlias].sort(
+    (a, b) => a.id - b.id,
+  );
 
   return (
     <>

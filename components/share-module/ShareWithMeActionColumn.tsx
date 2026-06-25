@@ -14,20 +14,66 @@ import {
 import { Button } from "../ui/button";
 import Icon from "../ui/icon";
 import { iconsWithPaths } from "@/constants/common-constants";
-import Rename from "./ShareWithMeActionModals/Rename";
+import { downloadFile } from "@/services/file-service";
+import AlertModal from "../ui/alert-modal";
+import { useRouter } from "next/navigation";
+import { trashSharedFile } from "@/services/shared-with-me-service";
+import RenameItem from "../rename/RenameIterm";
 
 const ShareWithMeActionColumn: FunctionComponent<{
   props: SharedWithMeItemsType;
 }> = ({ props }) => {
+  const router = useRouter();
   const [renameOpen, setRenameOpen] = useState<boolean>(false);
+  const [openDeleteDialog, setOpenDeleteDialog] = useState<boolean>(false);
+
+  const handleDelete = async () => {
+    const response = await trashSharedFile(props.id);
+    if (response?.success) {
+      router.refresh();
+      setOpenDeleteDialog(false);
+    }
+  };
 
   return (
     <>
-      <Rename
-        props={props}
-        renameOpen={renameOpen}
-        setRenameOpen={setRenameOpen}
+      <AlertModal
+        open={openDeleteDialog}
+        onOpenChange={setOpenDeleteDialog}
+        title="Delete file?"
+        description={`Are you sure you want to delete "${props.fileName}"?`}
+        confirmText="Delete"
+        confirmVariant="destructive"
+        cancelText="Cancel"
+        onConfirm={handleDelete}
+        onCancel={() => setOpenDeleteDialog(false)}
       />
+      {renameOpen && (
+        <RenameItem
+          file={
+            props.fileId
+              ? {
+                  ...props,
+                  id: props.fileId,
+                  name: props.fileName,
+                  shareId: props.id,
+                }
+              : undefined
+          }
+          folder={
+            props.folderId
+              ? {
+                  ...props,
+                  id: props.folderId,
+                  name: props.folderName,
+                  shareId: props.id,
+                }
+              : undefined
+          }
+          renameOpen={renameOpen}
+          setRenameOpen={setRenameOpen}
+        />
+      )}
       <DropdownMenu>
         <DropdownMenuTrigger asChild>
           <Button type="button" className={styles.moreBtn}>
@@ -40,7 +86,9 @@ const ShareWithMeActionColumn: FunctionComponent<{
         </DropdownMenuTrigger>
         <DropdownMenuContent className="w-40" align="start">
           <DropdownMenuGroup>
-            <DropdownMenuItem>
+            <DropdownMenuItem
+              onClick={() => downloadFile(props.fileId, props.userId)}
+            >
               Download
               <DropdownMenuShortcut>
                 <Icon d={iconsWithPaths.download} size={14} />
@@ -52,7 +100,7 @@ const ShareWithMeActionColumn: FunctionComponent<{
                 <Icon d={iconsWithPaths.share} size={14} />
               </DropdownMenuShortcut>
             </DropdownMenuItem>
-            <DropdownMenuItem>
+            <DropdownMenuItem onClick={() => setOpenDeleteDialog(true)}>
               Delete
               <DropdownMenuShortcut>
                 <Icon d={iconsWithPaths.trash} size={14} />

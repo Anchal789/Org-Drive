@@ -4,7 +4,7 @@ import { iconsWithPaths, TINTS } from "@/constants/common-constants";
 import { getAvatarColor, getFolderTone } from "@/lib/utils";
 import type { UploadedFolder } from "@/types/files";
 import styles from "./FolderTile.module.scss";
-import FolderMenu from "./FolderMenu";
+import FolderMenu from "./FolderMenu/FolderMenu";
 
 export default function FolderTile({
   folder,

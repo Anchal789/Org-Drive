@@ -45,6 +45,11 @@
   opacity: 1;
 }
 
+.listInner {
+  overflow-x: hidden;
+  position: relative;
+}
+
 .listCollapsed {
   grid-template-rows: 0fr;
   max-height: 0;

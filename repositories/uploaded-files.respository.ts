@@ -1,6 +1,7 @@
 import { and, eq, inArray, isNull, sql } from "drizzle-orm";
 import { db } from "@/db";
 import {
+  sharedItemsTable,
   trashedTable,
   uploadedFilesTable,
   uploadFoldersTable,
@@ -119,13 +120,17 @@ export const uploadedFilesRepository = {
         createdAt: uploadedFilesTable.createdAt,
         updatedAt: uploadedFilesTable.updatedAt,
         isDeleted: uploadedFilesTable.isDeleted,
-        bookmark: uploadedFilesTable.bookmark,
+        bookmark: sharedItemsTable.bookmark,
         folderId: uploadedFilesTable.folderId,
         ownerFirstName: userTable.firstName,
         ownerLastName: userTable.lastName,
       })
       .from(uploadedFilesTable)
       .leftJoin(userTable, eq(uploadedFilesTable.userId, userTable.id))
+      .leftJoin(
+        sharedItemsTable,
+        eq(sharedItemsTable.fileId, uploadedFilesTable.id),
+      )
       .where(
         and(
           eq(uploadedFilesTable.userId, userId),
@@ -150,13 +155,17 @@ export const uploadedFilesRepository = {
         createdAt: uploadedFilesTable.createdAt,
         updatedAt: uploadedFilesTable.updatedAt,
         isDeleted: uploadedFilesTable.isDeleted,
-        bookmark: uploadedFilesTable.bookmark,
+        bookmark: sharedItemsTable.bookmark,
         folderId: uploadedFilesTable.folderId,
         ownerFirstName: userTable.firstName,
         ownerLastName: userTable.lastName,
       })
       .from(uploadedFilesTable)
       .leftJoin(userTable, eq(uploadedFilesTable.userId, userTable.id))
+      .leftJoin(
+        sharedItemsTable,
+        eq(sharedItemsTable.fileId, uploadedFilesTable.id),
+      )
       .where(
         and(
           inArray(uploadedFilesTable.id, fileIds),
@@ -192,5 +201,11 @@ export const uploadedFilesRepository = {
       .where(eq(trashedTable.isDeleted, false));
     const totalFiles = [...files, ...deletedFiles];
     return totalFiles;
+  },
+  async renameFile(id: number, newName: string) {
+    return await db
+      .update(uploadedFilesTable)
+      .set({ name: newName })
+      .where(eq(uploadedFilesTable.id, id));
   },
 };

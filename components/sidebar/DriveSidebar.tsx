@@ -1,4 +1,3 @@
-import Icon from "@/components/ui/icon";
 import Ring from "@/components/ui/ring";
 import { iconsWithPaths } from "@/constants/common-constants";
 import { getSessionUser } from "@/lib/session";

@@ -6,11 +6,10 @@ import {
   DialogFooter,
   DialogHeader,
   DialogTitle,
-} from "../../ui/dialog";
-import { Field, FieldError, FieldGroup } from "../../ui/field";
-import { Label } from "../../ui/label";
+} from "@/components/ui/dialog";
+import { Field, FieldError, FieldGroup } from "@/components/ui/field";
+import { Label } from "@/components/ui/label";
 import { toast } from "sonner";
-import { renameSharedItem } from "@/services/shared-with-me-service";
 import { useRouter } from "next/navigation";
 import {
   Dispatch,
@@ -19,20 +18,24 @@ import {
   useEffect,
   useState,
 } from "react";
-import { SharedWithMeItemsType } from "@/types/share-with-me";
 import { Button } from "@/components/ui/button";
 import {
   InputGroup,
   InputGroupAddon,
   InputGroupInput,
 } from "@/components/ui/input-group";
-import { FileKind } from "@/types/dashboard";
+import { renameItem } from "@/services/folder-service";
+import { UploadedFile, UploadedFolder } from "@/types/files";
+import { getFileExtension, getFileNameWithoutExtension } from "@/lib/utils";
+import { renameSharedItem } from "@/services/shared-with-me-service";
+import styles from "./Rename.module.scss";
 
-const Rename: FunctionComponent<{
-  props: SharedWithMeItemsType;
+const RenameItem: FunctionComponent<{
+  file?: UploadedFile;
+  folder?: UploadedFolder;
   setRenameOpen: Dispatch<SetStateAction<boolean>>;
   renameOpen: boolean;
-}> = ({ props, setRenameOpen, renameOpen }) => {
+}> = ({ file, folder, setRenameOpen, renameOpen }) => {
   const router = useRouter();
   const [newNameState, setNewNameState] = useState<{
     name: string;
@@ -45,7 +48,9 @@ const Rename: FunctionComponent<{
   useEffect(() => {
     if (renameOpen) {
       setNewNameState({
-        name: props.fileName || props.folderName || "",
+        name: file?.name
+          ? getFileNameWithoutExtension(file?.name)
+          : folder?.name || "",
         error: null,
       });
     } else {
@@ -54,7 +59,7 @@ const Rename: FunctionComponent<{
         error: null,
       });
     }
-  }, [renameOpen, props.fileName, props.folderName]);
+  }, [renameOpen, file?.name, folder?.name]);
 
   const handleRename = async () => {
     if (!newNameState.name) {
@@ -64,7 +69,23 @@ const Rename: FunctionComponent<{
       });
       return;
     }
-    const response = await renameSharedItem(props.id, newNameState.name);
+
+    const finalName = `${newNameState.name}${file ? "." + fileExtension : ""}`;
+
+    const shareId = (file as any)?.shareId || (folder as any)?.shareId;
+
+    let response;
+
+    if (shareId) {
+      response = await renameSharedItem(shareId, finalName);
+    } else {
+      response = await renameItem(
+        folder?.id || file?.id || 0,
+        finalName,
+        !!file?.id,
+      );
+    }
+
     if (response.success) {
       setRenameOpen(false);
       toast.success(response.message);
@@ -74,15 +95,15 @@ const Rename: FunctionComponent<{
     }
   };
 
-  const fileExtension = props?.fileName?.split(".")[1] as FileKind;
+  const fileExtension = getFileExtension(file?.name || "");
 
   return (
     <Dialog open={renameOpen} onOpenChange={setRenameOpen} modal>
       <DialogContent className="sm:max-w-sm">
         <DialogHeader>
           <DialogTitle>Rename</DialogTitle>
-          <DialogDescription>
-            Original name: {props.fileName || props.folderName}
+          <DialogDescription className={styles.originalName}>
+            Original name: {file?.name || folder?.name}
           </DialogDescription>
         </DialogHeader>
         <FieldGroup>
@@ -107,9 +128,11 @@ const Rename: FunctionComponent<{
                   }
                 }}
               />
-              <InputGroupAddon align="inline-end">
-                .{fileExtension}
-              </InputGroupAddon>
+              {fileExtension && (
+                <InputGroupAddon align="inline-end">
+                  .{fileExtension}
+                </InputGroupAddon>
+              )}
             </InputGroup>
             <FieldError>{newNameState.error}</FieldError>
           </Field>
@@ -127,4 +150,4 @@ const Rename: FunctionComponent<{
   );
 };
 
-export default Rename;
+export default RenameItem;

@@ -1,7 +1,7 @@
 import { type ClassValue, clsx } from "clsx";
 import CryptoJS from "crypto-js";
 import { twMerge } from "tailwind-merge";
-import type { Tone } from "@/types/dashboard";
+import type { FileKind, Tone } from "@/types/dashboard";
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
@@ -112,3 +112,9 @@ const FOLDER_TONES: Tone[] = [
 export function getFolderTone(index: number): Tone {
   return FOLDER_TONES[index % FOLDER_TONES.length];
 }
+
+export const getFileExtension = (name: string) =>
+  name?.split(".")?.pop() as FileKind;
+
+export const getFileNameWithoutExtension = (name: string) =>
+  name?.includes(".") ? name?.substring(0, name.lastIndexOf(".")) : name;

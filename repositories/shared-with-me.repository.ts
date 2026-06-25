@@ -1,4 +1,8 @@
-import { sharedItemsTable, userTable } from "./../db/schema";
+import {
+  sharedItemsTable,
+  uploadedFilesTable,
+  userTable,
+} from "./../db/schema";
 import { db } from "@/db";
 import { and, eq, ne, or, sql } from "drizzle-orm";
 
@@ -11,7 +15,8 @@ export const sharedWithMeRepository = {
         fileId: sharedItemsTable.fileId,
         folderId: sharedItemsTable.folderId,
         permission: sharedItemsTable.permission,
-        fileName: sharedItemsTable.fileName,
+        fileName: sql<string>`COALESCE(${sharedItemsTable.fileName}, ${uploadedFilesTable.name})`,
+        bookmark: sharedItemsTable.bookmark,
         folderName: sharedItemsTable.folderName,
         ownerFirstName: userTable.firstName,
         ownerLastName: userTable.lastName,
@@ -19,6 +24,10 @@ export const sharedWithMeRepository = {
       })
       .from(sharedItemsTable)
       .leftJoin(userTable, eq(sharedItemsTable.userId, userTable.id))
+      .leftJoin(
+        uploadedFilesTable,
+        eq(sharedItemsTable.fileId, uploadedFilesTable.id),
+      )
       .where(eq(sharedItemsTable.sharedWithUserId, userId));
   },
   async getSharedFileUsersAndPermissions(id: number) {
@@ -78,5 +87,8 @@ export const sharedWithMeRepository = {
       );
 
     return [...ownerDetails, ...sharedUsers];
+  },
+  async deleteSharedItem(id: number) {
+    return await db.delete(sharedItemsTable).where(eq(sharedItemsTable.id, id));
   },
 };

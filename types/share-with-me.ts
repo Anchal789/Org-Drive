@@ -14,6 +14,7 @@ export interface SharedWithMeItemsType {
   fileName: string;
   folderId: number;
   folderName: string;
+  bookmark: boolean;
   sharedWithUserId: number;
   permission: "viewer" | "editor" | "owner" | "commenter";
   createdAt: Date;
