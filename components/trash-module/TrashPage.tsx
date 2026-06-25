@@ -4,9 +4,8 @@ import styles from "./TrashPage.module.scss";
 import { ColumnDef } from "@/types/component-types";
 import { TrashInterface } from "@/types/trash";
 import FileType from "../ui/fileType";
-import { FileKind } from "@/types/dashboard";
 import { formatBytes } from "@/store/store";
-import { formatFileDate } from "@/lib/utils";
+import { formatFileDate, getFileExtension } from "@/lib/utils";
 import { FunctionComponent } from "react";
 import DataTable from "../ui/datatable";
 import TrashTableActionColumn from "./TrashTableActionColumn";
@@ -15,9 +14,6 @@ import EmptyTrashButton from "./EmptyTrashButton";
 const TrashPage: FunctionComponent<{
   trashedItems: Array<TrashInterface>;
 }> = async ({ trashedItems }) => {
-  const fileExtension = (file: TrashInterface) =>
-    file.fileName.split(".")[1] as FileKind;
-
   const columns: ColumnDef<TrashInterface>[] = [
     {
       id: "name",
@@ -41,7 +37,7 @@ const TrashPage: FunctionComponent<{
             </>
           ) : (
             <>
-              <FileType kind={fileExtension(item)} />
+              <FileType kind={getFileExtension(item.fileName)} />
               <span className={styles.fileName}>{item.fileName}</span>
             </>
           )}

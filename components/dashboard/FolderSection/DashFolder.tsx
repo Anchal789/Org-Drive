@@ -5,7 +5,7 @@ import Icon from "@/components/ui/icon";
 import { iconsWithPaths } from "@/constants/common-constants";
 import type { UploadedFile } from "@/types/files";
 import DriveCrumb from "../DriveCrumb/DriveCrumb";
-import UploadWidget from "../UploadWidget";
+import UploadWidget from "../upload-widget/UploadWidget";
 import styles from "./DashFolder.module.scss";
 import { DownloadAllButton } from "./DownloadAllButton";
 import LayoutForInsideFolder from "./LayoutForInsideFolder";

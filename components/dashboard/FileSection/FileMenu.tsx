@@ -18,10 +18,15 @@ import type { UploadedFile } from "@/types/files";
 import styles from "./FileCard.module.scss";
 import { useShareDialogStore } from "@/store/store";
 import { Separator } from "@/components/ui/separator";
+import RenameItem from "@/components/rename/RenameIterm";
+import { bookmarkSharedItem } from "@/services/shared-with-me-service";
 
-const FileMenu: FunctionComponent<{ file: UploadedFile }> = ({ file }) => {
+const FileMenu: FunctionComponent<{
+  file: UploadedFile & { shareId?: number };
+}> = ({ file }) => {
   const { setOpen, setFile } = useShareDialogStore();
   const router = useRouter();
+  const [renameOpen, setRenameOpen] = useState<boolean>(false);
   const [openDeleteDialog, setOpenDeleteDialog] = useState<boolean>(false);
 
   const handleDelete = async () => {
@@ -33,7 +38,9 @@ const FileMenu: FunctionComponent<{ file: UploadedFile }> = ({ file }) => {
   };
 
   const handleBookmark = async () => {
-    const response = await bookmarkItem(file.id, true, !file.bookmark);
+    const response = file.shareId
+      ? await bookmarkSharedItem(file.shareId as number, !file.bookmark)
+      : await bookmarkItem(file.id, true, !file.bookmark);
     if (response?.success) {
       router.refresh();
     }
@@ -51,6 +58,12 @@ const FileMenu: FunctionComponent<{ file: UploadedFile }> = ({ file }) => {
         onConfirm={handleDelete}
         onCancel={() => setOpenDeleteDialog(false)}
       />
+      <RenameItem
+        file={file}
+        folder={undefined}
+        renameOpen={renameOpen}
+        setRenameOpen={setRenameOpen}
+      />
       <DropdownMenu>
         <DropdownMenuTrigger asChild>
           <Button type="button" className={styles.moreBtn}>
@@ -63,6 +76,17 @@ const FileMenu: FunctionComponent<{ file: UploadedFile }> = ({ file }) => {
         </DropdownMenuTrigger>
         <DropdownMenuContent className={styles.menuContent} align="start">
           <DropdownMenuGroup>
+            <DropdownMenuItem
+              onClick={() => setRenameOpen(true)}
+              className={styles.menuItem}
+            >
+              <Icon
+                d={iconsWithPaths.pencil}
+                size={14}
+                className={styles.icon}
+              />
+              Rename
+            </DropdownMenuItem>
             <DropdownMenuItem
               onClick={() => downloadFile(file.id)}
               className={styles.menuItem}

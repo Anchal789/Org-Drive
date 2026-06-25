@@ -24,7 +24,17 @@ const FolderContainer: FunctionComponent<{
         role="button"
         tabIndex={0}
         className={styles.folderContainer}
-        onClick={() => {
+        onClick={(e) => {
+          const target = e.target as HTMLElement;
+
+          if (
+            target.closest("button") ||
+            target.closest('[role="dialog"]') ||
+            target.closest('[data-slot="dialog-content"]')
+          ) {
+            return;
+          }
+
           router.push(
             `/my-drive/folder?folderId=${folderId}&folderName=${folder.name}`,
           );

@@ -14,97 +14,66 @@ import {
 import { Button } from "../ui/button";
 import Icon from "../ui/icon";
 import { iconsWithPaths } from "@/constants/common-constants";
-import {
-  Dialog,
-  DialogClose,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-} from "../ui/dialog";
-import { Field, FieldError, FieldGroup } from "../ui/field";
-import { Label } from "../ui/label";
-import { Input } from "../ui/input";
-import { renameSharedItem } from "@/services/shared-with-me-service";
-import { toast } from "sonner";
+import { downloadFile } from "@/services/file-service";
+import AlertModal from "../ui/alert-modal";
 import { useRouter } from "next/navigation";
+import { trashSharedFile } from "@/services/shared-with-me-service";
+import RenameItem from "../rename/RenameIterm";
 
 const ShareWithMeActionColumn: FunctionComponent<{
   props: SharedWithMeItemsType;
 }> = ({ props }) => {
   const router = useRouter();
   const [renameOpen, setRenameOpen] = useState<boolean>(false);
-  const [newNameState, setNewNameState] = useState<{
-    name: string;
-    error: string | null;
-  }>({
-    name: "",
-    error: null,
-  });
+  const [openDeleteDialog, setOpenDeleteDialog] = useState<boolean>(false);
 
-  const handleRename = async () => {
-    const response = await renameSharedItem(props.id, newNameState.name);
-    if (response.success) {
-      setRenameOpen(false);
-      toast.success(response.message);
+  const handleDelete = async () => {
+    const response = await trashSharedFile(props.id);
+    if (response?.success) {
       router.refresh();
-    } else {
-      toast.error(response.message);
+      setOpenDeleteDialog(false);
     }
   };
 
   return (
     <>
-      <Dialog open={renameOpen} onOpenChange={setRenameOpen} modal>
-        <DialogContent className="sm:max-w-sm">
-          <DialogHeader>
-            <DialogTitle>Rename</DialogTitle>
-            <DialogDescription>
-              Original name: {props.fileName || props.folderName}
-            </DialogDescription>
-          </DialogHeader>
-          <FieldGroup>
-            <Field>
-              <Label htmlFor="name">New name</Label>
-              <Input
-                id="name"
-                name="name"
-                onChange={(event) => {
-                  if (event.target.value) {
-                    setNewNameState({
-                      name: event.target.value,
-                      error: null,
-                    });
-                  } else {
-                    setNewNameState({
-                      name: "",
-                      error: "Name cannot be empty",
-                    });
-                  }
-                }}
-                onBlur={(event) => {
-                  if (!event.target.value) {
-                    setNewNameState({
-                      name: "",
-                      error: "Name cannot be empty",
-                    });
-                  }
-                }}
-              />
-              <FieldError>{newNameState.error}</FieldError>
-            </Field>
-          </FieldGroup>
-          <DialogFooter>
-            <DialogClose asChild>
-              <Button variant="destructive">Cancel</Button>
-            </DialogClose>
-            <Button variant={"primary"} onClick={handleRename}>
-              Save changes
-            </Button>
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
+      <AlertModal
+        open={openDeleteDialog}
+        onOpenChange={setOpenDeleteDialog}
+        title="Delete file?"
+        description={`Are you sure you want to delete "${props.fileName}"?`}
+        confirmText="Delete"
+        confirmVariant="destructive"
+        cancelText="Cancel"
+        onConfirm={handleDelete}
+        onCancel={() => setOpenDeleteDialog(false)}
+      />
+      {renameOpen && (
+        <RenameItem
+          file={
+            props.fileId
+              ? {
+                  ...props,
+                  id: props.fileId,
+                  name: props.fileName,
+                  shareId: props.id,
+                }
+              : undefined
+          }
+          folder={
+            props.folderId
+              ? {
+                  ...props,
+                  id: props.folderId,
+                  name: props.folderName,
+                  shareId: props.id,
+                }
+              : undefined
+          }
+          renameOpen={renameOpen}
+          setRenameOpen={setRenameOpen}
+        />
+      )}
       <DropdownMenu>
         <DropdownMenuTrigger asChild>
           <Button type="button" className={styles.moreBtn}>
@@ -117,7 +86,9 @@ const ShareWithMeActionColumn: FunctionComponent<{
         </DropdownMenuTrigger>
         <DropdownMenuContent className="w-40" align="start">
           <DropdownMenuGroup>
-            <DropdownMenuItem>
+            <DropdownMenuItem
+              onClick={() => downloadFile(props.fileId, props.userId)}
+            >
               Download
               <DropdownMenuShortcut>
                 <Icon d={iconsWithPaths.download} size={14} />
@@ -129,7 +100,7 @@ const ShareWithMeActionColumn: FunctionComponent<{
                 <Icon d={iconsWithPaths.share} size={14} />
               </DropdownMenuShortcut>
             </DropdownMenuItem>
-            <DropdownMenuItem>
+            <DropdownMenuItem onClick={() => setOpenDeleteDialog(true)}>
               Delete
               <DropdownMenuShortcut>
                 <Icon d={iconsWithPaths.trash} size={14} />

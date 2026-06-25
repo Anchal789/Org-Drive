@@ -140,3 +140,9 @@
   border: 1px solid transparent;
   white-space: nowrap;
 }
+
+.originalName {
+  text-overflow: ellipsis;
+  white-space: normal;
+  word-break: break-all;
+}

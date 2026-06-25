@@ -1,20 +1,20 @@
-import { type NextRequest, NextResponse } from 'next/server';
-import { createSession } from '@/lib/session';
-import { userRepository } from '@/repositories/user.repository';
+import { type NextRequest, NextResponse } from "next/server";
+import { createSession } from "@/lib/session";
+import { userRepository } from "@/repositories/user.repository";
 
 export async function GET(request: NextRequest) {
-  if (process.env.NODE_ENV === 'production') {
+  if (process.env.NODE_ENV === "production") {
     return NextResponse.json(
-      { error: 'Dev login disabled in production' },
+      { error: "Dev login disabled in production" },
       { status: 403 },
     );
   }
-  const targetUserId = 29;
+  const targetUserId = 31;
   const user = await userRepository.findById(targetUserId);
 
   if (!user) {
     return NextResponse.json(
-      { error: 'Hardcoded user not found in DB' },
+      { error: "Hardcoded user not found in DB" },
       { status: 404 },
     );
   }
@@ -29,5 +29,5 @@ export async function GET(request: NextRequest) {
     photoUrl: user.photoUrl,
   });
 
-  return NextResponse.redirect(new URL('/my-drive', request.url));
+  return NextResponse.redirect(new URL("/my-drive", request.url));
 }

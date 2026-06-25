@@ -1,0 +1,7 @@
+@use "../../styles/functions" as *;
+
+.originalName {
+  text-overflow: ellipsis;
+  white-space: normal;
+  word-break: break-all;
+}

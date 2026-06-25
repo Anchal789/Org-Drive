@@ -4,7 +4,7 @@ import { bookmarkRepository } from "@/repositories/bookmark.repository";
 import { NextRequest } from "next/server";
 
 export async function POST(request: NextRequest) {
-  const { id, isFile, bookmark } = await request.json();
+  const { id, isFile, bookmark, shared } = await request.json();
 
   if (!id) {
     return sendError("Missing id", 400);
@@ -14,6 +14,7 @@ export async function POST(request: NextRequest) {
       Number(decrypt(id)),
       isFile,
       bookmark,
+      shared,
     );
 
     if (!response) {

@@ -4,10 +4,9 @@ import Icon from "../ui/icon";
 import DataTable from "../ui/datatable";
 import { FunctionComponent } from "react";
 import { ColumnDef } from "@/types/component-types";
-import { FileKind } from "@/types/dashboard";
 import FileType from "../ui/fileType";
 import UserAvatar from "../ui/user-avatar";
-import { formatFileDate, getAvatarColor } from "@/lib/utils";
+import { formatFileDate, getAvatarColor, getFileExtension } from "@/lib/utils";
 import { SharedWithMeItemsType } from "@/types/share-with-me";
 import ShareWithMeActionColumn from "./ShareWithMeActionColumn";
 
@@ -38,7 +37,6 @@ const ShareWithMePage: FunctionComponent<{
         };
     }
   };
-  const fileExtension = (name: string) => name.split(".")[1] as FileKind;
 
   const columns: ColumnDef<SharedWithMeItemsType>[] = [
     {
@@ -64,7 +62,7 @@ const ShareWithMePage: FunctionComponent<{
             </>
           ) : (
             <>
-              <FileType kind={fileExtension(item.fileName)} />
+              <FileType kind={getFileExtension(item.fileName)} />
               <span className={styles.fileName}>{item.fileName}</span>
             </>
           )}
@@ -126,6 +124,7 @@ const ShareWithMePage: FunctionComponent<{
       cell: (item) => <ShareWithMeActionColumn props={item} />,
     },
   ];
+
   return (
     <>
       <div className={styles.header}>

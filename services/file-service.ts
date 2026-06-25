@@ -3,7 +3,7 @@ import { deleteData, postData } from "@/lib/api-fn";
 import { isTelegramSessionValid } from "@/lib/session";
 import { encrypt } from "@/lib/utils";
 
-export const downloadFile = async (fileId: number) => {
+export const downloadFile = async (fileId: number, userId?: number) => {
   const telegramSession = await isTelegramSessionValid();
 
   if (!telegramSession.valid) {
@@ -11,7 +11,7 @@ export const downloadFile = async (fileId: number) => {
     return;
   }
 
-  window.location.href = `/api/file/download/file?fileId=${fileId}`;
+  window.location.href = `/api/file/download/file?fileId=${fileId}${userId ? `&userId=${userId}` : ""}`;
 };
 
 export const downloadAllFolderFiles = async (

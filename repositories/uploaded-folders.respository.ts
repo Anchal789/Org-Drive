@@ -1,3 +1,4 @@
+import { sharedItemsTable } from "./../db/schema";
 import { and, eq, inArray } from "drizzle-orm";
 import { db } from "@/db";
 import { uploadedFilesTable, uploadFoldersTable, userTable } from "@/db/schema";
@@ -53,11 +54,16 @@ export const uploadedFoldersRepository = {
         isDeleted: uploadFoldersTable.isDeleted,
         createdAt: uploadFoldersTable.createdAt,
         updatedAt: uploadFoldersTable.updatedAt,
+        bookmark: sharedItemsTable.bookmark,
         ownerFirstName: userTable.firstName,
         ownerLastName: userTable.lastName,
       })
       .from(uploadFoldersTable)
       .leftJoin(userTable, eq(uploadFoldersTable.userId, userTable.id))
+      .leftJoin(
+        sharedItemsTable,
+        eq(uploadFoldersTable.id, sharedItemsTable.folderId),
+      )
       .where(
         and(
           eq(uploadFoldersTable.isDeleted, false),
@@ -80,5 +86,11 @@ export const uploadedFoldersRepository = {
         ),
       );
     return folders;
+  },
+  async renameFolder(id: number, newName: string) {
+    return await db
+      .update(uploadFoldersTable)
+      .set({ name: newName })
+      .where(eq(uploadFoldersTable.id, id));
   },
 };

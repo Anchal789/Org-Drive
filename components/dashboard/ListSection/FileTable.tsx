@@ -6,9 +6,8 @@ import FileType from "@/components/ui/fileType";
 import Icon from "@/components/ui/icon";
 import UserAvatar from "@/components/ui/user-avatar";
 import { iconsWithPaths, TINTS } from "@/constants/common-constants";
-import { formatFileDate, getAvatarColor } from "@/lib/utils";
+import { formatFileDate, getAvatarColor, getFileExtension } from "@/lib/utils";
 import { formatBytes } from "@/store/store";
-import type { FileKind } from "@/types/dashboard";
 import type { UploadedFile } from "@/types/files";
 import FileMenu from "../FileSection/FileMenu";
 import styles from "./FileTable.module.scss";
@@ -19,9 +18,6 @@ const FileTable: FunctionComponent<{
   files: UploadedFile[];
 }> = ({ files }) => {
   const [selectedFiles, setSelectedFiles] = useState<(string | number)[]>([]);
-
-  const fileExtension = (file: UploadedFile) =>
-    file.name.split(".")[1] as FileKind;
 
   const columns: ColumnDef<UploadedFile>[] = [
     {
@@ -35,7 +31,7 @@ const FileTable: FunctionComponent<{
       className: styles.fileCell,
       cell: (file) => (
         <>
-          <FileType kind={fileExtension(file)} />
+          <FileType kind={getFileExtension(file.name || "")} />
           <span className={styles.fileName}>{file.name}</span>
           {file.bookmark && (
             <Icon
@@ -52,7 +48,7 @@ const FileTable: FunctionComponent<{
       width: "100px",
       header: "Type",
       className: styles.kindCell,
-      cell: (file) => fileExtension(file),
+      cell: (file) => getFileExtension(file.name || ""),
     },
     {
       id: "owner",

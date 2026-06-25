@@ -1,5 +1,10 @@
 import { db } from "@/db";
-import { uploadedFilesTable, uploadFoldersTable, userTable } from "@/db/schema";
+import {
+  sharedItemsTable,
+  uploadedFilesTable,
+  uploadFoldersTable,
+  userTable,
+} from "@/db/schema";
 import { uploadedFiles } from "@/drizzle/schema";
 import { and, eq } from "drizzle-orm";
 
@@ -53,7 +58,18 @@ export const bookmarkRepository = {
         ),
       );
   },
-  async bookmarkItem(id: number, isFile: boolean, bookmark: boolean) {
+  async bookmarkItem(
+    id: number,
+    isFile: boolean,
+    bookmark: boolean,
+    shared: boolean,
+  ) {
+    if (shared) {
+      return await db
+        .update(sharedItemsTable)
+        .set({ bookmark })
+        .where(eq(sharedItemsTable.id, id));
+    }
     if (isFile) {
       return await db
         .update(uploadedFiles)

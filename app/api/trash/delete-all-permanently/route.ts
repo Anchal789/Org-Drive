@@ -2,8 +2,8 @@ export const dynamic = "force-dynamic";
 
 import { sendError, sendSuccess } from "@/lib/api-response";
 import { getSessionUser } from "@/lib/session";
-import { userRepository } from "@/repositories/user.repository";
 import { trashedItemsRepository } from "@/repositories/trashed-items.repository";
+import { systemSettingsRepository } from "@/repositories/system-settings.repository";
 import { TelegramClient } from "telegram";
 import { StringSession } from "telegram/sessions";
 
@@ -15,8 +15,6 @@ export async function DELETE() {
   const session = await getSessionUser();
   if (!session?.userId) return sendError("Unauthorized", 401);
 
-  const dbUser = await userRepository.findById(Number(session.userId));
-  if (!dbUser?.telegramSessionString) return sendError("Session invalid", 401);
   const telegramMessageIds = await trashedItemsRepository.emptyTrash(
     Number(session.userId),
   );
@@ -25,8 +23,13 @@ export async function DELETE() {
     return sendSuccess(null, "Trash is already empty", 200);
   }
 
+  const botSessionString = await systemSettingsRepository.getBotSessionString();
+  if (!botSessionString) {
+    return sendError("System error: Bot session is not configured.", 500);
+  }
+
   let client: TelegramClient | null = new TelegramClient(
-    new StringSession(dbUser.telegramSessionString),
+    new StringSession(botSessionString),
     API_ID,
     API_HASH,
     { connectionRetries: 1 },
@@ -34,7 +37,17 @@ export async function DELETE() {
 
   try {
     await client.connect();
-    await client.deleteMessages(STORAGE_CHANNEL, telegramMessageIds, {
+
+    let formattedChannelId = STORAGE_CHANNEL.trim();
+    if (
+      !formattedChannelId.startsWith("@") &&
+      !formattedChannelId.startsWith("-100")
+    ) {
+      formattedChannelId = `-100${formattedChannelId}`;
+    }
+    const targetEntity = await client.getEntity(formattedChannelId);
+
+    await client.deleteMessages(targetEntity, telegramMessageIds, {
       revoke: true,
     });
 

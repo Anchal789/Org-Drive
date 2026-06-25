@@ -9,6 +9,11 @@ import {
   varchar,
 } from "drizzle-orm/pg-core";
 
+export const systemSettingsTable = pgTable("system_settings", {
+  id: serial("id").primaryKey(),
+  botSessionString: text("bot_session_string").notNull(),
+});
+
 export const userTable = pgTable("users", {
   id: integer("id").primaryKey().generatedAlwaysAsIdentity(),
   telegramId: varchar("telegram_id", { length: 255 }).notNull().unique(),
@@ -87,6 +92,7 @@ export const sharedItemsTable = pgTable("shared_items", {
   folderName: varchar("folder_name", { length: 255 }),
   sharedWithUserId: integer("shared_with_user_id").notNull(),
   permission: permissionEnum("permission").notNull().default("viewer"),
+  bookmark: boolean("bookmark").default(false).notNull(),
   createdAt: timestamp("created_at", {
     withTimezone: true,
   })

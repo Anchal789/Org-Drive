@@ -1,6 +1,7 @@
-'use client';
+"use client";
 
-import { useDragDropStore } from '@/store/store';
+import { useDragDropStore } from "@/store/store";
+import styles from "./DashGrid.module.scss";
 
 export default function DashGridWrapper({
   children,
@@ -25,6 +26,7 @@ export default function DashGridWrapper({
         e.preventDefault();
         setIsDragging(false);
       }}
+      className={styles.wrapper}
     >
       {isDragging ? overlay : children}
     </div>

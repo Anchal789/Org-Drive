@@ -1,7 +1,7 @@
 import DriveDropOverlay from "@/components/dashboard/DriveDropOverlay";
 import DashGridWrapper from "@/components/dashboard/GridSection/DashGridWrapper";
 import SwitchLayout from "@/components/dashboard/SwitchLayout";
-import UploadWidget from "@/components/dashboard/UploadWidget";
+import UploadWidget from "@/components/dashboard/upload-widget/UploadWidget";
 import { getSessionUser } from "@/lib/session";
 import { sharedWithMeRepository } from "@/repositories/shared-with-me.repository";
 import { uploadedFilesRepository } from "@/repositories/uploaded-files.respository";
@@ -36,13 +36,37 @@ export default async function Page() {
     sharedFolderIds,
   )) as Array<UploadedFolder>;
 
-  const allFiles = [...files, ...sharedFiles].sort((a, b) => a.id - b.id);
-  const allFolders = [...folders, ...sharedFolders].sort((a, b) => a.id - b.id);
+  const sharedFilesWithAlias = sharedFiles.map((file) => {
+    const shareRecord = sharedItems.find((item) => item.fileId === file.id);
+    return {
+      ...file,
+      name: shareRecord?.fileName || file.name,
+      shareId: shareRecord?.id,
+    };
+  });
+
+  const sharedFoldersWithAlias = sharedFolders.map((folder) => {
+    const shareRecord = sharedItems.find((item) => item.folderId === folder.id);
+    return {
+      ...folder,
+      name: shareRecord?.folderName || folder.name,
+      shareId: shareRecord?.id,
+    };
+  });
+
+  const allFiles = [...files, ...sharedFilesWithAlias].sort(
+    (a, b) => a.id - b.id,
+  );
+  const allFolders = [...folders, ...sharedFoldersWithAlias].sort(
+    (a, b) => a.id - b.id,
+  );
 
   return (
-    <DashGridWrapper overlay={<DriveDropOverlay />}>
-      <SwitchLayout files={allFiles} folders={allFolders} />
+    <>
+      <DashGridWrapper overlay={<DriveDropOverlay />}>
+        <SwitchLayout files={allFiles} folders={allFolders} />
+      </DashGridWrapper>
       <UploadWidget />
-    </DashGridWrapper>
+    </>
   );
 }
