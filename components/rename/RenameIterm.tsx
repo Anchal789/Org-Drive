@@ -27,11 +27,10 @@ import {
 import { renameItem } from "@/services/folder-service";
 import { UploadedFile, UploadedFolder } from "@/types/files";
 import { getFileExtension, getFileNameWithoutExtension } from "@/lib/utils";
-import { renameSharedItem } from "@/services/shared-with-me-service";
 import styles from "./Rename.module.scss";
 
 const RenameItem: FunctionComponent<{
-  file?: UploadedFile;
+  file?: UploadedFile & { shareId?: number };
   folder?: UploadedFolder;
   setRenameOpen: Dispatch<SetStateAction<boolean>>;
   renameOpen: boolean;
@@ -72,19 +71,13 @@ const RenameItem: FunctionComponent<{
 
     const finalName = `${newNameState.name}${file ? "." + fileExtension : ""}`;
 
-    const shareId = (file as any)?.shareId || (folder as any)?.shareId;
-
     let response;
-
-    if (shareId) {
-      response = await renameSharedItem(shareId, finalName);
-    } else {
-      response = await renameItem(
-        folder?.id || file?.id || 0,
-        finalName,
-        !!file?.id,
-      );
-    }
+    response = await renameItem(
+      folder?.id || file?.id || 0,
+      finalName,
+      !!file?.id,
+      file?.shareId,
+    );
 
     if (response.success) {
       setRenameOpen(false);

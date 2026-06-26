@@ -45,8 +45,8 @@ export interface UploadStore {
 export interface ShareWithMeDialogStore {
   open: boolean;
   setOpen: (open: boolean) => void;
-  file: UploadedFile | null;
-  folder: UploadedFolder | null;
+  file: (UploadedFile & { fileName?: string }) | null;
+  folder: (UploadedFolder & { folderName?: string }) | null;
   setFile: (file: UploadedFile) => void;
   setFolder: (folder: UploadedFolder) => void;
 }

@@ -55,6 +55,7 @@ export const uploadedFoldersRepository = {
         createdAt: uploadFoldersTable.createdAt,
         updatedAt: uploadFoldersTable.updatedAt,
         bookmark: sharedItemsTable.bookmark,
+        permission: sharedItemsTable.permission,
         ownerFirstName: userTable.firstName,
         ownerLastName: userTable.lastName,
       })

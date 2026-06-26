@@ -11,6 +11,8 @@ import { decrypt } from "@/lib/utils";
 import { uploadedFilesRepository } from "@/repositories/uploaded-files.respository";
 import { systemSettingsRepository } from "@/repositories/system-settings.repository";
 import type { UploadedFile } from "@/types/files";
+import { db } from "@/db";
+import { recentTable } from "@/db/schema";
 
 const API_ID = Number(process.env.TELEGRAM_APP_API_ID);
 const API_HASH = String(process.env.TELEGRAM_APP_API_HASH);
@@ -33,6 +35,34 @@ export async function GET(request: NextRequest) {
   if (!filesInFolder || filesInFolder.length === 0) {
     return sendError("Folder is empty or not found", 404);
   }
+
+  const actorId = Number(session.userId);
+  const ownerId = Number(filesInFolder[0].userId);
+
+  const logs = [
+    {
+      userId: actorId,
+      fileId: Number(folderId),
+      folderId: Number(folderId),
+      action: "downloaded",
+      actionBy: actorId,
+    },
+  ];
+
+  if (actorId !== ownerId) {
+    logs.push({
+      userId: ownerId,
+      fileId: Number(folderId),
+      folderId: Number(folderId),
+      action: "downloaded",
+      actionBy: actorId,
+    });
+  }
+
+  await db
+    .insert(recentTable)
+    .values(logs)
+    .catch((err) => console.error("Log error", err));
 
   const botSessionString = await systemSettingsRepository.getBotSessionString();
   if (!botSessionString) {

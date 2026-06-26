@@ -6,6 +6,8 @@ import { getSessionUser } from "@/lib/session";
 import { uploadedFilesRepository } from "@/repositories/uploaded-files.respository";
 import { systemSettingsRepository } from "@/repositories/system-settings.repository";
 import type { UploadedFile } from "@/types/files";
+import { db } from "@/db";
+import { recentTable } from "@/db/schema";
 
 const API_ID = Number(process.env.TELEGRAM_APP_API_ID);
 const API_HASH = String(process.env.TELEGRAM_APP_API_HASH);
@@ -18,16 +20,39 @@ export async function GET(request: NextRequest) {
   if (!session?.userId) return sendError("Unauthorized", 401);
 
   const fileId = searchParams.get("fileId");
-  const userId = searchParams.get("userId");
+  const requestUserId = searchParams.get("userId");
 
   const fileInfo = (
     await uploadedFilesRepository.getFile(
-      Number(userId || session?.userId),
+      Number(requestUserId || session?.userId),
       Number(fileId),
     )
   )[0] as UploadedFile;
 
   if (!fileInfo) return sendError("File not found in database", 404);
+
+  const actorId = Number(session.userId);
+  const ownerId = Number(fileInfo.userId);
+
+  const logs = [
+    {
+      userId: actorId,
+      fileId: Number(fileId),
+      folderId: Number(fileInfo.folderId),
+      action: "downloaded",
+      actionBy: actorId,
+    },
+  ];
+
+  if (actorId !== ownerId) {
+    logs.push({
+      userId: ownerId,
+      fileId: Number(fileId),
+      folderId: Number(fileInfo.folderId),
+      action: "downloaded",
+      actionBy: actorId,
+    });
+  }
 
   const botSessionString = await systemSettingsRepository.getBotSessionString();
   if (!botSessionString) {
@@ -105,6 +130,10 @@ export async function GET(request: NextRequest) {
       },
     });
 
+    await db
+      .insert(recentTable)
+      .values(logs)
+      .catch((err) => console.error("Log error", err));
     return new Response(stream, {
       headers: {
         "Content-Type": "application/octet-stream",

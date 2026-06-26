@@ -1,6 +1,7 @@
 import { and, eq, inArray, isNull, sql } from "drizzle-orm";
 import { db } from "@/db";
 import {
+  recentTable,
   sharedItemsTable,
   trashedTable,
   uploadedFilesTable,
@@ -11,7 +12,21 @@ import type { UploadFilesResponse } from "@/types/files";
 
 export const uploadedFilesRepository = {
   async uploadFiles(files: Array<UploadFilesResponse & { userId: number }>) {
-    return db.insert(uploadedFilesTable).values(files).returning();
+    const uploadedFiles = await db
+      .insert(uploadedFilesTable)
+      .values(files)
+      .returning();
+    const logs = uploadedFiles.map((file) => ({
+      userId: file.userId,
+      fileId: file.id,
+      folderId: file.folderId || undefined,
+      action: "uploaded",
+      actionBy: file.userId,
+    }));
+    if (logs.length > 0) {
+      await db.insert(recentTable).values(logs).catch(console.error);
+    }
+    return uploadedFiles;
   },
   async getFiles(userId: number) {
     const files = await db
@@ -44,7 +59,7 @@ export const uploadedFilesRepository = {
     return files;
   },
 
-  async getFilesInFolder(userId: number, folderId: number) {
+  async getFilesInFolder(folderId: number) {
     return db
       .select({
         id: uploadedFilesTable.id,
@@ -67,7 +82,6 @@ export const uploadedFilesRepository = {
       .leftJoin(userTable, eq(uploadedFilesTable.userId, userTable.id))
       .where(
         and(
-          eq(uploadedFilesTable.userId, userId),
           eq(uploadedFilesTable.folderId, folderId),
           eq(uploadedFilesTable.isDeleted, false),
         ),
@@ -157,6 +171,7 @@ export const uploadedFilesRepository = {
         isDeleted: uploadedFilesTable.isDeleted,
         bookmark: sharedItemsTable.bookmark,
         folderId: uploadedFilesTable.folderId,
+        permission: sharedItemsTable.permission,
         ownerFirstName: userTable.firstName,
         ownerLastName: userTable.lastName,
       })
@@ -202,7 +217,41 @@ export const uploadedFilesRepository = {
     const totalFiles = [...files, ...deletedFiles];
     return totalFiles;
   },
-  async renameFile(id: number, newName: string) {
+  async renameFile(id: number, newName: string, actorId: number) {
+    const [file] = await db
+      .select({
+        ownerId: uploadedFilesTable.userId,
+        folderId: uploadedFilesTable.folderId,
+      })
+      .from(uploadedFilesTable)
+      .where(eq(uploadedFilesTable.id, id));
+
+    if (!file) return null;
+
+    const sharedRecords = await db
+      .select({ sharedWithUserId: sharedItemsTable.sharedWithUserId })
+      .from(sharedItemsTable)
+      .where(eq(sharedItemsTable.fileId, id));
+
+    const dashboardOwners = new Set<number>();
+    dashboardOwners.add(actorId);
+    dashboardOwners.add(file.ownerId);
+
+    sharedRecords.forEach((record) => {
+      if (record.sharedWithUserId) {
+        dashboardOwners.add(record.sharedWithUserId);
+      }
+    });
+
+    const logs = Array.from(dashboardOwners).map((dashboardUserId) => ({
+      userId: dashboardUserId,
+      fileId: id,
+      folderId: file.folderId || undefined,
+      action: "edited",
+      actionBy: actorId,
+    }));
+
+    await db.insert(recentTable).values(logs);
     return await db
       .update(uploadedFilesTable)
       .set({ name: newName })

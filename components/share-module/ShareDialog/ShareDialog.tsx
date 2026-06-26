@@ -114,9 +114,13 @@ export default function ShareDialog({
     <div className={styles.backdrop}>
       <div className={styles.dialog}>
         <ShareHeader
-          activeName={activeItem.name}
+          activeName={
+            (activeItem.name ||
+              ("fileName" in activeItem ? activeItem.fileName : undefined)) ??
+            ("folderName" in activeItem ? activeItem.folderName : undefined)
+          }
           isSharingFolder={isSharingFolder}
-          fileName={file?.name}
+          fileName={file?.name || file?.fileName}
           folderId={file?.folderId}
           isLoading={isLoading}
           parentFolderName={parentFolderName}
