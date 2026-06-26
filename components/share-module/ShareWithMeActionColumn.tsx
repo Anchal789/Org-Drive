@@ -8,7 +8,6 @@ import {
   DropdownMenuContent,
   DropdownMenuGroup,
   DropdownMenuItem,
-  DropdownMenuShortcut,
   DropdownMenuTrigger,
 } from "../ui/dropdown-menu";
 import { Button } from "../ui/button";
@@ -19,10 +18,13 @@ import AlertModal from "../ui/alert-modal";
 import { useRouter } from "next/navigation";
 import { trashSharedFile } from "@/services/shared-with-me-service";
 import RenameItem from "../rename/RenameIterm";
+import { Separator } from "../ui/separator";
+import { useShareDialogStore } from "@/store/store";
 
 const ShareWithMeActionColumn: FunctionComponent<{
   props: SharedWithMeItemsType;
 }> = ({ props }) => {
+  const { setOpen, setFile, setFolder } = useShareDialogStore();
   const router = useRouter();
   const [renameOpen, setRenameOpen] = useState<boolean>(false);
   const [openDeleteDialog, setOpenDeleteDialog] = useState<boolean>(false);
@@ -34,6 +36,8 @@ const ShareWithMeActionColumn: FunctionComponent<{
       setOpenDeleteDialog(false);
     }
   };
+
+  const canEdit = props.permission === "editor";
 
   return (
     <>
@@ -56,7 +60,6 @@ const ShareWithMeActionColumn: FunctionComponent<{
                   ...props,
                   id: props.fileId,
                   name: props.fileName,
-                  shareId: props.id,
                 }
               : undefined
           }
@@ -66,7 +69,6 @@ const ShareWithMeActionColumn: FunctionComponent<{
                   ...props,
                   id: props.folderId,
                   name: props.folderName,
-                  shareId: props.id,
                 }
               : undefined
           }
@@ -86,25 +88,44 @@ const ShareWithMeActionColumn: FunctionComponent<{
         </DropdownMenuTrigger>
         <DropdownMenuContent className="w-40" align="start">
           <DropdownMenuGroup>
+            {canEdit && (
+              <DropdownMenuItem
+                onSelect={() => setRenameOpen(true)}
+                className={styles.menuItem}
+              >
+                <Icon d={iconsWithPaths.pencil} size={14} />
+                Rename
+              </DropdownMenuItem>
+            )}
             <DropdownMenuItem
               onClick={() => downloadFile(props.fileId, props.userId)}
+              className={styles.menuItem}
             >
+              <Icon d={iconsWithPaths.download} size={14} />
               Download
-              <DropdownMenuShortcut>
-                <Icon d={iconsWithPaths.download} size={14} />
-              </DropdownMenuShortcut>
             </DropdownMenuItem>
-            <DropdownMenuItem onSelect={() => setRenameOpen(true)}>
-              Rename
-              <DropdownMenuShortcut>
-                <Icon d={iconsWithPaths.share} size={14} />
-              </DropdownMenuShortcut>
+            <DropdownMenuItem
+              onClick={() => {
+                setOpen(true);
+                const file = props.fileId;
+                file ? setFile(props) : setFolder(props);
+              }}
+              className={styles.menuItem}
+            >
+              <Icon
+                d={iconsWithPaths.share}
+                size={14}
+                className={styles.icon}
+              />
+              Share
             </DropdownMenuItem>
-            <DropdownMenuItem onClick={() => setOpenDeleteDialog(true)}>
-              Delete
-              <DropdownMenuShortcut>
-                <Icon d={iconsWithPaths.trash} size={14} />
-              </DropdownMenuShortcut>
+            <Separator />
+            <DropdownMenuItem
+              onClick={() => setOpenDeleteDialog(true)}
+              className={`${styles.menuItem} ${styles.deleteItem}`}
+            >
+              <Icon d={iconsWithPaths.trash} size={14} />
+              Remove for me
             </DropdownMenuItem>
           </DropdownMenuGroup>
         </DropdownMenuContent>

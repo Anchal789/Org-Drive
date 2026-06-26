@@ -146,3 +146,20 @@
   white-space: normal;
   word-break: break-all;
 }
+
+.menuItem {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  padding: 7px 9px;
+  font-size: 13px;
+  font-weight: 500;
+}
+
+.deleteItem {
+  color: v(destructive);
+
+  .icon {
+    color: v(destructive);
+  }
+}

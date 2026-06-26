@@ -22,7 +22,7 @@ import RenameItem from "@/components/rename/RenameIterm";
 import { bookmarkSharedItem } from "@/services/shared-with-me-service";
 
 const FileMenu: FunctionComponent<{
-  file: UploadedFile & { shareId?: number };
+  file: UploadedFile & { shareId?: number; permission?: string };
 }> = ({ file }) => {
   const { setOpen, setFile } = useShareDialogStore();
   const router = useRouter();
@@ -45,6 +45,8 @@ const FileMenu: FunctionComponent<{
       router.refresh();
     }
   };
+
+  const canEdit = file?.permission === "editor" || !file?.permission;
   return (
     <>
       <AlertModal
@@ -76,17 +78,19 @@ const FileMenu: FunctionComponent<{
         </DropdownMenuTrigger>
         <DropdownMenuContent className={styles.menuContent} align="start">
           <DropdownMenuGroup>
-            <DropdownMenuItem
-              onClick={() => setRenameOpen(true)}
-              className={styles.menuItem}
-            >
-              <Icon
-                d={iconsWithPaths.pencil}
-                size={14}
-                className={styles.icon}
-              />
-              Rename
-            </DropdownMenuItem>
+            {canEdit && (
+              <DropdownMenuItem
+                onClick={() => setRenameOpen(true)}
+                className={styles.menuItem}
+              >
+                <Icon
+                  d={iconsWithPaths.pencil}
+                  size={14}
+                  className={styles.icon}
+                />
+                Rename
+              </DropdownMenuItem>
+            )}
             <DropdownMenuItem
               onClick={() => downloadFile(file.id)}
               className={styles.menuItem}

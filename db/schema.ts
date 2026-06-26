@@ -86,10 +86,8 @@ const permissionEnum = pgEnum("permission", [
 export const sharedItemsTable = pgTable("shared_items", {
   id: integer("id").primaryKey().generatedAlwaysAsIdentity(),
   fileId: integer("file_id").references(() => uploadedFilesTable.id),
-  fileName: varchar("file_name", { length: 255 }),
   userId: integer("user_id").notNull(),
   folderId: integer("folder_id").references(() => uploadFoldersTable.id),
-  folderName: varchar("folder_name", { length: 255 }),
   sharedWithUserId: integer("shared_with_user_id").notNull(),
   permission: permissionEnum("permission").notNull().default("viewer"),
   bookmark: boolean("bookmark").default(false).notNull(),
@@ -110,6 +108,18 @@ export const trashedTable = pgTable("trashed", {
   size: integer("size").notNull(),
   isDeleted: boolean("is_deleted").default(false).notNull(),
   createdAt: timestamp("created_at", { withTimezone: true })
+    .defaultNow()
+    .notNull(),
+});
+
+export const recentTable = pgTable("recent", {
+  id: integer().primaryKey().generatedAlwaysAsIdentity(),
+  userId: integer("user_id").notNull(),
+  fileId: integer("file_id").notNull(),
+  folderId: integer("folder_id"),
+  action: varchar({ length: 255 }).notNull(),
+  actionBy: integer("edit_by").notNull(),
+  createdAt: timestamp("created_at", { withTimezone: true, mode: "string" })
     .defaultNow()
     .notNull(),
 });

@@ -1,6 +1,7 @@
 import {
   sharedItemsTable,
   uploadedFilesTable,
+  uploadFoldersTable,
   userTable,
 } from "./../db/schema";
 import { db } from "@/db";
@@ -15,15 +16,19 @@ export const sharedWithMeRepository = {
         fileId: sharedItemsTable.fileId,
         folderId: sharedItemsTable.folderId,
         permission: sharedItemsTable.permission,
-        fileName: sql<string>`COALESCE(${sharedItemsTable.fileName}, ${uploadedFilesTable.name})`,
+        fileName: sql<string>`COALESCE(${uploadedFilesTable.name}, ${uploadedFilesTable.name})`,
         bookmark: sharedItemsTable.bookmark,
-        folderName: sharedItemsTable.folderName,
+        folderName: uploadFoldersTable.name,
         ownerFirstName: userTable.firstName,
         ownerLastName: userTable.lastName,
         sharedDate: sharedItemsTable.createdAt,
       })
       .from(sharedItemsTable)
       .leftJoin(userTable, eq(sharedItemsTable.userId, userTable.id))
+      .leftJoin(
+        uploadFoldersTable,
+        eq(sharedItemsTable.folderId, uploadFoldersTable.id),
+      )
       .leftJoin(
         uploadedFilesTable,
         eq(sharedItemsTable.fileId, uploadedFilesTable.id),
@@ -34,23 +39,7 @@ export const sharedWithMeRepository = {
     return await db
       .select()
       .from(sharedItemsTable)
-      .where(
-        or(eq(sharedItemsTable.fileId, id), eq(sharedItemsTable.folderId, id)),
-      );
-  },
-  async renameSharedItem(id: number, newName: string) {
-    const [folderOrFile] = await db
-      .select()
-      .from(sharedItemsTable)
-      .where(eq(sharedItemsTable.id, id));
-    if (!folderOrFile) return null;
-
-    const name = folderOrFile.folderId ? "folderName" : "fileName";
-
-    return await db
-      .update(sharedItemsTable)
-      .set({ [name]: newName })
-      .where(eq(sharedItemsTable.id, id));
+      .where(or(eq(sharedItemsTable.id, id), eq(sharedItemsTable.id, id)));
   },
   async getUsersWithFileAccess(id: number, ownerId: number) {
     const ownerDetails = await db

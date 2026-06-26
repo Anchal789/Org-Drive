@@ -64,4 +64,13 @@ export const userRepository = {
   async getUsers(): Promise<User[]> {
     return await db.select().from(userTable);
   },
+  async getUserFirstName(id: number): Promise<string | null> {
+    const user = await db
+      .select({ firstName: userTable.firstName })
+      .from(userTable)
+      .where(eq(userTable.id, id))
+      .limit(1);
+
+    return user[0]?.firstName ?? null;
+  },
 };

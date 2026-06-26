@@ -2,14 +2,6 @@ import { deleteData, postData } from "@/lib/api-fn";
 import { encrypt } from "@/lib/utils";
 import { toast } from "sonner";
 
-export const renameSharedItem = async (id: number, newName: string) => {
-  const response = await postData({
-    url: "/api/shared-with-me/rename",
-    payload: { id, newName },
-  });
-  return response;
-};
-
 export const trashSharedFile = async (id: number) => {
   const response = await deleteData({
     url: "/api/shared-with-me/delete",

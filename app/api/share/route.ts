@@ -2,15 +2,27 @@ import { sendError, sendSuccess } from "@/lib/api-response";
 import { shareRepository } from "@/repositories/share.repository";
 import { sharedWithMeRepository } from "@/repositories/shared-with-me.repository";
 import { NextRequest } from "next/server";
+import { getSessionUser } from "@/lib/session";
+import { db } from "@/db";
+import { recentTable } from "@/db/schema";
 
 export async function POST(request: NextRequest) {
+  const session = await getSessionUser();
+  const actorId = Number(session?.userId);
+
+  if (!actorId) return sendError("Unauthorized", 401);
+
   const { usersToInvite, usersWithAccess, file, folder } = await request.json();
 
   if (!file && !folder) {
     return sendError("Missing Item to share", 400);
   }
 
-  const itemId = file?.id || folder?.id;
+  const actualFileId = file?.fileId || file?.id || null;
+  const actualFolderId =
+    file?.folderId || folder?.folderId || folder?.id || null;
+
+  const itemId = actualFileId || actualFolderId;
   const ownerId = file?.userId || folder?.userId;
 
   const currentDbState = await sharedWithMeRepository.getUsersWithFileAccess(
@@ -28,15 +40,33 @@ export async function POST(request: NextRequest) {
   }
 
   try {
+    const logs = [];
+
     if (usersToInvite.length > 0) {
+      logs.push({
+        userId: actorId,
+        fileId: actualFileId || undefined,
+        folderId: actualFolderId ? actualFolderId : null,
+        action: "shared",
+        actionBy: actorId,
+      });
+
       for (const user of usersToInvite) {
         await shareRepository.uploadSharedItem(
           ownerId,
-          file?.id || null,
-          folder?.id || null,
+          actualFileId,
+          actualFolderId,
           user.permission,
           user.userId,
         );
+
+        logs.push({
+          userId: user.userId,
+          fileId: actualFileId || undefined,
+          folderId: actualFolderId || undefined,
+          action: "shared",
+          actionBy: actorId,
+        });
       }
     }
 
@@ -51,6 +81,9 @@ export async function POST(request: NextRequest) {
       }
     }
 
+    if (logs.length > 0) {
+      await db.insert(recentTable).values(logs).catch(console.error);
+    }
     return sendSuccess(
       null,
       `${file ? "File" : "Folder"} shared successfully`,

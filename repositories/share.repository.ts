@@ -37,8 +37,6 @@ export const shareRepository = {
       folderId,
       permission,
       sharedWithUserId,
-      fileName: fileName?.name || null,
-      folderName: folderName?.name || null,
     });
   },
   async updateSharedItem(
