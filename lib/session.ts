@@ -66,6 +66,7 @@ export async function getSessionUser(): Promise<
 export async function destroySession() {
   const cookieStore = await cookies();
   cookieStore.delete(REFRESH_TOKEN);
+  cookieStore.delete("sidebar_state");
 }
 
 export async function isTelegramSessionValid(): Promise<{

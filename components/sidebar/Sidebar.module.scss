@@ -1,0 +1,25 @@
+@use "../../styles/functions" as *;
+
+.sidebarToggleButton {
+  display: none;
+  position: absolute;
+  right: -12px;
+  padding: 0;
+  top: 72px;
+  width: 22px;
+  height: 22px;
+  border: 1px solid v(border);
+  border-radius: 50%;
+  z-index: 20;
+  box-shadow: v(shadow-sm);
+  transition: all 0.2s ease;
+  color: v(muted-foreground);
+  &:hover {
+    border-color: v(primary);
+    background: color-mix(in srgb, v(primary) 10%, transparent);
+    color: v(primary);
+  }
+  @media (min-width: 768px) {
+    display: flex;
+  }
+}

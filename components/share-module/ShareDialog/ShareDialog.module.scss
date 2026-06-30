@@ -223,12 +223,46 @@
 }
 
 .folderIcon {
-  width: 36;
-  height: 36;
+  width: 36px; // Fixed missing px from your original code
+  height: 36px;
   display: flex;
   align-items: center;
   justify-content: center;
   background-color: v(muted);
   border-radius: v(radius-md);
   color: v(muted-foreground);
+}
+
+// ─── Multi File Selection ────────────────────────────────────────────────
+.multiFilesSection {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.multiFileList {
+  max-height: 200px;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding-right: 4px;
+}
+
+.multiFileItem {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 8px 10px;
+  border: 1px solid v(border);
+  border-radius: v(radius-md);
+  background: v(background);
+}
+
+.multiFileName {
+  font-size: 13px;
+  font-weight: v(weight-medium);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }

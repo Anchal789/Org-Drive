@@ -38,3 +38,129 @@
 .badge {
   font-size: 10;
 }
+
+.popoverContent {
+  width: 248px;
+  z-index: 30;
+  background: v(popover, card);
+  color: v(popover-foreground, foreground);
+  border: 1px solid v(border);
+  border-radius: v(radius-lg);
+  box-shadow: v(shadow-xl);
+  padding: 8px;
+  display: flex;
+  flex-direction: column;
+  gap: 0px;
+}
+
+.userHandle {
+  display: flex;
+  align-items: center;
+  gap: 11px;
+  padding: 6px 7px 10px;
+}
+
+.userDetails {
+  display: flex;
+  flex-direction: column;
+}
+
+.name {
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.username {
+  font-size: 11px;
+  color: v(muted-foreground);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.workspace {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 8px 9px;
+  margin-bottom: 4px;
+  background: v(secondary);
+  border-radius: v(radius-md);
+}
+
+.workspaceLetter {
+  width: 26px;
+  height: 26px;
+  border-radius: 7px;
+  background: v(foreground);
+  color: v(background);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 12px;
+  font-weight: 700;
+  flex-shrink: 0;
+}
+
+.workspaceDetails {
+  flex: 1 1 0%;
+  min-width: 0px;
+}
+
+.workspaceName {
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.workspaceMembers {
+  font-size: 10px;
+  color: v(muted-foreground);
+}
+
+.actionButton {
+  display: flex;
+  align-items: center;
+  gap: 11px;
+  width: 100%;
+  padding: 8px 9px;
+  border-radius: v(radius-md);
+  border-width: medium;
+  border-style: none;
+  border-color: currentcolor;
+  border-image: initial;
+  background: transparent;
+  cursor: pointer;
+  font-size: 13px;
+  font-weight: 500;
+  font-family: inherit;
+  text-align: left;
+  color: v(foreground);
+  justify-content: flex-start;
+
+  &:hover {
+    background: v(accent);
+  }
+}
+
+.actionIcon {
+  flex-shrink: 0;
+  color: v(muted-foreground);
+}
+
+.separator {
+  margin: 4px 2px;
+}
+
+.actionAction {
+  justify-content: space-between;
+}
+
+.actionContent {
+  display: flex;
+  gap: 11px;
+}
+
+.logoutButton,
+.logoutIcon {
+  color: v(--tint-red-tx);
+}

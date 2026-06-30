@@ -12,7 +12,7 @@ export default function LoginPage() {
             <div className={styles.eyebrow}>Login</div>
             <h2 className={styles.title}>Welcome back.</h2>
             <p className={styles.subtitle}>
-              Enter your phone — we'll send a code via Telegram.
+              Enter your phone number and we&apos;ll send a code via Telegram.
             </p>
           </div>
 

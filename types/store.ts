@@ -19,6 +19,11 @@ export interface FileLayoutStore {
   setFileLayout: (layout: "list" | "grid") => void;
 }
 
+export interface SortByStore {
+  sortBy: "name" | "modified" | "size" | "type";
+  setSortBy: (sortBy: "name" | "modified" | "size" | "type") => void;
+}
+
 export interface QueuedFile {
   file: File;
   folderName?: string;
@@ -47,6 +52,9 @@ export interface ShareWithMeDialogStore {
   setOpen: (open: boolean) => void;
   file: (UploadedFile & { fileName?: string }) | null;
   folder: (UploadedFolder & { folderName?: string }) | null;
+  files: UploadedFile[];
+  setFiles: (files: UploadedFile[]) => void;
   setFile: (file: UploadedFile) => void;
   setFolder: (folder: UploadedFolder) => void;
+  onSuccess?: () => void;
 }

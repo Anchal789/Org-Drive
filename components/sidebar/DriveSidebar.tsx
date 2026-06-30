@@ -1,15 +1,15 @@
-import Ring from "@/components/ui/ring";
 import { iconsWithPaths } from "@/constants/common-constants";
 import { getSessionUser } from "@/lib/session";
 import { uploadedFilesRepository } from "@/repositories/uploaded-files.respository";
-import { formatBytes } from "@/store/store";
-import styles from "@/styles/components/DriveSidebar.module.scss";
-import type {
-  DriveSidebarProps,
-  SidebarItemProps,
-} from "@/types/component-types";
+import styles from "./DriveSidebar.module.scss";
+import type { SidebarItemProps } from "@/types/component-types";
+import { Sidebar, SidebarContent } from "@/components/ui/sidebar";
 import NewItemButton from "./NewItemButton";
 import SidebarItem from "./SidebarItem";
+import { OrgPill } from "./OrgPill";
+import { SidebarSection } from "./SidebarSection";
+import { StorageCard } from "./SidebarFooter";
+import { SidebarToggleButton } from "./SidebarToggleButton";
 
 const MAIN_ITEMS: SidebarItemProps[] = [
   {
@@ -49,61 +49,29 @@ const ADMIN_ITEMS: SidebarItemProps[] = [
   { icon: iconsWithPaths.settings, label: "Settings", url: "/settings" },
 ];
 
-export default async function DriveSidebar({
-  collapsed = false,
-}: DriveSidebarProps) {
+export default async function DriveSidebar() {
   const user = await getSessionUser();
-
-  const renderItem = (item: SidebarItemProps) => {
-    return <SidebarItem key={item.label} item={item} collapsed={collapsed} />;
-  };
-
   const filesize = await uploadedFilesRepository.totalStorage(
     Number(user?.userId),
   );
   const totalSize = filesize.reduce((a, b) => a + b.size, 0);
 
   return (
-    <aside
-      className={`${styles.sidebar} ${collapsed ? styles.collapsed : ""}`}
-      style={{ width: collapsed ? 64 : 232 }}
-    >
-      {/* Org pill */}
-      <button type="button" className={styles.orgPill}>
-        <div className={styles.orgLogo}>Z</div>
-        {!collapsed && <span className={styles.orgName}>Zuru Tech</span>}
-      </button>
+    <Sidebar collapsible="icon" className={styles.sidebar}>
+      <SidebarToggleButton />
+      <OrgPill />
+      <NewItemButton />
+      <SidebarContent className={styles.contentReset}>
+        <nav className={styles.nav}>
+          {MAIN_ITEMS.map((item) => (
+            <SidebarItem key={item.label} item={item} />
+          ))}
+        </nav>
 
-      {/* + New button */}
-      <NewItemButton collapsed={collapsed} />
-
-      <nav className={styles.nav}>{MAIN_ITEMS.map(renderItem)}</nav>
-
-      {!collapsed && (
-        <>
-          <div className={styles.sectionLabel}>AI (optional)</div>
-          <nav className={styles.nav}>{OPTIONAL_ITEMS.map(renderItem)}</nav>
-
-          <div className={styles.sectionLabel}>Admin</div>
-          <nav className={styles.nav}>{ADMIN_ITEMS.map(renderItem)}</nav>
-        </>
-      )}
-
-      <div className={styles.spacer} />
-
-      {/* Storage ring */}
-      {!collapsed && (
-        <div className={styles.storage}>
-          <Ring pct={64} size={44} color="var(--primary)" />
-          <div className={styles.storageInfo}>
-            <div className={styles.storageLabel}>Telegram channel</div>
-            <div className={styles.storageUsed}>
-              {formatBytes(totalSize)} used
-            </div>
-            <div className={styles.storageCap}>of effectively ∞</div>
-          </div>
-        </div>
-      )}
-    </aside>
+        <SidebarSection label="AI (optional)" items={OPTIONAL_ITEMS} />
+        <SidebarSection label="Admin" items={ADMIN_ITEMS} />
+      </SidebarContent>
+      <StorageCard totalSize={totalSize} />
+    </Sidebar>
   );
 }

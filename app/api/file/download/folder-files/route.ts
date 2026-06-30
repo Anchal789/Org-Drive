@@ -28,7 +28,6 @@ export async function GET(request: NextRequest) {
   if (!folderId) return sendError("Missing folderId", 400);
 
   const filesInFolder = (await uploadedFilesRepository.getFilesInFolder(
-    Number(session.userId),
     Number(folderId),
   )) as Array<UploadedFile>;
 

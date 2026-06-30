@@ -22,13 +22,23 @@ export async function DELETE(request: NextRequest) {
   const session = await getSessionUser();
   if (!session?.userId) return sendError("Unauthorized", 401);
 
-  const telegramMessageId = await trashedItemsRepository.permanentlyDeleteFile(
+  const telegramMessageIds = await trashedItemsRepository.permanentlyDeleteItem(
     Number(session.userId),
     Number(trashId),
   );
 
-  if (!telegramMessageId) {
-    return sendError("File not found in trash", 404);
+  if (!telegramMessageIds) {
+    return sendError("Item not found in trash", 404);
+  }
+
+  if (telegramMessageIds.length === 0) {
+    return new Response(
+      JSON.stringify({ message: "Item permanently deleted" }),
+      {
+        status: 200,
+        headers: { "Content-Type": "application/json" },
+      },
+    );
   }
 
   const botSessionString = await systemSettingsRepository.getBotSessionString();
@@ -55,12 +65,12 @@ export async function DELETE(request: NextRequest) {
     }
     const targetEntity = await client.getEntity(formattedChannelId);
 
-    await client.deleteMessages(targetEntity, [Number(telegramMessageId)], {
+    await client.deleteMessages(targetEntity, telegramMessageIds, {
       revoke: true,
     });
 
     return new Response(
-      JSON.stringify({ message: "File permanently deleted" }),
+      JSON.stringify({ message: "Item permanently deleted" }),
       {
         status: 200,
         headers: { "Content-Type": "application/json" },

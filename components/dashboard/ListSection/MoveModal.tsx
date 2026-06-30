@@ -1,0 +1,147 @@
+"use client";
+
+import { Button } from "@/components/ui/button";
+import {
+  DialogClose,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
+import { UploadedFile } from "@/types/files";
+import { FunctionComponent, useEffect, useState } from "react";
+import styles from "./MoveModal.module.scss";
+import {
+  Collapsible,
+  CollapsibleContent,
+  CollapsibleTrigger,
+} from "@/components/ui/collapsible";
+import {
+  Field,
+  FieldContent,
+  FieldLabel,
+  FieldTitle,
+} from "@/components/ui/field";
+import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
+import { moveFile } from "@/services/file-service";
+import { decrypt } from "@/lib/utils";
+import { fetchData } from "@/lib/api-fn";
+import { useRouter } from "next/navigation";
+
+const MoveModal: FunctionComponent<{
+  files: Array<UploadedFile>;
+  closeModal: () => void;
+}> = ({ files, closeModal }) => {
+  const [open, setOpen] = useState<boolean>(false);
+  const [selectedFolder, setSelectedFolder] = useState<string>("");
+  const [allFolders, setAllFolders] = useState<
+    Array<{ id: string | null; name: string }>
+  >([]);
+
+  const router = useRouter();
+
+  const [currentFolderId, setCurrentFolderId] = useState<string | null>(null);
+
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      const urlSearchParams = new URLSearchParams(window.location.search);
+      const decryptedId = decrypt(urlSearchParams.get("folderId") || "");
+      setCurrentFolderId(decryptedId);
+    }
+  }, []);
+
+  const handleMove = async () => {
+    const folderIdStr = String(selectedFolder);
+    const filesId = files.map((file) => file.id);
+    const response = await moveFile(filesId, folderIdStr);
+
+    if (response.success) {
+      closeModal();
+      router.refresh();
+    }
+  };
+
+  useEffect(() => {
+    const getAllFoldersWithIdName = async () => {
+      const response = await fetchData<
+        Array<{ id: string | null; name: string }>
+      >({
+        url: "/api/all/get/folders-with-id-name",
+      });
+
+      if (response.success) {
+        const updatedFolders = [];
+        if (currentFolderId) {
+          updatedFolders.push({ id: "my-drive", name: "My Drive" });
+        }
+
+        const combinedFolders = [...updatedFolders, ...response.data];
+        setAllFolders(combinedFolders);
+
+        if (currentFolderId) {
+          setSelectedFolder("my-drive");
+        } else if (response.data.length > 0) {
+          setSelectedFolder(String(response.data[0].id));
+        }
+      }
+    };
+
+    getAllFoldersWithIdName();
+  }, [currentFolderId]);
+
+  return (
+    <DialogContent>
+      <DialogHeader>
+        <DialogTitle>Move file/files </DialogTitle>
+        <DialogDescription>
+          <Collapsible open={open} onOpenChange={setOpen}>
+            <CollapsibleTrigger asChild>
+              <Button variant="outline">Files to move {files.length}</Button>
+            </CollapsibleTrigger>
+            <CollapsibleContent>
+              <div className={styles.fileToMoveList}>
+                {files.map((file) => (
+                  <span key={file.id}>{file.name}</span>
+                ))}
+              </div>
+            </CollapsibleContent>
+          </Collapsible>
+        </DialogDescription>
+      </DialogHeader>
+
+      <div className={styles.container}>
+        <RadioGroup
+          className={styles.radioGroup}
+          value={selectedFolder}
+          onValueChange={setSelectedFolder}
+        >
+          {allFolders.map((folder) => (
+            <FieldLabel key={folder.id} htmlFor={folder.name}>
+              <Field orientation="horizontal">
+                <FieldContent>
+                  <FieldTitle>{folder.name}</FieldTitle>
+                </FieldContent>
+                <RadioGroupItem
+                  value={String(folder.id) || ""}
+                  id={folder.name}
+                />
+              </Field>
+            </FieldLabel>
+          ))}
+        </RadioGroup>
+      </div>
+
+      <DialogFooter>
+        <DialogClose asChild>
+          <Button variant="destructive">Cancel</Button>
+        </DialogClose>
+        <Button variant="primary" onClick={handleMove}>
+          Move
+        </Button>
+      </DialogFooter>
+    </DialogContent>
+  );
+};
+
+export default MoveModal;

@@ -73,3 +73,22 @@
   grid-template-columns: repeat(4, 1fr);
   gap: 10px;
 }
+
+.emptyHint {
+  font-size: v(text-base);
+  color: v(muted-foreground);
+  font-weight: v(weight-semibold);
+  text-align: center;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+.emptyHintImage {
+  width: 20%;
+  height: auto;
+  margin-bottom: 12px;
+}

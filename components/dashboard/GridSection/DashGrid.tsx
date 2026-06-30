@@ -28,7 +28,8 @@ export default function DashGrid({
             loading="eager"
             className={styles.emptyHintImage}
           />
-          Drag your files and folders here or use the 'New' button to upload
+          Drag your files and folders here or use the &apos;New&apos; button to
+          upload
         </div>
       )}
       <div className={styles.content}>

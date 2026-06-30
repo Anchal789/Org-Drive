@@ -4,12 +4,14 @@
   width: 100%;
   height: 100%;
   padding: 0;
+  cursor: pointer;
 }
 
 // ─── Folders row ──────────────────────────────────────────────────────────
 .folderChip {
   display: flex;
   align-items: center;
+  justify-content: space-between;
   gap: 8px;
   padding: 8px 10px;
   border: 1px solid v(border);
@@ -17,6 +19,12 @@
   background: v(card);
   width: 100%;
   height: 100%;
+}
+
+.folderInfo {
+  display: flex;
+  align-items: center;
+  gap: 8px;
 }
 
 .folderName {

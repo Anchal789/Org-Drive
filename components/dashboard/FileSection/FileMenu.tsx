@@ -30,7 +30,7 @@ const FileMenu: FunctionComponent<{
   const [openDeleteDialog, setOpenDeleteDialog] = useState<boolean>(false);
 
   const handleDelete = async () => {
-    const response = await trashFile(file.id);
+    const response = await trashFile(file.id, file.shareId);
     if (response?.success) {
       router.refresh();
       setOpenDeleteDialog(false);
@@ -135,11 +135,15 @@ const FileMenu: FunctionComponent<{
               className={`${styles.menuItem} ${styles.deleteItem}`}
             >
               <Icon
-                d={iconsWithPaths.trash}
+                d={
+                  file.shareId
+                    ? iconsWithPaths.userRemove
+                    : iconsWithPaths.trash
+                }
                 size={14}
                 className={styles.icon}
               />
-              Delete
+              {file.shareId ? "Remove for me" : "Delete"}
             </DropdownMenuItem>
           </DropdownMenuGroup>
         </DropdownMenuContent>

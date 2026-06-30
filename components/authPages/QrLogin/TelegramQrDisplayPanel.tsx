@@ -1,14 +1,14 @@
-'use client';
+"use client";
 
-import Link from 'next/link';
-import QR from '@/components/ui/telegram-qr';
-import styles from './TelegramQrDisplayPanel.module.scss';
+import Link from "next/link";
+import styles from "./TelegramQrDisplayPanel.module.scss";
+import QrSampleImage from "@/components/ui/telegram-qr";
 
 export function TelegramQrDisplayPanel() {
   return (
     <Link href="/qr-login" className={styles.linkWrapper}>
       <div className={styles.panelCard}>
-        <QR size={84} />
+        <QrSampleImage size={84} />
 
         <div className={styles.textContainer}>
           <div className={styles.title}>Scan with Telegram</div>

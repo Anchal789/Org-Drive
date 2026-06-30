@@ -7,6 +7,7 @@ import Icon from "@/components/ui/icon";
 import { iconsWithPaths } from "@/constants/common-constants";
 import { useFileLayout } from "@/store/store";
 import styles from "./DriveCrumb.module.scss";
+import LayoutSettings from "./LayoutSettings";
 
 export default function DriveCrumb({ inFolder }: { inFolder?: string }) {
   const { fileLayout, setFileLayout } = useFileLayout();
@@ -25,7 +26,7 @@ export default function DriveCrumb({ inFolder }: { inFolder?: string }) {
               type="button"
               className={styles.parentLink}
               onClick={() => {
-                router.push("/my-drive");
+                router.replace("/my-drive");
               }}
             >
               My drive
@@ -67,7 +68,7 @@ export default function DriveCrumb({ inFolder }: { inFolder?: string }) {
           onClick={() => handleChangeDriveLayout("grid")}
         />
         <span className={styles.divider} />
-        <Btn variant="ghost" size="icon" icon={iconsWithPaths.settings} />
+        <LayoutSettings />
       </div>
     </div>
   );

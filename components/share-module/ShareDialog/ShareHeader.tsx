@@ -13,6 +13,8 @@ interface ShareHeaderProps {
   isLoading: boolean;
   parentFolderName: string | null;
   onClose: () => void;
+  isMultiShare?: boolean;
+  multiFileCount?: number;
 }
 
 export default function ShareHeader({
@@ -23,9 +25,13 @@ export default function ShareHeader({
   isLoading,
   parentFolderName,
   onClose,
+  isMultiShare,
+  multiFileCount,
 }: ShareHeaderProps) {
   let subtitleText = "Standalone File";
-  if (isSharingFolder) {
+  if (isMultiShare) {
+    subtitleText = "Multiple Items";
+  } else if (isSharingFolder) {
     subtitleText = "Folder";
   } else if (folderId) {
     subtitleText = isLoading
@@ -33,11 +39,15 @@ export default function ShareHeader({
       : `Inside Folder: ${parentFolderName}`;
   }
 
-  const fileExtension = fileName?.split(".")?.[1] as FileKind;
+  const fileExtension = fileName?.split(".")?.pop() as FileKind; // Safely gets extension even with multiple dots
 
   return (
     <div className={styles.header}>
-      {isSharingFolder ? (
+      {isMultiShare ? (
+        <div className={styles.folderIcon}>
+          <Icon d={iconsWithPaths.folder} size={20} fill="currentColor" />
+        </div>
+      ) : isSharingFolder ? (
         <div className={styles.folderIcon}>
           <Icon d={iconsWithPaths.folder} size={20} fill="currentColor" />
         </div>
@@ -45,7 +55,11 @@ export default function ShareHeader({
         <FileType kind={fileExtension} />
       )}
       <div className={styles.headerInfo}>
-        <div className={styles.headerTitle}>Share &quot;{activeName}&quot;</div>
+        <div className={styles.headerTitle}>
+          {isMultiShare
+            ? `Share ${multiFileCount} items`
+            : `Share "${activeName}"`}
+        </div>
         <div className={styles.headerSubtitle}>{subtitleText}</div>
       </div>
       <Button variant="ghost" size="sm" onClick={onClose}>

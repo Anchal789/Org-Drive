@@ -43,9 +43,8 @@ export default function DashFolder({
             className={styles.flatHintIcon}
           />
           <span className={styles.flatHintText}>
-            <strong>Flat folder.</strong> Org Drive keeps things simple —
-            folders contain files, not other folders. Use tags for finer
-            organization.
+            <strong>Flat folder.</strong> Org Drive keeps things simple: folders
+            contain files, not other folders. Use tags for finer organization.
           </span>
           <span className={styles.flatHintAction}>About this</span>
         </div>

@@ -4,6 +4,7 @@ import { getSessionUser } from "@/lib/session";
 import styles from "./layout.module.scss";
 import DriveTopbar from "@/components/Header/DriveTopbar";
 import { TooltipProvider } from "@/components/ui/tooltip";
+import { SidebarProvider } from "@/components/ui/sidebar";
 import ShareDialog from "@/components/share-module/ShareDialog/ShareDialog";
 import { userRepository } from "@/repositories/user.repository";
 
@@ -22,14 +23,16 @@ export default async function ProtectedLayout({
   return (
     <TooltipProvider>
       <div className={styles.layoutWrapper}>
-        <DriveSidebar />
-        <div className={styles.shell}>
-          <div className={styles.main}>
-            <DriveTopbar user={user} />
-            <div className={styles.mainContent}>{children}</div>
+        <SidebarProvider>
+          <DriveSidebar />
+          <div className={styles.shell}>
+            <div className={styles.main}>
+              <DriveTopbar user={user} />
+              <div className={styles.mainContent}>{children}</div>
+            </div>
           </div>
-        </div>
-        <ShareDialog userId={Number(user.userId)} allUsers={allUsers} />
+          <ShareDialog userId={Number(user.userId)} allUsers={allUsers} />
+        </SidebarProvider>
       </div>
     </TooltipProvider>
   );

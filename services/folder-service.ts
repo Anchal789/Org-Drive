@@ -1,4 +1,6 @@
-import { postData } from "@/lib/api-fn";
+import { deleteData, postData } from "@/lib/api-fn";
+import { encrypt } from "@/lib/utils";
+import { toast } from "sonner";
 
 export const renameItem = async (
   id: number,
@@ -10,5 +12,22 @@ export const renameItem = async (
     url: "/api/rename/" + (isFile ? "file" : "folder"),
     payload: { id, newName, shareId },
   });
+  return response;
+};
+
+export const trashFolder = async (id: number, shareId?: number) => {
+  const response = await deleteData({
+    url: "/api/folder/delete",
+    params: {
+      id: encrypt(String(id)),
+      shareId: encrypt(String(shareId)),
+    },
+  });
+
+  if (response.success) {
+    toast.success(response.message);
+  } else {
+    toast.error(response.message);
+  }
   return response;
 };

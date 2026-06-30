@@ -6,7 +6,7 @@ import {
   userTable,
 } from "@/db/schema";
 import { uploadedFiles } from "@/drizzle/schema";
-import { and, eq } from "drizzle-orm";
+import { and, eq, inArray } from "drizzle-orm";
 
 export const bookmarkRepository = {
   async getBookmarksFiles(userId: number) {
@@ -73,7 +73,7 @@ export const bookmarkRepository = {
     if (isFile) {
       return await db
         .update(uploadedFiles)
-        .set({ bookmark })
+        .set({ bookmark: bookmark })
         .where(eq(uploadedFiles.id, id));
     } else {
       return await db
@@ -81,5 +81,46 @@ export const bookmarkRepository = {
         .set({ bookmark })
         .where(eq(uploadFoldersTable.id, id));
     }
+  },
+  async bookmarkMultipleItems(
+    items: { id: number; isFile: boolean; shared: boolean }[],
+    bookmarkState: boolean,
+  ) {
+    const sharedIds = items.filter((i) => i.shared).map((i) => i.id);
+    const fileIds = items.filter((i) => !i.shared && i.isFile).map((i) => i.id);
+    const folderIds = items
+      .filter((i) => !i.shared && !i.isFile)
+      .map((i) => i.id);
+
+    const promises = [];
+
+    if (sharedIds.length > 0) {
+      return promises.push(
+        await db
+          .update(sharedItemsTable)
+          .set({ bookmark: bookmarkState })
+          .where(inArray(sharedItemsTable.id, sharedIds)),
+      );
+    }
+
+    if (fileIds.length > 0) {
+      promises.push(
+        await db
+          .update(uploadedFiles)
+          .set({ bookmark: bookmarkState })
+          .where(inArray(uploadedFiles.id, fileIds)),
+      );
+    }
+
+    if (folderIds.length > 0) {
+      promises.push(
+        await db
+          .update(uploadFoldersTable)
+          .set({ bookmark: bookmarkState })
+          .where(inArray(uploadFoldersTable.id, folderIds)),
+      );
+    }
+
+    return await Promise.all(promises);
   },
 };

@@ -11,5 +11,5 @@ export default async function AuthLayout({
   if (sessionId) {
     redirect("/my-drive");
   }
-  return <>{children}</>;
+  return children;
 }

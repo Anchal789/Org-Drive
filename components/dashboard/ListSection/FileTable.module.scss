@@ -45,3 +45,22 @@
   font-size: 11px;
   font-variant-numeric: tabular-nums;
 }
+
+.actionButton {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  height: 30px;
+  padding: 0px 11px;
+  border-radius: var(--radius-md);
+  border-width: medium;
+  border-style: none;
+  border-color: currentcolor;
+  background: transparent;
+  border-image: initial;
+  cursor: pointer;
+  font-size: 12.5px;
+  font-weight: 500;
+  font-family: inherit;
+  white-space: nowrap;
+}

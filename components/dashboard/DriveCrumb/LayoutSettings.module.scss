@@ -1,0 +1,110 @@
+@use "../../../styles/functions" as *;
+
+.triggerBtn {
+  color: v(muted-foreground);
+}
+
+.popoverContent {
+  width: 248px;
+  z-index: 30;
+  background: v(popover, card);
+  color: v(popover-foreground, foreground);
+  border: 1px solid v(border);
+  border-radius: v(radius-lg);
+  box-shadow: v(shadow-xl);
+  padding: 8px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.section {
+  padding: 0px 2px 4px;
+
+  .label {
+    font-size: 10px;
+    font-weight: 600;
+    color: v(muted-foreground);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    margin-bottom: 7px;
+  }
+}
+
+.divider {
+  height: 1px;
+  background: v(border);
+  margin: 0 2px;
+}
+
+.switchButton {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  width: 100%;
+  padding: 7px 9px;
+  border-radius: v(radius-md);
+  border: none;
+  background: transparent;
+  cursor: pointer;
+  font-size: 13px;
+  font-weight: 500;
+  color: v(foreground);
+  text-align: left;
+
+  &:hover {
+    background: v(accent);
+  }
+}
+
+.switch {
+  position: relative;
+  display: inline-block;
+  border-radius: 999px;
+  background: v(primary);
+  transition: background 0.15s;
+  flex-shrink: 0;
+  margin-left: auto;
+}
+
+.switchThumb {
+  position: absolute;
+  top: 2px;
+  left: 2px;
+  width: 12px;
+  height: 12px;
+  background: v(background);
+  border-radius: 50%;
+  box-shadow: v(shadow-sm);
+  transition: left 0.15s;
+
+  [aria-checked="true"] & {
+    left: 14px;
+  }
+}
+
+.actionButton {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  gap: 10px;
+  width: 100%;
+  padding: 7px 9px;
+  border-radius: v(radius-md);
+  border: none;
+  background: transparent;
+  cursor: pointer;
+  font-size: 13px;
+  font-weight: 500;
+  color: v(foreground);
+  text-align: left;
+
+  &:hover {
+    background: v(accent);
+  }
+}
+
+.actionIcon {
+  flex-shrink: 0;
+  color: v(muted-foreground);
+}

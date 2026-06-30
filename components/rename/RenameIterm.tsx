@@ -134,7 +134,7 @@ const RenameItem: FunctionComponent<{
           <DialogClose asChild>
             <Button variant="destructive">Cancel</Button>
           </DialogClose>
-          <Button variant={"primary"} onClick={handleRename}>
+          <Button variant="primary" onClick={handleRename}>
             Save changes
           </Button>
         </DialogFooter>

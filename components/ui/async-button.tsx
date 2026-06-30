@@ -1,13 +1,13 @@
-'use client';
+"use client";
 
-import { Loader2 } from 'lucide-react';
-import type React from 'react';
-import { useState } from 'react';
-import { Button } from '@/components/ui/button';
+import { Loader2 } from "lucide-react";
+import type React from "react";
+import { useState } from "react";
+import { Button } from "@/components/ui/button";
 
 type ButtonComponentProps = React.ComponentProps<typeof Button>;
 
-interface AsyncButtonProps extends Omit<ButtonComponentProps, 'onClick'> {
+interface AsyncButtonProps extends Omit<ButtonComponentProps, "onClick"> {
   onClick?: (e: React.MouseEvent<HTMLButtonElement>) => void | Promise<unknown>;
 }
 
@@ -24,13 +24,16 @@ export function AsyncButton({
 
     const result = onClick(e);
 
-    if (result && typeof (result as Promise<unknown>).then === 'function') {
+    if (result instanceof Promise) {
       setIsPending(true);
+
       try {
         await result;
-      } finally {
-        setIsPending(false);
+      } catch (error) {
+        console.error(error);
       }
+
+      setIsPending(false);
     }
   };
 
@@ -40,7 +43,7 @@ export function AsyncButton({
       disabled={disabled || isPending}
       {...(props as ButtonComponentProps)}
     >
-      {isPending && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+      {isPending && <Loader2 className="mr-2 size-4 animate-spin" />}
       {children}
     </Button>
   );

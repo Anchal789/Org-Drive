@@ -45,6 +45,7 @@ export type CheckboxProps = {
   disabled?: boolean;
   onClick?: (e: React.MouseEvent) => void;
   style?: React.CSSProperties;
+  className?: string;
 };
 
 export type SidebarItemProps = {
@@ -53,10 +54,6 @@ export type SidebarItemProps = {
   count?: number;
   badge?: string;
   url: Route;
-};
-
-export type DriveSidebarProps = {
-  collapsed?: boolean;
 };
 
 export type AlertActionVariant =

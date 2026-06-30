@@ -9,6 +9,14 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import styles from "./Component.module.scss";
+import { X } from "lucide-react";
+
+type ExtendedDataTableProps<T> = DataTableProps<T> & {
+  renderSelectionActions?: (
+    selectedIds: (string | number)[],
+    clearSelection: () => void,
+  ) => React.ReactNode;
+};
 
 export default function DataTable<T>({
   data,
@@ -18,8 +26,8 @@ export default function DataTable<T>({
   enableSelection = false,
   selectedIds = [],
   onSelectionChange,
-}: DataTableProps<T>) {
-  // Handle Row Selection
+  renderSelectionActions,
+}: ExtendedDataTableProps<T>) {
   const handleSelectRow = (id: string | number, checked: boolean) => {
     if (!onSelectionChange) return;
     if (checked) {
@@ -29,7 +37,6 @@ export default function DataTable<T>({
     }
   };
 
-  // Handle Select All
   const handleSelectAll = (checked: boolean) => {
     if (!onSelectionChange) return;
     if (checked) {
@@ -39,31 +46,75 @@ export default function DataTable<T>({
     }
   };
 
+  const clearSelection = () => {
+    if (onSelectionChange) onSelectionChange([]);
+  };
+
   const isAllSelected = data.length > 0 && selectedIds.length === data.length;
+  const hasSelection = selectedIds.length > 0;
+  const showSelectionBar = hasSelection && !!renderSelectionActions;
 
   return (
     <div className={`${styles.table} ${classes?.table || ""}`}>
       <Table>
         <TableHeader className={classes?.header}>
-          <TableRow className={classes?.header} notApplyBackground={true}>
-            {enableSelection && (
-              <TableHead style={{ width: "40px" }} className="px-4">
-                <Checkbox
-                  checked={isAllSelected}
-                  onClick={(checked) => handleSelectAll(!!checked)}
-                />
-              </TableHead>
-            )}
-
-            {columns.map((col) => (
+          <TableRow notApplyBackground className={classes?.header}>
+            {showSelectionBar ? (
               <TableHead
-                key={col.id}
-                style={{ width: col.width }}
-                className={col.headerClassName}
+                colSpan={columns.length + (enableSelection ? 1 : 0)}
+                className={styles.selectionCell}
               >
-                {col.header}
+                <div className={styles.selectionBar}>
+                  {enableSelection && (
+                    <Checkbox
+                      checked={isAllSelected}
+                      onCheckedChange={(checked) => {
+                        handleSelectAll(!!checked);
+                      }}
+                    />
+                  )}
+
+                  <span className={styles.selectedCount}>
+                    {selectedIds.length} selected
+                  </span>
+
+                  <button
+                    type="button"
+                    onClick={clearSelection}
+                    aria-label="Clear selection"
+                    className={styles.clearButton}
+                  >
+                    <X size={14} strokeWidth={1.6} />
+                  </button>
+
+                  <div className={styles.actionsGap} />
+
+                  <div className={styles.actionsGroup}>
+                    {renderSelectionActions!(selectedIds, clearSelection)}
+                  </div>
+                </div>
               </TableHead>
-            ))}
+            ) : (
+              <>
+                {enableSelection && (
+                  <TableHead className={styles.checkboxCell}>
+                    <Checkbox
+                      checked={isAllSelected}
+                      onClick={(checked) => handleSelectAll(!!checked)}
+                    />
+                  </TableHead>
+                )}
+                {columns.map((col) => (
+                  <TableHead
+                    key={col.id}
+                    style={{ width: col.width }}
+                    className={col.headerClassName}
+                  >
+                    {col.header}
+                  </TableHead>
+                ))}
+              </>
+            )}
           </TableRow>
         </TableHeader>
 
@@ -83,9 +134,14 @@ export default function DataTable<T>({
               const isSelected = selectedIds.includes(rowId);
 
               return (
-                <TableRow key={rowId} className={classes?.row}>
+                <TableRow
+                  key={rowId}
+                  className={`${classes?.row || ""} ${
+                    isSelected ? styles.selectedRow : ""
+                  }`}
+                >
                   {enableSelection && (
-                    <TableCell className="px-4">
+                    <TableCell className={styles.checkboxCell}>
                       <Checkbox
                         checked={isSelected}
                         onClick={(checked) => handleSelectRow(rowId, !!checked)}

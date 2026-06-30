@@ -72,3 +72,121 @@
     background: #d97706;
   }
 }
+
+.header {
+  padding: 7px 12px 7px 13px;
+}
+.actions {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 2px;
+}
+.selectedHead {
+  gap: 2px;
+}
+.actionsGap {
+  flex: 1 1 0%;
+}
+
+// ─── TABLE WRAPPER ───────────────────────────────────────────────────────────
+.table {
+  width: 100%;
+}
+
+.selectionCell {
+  padding: 0;
+}
+
+.checkboxCell {
+  width: 40px;
+}
+
+.selectionBar {
+  display: flex;
+  align-items: center;
+  gap: 2px;
+  padding: 7px 12px 7px 13px;
+  background: color-mix(in oklch, v(primary) 9%, v(card));
+  border-bottom: 1px solid v(border);
+}
+
+.selectedCount {
+  font-size: 13px;
+  font-weight: 600;
+  margin: 0 4px 0 9px;
+  white-space: nowrap;
+}
+
+.clearButton {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  flex-shrink: 0;
+  border: none;
+  background: transparent;
+  border-radius: v(radius-md);
+  color: v(muted-foreground);
+  cursor: pointer;
+  transition: background-color 0.12s ease;
+
+  &:hover {
+    background: color-mix(in oklch, v(foreground) 8%, transparent);
+  }
+}
+
+.actionsGroup {
+  display: flex;
+  align-items: center;
+  gap: 2px;
+}
+
+.actionButton {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  height: 30px;
+  padding: 0 11px;
+  flex-shrink: 0;
+  border: none;
+  background: transparent;
+  border-radius: v(radius-md);
+  font-size: 12.5px;
+  font-weight: 500;
+  font-family: inherit;
+  white-space: nowrap;
+  color: v(foreground);
+  cursor: pointer;
+  transition: background-color 0.12s ease;
+
+  svg {
+    flex-shrink: 0;
+    color: v(muted-foreground);
+  }
+
+  &:hover {
+    background: color-mix(in oklch, v(foreground) 8%, transparent);
+  }
+}
+
+.actionButtonDanger {
+  color: v(destructive);
+
+  svg {
+    color: v(destructive);
+  }
+}
+
+.actionDivider {
+  width: 1px;
+  height: 18px;
+  flex-shrink: 0;
+  margin: 0 4px;
+  background: v(border);
+}
+
+.selectedRow {
+  background: color-mix(in oklch, v(primary) 9%, v(card));
+}
