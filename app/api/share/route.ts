@@ -12,7 +12,76 @@ export async function POST(request: NextRequest) {
 
   if (!actorId) return sendError("Unauthorized", 401);
 
-  const { usersToInvite, usersWithAccess, file, folder } = await request.json();
+  const { usersToInvite, usersWithAccess, file, folder, files } =
+    await request.json();
+
+  const isMultiShare = Array.isArray(files) && files.length > 1;
+
+  if (isMultiShare) {
+    try {
+      const logs: any[] = [];
+      const insertPayloads: any[] = [];
+      const fileIds = files.map((f: any) => Number(f.id));
+
+      if (usersToInvite && usersToInvite.length > 0) {
+        for (const user of usersToInvite) {
+          const recipientId = Number(user.userId || user.id);
+
+          for (const f of files) {
+            insertPayloads.push({
+              userId: Number(f.userId),
+              fileId: Number(f.id),
+              folderId: f.folderId ? Number(f.folderId) : null,
+              permission: user.permission,
+              sharedWithUserId: recipientId,
+            });
+
+            logs.push({
+              userId: actorId,
+              fileId: Number(f.id),
+              folderId: f.folderId ? Number(f.folderId) : null,
+              action: "shared",
+              actionBy: actorId,
+            });
+
+            logs.push({
+              userId: recipientId,
+              fileId: Number(f.id),
+              folderId: f.folderId ? Number(f.folderId) : null,
+              action: "shared",
+              actionBy: actorId,
+            });
+          }
+        }
+
+        if (insertPayloads.length > 0) {
+          await shareRepository.uploadSharedItemBulk(insertPayloads);
+        }
+      }
+
+      if (usersWithAccess && usersWithAccess.length > 0) {
+        for (const user of usersWithAccess) {
+          if (user.permission === "owner") continue;
+
+          await shareRepository.updateSharedItemPermissionsBulk(
+            fileIds,
+            Number(user.id),
+            user.permission,
+          );
+        }
+      }
+
+      if (logs.length > 0) {
+        await db.insert(recentTable).values(logs).catch(console.error);
+      }
+
+      return sendSuccess(null, "Multiple files shared successfully", 200);
+    } catch (error: unknown) {
+      const errMsg = error instanceof Error ? error.message : String(error);
+      console.error("Bulk Share API Error:", errMsg);
+      return sendError("Failed to process bulk sharing", 500);
+    }
+  }
 
   if (!file && !folder) {
     return sendError("Missing Item to share", 400);
@@ -84,6 +153,7 @@ export async function POST(request: NextRequest) {
     if (logs.length > 0) {
       await db.insert(recentTable).values(logs).catch(console.error);
     }
+
     return sendSuccess(
       null,
       `${file ? "File" : "Folder"} shared successfully`,

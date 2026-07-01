@@ -8,6 +8,7 @@ import styles from "./FolderContainer.module.scss";
 import FolderTile from "./FolderTile";
 import Icon from "@/components/ui/icon";
 import { iconsWithPaths, TINTS } from "@/constants/common-constants";
+import FolderMenu from "./FolderMenu/FolderMenu";
 
 const FolderContainer: FunctionComponent<{
   folder: UploadedFolder;
@@ -50,20 +51,32 @@ const FolderContainer: FunctionComponent<{
         role="button"
         tabIndex={0}
         className={styles.folderContainer}
-        onClick={() => {
+        onClick={(e) => {
+          const target = e.target as HTMLElement;
+
+          if (
+            target.closest("button") ||
+            target.closest('[role="dialog"]') ||
+            target.closest('[data-slot="dialog-content"]')
+          ) {
+            return;
+          }
           router.push(
             `/my-drive/folder?folderId=${folderId}&folderName=${folder.name}`,
           );
         }}
       >
         <div key={folder.name} className={styles.folderChip}>
-          <Icon
-            d={iconsWithPaths.folder}
-            size={14}
-            fill={folderTone(folder)?.bg}
-            stroke={0}
-          />
-          <span className={styles.folderName}>{folder.name}</span>
+          <div className={styles.folderInfo}>
+            <Icon
+              d={iconsWithPaths.folder}
+              size={14}
+              fill={folderTone(folder)?.bg}
+              stroke={0}
+            />
+            <span className={styles.folderName}>{folder.name}</span>
+          </div>
+          <FolderMenu folder={folder} />
         </div>
       </div>
     );

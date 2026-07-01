@@ -7,6 +7,8 @@ import FolderContainer from "../FolderSection/FolderContainer";
 import styles from "./DashGrid.module.scss";
 import Image from "next/image";
 import NoDataImage from "@/public/assets/No-Data.svg";
+import FilesContainer from "../FileSection/FilesContainer";
+import FileSelectionBar from "../FileSection/FileSelectionBar";
 
 export default function DashGrid({
   files,
@@ -28,10 +30,12 @@ export default function DashGrid({
             loading="eager"
             className={styles.emptyHintImage}
           />
-          Drag your files and folders here or use the 'New' button to upload
+          Drag your files and folders here or use the &apos;New&apos; button to
+          upload
         </div>
       )}
       <div className={styles.content}>
+        <FileSelectionBar files={files} />
         {files.length > 0 && (
           <>
             <div className={styles.sectionLabel}>Suggested</div>
@@ -69,9 +73,7 @@ export default function DashGrid({
               Files
             </div>
             <div className={`${styles.grid} ${styles.grid4}`}>
-              {files.map((file) => (
-                <FileCard key={file.id} file={file} />
-              ))}
+              <FilesContainer files={files} />
             </div>
           </>
         )}

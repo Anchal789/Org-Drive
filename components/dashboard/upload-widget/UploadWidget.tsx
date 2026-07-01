@@ -1,6 +1,5 @@
 "use client";
 
-import { Button } from "@base-ui/react";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import Icon from "@/components/ui/icon";
@@ -8,6 +7,7 @@ import { iconsWithPaths, TINTS } from "@/constants/common-constants";
 import { formatBytes, useUploadStore } from "@/store/store";
 import styles from "./UploadWidget.module.scss";
 import type { DisplayItem, Tone, UploadItem } from "@/types/dashboard";
+import { Button } from "@/components/ui/button";
 
 const STATE_TO_TONE: Record<UploadItem["state"], Tone> = {
   done: "green",
@@ -51,7 +51,7 @@ function UploadItemRow({
           <Icon
             d={iconsWithPaths.sparkle}
             size={13}
-            style={{ animation: "spin 2.4s linear infinite" }}
+            style={{ animation: "spin 1s linear infinite" }}
           />
         )}
         {item.state === "queued" && <Icon d={iconsWithPaths.clock} size={13} />}
@@ -252,16 +252,16 @@ export default function UploadWidget() {
             {estimateMinutes}m {estimateSeconds}s left
           </span>
         )}
-        <button onClick={() => setCollapseWidget(!collapseWidget)}>
+        <Button onClick={() => setCollapseWidget(!collapseWidget)}>
           <Icon
             d={collapseWidget ? iconsWithPaths.chevUp : iconsWithPaths.chevDown}
             size={14}
             style={{ opacity: 0.8 }}
           />
-        </button>
-        <button onClick={closeWidget} className={styles.closeBtn}>
+        </Button>
+        <Button onClick={closeWidget}>
           <Icon d={iconsWithPaths.x} size={14} />
-        </button>
+        </Button>
       </div>
 
       <div

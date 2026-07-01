@@ -1,0 +1,97 @@
+@use "@/styles/functions" as *;
+
+.container {
+  margin-top: 14px;
+}
+
+.actionBar {
+  display: flex;
+  align-items: center;
+  gap: 2px;
+  padding: 7px 12px 7px 13px;
+  background: color-mix(in oklch, v(primary) 9%, v(card));
+  border: 1px solid color-mix(in oklch, v(primary) 30%, v(border));
+  border-radius: v(radius-lg);
+  box-shadow: v(shadow-xs);
+}
+
+.selectedCount {
+  font-size: 13px;
+  font-weight: 600;
+  margin: 0px 4px 0px 9px;
+  white-space: nowrap;
+  color: v(foreground);
+}
+
+.clearBtn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  border-radius: v(radius-md);
+  border: none;
+  background: transparent;
+  cursor: pointer;
+  color: v(muted-foreground);
+  flex-shrink: 0;
+  transition: background 0.15s ease;
+
+  &:hover {
+    background: color-mix(in srgb, v(foreground) 8%, transparent);
+  }
+}
+
+.spacer {
+  flex: 1 1 0%;
+}
+
+.actionButton {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  height: 30px;
+  padding: 0px 11px;
+  border-radius: var(--radius-md);
+  border-width: medium;
+  border-style: none;
+  border-color: currentcolor;
+  background: transparent;
+  border-image: initial;
+  cursor: pointer;
+  font-size: 12.5px;
+  font-weight: 500;
+  font-family: inherit;
+  white-space: nowrap;
+
+  transition: background-color 0.12s ease;
+
+  &:hover {
+    background: color-mix(in srgb, v(foreground) 6%, transparent);
+  }
+}
+
+.actionIcon {
+  flex-shrink: 0;
+  color: v(muted-foreground);
+}
+
+.divider {
+  width: 1px;
+  height: 18px;
+  background: v(border);
+  margin: 0px 4px;
+  flex-shrink: 0;
+}
+
+.actionButton-destructive {
+  color: v(destructive);
+
+  .actionIcon {
+    color: v(destructive);
+  }
+
+  &:hover {
+    background: color-mix(in srgb, v(destructive) 8%, transparent);
+  }
+}

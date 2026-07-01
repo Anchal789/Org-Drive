@@ -21,6 +21,7 @@ import { bookmarkItem, downloadAllFolderFiles } from "@/services/file-service";
 import { encrypt } from "@/lib/utils";
 import RenameItem from "@/components/rename/RenameIterm";
 import { bookmarkSharedItem } from "@/services/shared-with-me-service";
+import { trashFolder } from "@/services/folder-service";
 
 const FolderMenu = ({
   folder,
@@ -40,6 +41,14 @@ const FolderMenu = ({
       router.refresh();
     }
   };
+
+  const handleDelete = async () => {
+    const response = await trashFolder(folder.id, folder.shareId);
+    if (response?.success) {
+      router.refresh();
+      setOpenDeleteDialog(false);
+    }
+  };
   return (
     <>
       <AlertModal
@@ -50,7 +59,7 @@ const FolderMenu = ({
         confirmText="Delete"
         confirmVariant="destructive"
         cancelText="Cancel"
-        // onConfirm={handleDelete}
+        onConfirm={handleDelete}
         onCancel={() => setOpenDeleteDialog(false)}
       />
       <RenameItem
@@ -142,11 +151,15 @@ const FolderMenu = ({
               className={`${styles.menuItem} ${styles.deleteItem}`}
             >
               <Icon
-                d={iconsWithPaths.trash}
+                d={
+                  folder.shareId
+                    ? iconsWithPaths.userRemove
+                    : iconsWithPaths.trash
+                }
                 size={14}
                 className={styles.icon}
               />
-              Delete
+              {folder.shareId ? "Remove for me" : "Delete"}
             </DropdownMenuItem>
           </DropdownMenuGroup>
         </DropdownMenuContent>

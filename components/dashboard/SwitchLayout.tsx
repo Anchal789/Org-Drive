@@ -1,7 +1,7 @@
 "use client";
 
-import { useEffect, useState, type FunctionComponent } from "react";
-import { useFileLayout } from "@/store/store";
+import { useEffect, useMemo, useState, type FunctionComponent } from "react";
+import { useFileLayout, useSortByStore } from "@/store/store";
 import type { UploadedFile, UploadedFolder } from "@/types/files";
 import DashGrid from "./GridSection/DashGrid";
 import DashList from "./ListSection/DashList";
@@ -12,8 +12,9 @@ const SwitchLayout: FunctionComponent<{
   insideFolder?: boolean;
 }> = ({ files, folders }) => {
   const { fileLayout, setFileLayout } = useFileLayout();
+  const { sortBy } = useSortByStore();
 
-  const [hydrated, setHydrated] = useState<boolean>(false);
+  const [hydrated, setHydrated] = useState(false);
 
   useEffect(() => {
     const layout = localStorage.getItem("fileLayout");
@@ -23,15 +24,61 @@ const SwitchLayout: FunctionComponent<{
     }
 
     setHydrated(true);
-  }, []);
+  }, [setFileLayout]);
 
-  return hydrated ? (
-    fileLayout === "list" ? (
-      <DashList files={files} folders={folders} />
-    ) : (
-      <DashGrid files={files} folders={folders} />
-    )
-  ) : null;
+  const sortedData = useMemo(() => {
+    const getModTime = (item: any) => {
+      const date =
+        item.updatedAt || item.modifiedAt || item.modTime || item.createdAt;
+      return date ? new Date(date).getTime() : 0;
+    };
+
+    const sortedFiles = [...files];
+    const sortedFolders = [...folders];
+
+    switch (sortBy) {
+      case "name":
+        sortedFiles.sort((a, b) => a.name.localeCompare(b.name));
+        sortedFolders.sort((a, b) => a.name.localeCompare(b.name));
+        break;
+
+      case "modified":
+        sortedFiles.sort((a, b) => getModTime(b) - getModTime(a));
+        sortedFolders.sort((a, b) => getModTime(b) - getModTime(a));
+        break;
+
+      case "size":
+        sortedFiles.sort((a, b) => (b.size || 0) - (a.size || 0));
+        sortedFolders.sort((a, b) => {
+          const sizeA = (a as any).size || (a as any).itemCount || 0;
+          const sizeB = (b as any).size || (b as any).itemCount || 0;
+          return sizeA === sizeB ? a.name.localeCompare(b.name) : sizeB - sizeA;
+        });
+        break;
+
+      case "type":
+        sortedFiles.sort((a, b) => {
+          const typeA = a.mimeType || (a as any).extension || "";
+          const typeB = b.mimeType || (b as any).extension || "";
+          return typeA.localeCompare(typeB);
+        });
+        sortedFolders.sort((a, b) => a.name.localeCompare(b.name));
+        break;
+
+      default:
+        break;
+    }
+
+    return { files: sortedFiles, folders: sortedFolders };
+  }, [files, folders, sortBy]);
+
+  if (!hydrated) return null;
+
+  return fileLayout === "list" ? (
+    <DashList files={sortedData.files} folders={sortedData.folders} />
+  ) : (
+    <DashGrid files={sortedData.files} folders={sortedData.folders} />
+  );
 };
 
 export default SwitchLayout;

@@ -37,7 +37,6 @@ export default function UserAccessRow({
   isOwner = false,
   isCurrentUser = false,
   disabled = false,
-  hideOwnerOption = false,
   onPermissionChange,
   showSeparator = true,
 }: UserAccessRowProps) {
@@ -74,11 +73,9 @@ export default function UserAccessRow({
               <SelectLabel>Role</SelectLabel>
               <SelectItem value="viewer">Viewer</SelectItem>
               <SelectItem value="editor">Editor</SelectItem>
-              {!hideOwnerOption && (
-                <SelectItem value="owner" disabled>
-                  Owner
-                </SelectItem>
-              )}
+              <SelectItem value="owner" disabled>
+                Owner
+              </SelectItem>
             </SelectGroup>
           </SelectContent>
         </Select>

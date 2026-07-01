@@ -9,7 +9,7 @@ export async function GET(request: NextRequest) {
       { status: 403 },
     );
   }
-  const targetUserId = 31;
+  const targetUserId = 30;
   const user = await userRepository.findById(targetUserId);
 
   if (!user) {

@@ -220,3 +220,41 @@
   --tint-cyan-bd: #67e8f9;
   --tint-cyan-tx: oklch(0.42 0.08 215);
 }
+
+// ─── DENSITY SCALING TOKENS ─────────────────────────────────────────────────
+:root {
+  --density-layout-p: 24px; /* Outer padding for main views */
+  --density-card-p: 12px 14px; /* Padding inside cards/tiles */
+  --density-row-p: 8px 12px; /* Padding for lists and nav items */
+  --density-pill-p: 8px 12px; /* Padding for org pills */
+  --density-btn-p: 10px 16px; /* Padding for primary buttons */
+
+  --density-gap-lg: 12px;
+  --density-gap-md: 10px;
+  --density-gap-sm: 8px;
+
+  --density-item-h: 40px; /* Button heights */
+  --density-icon-md: 22px; /* Logos and main icons */
+  --density-preview-h: 72px; /* File card image preview height */
+
+  --density-text-base: 13px; /* Nav item text size */
+}
+
+/* Overrides applied instantly when "Compact" is selected */
+[data-density="compact"] {
+  --density-layout-p: 16px;
+  --density-card-p: 8px 10px;
+  --density-row-p: 4px 8px;
+  --density-pill-p: 6px 10px;
+  --density-btn-p: 6px 12px;
+
+  --density-gap-lg: 8px;
+  --density-gap-md: 6px;
+  --density-gap-sm: 4px;
+
+  --density-item-h: 32px;
+  --density-icon-md: 18px;
+  --density-preview-h: 56px;
+
+  --density-text-base: 12px;
+}

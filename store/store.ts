@@ -1,15 +1,17 @@
 import { toast } from "sonner";
 import { create } from "zustand";
 import type { UploadItem } from "@/types/dashboard";
-import type {
-  AuthStateStore,
-  DragDropStore,
-  FileLayoutStore,
-  QueuedFile,
-  ShareWithMeDialogStore,
-  UploadStore,
+import {
+  SortByStore,
+  type AuthStateStore,
+  type DragDropStore,
+  type FileLayoutStore,
+  type QueuedFile,
+  type ShareWithMeDialogStore,
+  type UploadStore,
 } from "@/types/store";
 import { UploadedFile, UploadedFolder } from "@/types/files";
+import { persist } from "zustand/middleware";
 
 export const useAuthStore = create<AuthStateStore>((set) => ({
   accessToken: null,
@@ -24,9 +26,21 @@ export const useDragDropStore = create<DragDropStore>((set) => ({
   setFiles: (files) => set({ files }),
 }));
 
-export const useFileLayout = create<FileLayoutStore>((set) => ({
-  fileLayout: "grid",
-  setFileLayout: (layout) => set({ fileLayout: layout }),
+export const useFileLayout = create<FileLayoutStore>()(
+  persist(
+    (set) => ({
+      fileLayout: "grid",
+      setFileLayout: (layout) => set({ fileLayout: layout }),
+    }),
+    {
+      name: "file-layout",
+    },
+  ),
+);
+
+export const useSortByStore = create<SortByStore>((set) => ({
+  sortBy: "name",
+  setSortBy: (sortBy) => set({ sortBy }),
 }));
 
 export function formatBytes(bytes: number): string {
@@ -239,5 +253,22 @@ export const useShareDialogStore = create<ShareWithMeDialogStore>((set) => ({
   file: null,
   folder: null,
   setFile: (file: UploadedFile) => set({ file }),
+  files: [],
+  setFiles: (files: UploadedFile[]) => set({ files }),
   setFolder: (folder: UploadedFolder) => set({ folder }),
+  onSuccess: () => {},
+}));
+
+export const useSelectedFilesStore = create<{
+  selectedFiles: Array<UploadedFile>;
+  setSelectedFiles: (files: Array<UploadedFile>) => void;
+  clearSelection: () => void;
+  fileCount: number;
+  setFileCount: (count: number) => void;
+}>((set) => ({
+  selectedFiles: [],
+  setSelectedFiles: (files) => set({ selectedFiles: files }),
+  clearSelection: () => set({ selectedFiles: [] }),
+  fileCount: 0,
+  setFileCount: (count) => set({ fileCount: count }),
 }));

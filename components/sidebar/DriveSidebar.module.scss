@@ -1,4 +1,4 @@
-@use "../functions" as *;
+@use "../../styles/functions" as *;
 
 .sidebar {
   flex-shrink: 0;
@@ -7,15 +7,11 @@
   display: flex;
   flex-direction: column;
   padding: 14px 10px;
-  gap: 14px;
-  height: 100dvh;
+  height: 100%;
+  transition: width 300ms ease;
+  z-index: 4;
 }
 
-// .collapsed {
-//   // collapsed state — minor adjustments handled via inline style
-// }
-
-// ─── Org pill ─────────────────────────────────────────────────────────────
 .orgPill {
   display: flex;
   align-items: center;
@@ -29,6 +25,14 @@
   font-weight: v(weight-medium);
   color: v(sidebar-foreground);
   font-family: inherit;
+}
+
+.orgPillCollapsed {
+  padding: 8px 8px;
+
+  .orgLogo {
+    width: 100%;
+  }
 }
 
 .orgLogo {
@@ -165,4 +169,13 @@
 .storageCap {
   font-size: 10px;
   color: v(muted-foreground);
+}
+.contentReset {
+  padding: 0;
+  gap: 14px;
+  overflow: visible;
+}
+
+.footerReset {
+  padding: 0;
 }

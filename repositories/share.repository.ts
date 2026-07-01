@@ -1,10 +1,7 @@
+// repositories/share.repository.ts
 import { db } from "@/db";
-import {
-  sharedItemsTable,
-  uploadedFilesTable,
-  uploadFoldersTable,
-} from "@/db/schema";
-import { eq } from "drizzle-orm";
+import { sharedItemsTable } from "@/db/schema";
+import { eq, inArray, and } from "drizzle-orm";
 
 export const shareRepository = {
   async uploadSharedItem(
@@ -14,23 +11,6 @@ export const shareRepository = {
     permission: "viewer" | "editor" | "owner" | "commenter",
     sharedWithUserId: number,
   ) {
-    let fileName = null;
-
-    if (fileId) {
-      [fileName] = await db
-        .select({ name: uploadedFilesTable.name })
-        .from(uploadedFilesTable)
-        .where(eq(uploadedFilesTable?.id, fileId));
-    }
-
-    let folderName = null;
-    if (folderId) {
-      [folderName] = await db
-        .select({ name: uploadFoldersTable.name })
-        .from(uploadFoldersTable)
-        .where(eq(uploadFoldersTable?.id, folderId));
-    }
-
     return await db.insert(sharedItemsTable).values({
       userId,
       fileId,
@@ -47,5 +27,35 @@ export const shareRepository = {
       .update(sharedItemsTable)
       .set({ permission })
       .where(eq(sharedItemsTable.id, sharedItemId));
+  },
+
+  async uploadSharedItemBulk(
+    payloads: {
+      userId: number;
+      fileId: number | null;
+      folderId: number | null;
+      permission: "viewer" | "editor" | "owner" | "commenter";
+      sharedWithUserId: number;
+    }[],
+  ) {
+    if (payloads.length === 0) return;
+    return await db.insert(sharedItemsTable).values(payloads);
+  },
+
+  async updateSharedItemPermissionsBulk(
+    fileIds: number[],
+    sharedWithUserId: number,
+    permission: "viewer" | "editor" | "owner" | "commenter",
+  ) {
+    if (fileIds.length === 0) return;
+    return await db
+      .update(sharedItemsTable)
+      .set({ permission })
+      .where(
+        and(
+          inArray(sharedItemsTable.fileId, fileIds),
+          eq(sharedItemsTable.sharedWithUserId, sharedWithUserId),
+        ),
+      );
   },
 };

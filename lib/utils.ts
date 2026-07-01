@@ -7,16 +7,31 @@ export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
 }
 
-const SECRET_KEY =
-  process.env.NEXT_PUBLIC_CRYPTO_SECRET || "my-super-secret-passphrase";
+const SECRET_KEY = process.env.NEXT_PUBLIC_PHONE_OBFUSCATION_KEY;
+
+if (!SECRET_KEY) {
+  throw new Error(
+    "Missing required env var: NEXT_PUBLIC_PHONE_OBFUSCATION_KEY",
+  );
+}
 
 export function encrypt(text: string) {
+  if (!SECRET_KEY) {
+    throw new Error(
+      "Missing required env var: NEXT_PUBLIC_PHONE_OBFUSCATION_KEY",
+    );
+  }
   const cipherText = CryptoJS.AES.encrypt(text, SECRET_KEY).toString();
 
   return cipherText.replace(/\+/g, "-").replace(/\//g, "_").replace(/=+$/, "");
 }
 
 export function decrypt(safeCipherText: string) {
+  if (!SECRET_KEY) {
+    throw new Error(
+      "Missing required env var: NEXT_PUBLIC_PHONE_OBFUSCATION_KEY",
+    );
+  }
   let cipherText = safeCipherText.replace(/-/g, "+").replace(/_/g, "/");
 
   while (cipherText.length % 4) {

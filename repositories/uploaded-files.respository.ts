@@ -87,7 +87,13 @@ export const uploadedFilesRepository = {
         ),
       );
   },
-  async deleteFile(id: number) {
+  async deleteFile(id: number, shareId: number) {
+    if (shareId) {
+      return await db
+        .delete(sharedItemsTable)
+        .where(eq(sharedItemsTable.id, shareId));
+    }
+
     const [deletedFile] = await db
       .update(uploadedFilesTable)
       .set({ isDeleted: true })
@@ -256,5 +262,67 @@ export const uploadedFilesRepository = {
       .update(uploadedFilesTable)
       .set({ name: newName })
       .where(eq(uploadedFilesTable.id, id));
+  },
+
+  async moveFiles(filesId: number[], folder: number) {
+    if (folder) {
+      return await db
+        .update(uploadedFilesTable)
+        .set({ folderId: folder })
+        .where(inArray(uploadedFilesTable.id, filesId));
+    }
+
+    return await db
+      .update(uploadedFilesTable)
+      .set({ folderId: null })
+      .where(inArray(uploadedFilesTable.id, filesId));
+  },
+  async deleteMultipleItems(
+    items: { id: number; isFile: boolean; shared: boolean }[],
+  ) {
+    const sharedIds = items.filter((i) => i.shared).map((i) => i.id);
+    const fileIds = items.filter((i) => !i.shared && i.isFile).map((i) => i.id);
+    const folderIds = items
+      .filter((i) => !i.shared && !i.isFile)
+      .map((i) => i.id);
+
+    const promises = [];
+
+    if (sharedIds.length > 0) {
+      return await db
+        .delete(sharedItemsTable)
+        .where(inArray(sharedItemsTable.id, sharedIds));
+    }
+
+    let files = [];
+
+    if (fileIds.length > 0) {
+      files = await db
+        .update(uploadedFilesTable)
+        .set({ isDeleted: true })
+        .where(inArray(uploadedFilesTable.id, fileIds))
+        .returning();
+
+      await db.insert(trashedTable).values(
+        files.map((file) => ({
+          userId: file.userId,
+          fileId: file.id,
+          folderId: file.folderId,
+          fileName: file.name,
+          size: file.size,
+        })),
+      );
+    }
+
+    if (folderIds.length > 0) {
+      promises.push(
+        await db
+          .update(uploadFoldersTable)
+          .set({ isDeleted: true })
+          .where(inArray(uploadFoldersTable.id, folderIds)),
+      );
+    }
+
+    return await Promise.all(promises);
   },
 };

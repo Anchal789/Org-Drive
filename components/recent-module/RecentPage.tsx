@@ -9,6 +9,7 @@ import { getFileExtension } from "@/lib/utils";
 import { formatBytes } from "@/store/store";
 import FileType from "../ui/fileType";
 import { RecentLogsType } from "@/types/recent";
+import { Button } from "../ui/button";
 
 const RecentPage: FunctionComponent<{
   recentLogs: Array<RecentLogsType>;
@@ -58,7 +59,7 @@ const RecentPage: FunctionComponent<{
         <div>
           <div className={styles.title}>Recent</div>
           <div className={styles.subHeading}>
-            Everything you've touched lately, newest first.
+            Everything you&apos;ve touched lately, newest first.
           </div>
         </div>
       </div>
@@ -112,9 +113,9 @@ const RecentPage: FunctionComponent<{
                         {log.fileSize ? formatBytes(log.fileSize) : "--"}
                       </span>
 
-                      <button className={styles.moreBtn}>
+                      <Button className={styles.moreBtn}>
                         <Icon d={iconsWithPaths.more} size={14} />
-                      </button>
+                      </Button>
                     </div>
                   );
                 })}

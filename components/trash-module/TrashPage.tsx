@@ -117,7 +117,7 @@ const TrashPage: FunctionComponent<{
             />
             <span className={styles.flatHintText}>
               Files in Trash still count toward your channel storage until
-              they're permanently deleted.
+              they&apos;re permanently deleted.
             </span>
           </div>
         </div>

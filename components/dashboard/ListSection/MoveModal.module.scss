@@ -1,0 +1,23 @@
+@use "../../../styles/functions" as *;
+
+.container {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-inline: calc(var(--spacing) * -4);
+  max-height: 50vh;
+  overflow-y: auto;
+  padding-inline: calc(var(--spacing) * 4);
+}
+
+.fileToMoveList {
+  display: grid;
+  gap: 6px;
+  grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+  list-style: disc;
+  background-color: v(background);
+  border: 1px solid v(border);
+  border-radius: v(radius-md);
+  padding: 8px 12px;
+  margin-top: 6px;
+}

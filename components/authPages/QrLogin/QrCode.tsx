@@ -2,19 +2,15 @@
 
 import Image from "next/image";
 import { useRouter } from "next/navigation";
-import {
-  useActionState,
-  useCallback,
-  useEffect,
-  useRef,
-  useState,
-} from "react";
+import { useActionState, useEffect, useRef, useState } from "react";
 import { useCountdown } from "@/hooks/use-countdown";
 import { postData } from "@/lib/api-fn";
 import { encrypt } from "@/lib/utils";
 import { qrLogin, qrStart } from "@/services/auth-service";
 import type { TelegramUser } from "@/types/auth";
 import styles from "./QrCode.module.scss";
+import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
 
 const POLL_INTERVAL_MS = 2000;
 
@@ -31,11 +27,11 @@ export default function QrCode() {
   const [state, setState] = useState<AuthState>({ status: "loading" });
   const startedRef = useRef(false);
 
-  const { formatted, expired } = useCountdown(
+  const { formatted } = useCountdown(
     state.status === "waiting" ? state.expiresAt : null,
   );
 
-  const start = useCallback(async () => {
+  const start = async () => {
     setState({ status: "loading" });
 
     try {
@@ -67,24 +63,30 @@ export default function QrCode() {
       const errMsg = err instanceof Error ? err.message : String(err);
       setState({ status: "error", message: errMsg ?? "Network error" });
     }
-  }, []);
+  };
 
   useEffect(() => {
     if (startedRef.current) return;
     startedRef.current = true;
     start();
-  }, [start]);
+  }, []);
+
+  const currentLoginId = "loginId" in state ? state.loginId : null;
+  const expiresAt = state.status === "waiting" ? state.expiresAt : null;
+
+  const navigateToMyDrive = () => {
+    router.replace("/my-drive");
+  };
 
   useEffect(() => {
-    if (state.status !== "waiting") return;
+    if (state.status !== "waiting" || !currentLoginId) return;
 
     let cancelled = false;
-    const currentLoginId = state.loginId;
 
     async function poll() {
       if (cancelled) return;
       try {
-        const response = await qrLogin(currentLoginId);
+        const response = await qrLogin(currentLoginId || "");
         const data = response?.data;
         if (cancelled) return;
 
@@ -100,14 +102,14 @@ export default function QrCode() {
         } else if (data.step === "needs_password") {
           setState({
             status: "needs_password",
-            loginId: currentLoginId,
+            loginId: currentLoginId || "",
             passwordHint: data.passwordHint ?? null,
           });
         } else if (data.step === "success" && data.user) {
           setState({ status: "success", user: data.user });
-          setTimeout(() => router.push("/my-drive"), 1500);
+          setTimeout(() => navigateToMyDrive(), 1500);
         } else if (data.step === "expired") {
-          setState({ status: "expired", loginId: currentLoginId });
+          setState({ status: "expired", loginId: currentLoginId || "" });
         } else if (data.step === "error") {
           setState({
             status: "error",
@@ -126,23 +128,29 @@ export default function QrCode() {
       cancelled = true;
       clearInterval(id);
     };
-  }, [state.status, router]);
+  }, [state.status, currentLoginId, router]);
 
-  function restart() {
+  const restart = () => {
     startedRef.current = false;
     start();
     startedRef.current = true;
-  }
+  };
 
   useEffect(() => {
-    if (expired && state.status === "waiting") {
-      setState({ status: "expired", loginId: state.loginId });
-      restart();
-    }
-  }, [expired, state.status]);
+    if (expiresAt == null) return;
+    const id = setTimeout(
+      () => {
+        startedRef.current = false;
+        start();
+        startedRef.current = true;
+      },
+      Math.max(0, expiresAt - Date.now()),
+    );
+    return () => clearTimeout(id);
+  }, [expiresAt]);
 
   const [pwdError, submitPasswordAction, isSubmittingPassword] = useActionState(
-    async (prevState: string | null, formData: FormData) => {
+    async (_prevState: string | null, formData: FormData) => {
       if (state.status !== "needs_password") return null;
 
       const password = formData.get("password") as string;
@@ -161,7 +169,7 @@ export default function QrCode() {
 
         if (response.success && data?.step === "success" && data.user) {
           setState({ status: "success", user: data.user });
-          setTimeout(() => router.push("/my-drive"), 1500);
+          setTimeout(() => navigateToMyDrive(), 1500);
           return null;
         }
         return data?.error ?? "Password failed";
@@ -191,13 +199,13 @@ export default function QrCode() {
           {state.status === "expired" && (
             <div className={styles.stateWrapper}>
               <p className={styles.stateTitle}>QR code expired</p>
-              <button
+              <Button
                 type="button"
                 onClick={restart}
                 className={styles.btnPrimary}
               >
                 Regenerate QR code
-              </button>
+              </Button>
             </div>
           )}
 
@@ -212,21 +220,20 @@ export default function QrCode() {
                 action={submitPasswordAction}
                 className={styles.stateWrapper}
               >
-                <input
+                <Input
                   className={styles.input}
                   type="password"
                   name="password"
-                  autoFocus
                   required
                   placeholder="Your Telegram password"
                 />
-                <button
+                <Button
                   type="submit"
                   disabled={isSubmittingPassword}
                   className={styles.btnPrimary}
                 >
-                  {isSubmittingPassword ? "Verifying…" : "Continue"}
-                </button>
+                  {isSubmittingPassword ? "Verifying…" : "Submit password"}
+                </Button>
                 {pwdError && <p className={styles.errorText}>{pwdError}</p>}
               </form>
             </div>
@@ -244,13 +251,13 @@ export default function QrCode() {
           {state.status === "error" && (
             <div className={styles.stateWrapper}>
               <p className={styles.errorText}>{state.message}</p>
-              <button
+              <Button
                 type="button"
                 onClick={start}
                 className={styles.btnPrimary}
               >
                 Try again
-              </button>
+              </Button>
             </div>
           )}
         </div>
@@ -268,7 +275,7 @@ export default function QrCode() {
           </>
         )}
         {state.status === "expired" && (
-          <span>Code expired — click regenerate to get a new one</span>
+          <span>Code expired, click regenerate to get a new one</span>
         )}
       </div>
     </>
