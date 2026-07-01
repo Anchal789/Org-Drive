@@ -13,6 +13,11 @@ export type BadgeProps = {
   outline?: boolean;
   className?: string;
   style?: React.CSSProperties;
+  customTone?: {
+    background?: string;
+    color?: string;
+    border?: string;
+  };
 };
 
 export type SparkProps = {

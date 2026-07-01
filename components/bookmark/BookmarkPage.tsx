@@ -1,7 +1,5 @@
 export const dynamic = "force-dynamic";
 
-import { iconsWithPaths } from "@/constants/common-constants";
-import Icon from "../ui/icon";
 import styles from "./Bookmark.module.scss";
 import { FunctionComponent } from "react";
 import { UploadedFile, UploadedFolder } from "@/types/files";
@@ -9,6 +7,7 @@ import FileCard from "../dashboard/FileSection/FileCard";
 import FolderContainer from "../dashboard/FolderSection/FolderContainer";
 import Image from "next/image";
 import NoDataImage from "@/public/assets/No-Data.svg";
+import { Tag } from "lucide-react";
 
 const BookmarkPage: FunctionComponent<{
   bookmarkedFolders: UploadedFolder[];
@@ -19,7 +18,7 @@ const BookmarkPage: FunctionComponent<{
       <div className={styles.header}>
         <div className={styles.headings}>
           <div className={styles.iconBox}>
-            <Icon d={iconsWithPaths.bookmark} size={20} />
+            <Tag size={20} />
           </div>
           <div>
             <div className={styles.title}>
@@ -64,7 +63,9 @@ const BookmarkPage: FunctionComponent<{
           )}
           {bookmarkedFiles.length > 0 && (
             <>
-              <div className={`${styles.sectionLabel} ${styles.spaced}`}>
+              <div
+                className={`${styles.sectionLabel} ${bookmarkedFolders.length > 0 ? styles.spaced : styles.spacedBottom}`}
+              >
                 Files
               </div>
               <div className={`${styles.grid} ${styles.grid4}`}>

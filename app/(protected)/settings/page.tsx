@@ -1,5 +1,7 @@
-const Analytics = async () => {
-  return <>Analytics</>;
+import SettingsPage from "@/components/settings/SettingsPage";
+
+const Settings = async () => {
+  return <SettingsPage />;
 };
 
-export default Analytics;
+export default Settings;
