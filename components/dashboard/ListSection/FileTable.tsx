@@ -182,6 +182,7 @@ const FileTable: FunctionComponent<{
 
             <Button
               className={styles.actionButton}
+              variant={"ghost"}
               onClick={() => {
                 setFiles(selectedFileObjects);
                 useShareDialogStore.setState({ onSuccess: clearSelection });
@@ -221,8 +222,7 @@ const FileTable: FunctionComponent<{
 
             <Separator orientation="vertical" />
             <Button
-              className={styles.actionButton}
-              variant={"destructive"}
+              className={`${styles.actionButton} ${styles["actionButton-destructive"]}`}
               onClick={() => {
                 setOpenDeleteDialog(true);
               }}

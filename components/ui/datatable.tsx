@@ -100,7 +100,7 @@ export default function DataTable<T>({
                   <TableHead className={styles.checkboxCell}>
                     <Checkbox
                       checked={isAllSelected}
-                      onClick={(checked) => handleSelectAll(!!checked)}
+                      onCheckedChange={(checked) => handleSelectAll(!!checked)}
                     />
                   </TableHead>
                 )}
@@ -144,7 +144,9 @@ export default function DataTable<T>({
                     <TableCell className={styles.checkboxCell}>
                       <Checkbox
                         checked={isSelected}
-                        onClick={(checked) => handleSelectRow(rowId, !!checked)}
+                        onCheckedChange={(checked) =>
+                          handleSelectRow(rowId, !!checked)
+                        }
                       />
                     </TableCell>
                   )}

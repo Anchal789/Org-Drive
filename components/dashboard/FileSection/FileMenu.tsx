@@ -67,7 +67,7 @@ const FileMenu: FunctionComponent<{
         setRenameOpen={setRenameOpen}
       />
       <DropdownMenu>
-        <DropdownMenuTrigger asChild>
+        <DropdownMenuTrigger asChild className={styles.dropdownTrigger}>
           <Button type="button" className={styles.moreBtn}>
             <Icon
               d={iconsWithPaths.more}

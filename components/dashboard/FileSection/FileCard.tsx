@@ -7,12 +7,15 @@ import type { FileKind } from "@/types/dashboard";
 import type { UploadedFile } from "@/types/files";
 import styles from "./FileCard.module.scss";
 import FileMenu from "./FileMenu";
+import { Checkbox } from "@/components/ui/checkbox";
 
 export default function FileCard({
   file,
+  isSelected = false,
   big = false,
 }: {
   file: UploadedFile;
+  isSelected?: boolean;
   big?: boolean;
 }) {
   const createdAt = formatFileDate(file.createdAt);
@@ -24,11 +27,14 @@ export default function FileCard({
 
   return (
     <div
-      className={`${styles.card} ${big ? styles.cardBig : ""}`.trim()}
-      data-slot="file-card"
+      className={`${styles.card} ${isSelected ? styles.selected : ""} ${big ? styles.cardBig : ""}`.trim()}
     >
       <div className={styles.header}>
-        <FileType kind={fileExtension} />
+        {isSelected ? (
+          <Checkbox checked={isSelected} size="21.39px" />
+        ) : (
+          <FileType kind={fileExtension} />
+        )}
         <div className={styles.headerActions}>
           {file.bookmark && (
             <Icon

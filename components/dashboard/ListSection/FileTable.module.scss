@@ -1,3 +1,5 @@
+@use "@/styles/functions" as *;
+
 .table {
   margin-top: 18px;
 }
@@ -63,4 +65,22 @@
   font-weight: 500;
   font-family: inherit;
   white-space: nowrap;
+
+  transition: background-color 0.12s ease;
+
+  &:hover {
+    background: color-mix(in srgb, v(foreground) 6%, transparent) !important;
+  }
+}
+
+.actionButton-destructive {
+  color: v(destructive);
+
+  .actionIcon {
+    color: v(destructive);
+  }
+
+  &:hover {
+    background: color-mix(in srgb, v(destructive) 8%, transparent) !important;
+  }
 }

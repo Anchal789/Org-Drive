@@ -258,3 +258,17 @@ export const useShareDialogStore = create<ShareWithMeDialogStore>((set) => ({
   setFolder: (folder: UploadedFolder) => set({ folder }),
   onSuccess: () => {},
 }));
+
+export const useSelectedFilesStore = create<{
+  selectedFiles: Array<UploadedFile>;
+  setSelectedFiles: (files: Array<UploadedFile>) => void;
+  clearSelection: () => void;
+  fileCount: number;
+  setFileCount: (count: number) => void;
+}>((set) => ({
+  selectedFiles: [],
+  setSelectedFiles: (files) => set({ selectedFiles: files }),
+  clearSelection: () => set({ selectedFiles: [] }),
+  fileCount: 0,
+  setFileCount: (count) => set({ fileCount: count }),
+}));
