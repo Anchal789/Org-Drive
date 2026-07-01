@@ -1,60 +1,68 @@
-import { iconsWithPaths } from "@/constants/common-constants";
-import { getSessionUser } from "@/lib/session";
-import { uploadedFilesRepository } from "@/repositories/uploaded-files.respository";
-import styles from "./DriveSidebar.module.scss";
-import type { SidebarItemProps } from "@/types/component-types";
-import { Sidebar, SidebarContent } from "@/components/ui/sidebar";
-import NewItemButton from "./NewItemButton";
-import SidebarItem from "./SidebarItem";
-import { OrgPill } from "./OrgPill";
-import { SidebarSection } from "./SidebarSection";
-import { StorageCard } from "./SidebarFooter";
-import { SidebarToggleButton } from "./SidebarToggleButton";
-
-const MAIN_ITEMS: SidebarItemProps[] = [
-  {
-    icon: iconsWithPaths.cloud,
-    label: "My drive",
-    count: 248,
-    url: "/my-drive",
-  },
-  {
-    icon: iconsWithPaths.users,
-    label: "Shared with me",
-    count: 31,
-    url: "/shared-with-me",
-  },
-  { icon: iconsWithPaths.clock, label: "Recent", url: "/recent" },
-  {
-    icon: iconsWithPaths.bookmark,
-    label: "Bookmark",
-    count: 8,
-    url: "/bookmark",
-  },
-  { icon: iconsWithPaths.trash, label: "Trash", url: "/trash" },
-];
+import { Sidebar, SidebarContent } from '@/components/ui/sidebar';
+import { iconsWithPaths } from '@/constants/common-constants';
+import { getSessionUser } from '@/lib/session';
+import { uploadedFilesRepository } from '@/repositories/uploaded-files.respository';
+import type { SidebarItemProps } from '@/types/component-types';
+import styles from './DriveSidebar.module.scss';
+import NewItemButton from './NewItemButton';
+import { OrgPill } from './OrgPill';
+import { StorageCard } from './SidebarFooter';
+import SidebarItem from './SidebarItem';
+import { SidebarSection } from './SidebarSection';
+import { SidebarToggleButton } from './SidebarToggleButton';
 
 const OPTIONAL_ITEMS: SidebarItemProps[] = [
   {
     icon: iconsWithPaths.sparkle,
-    label: "AI chat",
-    badge: "Beta",
-    url: "/ai-chat",
+    label: 'AI chat',
+    badge: 'Beta',
+    url: '/ai-chat',
   },
-  { icon: iconsWithPaths.search, label: "Smart search", url: "/smart-search" },
+  { icon: iconsWithPaths.search, label: 'Smart search', url: '/smart-search' },
 ];
 
 const ADMIN_ITEMS: SidebarItemProps[] = [
-  { icon: iconsWithPaths.activity, label: "Analytics", url: "/analytics" },
-  { icon: iconsWithPaths.settings, label: "Settings", url: "/settings" },
+  { icon: iconsWithPaths.activity, label: 'Analytics', url: '/analytics' },
+  { icon: iconsWithPaths.settings, label: 'Settings', url: '/settings' },
 ];
 
-export default async function DriveSidebar() {
+export default async function DriveSidebar({
+  fileFolderCount,
+  sharedWithMeFileCount,
+  bookmarksCount,
+}: {
+  fileFolderCount: number;
+  sharedWithMeFileCount: number;
+  bookmarksCount: number;
+}) {
   const user = await getSessionUser();
   const filesize = await uploadedFilesRepository.totalStorage(
     Number(user?.userId),
   );
   const totalSize = filesize.reduce((a, b) => a + b.size, 0);
+
+  const MAIN_ITEMS: SidebarItemProps[] = [
+    {
+      icon: iconsWithPaths.cloud,
+      label: 'My drive',
+      count: fileFolderCount,
+      url: '/my-drive',
+    },
+    {
+      icon: iconsWithPaths.users,
+      label: 'Shared with me',
+      count: sharedWithMeFileCount,
+      url: '/shared-with-me',
+    },
+    { icon: iconsWithPaths.clock, label: 'Recent', url: '/recent' },
+    {
+      icon: iconsWithPaths.bookmark,
+      label: 'Bookmark',
+      count: bookmarksCount,
+      url: '/bookmark',
+    },
+    { icon: iconsWithPaths.trash, label: 'Trash', url: '/trash' },
+  ];
 
   return (
     <Sidebar collapsible="icon" className={styles.sidebar}>
