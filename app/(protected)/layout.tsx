@@ -7,6 +7,7 @@ import { TooltipProvider } from "@/components/ui/tooltip";
 import { SidebarProvider } from "@/components/ui/sidebar";
 import ShareDialog from "@/components/share-module/ShareDialog/ShareDialog";
 import { userRepository } from "@/repositories/user.repository";
+import TopbarWrapper from "@/components/Header/TopbarWrapper";
 
 export default async function ProtectedLayout({
   children,
@@ -27,7 +28,9 @@ export default async function ProtectedLayout({
           <DriveSidebar />
           <div className={styles.shell}>
             <div className={styles.main}>
-              <DriveTopbar user={user} />
+              <TopbarWrapper>
+                <DriveTopbar user={user} />
+              </TopbarWrapper>
               <div className={styles.mainContent}>{children}</div>
             </div>
           </div>

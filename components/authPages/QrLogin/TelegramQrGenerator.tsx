@@ -1,10 +1,9 @@
 "use client";
 
-import Icon from "@/components/ui/icon";
 import TelegramButton from "@/components/ui/telegram-button";
-import { iconsWithPaths } from "@/constants/common-constants";
 import QrCode from "./QrCode";
 import styles from "./TelegramQrGenerator.module.scss";
+import { Send } from "lucide-react";
 
 export default function TelegramQrGenerator() {
   return (
@@ -14,7 +13,7 @@ export default function TelegramQrGenerator() {
           <div className={styles.brandSquare}>OD</div>
           <div className={styles.dividerLine} />
           <div className={styles.tgCircle}>
-            <Icon d={iconsWithPaths.send} size={17} stroke={2.4} />
+            <Send size={17} />
           </div>
         </div>
 

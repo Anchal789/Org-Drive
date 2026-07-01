@@ -1,10 +1,10 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import Icon from "@/components/ui/icon";
 import { iconsWithPaths } from "@/constants/common-constants";
 import styles from "./VerifyOtpPage.module.scss";
 import { Button } from "@/components/ui/button";
+import { Clock } from "lucide-react";
 
 type ResendTimerProps = {
   seconds: number;
@@ -31,7 +31,7 @@ export default function ResendTimer({ seconds }: ResendTimerProps) {
 
   return (
     <div className={styles.resendContainer}>
-      <Icon d={iconsWithPaths.clock} size={12} />
+      <Clock d={iconsWithPaths.clock} size={12} />
       {resendIn > 0 ? (
         <>
           Resend code in{" "}

@@ -15,7 +15,6 @@ import {
   ComboboxTrigger,
   ComboboxValue,
 } from "@/components/ui/combobox";
-import Icon from "@/components/ui/icon";
 import { Input } from "@/components/ui/input";
 import {
   Item,
@@ -24,12 +23,12 @@ import {
   ItemTitle,
 } from "@/components/ui/item";
 import TelegramButton from "@/components/ui/telegram-button";
-import { iconsWithPaths } from "@/constants/common-constants";
 import { countryWithPhoneCode } from "@/constants/country-with-phonecode";
 import { encrypt } from "@/lib/utils";
 import { requestOtp } from "@/services/auth-service";
 import type { CountryType } from "@/types/auth";
 import styles from "./PhoneLogin.module.scss";
+import { Shield } from "lucide-react";
 
 const flagSrc = (code: string) =>
   `https://raw.githubusercontent.com/SujalXplores/All-Country-Flags/refs/heads/master/${code}.png`;
@@ -182,7 +181,7 @@ export default function PhoneLogin() {
         )}
 
         <div className={styles.shieldHint}>
-          <Icon d={iconsWithPaths.shield} size={11} />
+          <Shield size={11} />
           We never see your messages. Telegram handles the OTP.
         </div>
       </div>

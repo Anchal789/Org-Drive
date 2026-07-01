@@ -3,9 +3,7 @@
 import { useRouter, useSearchParams } from "next/navigation";
 import { useReducer } from "react";
 import { Controller, useForm } from "react-hook-form";
-import Icon from "@/components/ui/icon";
 import TelegramButton from "@/components/ui/telegram-button";
-import { iconsWithPaths } from "@/constants/common-constants";
 import { decrypt } from "@/lib/utils";
 import { verifyOtp, verifyOtpPassword } from "@/services/auth-service";
 import OtpInputGroup from "./OtpInputGroup";
@@ -15,6 +13,7 @@ import { initialVerifyState, verifyReducer } from "./verify-otp-reducer";
 import styles from "./VerifyOtpPage.module.scss";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
+import { ChevronLeftIcon } from "lucide-react";
 
 const OTP_LENGTH = 5;
 const RESEND_SECONDS = 60;
@@ -103,7 +102,7 @@ export default function VerifyOtpPage() {
           onClick={() => router.push("/login")}
           className={styles.backButton}
         >
-          <Icon d={iconsWithPaths.chevLeft} size={13} /> Back
+          <ChevronLeftIcon size={13} /> Back
         </Button>
 
         <VerifyStepHeader

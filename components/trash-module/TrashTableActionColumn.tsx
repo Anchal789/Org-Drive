@@ -3,13 +3,12 @@
 import { TrashInterface } from "@/types/trash";
 import { FunctionComponent, useState } from "react";
 import styles from "./TrashPage.module.scss";
-import Icon from "../ui/icon";
-import { iconsWithPaths } from "@/constants/common-constants";
 import { Button } from "../ui/button";
 import AlertModal from "../ui/alert-modal";
 import { useRouter } from "next/navigation";
 import { permanentDeleteFile, restoreFile } from "@/services/trash-service";
 import CustomTooltip from "../ui/custom-tooltip";
+import { RefreshCw, X } from "lucide-react";
 
 const TrashTableActionColumn: FunctionComponent<{
   trashed: TrashInterface;
@@ -70,11 +69,7 @@ const TrashTableActionColumn: FunctionComponent<{
             onClick={handleRestore}
             className={styles.iconButton}
           >
-            <Icon
-              d={iconsWithPaths.refresh}
-              size={14}
-              className={styles.icon}
-            />
+            <RefreshCw size={14} className={styles.icon} />
           </Button>
         </CustomTooltip>
         <CustomTooltip title="Delete Permanently">
@@ -83,7 +78,7 @@ const TrashTableActionColumn: FunctionComponent<{
             onClick={handleDelete}
             className={styles.iconButton}
           >
-            <Icon d={iconsWithPaths.x} size={14} className={styles.icon} />
+            <X size={14} className={styles.icon} />
           </Button>
         </CustomTooltip>
       </div>

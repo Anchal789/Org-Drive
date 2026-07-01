@@ -8,6 +8,7 @@ import { formatBytes, useUploadStore } from "@/store/store";
 import styles from "./UploadWidget.module.scss";
 import type { DisplayItem, Tone, UploadItem } from "@/types/dashboard";
 import { Button } from "@/components/ui/button";
+import { Check, RefreshCw } from "lucide-react";
 
 const STATE_TO_TONE: Record<UploadItem["state"], Tone> = {
   done: "green",
@@ -221,8 +222,7 @@ export default function UploadWidget() {
       <div className={styles.head}>
         {itemsStillUploading.length > 0 ? (
           <>
-            <Icon
-              d={iconsWithPaths.refresh}
+            <RefreshCw
               size={14}
               style={{
                 animation: "spin 1.6s linear infinite",
@@ -236,11 +236,7 @@ export default function UploadWidget() {
           </>
         ) : (
           <>
-            <Icon
-              d={iconsWithPaths.check}
-              size={14}
-              style={{ color: "var(--primary)" }}
-            />
+            <Check size={14} style={{ color: "var(--primary)" }} />
             <span className={styles.headTitle}>
               {doneCount} of {displayItems.length} uploaded successfully
             </span>

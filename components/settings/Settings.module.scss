@@ -1,0 +1,165 @@
+@use "@/styles/functions" as *;
+@use "../../styles/mixins" as *;
+
+.header {
+  position: sticky;
+  top: 0;
+  padding: 18px 24px 6px;
+  background: v(background);
+}
+
+.headingsContainer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.headings {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.title {
+  font-size: 22px;
+  font-weight: 600;
+  letter-spacing: -0.02em;
+  line-height: 1.1;
+}
+
+.iconBox {
+  width: 38px;
+  height: 38px;
+  border-radius: v(radius-md);
+  background: v(tint-slate-bg);
+  color: v(tint-slate-tx);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.subHeading {
+  font-size: 12.5px;
+  color: v(muted-foreground);
+  margin-top: 3px;
+}
+
+.pageContent {
+  .content {
+    flex: 1 1 0%;
+    overflow: auto;
+    padding: 14px 24px 32px;
+    max-width: 860px;
+
+    .contentSection {
+      margin-bottom: 22px;
+
+      .contentTitle {
+        font-size: 12px;
+        font-weight: v(weight-semibold);
+        color: v(muted-foreground);
+        text-transform: uppercase;
+        letter-spacing: 0.04em;
+        margin-bottom: 8px;
+      }
+
+      .contentRowContainer {
+        border: 1px solid v(border);
+        border-radius: v(radius-lg);
+        overflow: hidden;
+        background: v(card);
+
+        .contentRow {
+          display: flex;
+          align-items: center;
+          justify-content: space-between;
+          gap: 16px;
+          padding: 14px 16px;
+          border-bottom: 1px solid v(border);
+
+          &:last-child {
+            border-bottom: none;
+          }
+
+          .tgCircle {
+            flex-shrink: 0;
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            background: v(tg-blue);
+            color: #fff;
+            @include flex-center;
+          }
+
+          .contentRowLabel {
+            flex: 1 1 0%;
+            min-width: 0px;
+
+            .tgUsername {
+              color: v(tg-blue);
+            }
+
+            .contentRowTitle {
+              font-size: 13px;
+              font-weight: 500;
+            }
+            .contentRowDescription {
+              font-size: 12px;
+              color: v(muted-foreground);
+              margin-top: 2px;
+              line-height: 1.5;
+            }
+          }
+          .organizationNameEditable {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            height: 32px;
+            padding: 0px 12px;
+          }
+
+          .connectionStatus {
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            padding: 2px 8px;
+            border-radius: v(radius-md);
+            font-size: 11px;
+            font-weight: 500;
+            line-height: 1.4;
+            background: v(tint-green-bg);
+            color: v(tint-green-tx);
+            border: 1px solid transparent;
+            white-space: nowrap;
+
+            .dot {
+              width: 6px;
+              height: 6px;
+              border-radius: 999px;
+              background: v(tint-green-bd);
+            }
+          }
+
+          .contentRowAction {
+            flex-shrink: 0;
+
+            .viewOption {
+              display: inline-flex;
+              align-items: center;
+              gap: 6px;
+              padding: 0px 12px;
+              height: 32px;
+              font-size: 12px;
+              font-weight: 500;
+            }
+          }
+        }
+
+        .telegramConnectionRow {
+          background: v(tg-blue-bg);
+        }
+      }
+    }
+  }
+}

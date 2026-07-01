@@ -2,11 +2,10 @@
 
 import { useState } from "react";
 import { Button } from "../ui/button";
-import Icon from "../ui/icon";
-import { iconsWithPaths } from "@/constants/common-constants";
 import AlertModal from "../ui/alert-modal";
 import { useRouter } from "next/navigation";
 import { emptyTrash } from "@/services/trash-service";
+import { Trash2 } from "lucide-react";
 
 export default function EmptyTrashButton({
   isDisabled,
@@ -45,7 +44,7 @@ export default function EmptyTrashButton({
         onClick={() => setIsOpen(true)}
         disabled={isDisabled || isDeleting}
       >
-        <Icon d={iconsWithPaths.trash} size={14} />
+        <Trash2 size={14} />
         {isDeleting ? "Emptying..." : "Empty trash"}
       </Button>
     </>
