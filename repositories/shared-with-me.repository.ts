@@ -1,11 +1,11 @@
+import { and, count, eq, ne, or, sql } from 'drizzle-orm';
+import { db } from '@/db';
 import {
   sharedItemsTable,
   uploadedFilesTable,
   uploadFoldersTable,
   userTable,
-} from "./../db/schema";
-import { db } from "@/db";
-import { and, eq, ne, or, sql } from "drizzle-orm";
+} from './../db/schema';
 
 export const sharedWithMeRepository = {
   async getSharedWithMeFiles(userId: number) {
@@ -79,5 +79,14 @@ export const sharedWithMeRepository = {
   },
   async deleteSharedItem(id: number) {
     return await db.delete(sharedItemsTable).where(eq(sharedItemsTable.id, id));
+  },
+  async getSharedWithMeFileCount(userId: number) {
+    const [sharedWithMeFileCount] = await db
+      .select({
+        count: count(sharedItemsTable.id),
+      })
+      .from(sharedItemsTable)
+      .where(eq(sharedItemsTable.sharedWithUserId, userId));
+    return sharedWithMeFileCount.count;
   },
 };
