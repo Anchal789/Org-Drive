@@ -1,5 +1,7 @@
-const Analytics = async () => {
-  return <>Analytics</>;
+import SmartSearchPage from "@/components/smart-search/SmartSearchPage";
+
+const SmartSearch = async () => {
+  return <SmartSearchPage />;
 };
 
-export default Analytics;
+export default SmartSearch;
