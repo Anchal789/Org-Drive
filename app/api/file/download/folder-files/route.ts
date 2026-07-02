@@ -3,7 +3,7 @@ export const dynamic = "force-dynamic";
 import { ZipArchive as Archiver } from "archiver";
 import type { NextRequest } from "next/server";
 import { PassThrough, Readable } from "stream";
-import { TelegramClient } from "telegram";
+import { Api, TelegramClient } from "telegram";
 import { StringSession } from "telegram/sessions";
 import { sendError } from "@/lib/api-response";
 import { getSessionUser } from "@/lib/session";
@@ -75,7 +75,7 @@ export async function GET(request: NextRequest) {
     { connectionRetries: 1 },
   );
 
-  let targetEntity: any;
+  let targetEntity: Api.TypeEntityLike;
 
   try {
     await client.connect();

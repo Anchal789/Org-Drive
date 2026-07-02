@@ -19,9 +19,21 @@ export async function POST(request: NextRequest) {
 
   if (isMultiShare) {
     try {
-      const logs: any[] = [];
-      const insertPayloads: any[] = [];
-      const fileIds = files.map((f: any) => Number(f.id));
+      const logs: Array<{
+        userId: number;
+        fileId: number;
+        folderId: number | null;
+        action: string;
+        actionBy: number;
+      }> = [];
+      const insertPayloads: Array<{
+        userId: number;
+        fileId: number;
+        folderId: number | null;
+        permission: "viewer" | "editor" | "owner" | "commenter";
+        sharedWithUserId: number;
+      }> = [];
+      const fileIds = files.map((f) => Number(f.id));
 
       if (usersToInvite && usersToInvite.length > 0) {
         for (const user of usersToInvite) {
@@ -99,10 +111,15 @@ export async function POST(request: NextRequest) {
     ownerId,
   );
 
-  const recordsToUpdate = usersWithAccess.filter((frontendUser: any) => {
-    const dbUser = currentDbState.find((user) => user.id === frontendUser.id);
-    return dbUser && dbUser.permission !== frontendUser.permission;
-  });
+  const recordsToUpdate = usersWithAccess.filter(
+    (frontendUser: {
+      id: number;
+      permission: "viewer" | "editor" | "owner" | "commenter";
+    }) => {
+      const dbUser = currentDbState.find((user) => user.id === frontendUser.id);
+      return dbUser && dbUser.permission !== frontendUser.permission;
+    },
+  );
 
   if (usersToInvite.length === 0 && recordsToUpdate.length === 0) {
     return sendError("No changes detected", 400);

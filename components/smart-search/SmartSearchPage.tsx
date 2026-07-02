@@ -242,7 +242,7 @@ export default function SmartSearchPage() {
               {displayFiles.length > 0 && (
                 <div className={styles.resultGroup}>
                   <div className={styles.sectionTitle}>Files</div>
-                  {displayFiles.map((file: any) => (
+                  {displayFiles.map((file: UploadedFile) => (
                     <div
                       key={file.id}
                       className={styles.resultItem}
@@ -253,9 +253,6 @@ export default function SmartSearchPage() {
                       <div className={styles.info}>
                         <File size={14} className={styles.searchIcon} />
                         <span className={styles.resultText}>{file.name}</span>
-                        {file.isShared && (
-                          <span className={styles.tag}>Shared</span>
-                        )}
                       </div>
                       <FileMenu file={file} />
                     </div>

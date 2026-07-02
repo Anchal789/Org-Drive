@@ -370,13 +370,11 @@ export default function ShareDialog({
           }
         />
 
-        {/* MULTIPLE FILES LIST (Placed right before the footer) */}
         {isMultiShare && files && files.length > 1 && (
           <div className={styles.multiFilesSection}>
             <div className={styles.sectionLabel}>Selected Items</div>
             <div className={styles.multiFileList}>
-              {/* @ts-ignore - typing fallback if files array relies on generic schema structure */}
-              {files.map((f: any) => {
+              {files.map((f: UploadedFile & { fileName?: string }) => {
                 const fName = f.name || f.fileName || "Unknown file";
                 const fExt = fName.split(".").pop() as FileKind;
                 return (

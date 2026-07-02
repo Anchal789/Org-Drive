@@ -36,7 +36,13 @@ export async function GET(request: NextRequest) {
   if (filesInfo.length === 0) return sendError("No files found", 404);
 
   const actorId = Number(session.userId);
-  const logs: any[] = [];
+  const logs: Array<{
+    userId: number;
+    fileId: number;
+    folderId: number | null;
+    action: string;
+    actionBy: number;
+  }> = [];
   const messageIdsToFetch: number[] = [];
 
   for (const file of filesInfo) {

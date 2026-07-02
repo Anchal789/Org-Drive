@@ -27,9 +27,8 @@ const SwitchLayout: FunctionComponent<{
   }, [setFileLayout]);
 
   const sortedData = useMemo(() => {
-    const getModTime = (item: any) => {
-      const date =
-        item.updatedAt || item.modifiedAt || item.modTime || item.createdAt;
+    const getModTime = (item: UploadedFile | UploadedFolder) => {
+      const date = item.updatedAt || item.createdAt;
       return date ? new Date(date).getTime() : 0;
     };
 
@@ -50,16 +49,16 @@ const SwitchLayout: FunctionComponent<{
       case "size":
         sortedFiles.sort((a, b) => (b.size || 0) - (a.size || 0));
         sortedFolders.sort((a, b) => {
-          const sizeA = (a as any).size || (a as any).itemCount || 0;
-          const sizeB = (b as any).size || (b as any).itemCount || 0;
+          const sizeA = a.fileCount || 0;
+          const sizeB = b.fileCount || 0;
           return sizeA === sizeB ? a.name.localeCompare(b.name) : sizeB - sizeA;
         });
         break;
 
       case "type":
         sortedFiles.sort((a, b) => {
-          const typeA = a.mimeType || (a as any).extension || "";
-          const typeB = b.mimeType || (b as any).extension || "";
+          const typeA = a.mimeType || "";
+          const typeB = b.mimeType || "";
           return typeA.localeCompare(typeB);
         });
         sortedFolders.sort((a, b) => a.name.localeCompare(b.name));

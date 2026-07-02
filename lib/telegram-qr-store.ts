@@ -1,5 +1,5 @@
-import type { TelegramClient } from 'telegram';
-import type { QRLoginEntry } from '@/types/auth';
+import type { TelegramClient } from "telegram";
+import type { QRLoginEntry, TelegramUser, User } from "@/types/auth";
 
 const globalForQRStore = globalThis as unknown as {
   qrLoginStore: Map<string, QRLoginEntry> | undefined;
@@ -31,7 +31,7 @@ export const qrStore = {
     store.set(loginId, {
       client,
       createdAt: Date.now(),
-      status: 'waiting',
+      status: "waiting",
       user: null,
       error: null,
       passwordHint: null,
@@ -45,23 +45,23 @@ export const qrStore = {
   markNeedsPassword(loginId: string, hint: string | null) {
     const entry = store.get(loginId);
     if (entry) {
-      entry.status = 'needs_password';
+      entry.status = "needs_password";
       entry.passwordHint = hint;
     }
   },
 
-  markSuccess(loginId: string, user: any) {
+  markSuccess(loginId: string, user: TelegramUser) {
     const entry = store.get(loginId);
     if (entry) {
-      entry.status = 'success';
-      entry.user = user;
+      entry.status = "success";
+      entry.user = user as User;
     }
   },
 
   markError(loginId: string, error: string) {
     const entry = store.get(loginId);
     if (entry) {
-      entry.status = 'error';
+      entry.status = "error";
       entry.error = error;
     }
   },

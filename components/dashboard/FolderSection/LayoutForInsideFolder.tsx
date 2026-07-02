@@ -26,9 +26,8 @@ const LayoutForInsideFolder: FunctionComponent<{
   }, [setFileLayout]);
 
   const sortedData = useMemo(() => {
-    const getModTime = (item: any) => {
-      const date =
-        item.updatedAt || item.modifiedAt || item.modTime || item.createdAt;
+    const getModTime = (item: UploadedFile) => {
+      const date = item.updatedAt || item.createdAt;
       return date ? new Date(date).getTime() : 0;
     };
 
@@ -50,8 +49,8 @@ const LayoutForInsideFolder: FunctionComponent<{
 
       case "type":
         sortedFiles.sort((a, b) => {
-          const typeA = a.mimeType || (a as any).extension || "";
-          const typeB = b.mimeType || (b as any).extension || "";
+          const typeA = a.mimeType || "";
+          const typeB = b.mimeType || "";
           return typeA.localeCompare(typeB);
         });
         break;
