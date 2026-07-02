@@ -1,0 +1,659 @@
+@use "@/styles/functions" as *;
+
+.container {
+  display: flex;
+  height: 100%;
+  background: v(background);
+  color: v(foreground);
+  font-family: v(font-sans);
+}
+
+.scrollArea {
+  flex: 1;
+  overflow: auto;
+}
+
+.header {
+  padding: 20px 28px 4px;
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+
+  @media (max-width: 768px) {
+    padding: 12px 16px;
+    align-items: center;
+    border-bottom: 1px solid v(border);
+  }
+}
+
+.mobileHeader {
+  display: none;
+
+  @media (max-width: 768px) {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    width: 100%;
+  }
+}
+
+.mobileTitle {
+  flex: 1;
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.desktopHeader {
+  display: block;
+
+  @media (max-width: 768px) {
+    display: none;
+  }
+}
+
+.subtitle {
+  font-size: 11px;
+  color: v(muted-foreground);
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
+
+.title {
+  font-size: 24px;
+  font-weight: 600;
+  margin: 4px 0 4px;
+  letter-spacing: -0.02em;
+}
+
+.description {
+  font-size: 13px;
+  color: v(muted-foreground);
+  margin: 0;
+}
+
+.filterGroup {
+  display: flex;
+  gap: 6px;
+  padding: 3px;
+  background: v(secondary);
+  border-radius: v(radius-md);
+
+  @media (max-width: 768px) {
+    display: none;
+  }
+}
+
+.filterBtn {
+  padding: 5px 12px;
+  font-size: 12px;
+  font-weight: 500;
+  background: transparent;
+  color: v(muted-foreground);
+  border: none;
+  border-radius: v(radius-sm);
+  cursor: pointer;
+}
+
+.filterBtnActive {
+  background: v(background);
+  color: v(foreground);
+  box-shadow: v(shadow-xs);
+}
+
+.kpiGrid {
+  padding: 16px 28px 8px;
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 12px;
+
+  @media (max-width: 1024px) {
+    grid-template-columns: repeat(2, 1fr);
+  }
+  @media (max-width: 768px) {
+    padding: 14px;
+    grid-template-columns: 1fr 1fr;
+  }
+}
+
+.mobileMainKpi {
+  display: none;
+  padding: 16px;
+  border-radius: v(radius-xl);
+  background: v(foreground);
+  color: v(background);
+  align-items: center;
+  gap: 14px;
+  margin: 14px 14px 0;
+
+  @media (max-width: 768px) {
+    display: flex;
+  }
+}
+
+.mobileMainKpiTitle {
+  font-size: 10px;
+  opacity: 0.7;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  font-weight: 600;
+}
+
+.mobileMainKpiValue {
+  font-size: 22px;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+}
+
+.mobileMainKpiSub {
+  font-size: 11px;
+  opacity: 0.75;
+}
+
+.statCard {
+  padding: 16px;
+  border: 1px solid v(border);
+  border-radius: v(radius-xl);
+  background: v(card);
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  transition:
+    transform 0.15s ease,
+    border-color 0.15s ease;
+
+  @media (max-width: 768px) {
+    padding: 12px;
+  }
+}
+
+.statHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.statLabel {
+  font-size: 11px;
+  color: v(muted-foreground);
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.statBadge {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 2px 6px;
+  border-radius: v(radius-full);
+  font-size: 10px;
+  font-weight: 600;
+}
+
+.statBody {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.statValue {
+  font-size: 26px;
+  font-weight: 600;
+  line-height: 1;
+  font-variant-numeric: tabular-nums;
+  letter-spacing: -0.02em;
+
+  @media (max-width: 768px) {
+    font-size: 20px;
+  }
+}
+
+.statSub {
+  font-size: 11px;
+  color: v(muted-foreground);
+  margin-top: 4px;
+}
+
+.mainGrid {
+  padding: 8px 28px;
+  display: grid;
+  grid-template-columns: 1.4fr 1fr;
+  gap: 14px;
+
+  @media (max-width: 1024px) {
+    grid-template-columns: 1fr;
+  }
+  @media (max-width: 768px) {
+    display: none;
+  }
+}
+
+.card {
+  padding: 18px;
+  border: 1px solid v(border);
+  border-radius: v(radius-xl);
+  background: v(card);
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.cardHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.cardTitle {
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.cardSub {
+  font-size: 11px;
+  color: v(muted-foreground);
+}
+
+.legendGroup {
+  display: flex;
+  gap: 12px;
+  font-size: 11px;
+}
+
+.legendItem {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  color: v(muted-foreground);
+}
+
+.legendDot {
+  width: 8px;
+  height: 8px;
+  border-radius: 2px;
+}
+
+.xAxis {
+  display: flex;
+  justify-content: space-between;
+  font-size: 10px;
+  color: v(muted-foreground);
+  margin-top: 6px;
+}
+
+.donutWrapper {
+  display: flex;
+  align-items: center;
+  gap: 18px;
+}
+
+.donutChart {
+  height: 120px;
+  width: 120px;
+}
+
+.donutList {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.donutListItem {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 11px;
+}
+
+.donutListName {
+  flex: 1;
+  font-weight: 500;
+}
+
+.donutListVal {
+  color: v(muted-foreground);
+  font-variant-numeric: tabular-nums;
+}
+
+.donutListPct {
+  color: v(muted-foreground);
+  font-weight: 600;
+  font-size: 10px;
+  width: 28px;
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+}
+
+.activityList {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+
+  @media (max-width: 768px) {
+    padding: 0 14px 14px;
+    gap: 12px;
+  }
+}
+
+.mobileSectionTitle {
+  display: none;
+  font-size: 11px;
+  font-weight: 600;
+  color: v(muted-foreground);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  padding: 8px 18px 0;
+
+  @media (max-width: 768px) {
+    display: block;
+  }
+}
+
+.activityRow {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 0;
+  border-bottom: 1px solid v(border);
+
+  &:last-child {
+    border-bottom: none;
+  }
+
+  @media (max-width: 768px) {
+    padding: 10px 12px;
+    border: 1px solid v(border);
+    border-radius: v(radius-lg);
+    background: v(card);
+  }
+}
+
+.activityInfo {
+  flex: 1;
+  min-width: 0;
+  font-size: 12px;
+}
+
+.activityName {
+  font-weight: 600;
+}
+
+.activityAction {
+  color: v(muted-foreground);
+}
+
+.activityItem {
+  font-weight: 500;
+
+  @media (max-width: 768px) {
+    font-size: 10px;
+    color: v(muted-foreground);
+    margin-top: 1px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    font-weight: 400;
+    display: block;
+  }
+}
+
+.activityTime {
+  font-size: 11px;
+  color: v(muted-foreground);
+  width: 70px;
+  text-align: right;
+
+  @media (max-width: 768px) {
+    width: auto;
+    font-size: 10px;
+  }
+}
+
+.activityBadge {
+  @media (max-width: 768px) {
+    display: none !important;
+  }
+}
+
+.contributorRow {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 0;
+  border-bottom: 1px solid v(border);
+
+  &:last-child {
+    border-bottom: none;
+  }
+}
+
+.contributorInfo {
+  flex: 1;
+  min-width: 0;
+}
+
+.contributorTop {
+  font-size: 12px;
+  font-weight: 500;
+  display: flex;
+  justify-content: space-between;
+}
+
+.contributorMeta {
+  color: v(muted-foreground);
+  font-size: 11px;
+  font-variant-numeric: tabular-nums;
+}
+
+.progressBar {
+  height: 4px;
+  background: v(secondary);
+  border-radius: 999px;
+  margin-top: 6px;
+  overflow: hidden;
+}
+
+.progressFill {
+  height: 100%;
+}
+
+.treemapGrid {
+  padding: 16px 28px 0;
+  display: grid;
+  gap: 8px;
+  grid-template-columns: 2fr 1.4fr 1fr;
+  grid-template-rows: 180px 130px;
+  grid-template-areas:
+    "a a b"
+    "c d b";
+
+  @media (max-width: 768px) {
+    padding: 16px;
+    grid-template-columns: 1fr 1fr;
+    grid-template-rows: 140px 140px;
+    grid-template-areas:
+      "a b"
+      "c d";
+  }
+}
+
+.treeItem {
+  padding: 14px;
+  border-radius: v(radius-xl);
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.treeTitle {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.treeSub {
+  font-size: 10px;
+  margin-top: 2px;
+  opacity: 0.75;
+}
+
+.treeVal {
+  font-size: 28px;
+  font-weight: 700;
+  letter-spacing: -0.03em;
+  line-height: 1;
+}
+
+.treeValSub {
+  font-size: 13px;
+  font-weight: 500;
+  opacity: 0.7;
+}
+
+.listGrid {
+  margin: 14px 28px;
+  padding: 18px;
+  border: 1px solid v(border);
+  border-radius: v(radius-xl);
+  background: v(card);
+
+  @media (max-width: 768px) {
+    margin: 14px 16px;
+  }
+}
+
+.listRow {
+  display: grid;
+  grid-template-columns: 140px 1fr 80px 60px;
+  gap: 12px;
+  align-items: center;
+  padding: 8px 0;
+  border-bottom: 1px solid v(border);
+
+  &:last-child {
+    border-bottom: none;
+  }
+
+  @media (max-width: 768px) {
+    grid-template-columns: 100px 1fr 60px;
+    .listFiles {
+      display: none;
+    }
+  }
+}
+
+.listNameGroup {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.listName {
+  font-size: 12px;
+  font-weight: 500;
+}
+
+.listSize {
+  font-size: 11px;
+  color: v(muted-foreground);
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+}
+
+.listFiles {
+  font-size: 11px;
+  color: v(muted-foreground);
+  text-align: right;
+}
+
+.growthGrid {
+  padding: 0 28px 28px;
+
+  @media (max-width: 768px) {
+    padding: 0 16px 28px;
+  }
+}
+
+.tabs {
+  display: flex;
+  gap: 16px;
+  padding: 0 28px;
+  border-bottom: 1px solid v(border);
+  margin-bottom: 8px;
+
+  @media (max-width: 768px) {
+    padding: 0 16px;
+  }
+}
+
+.tabBtn {
+  background: transparent;
+  border: none;
+  padding: 12px 0;
+  font-size: 13px;
+  font-weight: 500;
+  color: v(muted-foreground);
+  cursor: pointer;
+  position: relative;
+
+  &.active {
+    color: v(foreground);
+    &::after {
+      content: "";
+      position: absolute;
+      bottom: -1px;
+      left: 0;
+      right: 0;
+      height: 2px;
+      background: v(primary);
+    }
+  }
+}
+
+.badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 2px 8px;
+  border-radius: v(radius-full);
+  font-size: 10px;
+  font-weight: 600;
+  border: 1px solid transparent;
+}
+
+.clickableStat {
+  cursor: pointer;
+
+  &:hover {
+    transform: translateY(-2px);
+    border-color: v(primary);
+  }
+
+  &:active {
+    transform: translateY(0);
+  }
+}
+
+.statDelta {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 999px;
+  background: currentColor;
+}
+
+.chartContainer {
+  width: 100%;
+  height: 200px;
+  margin-top: 16px;
+}

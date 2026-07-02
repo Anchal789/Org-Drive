@@ -1,15 +1,16 @@
 @use "../../styles/functions" as *;
 
 .sidebar {
-  flex-shrink: 0;
-  background: v(sidebar);
   border-right: 1px solid v(sidebar-border);
+  z-index: 4;
+}
+
+.sidebarHeader {
   display: flex;
   flex-direction: column;
-  padding: 14px 10px;
-  height: 100%;
-  transition: width 300ms ease;
-  z-index: 4;
+  gap: 14px;
+  padding: 14px 10px 0;
+  position: relative;
 }
 
 .orgPill {
@@ -25,10 +26,14 @@
   font-weight: v(weight-medium);
   color: v(sidebar-foreground);
   font-family: inherit;
+  height: 40px;
+  flex-shrink: 0;
 }
 
 .orgPillCollapsed {
   padding: 8px 8px;
+  width: 40px;
+  justify-content: center;
 
   .orgLogo {
     width: 100%;
@@ -53,7 +58,6 @@
   text-align: left;
 }
 
-// ─── + New button ─────────────────────────────────────────────────────────
 .newButton {
   display: flex;
   align-items: center;
@@ -67,6 +71,7 @@
   cursor: pointer;
   box-shadow: v(shadow-sm);
   height: 40px;
+  flex-shrink: 0;
   font-family: inherit;
   transition: background 120ms ease;
   justify-content: flex-start;
@@ -77,11 +82,10 @@
 .newButtonCollapsed {
   justify-content: center;
   padding: 0;
-  width: 40;
+  width: 40px;
   align-self: center;
 }
 
-// ─── Nav lists ────────────────────────────────────────────────────────────
 .nav {
   display: flex;
   flex-direction: column;
@@ -103,6 +107,8 @@
   width: 100%;
   text-align: left;
   font-family: inherit;
+  height: 36px;
+  flex-shrink: 0;
 }
 
 .navItemActive {
@@ -123,7 +129,6 @@
   font-weight: v(weight-medium);
 }
 
-// ─── Section labels ───────────────────────────────────────────────────────
 .sectionLabel {
   font-size: 10px;
   font-weight: v(weight-semibold);
@@ -137,7 +142,6 @@
   flex: 1;
 }
 
-// ─── Storage card ─────────────────────────────────────────────────────────
 .storage {
   padding: 12px;
   background: v(background);
@@ -170,12 +174,17 @@
   font-size: 10px;
   color: v(muted-foreground);
 }
+
 .contentReset {
-  padding: 0;
+  padding: 0 10px;
+  display: flex;
+  flex-direction: column;
   gap: 14px;
-  overflow: visible;
+  overflow-x: hidden;
+  overflow-y: auto;
+  flex: 1;
 }
 
 .footerReset {
-  padding: 0;
+  padding: 14px 10px;
 }
