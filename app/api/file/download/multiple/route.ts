@@ -20,7 +20,8 @@ export async function GET(request: NextRequest) {
   const { searchParams } = new URL(request.url);
   const session = await getSessionUser();
 
-  if (!session?.userId) return sendError("Unauthorized", 401);
+  if (!session?.userId || !searchParams.get("userId"))
+    return sendError("Unauthorized", 401);
 
   const idsParam = searchParams.get("ids");
   if (!idsParam) return sendError("No file IDs provided", 400);
@@ -35,8 +36,14 @@ export async function GET(request: NextRequest) {
 
   if (filesInfo.length === 0) return sendError("No files found", 404);
 
-  const actorId = Number(session.userId);
-  const logs: any[] = [];
+  const actorId = Number(session.userId || searchParams.get("userId"));
+  const logs: Array<{
+    userId: number;
+    fileId: number;
+    folderId: number | null;
+    action: string;
+    actionBy: number;
+  }> = [];
   const messageIdsToFetch: number[] = [];
 
   for (const file of filesInfo) {

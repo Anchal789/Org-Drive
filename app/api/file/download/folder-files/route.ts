@@ -3,7 +3,7 @@ export const dynamic = "force-dynamic";
 import { ZipArchive as Archiver } from "archiver";
 import type { NextRequest } from "next/server";
 import { PassThrough, Readable } from "stream";
-import { TelegramClient } from "telegram";
+import { Api, TelegramClient } from "telegram";
 import { StringSession } from "telegram/sessions";
 import { sendError } from "@/lib/api-response";
 import { getSessionUser } from "@/lib/session";
@@ -24,7 +24,8 @@ export async function GET(request: NextRequest) {
   const folderId = decrypt(searchParams.get("folderId") || "");
   const folderName = searchParams.get("folderName") || "folder";
 
-  if (!session?.userId) return sendError("Unauthorized", 401);
+  if (!session?.userId || !searchParams.get("userId"))
+    return sendError("Unauthorized", 401);
   if (!folderId) return sendError("Missing folderId", 400);
 
   const filesInFolder = (await uploadedFilesRepository.getFilesInFolder(
@@ -35,7 +36,7 @@ export async function GET(request: NextRequest) {
     return sendError("Folder is empty or not found", 404);
   }
 
-  const actorId = Number(session.userId);
+  const actorId = Number(session.userId || searchParams.get("userId"));
   const ownerId = Number(filesInFolder[0].userId);
 
   const logs = [
@@ -75,7 +76,7 @@ export async function GET(request: NextRequest) {
     { connectionRetries: 1 },
   );
 
-  let targetEntity: any;
+  let targetEntity: Api.TypeEntityLike;
 
   try {
     await client.connect();

@@ -93,20 +93,25 @@ export default function VerifyOtpPage() {
 
   const showOtpUi = status === "entering_otp";
   const showPasswordUi = status === "needs_password";
+  const isSuccess = status === "success";
 
   return (
     <div className={styles.pageWrapper}>
       <div className={styles.authCard}>
-        <Button
-          type="button"
-          onClick={() => router.push("/login")}
-          className={styles.backButton}
-        >
-          <ChevronLeftIcon size={13} /> Back
-        </Button>
+        {/* Hide the back button once successfully verified */}
+        {!isSuccess && (
+          <Button
+            type="button"
+            onClick={() => router.push("/login")}
+            className={styles.backButton}
+          >
+            <ChevronLeftIcon size={13} /> Back
+          </Button>
+        )}
 
         <VerifyStepHeader
           showPasswordUi={showPasswordUi}
+          isSuccess={isSuccess}
           phoneNumber={phoneNumber}
           passwordHint={passwordHint}
           otpLength={OTP_LENGTH}

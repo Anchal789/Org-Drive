@@ -22,7 +22,7 @@ export default function FileSelectionBar({
 }) {
   const { selectedFiles, setSelectedFiles, clearSelection, fileCount } =
     useSelectedFilesStore();
-  const { setOpen, setFiles } = useShareDialogStore();
+  const { setOpen, setFiles, setFile } = useShareDialogStore();
 
   const [modalState, setModalState] = useState<{
     open: boolean;
@@ -122,7 +122,9 @@ export default function FileSelectionBar({
           <Button
             className={styles.actionButton}
             onClick={() => {
-              setFiles(selectedFiles);
+              selectedFiles.length > 1
+                ? setFiles(selectedFiles)
+                : setFile(selectedFiles[0]);
               useShareDialogStore.setState({ onSuccess: clearSelection });
               setOpen(true);
             }}

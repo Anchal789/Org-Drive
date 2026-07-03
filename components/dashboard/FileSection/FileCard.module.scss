@@ -82,10 +82,12 @@
 .name {
   font-size: 12px;
   font-weight: v(weight-medium);
+  max-width: 200px;
   overflow: hidden;
+  overflow-wrap: break-word;
+  word-wrap: break-word;
   text-overflow: ellipsis;
   white-space: nowrap;
-  height: 16px;
 }
 
 .meta {

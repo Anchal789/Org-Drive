@@ -9,7 +9,7 @@
   }
 
   html {
-    font-family: v(font-sans);
+    font-family: var(--font-geist-mono);
     font-size: 16px;
     line-height: v(leading-normal);
     -webkit-font-smoothing: antialiased;
@@ -21,7 +21,7 @@
     background: v(background);
     color: v(foreground);
     min-height: 100dvh;
-    font-family: v(font-sans);
+    font-family: v(--font-geist-sans);
   }
 
   h1 {

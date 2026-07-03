@@ -1,4 +1,3 @@
-// repositories/telegram.repository.ts
 import { sendError } from "@/lib/api-response";
 import { TelegramClient, Api } from "telegram";
 import { StringSession } from "telegram/sessions";
@@ -36,14 +35,13 @@ export const telegramRepository = {
           limit: limit,
         }),
       );
-
-      // Telegram returns a complex object. We need to filter out channels/bots
-      // and map the data into a clean structure for your frontend.
       const users = result.users
-        .filter((user) => user instanceof Api.User && !user.bot)
-        .map((user: any) => ({
+        .filter(
+          (user): user is Api.User => user instanceof Api.User && !user.bot,
+        )
+        .map((user) => ({
           id: String(user.id),
-          accessHash: String(user.accessHash), // You need this if you want to interact with them later!
+          accessHash: String(user.accessHash),
           username: user.username || null,
           firstName: user.firstName || "",
           lastName: user.lastName || "",

@@ -28,7 +28,7 @@ const MoveModal = dynamic(() => import("./MoveModal"));
 const FileTable: FunctionComponent<{
   files: Array<UploadedFile & { shareId?: number }>;
 }> = ({ files }) => {
-  const { setOpen, setFiles } = useShareDialogStore();
+  const { setOpen, setFiles, setFile } = useShareDialogStore();
   const [selectedFiles, setSelectedFiles] = useState<(string | number)[]>([]);
   const [modalState, setModalState] = useState<{
     open: boolean;
@@ -184,7 +184,9 @@ const FileTable: FunctionComponent<{
               className={styles.actionButton}
               variant={"ghost"}
               onClick={() => {
-                setFiles(selectedFileObjects);
+                selectedFileObjects.length > 1
+                  ? setFiles(selectedFileObjects)
+                  : setFile(selectedFileObjects[0]);
                 useShareDialogStore.setState({ onSuccess: clearSelection });
                 setOpen(true);
               }}

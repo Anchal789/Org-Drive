@@ -46,6 +46,7 @@ export default async function DriveTopbar({ user }: { user: SessionUser }) {
             initials={userInitials}
             tone="violet"
             size="default"
+            className={styles.avatar}
             ring
           />
         </PopoverTrigger>
