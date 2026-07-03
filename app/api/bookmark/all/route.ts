@@ -13,7 +13,7 @@ export async function POST(request: Request) {
 
     return sendSuccess(
       null,
-      `Items ${bookmarkState ? "bookmarked" : "unbookmarked"} successfully`,
+      `${items.length > 1 ? "Items" : "Item"} ${bookmarkState ? "bookmarked" : "unbookmarked"} successfully`,
       200,
     );
   } catch (error) {

@@ -5,6 +5,7 @@
   height: 100%;
   background: v(background);
   color: v(foreground);
+  font-family: v(font-sans);
   position: relative;
 }
 
@@ -66,6 +67,7 @@
 }
 
 .filesGrid {
+  margin-top: 16px;
   display: grid;
   grid-template-columns: repeat(5, 1fr);
   gap: 10px;

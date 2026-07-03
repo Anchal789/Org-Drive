@@ -99,7 +99,7 @@ export const uploadedFoldersRepository = {
       );
     return folder;
   },
-  async getFoldersByIds(ids: number[]) {
+  async getFoldersByIds(ids: number[], currentUserId: number) {
     const folders = await db
       .select({
         id: uploadFoldersTable.id,
@@ -118,7 +118,10 @@ export const uploadedFoldersRepository = {
       .leftJoin(userTable, eq(uploadFoldersTable.userId, userTable.id))
       .leftJoin(
         sharedItemsTable,
-        eq(uploadFoldersTable.id, sharedItemsTable.folderId),
+        and(
+          eq(uploadFoldersTable.id, sharedItemsTable.folderId),
+          eq(sharedItemsTable.sharedWithUserId, currentUserId),
+        ),
       )
       .where(
         and(
@@ -126,6 +129,7 @@ export const uploadedFoldersRepository = {
           inArray(uploadFoldersTable.id, ids),
         ),
       );
+
     return folders;
   },
   async getFoldersName(ids: number[]) {
@@ -158,5 +162,13 @@ export const uploadedFoldersRepository = {
       .update(uploadFoldersTable)
       .set({ name: newName })
       .where(eq(uploadFoldersTable.id, id));
+  },
+  async getCountOfFolderSharedWith(folderId: number) {
+    const folders = await db
+      .select()
+      .from(sharedItemsTable)
+      .where(eq(sharedItemsTable.folderId, folderId));
+
+    return folders;
   },
 };

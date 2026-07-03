@@ -3,9 +3,9 @@
 import { UploadedFile } from "@/types/files";
 import { FunctionComponent, useEffect, useMemo, useState } from "react";
 import styles from "./DashFolder.module.scss";
-import FileCard from "../FileSection/FileCard";
 import FileTable from "../ListSection/FileTable";
 import { useFileLayout, useSortByStore } from "@/store/store";
+import FilesContainer from "../FileSection/FilesContainer";
 
 const LayoutForInsideFolder: FunctionComponent<{
   files: Array<UploadedFile>;
@@ -67,9 +67,7 @@ const LayoutForInsideFolder: FunctionComponent<{
       {hydrated ? (
         fileLayout === "grid" ? (
           <div className={styles.filesGrid}>
-            {sortedData.files?.map((file) => (
-              <FileCard key={file.id} file={file} />
-            ))}
+            <FilesContainer files={sortedData.files} />
           </div>
         ) : (
           <FileTable files={sortedData.files} />
