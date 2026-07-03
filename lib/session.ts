@@ -5,6 +5,7 @@ import { StringSession } from "telegram/sessions";
 import { userRepository } from "@/repositories/user.repository";
 import type { TelegramUser } from "@/types/auth";
 import { generateRefreshToken, verifyToken } from "./jwt";
+import { NextRequest } from "next/server";
 
 const API_ID = Number(process.env.TELEGRAM_APP_API_ID);
 const API_HASH = String(process.env.TELEGRAM_APP_API_HASH);
@@ -60,6 +61,22 @@ export async function getSessionUser(): Promise<
 
   if (!payload || !isSessionPayload(payload)) return null;
 
+  return payload;
+}
+
+export async function getApiSession(
+  request: NextRequest,
+): Promise<(TelegramUser & { userId: string }) | null> {
+  const authHeader = request.headers.get("authorization");
+  if (!authHeader || !authHeader.startsWith("Bearer ")) {
+    return null;
+  }
+  const token = authHeader.split(" ")[1];
+  const payload = await verifyToken(token);
+  console.log("authHeader", payload);
+  if (!payload || !isSessionPayload(payload)) {
+    return null;
+  }
   return payload;
 }
 

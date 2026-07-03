@@ -17,6 +17,7 @@ export async function verifyOtp(phoneNumber: string, otpCode: string) {
     step?: string;
     passwordHint?: string;
     user?: User;
+    accessToken?: string;
   }>({
     url: "/api/auth/verify-otp",
     payload: {
@@ -33,6 +34,7 @@ export async function verifyOtpPassword(phoneNumber: string, password: string) {
     step?: string;
     passwordHint?: string;
     user?: User;
+    accessToken?: string;
   }>({
     url: "/api/auth/verify-otp-password",
     payload: {
@@ -64,6 +66,7 @@ export async function qrLogin(loginId: string) {
     step: string;
     passwordHint: string;
     user: User;
+    accessToken?: string;
   }>({
     url: `/api/auth/qr-login?loginId=${loginId}`,
   });

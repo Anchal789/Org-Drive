@@ -1,9 +1,13 @@
 import { sendError, sendSuccess } from "@/lib/api-response";
+import { getApiSession } from "@/lib/session";
 import { decrypt } from "@/lib/utils";
 import { bookmarkRepository } from "@/repositories/bookmark.repository";
 import { NextRequest } from "next/server";
 
 export async function POST(request: NextRequest) {
+  const session = await getApiSession(request);
+
+  if (!session?.userId) return sendError("Unauthorized", 401);
   const { id, isFile, bookmark, shared } = await request.json();
 
   if (!id) {

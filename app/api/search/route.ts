@@ -1,11 +1,14 @@
 import { NextRequest } from "next/server";
-import { getSessionUser } from "@/lib/session";
+import { getApiSession } from "@/lib/session";
 import { sendError, sendSuccess } from "@/lib/api-response";
 import { searchRepository } from "@/repositories/search.repository";
 
 export async function GET(request: NextRequest) {
-  const session = await getSessionUser();
-  if (!session?.userId) return sendError("Unauthorized", 401);
+  const session = await getApiSession(request);
+
+  if (!session || !session.userId) {
+    return sendError("Access token missing or expired", 401);
+  }
 
   const { searchParams } = new URL(request.url);
   const q = searchParams.get("q");

@@ -1,7 +1,7 @@
 "use client";
 
 import { UploadedFile } from "@/types/files";
-import { FunctionComponent, useEffect, useMemo, useState } from "react";
+import { FunctionComponent, useMemo } from "react";
 import styles from "./DashFolder.module.scss";
 import FileTable from "../ListSection/FileTable";
 import { useFileLayout, useSortByStore } from "@/store/store";
@@ -10,20 +10,8 @@ import FilesContainer from "../FileSection/FilesContainer";
 const LayoutForInsideFolder: FunctionComponent<{
   files: Array<UploadedFile>;
 }> = ({ files }) => {
-  const { fileLayout, setFileLayout } = useFileLayout();
+  const { fileLayout, hasHydrated } = useFileLayout();
   const { sortBy } = useSortByStore();
-
-  const [hydrated, setHydrated] = useState<boolean>(false);
-
-  useEffect(() => {
-    const layout = localStorage.getItem("fileLayout");
-
-    if (layout) {
-      setFileLayout(layout as "list" | "grid");
-    }
-
-    setHydrated(true);
-  }, [setFileLayout]);
 
   const sortedData = useMemo(() => {
     const getModTime = (item: UploadedFile) => {
@@ -62,18 +50,16 @@ const LayoutForInsideFolder: FunctionComponent<{
     return { files: sortedFiles };
   }, [files, sortBy]);
 
-  return (
-    <>
-      {hydrated ? (
-        fileLayout === "grid" ? (
-          <div className={styles.filesGrid}>
-            <FilesContainer files={sortedData.files} />
-          </div>
-        ) : (
-          <FileTable files={sortedData.files} />
-        )
-      ) : null}
-    </>
+  if (!hasHydrated) {
+    return null;
+  }
+
+  return fileLayout === "grid" ? (
+    <div className={styles.filesGrid}>
+      <FilesContainer files={sortedData.files} />
+    </div>
+  ) : (
+    <FileTable files={sortedData.files} />
   );
 };
 

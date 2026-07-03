@@ -5,7 +5,7 @@ import { X, Download, Share, Folder, Trash2, Tag, Sparkle } from "lucide-react";
 import styles from "./FileSelectionBar.module.scss";
 import { Separator } from "@/components/ui/separator";
 import { useSelectedFilesStore, useShareDialogStore } from "@/store/store";
-import { UploadedFile } from "@/types/files";
+import { UploadedFile, UploadedFolder } from "@/types/files";
 import { Button } from "@/components/ui/button";
 import { downloadMultiple } from "@/services/file-service";
 import { useState } from "react";
@@ -17,8 +17,10 @@ import AlertModal from "@/components/ui/alert-modal";
 
 export default function FileSelectionBar({
   files,
+  folders,
 }: {
   files: Array<UploadedFile>;
+  folders: Array<UploadedFolder>;
 }) {
   const { selectedFiles, setSelectedFiles, clearSelection, fileCount } =
     useSelectedFilesStore();
@@ -140,6 +142,7 @@ export default function FileSelectionBar({
                 action: "move",
               })
             }
+            disabled={folders.length === 0}
           >
             <Folder size={14} /> Move
           </Button>

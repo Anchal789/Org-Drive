@@ -24,8 +24,7 @@ export async function GET(request: NextRequest) {
   const folderId = decrypt(searchParams.get("folderId") || "");
   const folderName = searchParams.get("folderName") || "folder";
 
-  if (!session?.userId || !searchParams.get("userId"))
-    return sendError("Unauthorized", 401);
+  if (!session?.userId) return sendError("Unauthorized", 401);
   if (!folderId) return sendError("Missing folderId", 400);
 
   const filesInFolder = (await uploadedFilesRepository.getFilesInFolder(

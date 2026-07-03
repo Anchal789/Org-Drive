@@ -1,9 +1,15 @@
 import { sendError, sendSuccess } from "@/lib/api-response";
+import { getApiSession } from "@/lib/session";
 import { decrypt } from "@/lib/utils";
 import { uploadedFilesRepository } from "@/repositories/uploaded-files.respository";
+import { NextRequest } from "next/server";
 
-export async function DELETE(req: Request) {
-  const url = new URL(req.url);
+export async function DELETE(request: NextRequest) {
+  const session = await getApiSession(request);
+
+  if (!session?.userId) return sendError("Unauthorized", 401);
+
+  const url = new URL(request.url);
   const fileId = decrypt(url.searchParams.get("fileId") || "");
   const sharedId = decrypt(url.searchParams.get("shareId") || "");
 

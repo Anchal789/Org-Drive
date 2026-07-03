@@ -2,13 +2,14 @@
 
 import { useRouter } from "next/navigation";
 import type { FunctionComponent } from "react";
-import { encrypt, getFolderTone } from "@/lib/utils";
+import { encrypt, getAvatarColor, getFolderTone } from "@/lib/utils";
 import type { UploadedFolder } from "@/types/files";
 import styles from "./FolderContainer.module.scss";
 import FolderTile from "./FolderTile";
 import Icon from "@/components/ui/icon";
 import { iconsWithPaths, TINTS } from "@/constants/common-constants";
 import FolderMenu from "./FolderMenu/FolderMenu";
+import UserAvatar from "@/components/ui/user-avatar";
 
 const FolderContainer: FunctionComponent<{
   folder: UploadedFolder;
@@ -18,6 +19,10 @@ const FolderContainer: FunctionComponent<{
   const folderId = encrypt(folder.id.toString());
   const folderTone = (folder: UploadedFolder) =>
     TINTS?.[getFolderTone(folder.id)];
+
+  const ownerInitials = folder
+    ? `${folder.ownerFirstName?.charAt(0) ?? ""}${folder.ownerLastName?.charAt(0) ?? ""}`
+    : "";
 
   if (layout === "grid")
     return (
@@ -76,7 +81,21 @@ const FolderContainer: FunctionComponent<{
             />
             <span className={styles.folderName}>{folder.name}</span>
           </div>
-          <FolderMenu folder={folder} />
+          <div className={styles.folderActions}>
+            {folder.bookmark && (
+              <Icon
+                d={iconsWithPaths.bookmark}
+                size={13}
+                className={styles.starIcon}
+              />
+            )}
+            <UserAvatar
+              initials={ownerInitials}
+              tone={getAvatarColor(folder?.userId ?? "")}
+              size="sm"
+            />
+            <FolderMenu folder={folder} />
+          </div>
         </div>
       </div>
     );

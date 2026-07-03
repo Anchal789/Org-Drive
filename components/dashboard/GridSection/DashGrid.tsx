@@ -35,7 +35,7 @@ export default function DashGrid({
         </div>
       )}
       <div className={styles.content}>
-        <FileSelectionBar files={files} />
+        <FileSelectionBar files={files} folders={folders} />
         {files.length > 0 && (
           <>
             <div className={styles.sectionLabel}>Suggested</div>

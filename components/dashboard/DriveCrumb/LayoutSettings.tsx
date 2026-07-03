@@ -19,7 +19,6 @@ const LayoutSettings = () => {
 
   const handleChangeDriveLayout = (layout: "list" | "grid") => {
     setFileLayout(layout);
-    localStorage.setItem("fileLayout", layout);
   };
   return (
     <Popover>

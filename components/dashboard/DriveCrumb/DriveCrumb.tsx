@@ -15,7 +15,6 @@ export default function DriveCrumb({ inFolder }: { inFolder?: string }) {
 
   const handleChangeDriveLayout = (layout: "list" | "grid") => {
     setFileLayout(layout);
-    localStorage.setItem("fileLayout", layout);
   };
   return (
     <div className={styles.crumb}>

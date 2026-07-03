@@ -1,4 +1,4 @@
-import { jwtVerify, SignJWT } from 'jose';
+import { jwtVerify, SignJWT } from "jose";
 
 const secret = new TextEncoder().encode(process.env.JWT_SECRET);
 
@@ -18,9 +18,9 @@ export async function generateAccessToken(
     username,
     photoUrl,
   })
-    .setProtectedHeader({ alg: 'HS256' })
+    .setProtectedHeader({ alg: "HS256" })
     .setIssuedAt()
-    .setExpirationTime('5s')
+    .setExpirationTime("15m")
     .sign(secret);
 }
 
@@ -40,9 +40,9 @@ export async function generateRefreshToken(
     username,
     photoUrl,
   })
-    .setProtectedHeader({ alg: 'HS256' })
+    .setProtectedHeader({ alg: "HS256" })
     .setIssuedAt()
-    .setExpirationTime('7d')
+    .setExpirationTime("7d")
     .sign(secret);
 }
 

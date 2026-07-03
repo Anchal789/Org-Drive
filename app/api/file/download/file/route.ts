@@ -8,6 +8,7 @@ import { systemSettingsRepository } from "@/repositories/system-settings.reposit
 import type { UploadedFile } from "@/types/files";
 import { db } from "@/db";
 import { recentTable } from "@/db/schema";
+import { decrypt } from "@/lib/utils";
 
 const API_ID = Number(process.env.TELEGRAM_APP_API_ID);
 const API_HASH = String(process.env.TELEGRAM_APP_API_HASH);
@@ -17,10 +18,9 @@ export async function GET(request: NextRequest) {
   const { searchParams } = new URL(request.url);
   const session = await getSessionUser();
 
-  if (!session?.userId || !searchParams.get("userId"))
-    return sendError("Unauthorized", 401);
+  if (!session?.userId) return sendError("Unauthorized", 401);
 
-  const fileId = searchParams.get("fileId");
+  const fileId = decrypt(searchParams.get("token") || "");
   const requestUserId = searchParams.get("userId");
 
   const fileInfo = (

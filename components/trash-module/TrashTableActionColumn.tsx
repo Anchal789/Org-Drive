@@ -75,7 +75,12 @@ const TrashTableActionColumn: FunctionComponent<{
         <CustomTooltip title="Delete Permanently">
           <Button
             type="button"
-            onClick={handleDelete}
+            onClick={() => {
+              setDialogState({
+                open: true,
+                action: "delete",
+              });
+            }}
             className={styles.iconButton}
           >
             <X size={14} className={styles.icon} />

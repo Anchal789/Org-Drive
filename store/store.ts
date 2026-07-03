@@ -13,11 +13,18 @@ import {
 import { UploadedFile, UploadedFolder } from "@/types/files";
 import { persist } from "zustand/middleware";
 
-export const useAuthStore = create<AuthStateStore>((set) => ({
-  accessToken: null,
-  setAccessToken: (token) => set({ accessToken: token }),
-  clearAuth: () => set({ accessToken: null }),
-}));
+export const useAuthStore = create<AuthStateStore>()(
+  persist(
+    (set) => ({
+      accessToken: null,
+      setAccessToken: (token: string | null) => set({ accessToken: token }),
+      clearAuth: () => set({ accessToken: null }),
+    }),
+    {
+      name: "auth-storage",
+    },
+  ),
+);
 
 export const useDragDropStore = create<DragDropStore>((set) => ({
   isDragging: false,
@@ -30,10 +37,18 @@ export const useFileLayout = create<FileLayoutStore>()(
   persist(
     (set) => ({
       fileLayout: "grid",
+      hasHydrated: false,
+
+      setHasHydrated: (state) => set({ hasHydrated: state }),
+
       setFileLayout: (layout) => set({ fileLayout: layout }),
     }),
     {
-      name: "file-layout",
+      name: "fileLayout",
+
+      onRehydrateStorage: () => (state) => {
+        state?.setHasHydrated(true);
+      },
     },
   ),
 );

@@ -1,8 +1,13 @@
 import { sendError, sendSuccess } from "@/lib/api-response";
+import { getApiSession } from "@/lib/session";
 import { uploadedFoldersRepository } from "@/repositories/uploaded-folders.respository";
 import { NextRequest } from "next/server";
 
 export async function POST(request: NextRequest) {
+  const session = await getApiSession(request);
+
+  if (!session?.userId) return sendError("Unauthorized", 401);
+
   const { id, newName } = await request.json();
   if (!id) {
     return sendError("Missing id", 400);

@@ -27,12 +27,23 @@
   gap: 8px;
 }
 
+.folderActions {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
 .folderName {
   font-size: 12px;
   font-weight: v(weight-medium);
+  max-width: 100px;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
+}
+
+.starIcon {
+  color: v(tint-amber-bd);
 }
 
 .moreBtn {

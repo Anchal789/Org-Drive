@@ -147,14 +147,19 @@ export const uploadedFoldersRepository = {
       );
     return folders;
   },
-  async getAllFoldersWithIdName() {
+  async getAllFoldersWithIdName(userId: number) {
     const folders = await db
       .select({
         id: uploadFoldersTable.id,
         name: uploadFoldersTable.name,
       })
       .from(uploadFoldersTable)
-      .where(eq(uploadFoldersTable.isDeleted, false));
+      .where(
+        and(
+          eq(uploadFoldersTable.userId, userId),
+          eq(uploadFoldersTable.isDeleted, false),
+        ),
+      );
     return folders;
   },
   async renameFolder(id: number, newName: string) {

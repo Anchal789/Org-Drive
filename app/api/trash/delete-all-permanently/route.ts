@@ -1,25 +1,31 @@
 export const dynamic = "force-dynamic";
 
 import { sendError, sendSuccess } from "@/lib/api-response";
-import { getSessionUser } from "@/lib/session";
+import { getApiSession } from "@/lib/session";
 import { trashedItemsRepository } from "@/repositories/trashed-items.repository";
 import { systemSettingsRepository } from "@/repositories/system-settings.repository";
 import { TelegramClient } from "telegram";
 import { StringSession } from "telegram/sessions";
+import { NextRequest } from "next/server";
 
 const API_ID = Number(process.env.TELEGRAM_APP_API_ID);
 const API_HASH = String(process.env.TELEGRAM_APP_API_HASH);
 const STORAGE_CHANNEL = String(process.env.TELEGRAM_STORAGE_CHANNEL_ID);
 
-export async function DELETE() {
-  const session = await getSessionUser();
-  if (!session?.userId) return sendError("Unauthorized", 401);
+export async function DELETE(request: NextRequest) {
+  const session = await getApiSession(request);
+
+  if (!session || !session.userId) {
+    return sendError("Access token missing or expired", 401);
+  }
 
   const telegramMessageIds = await trashedItemsRepository.emptyTrash(
     Number(session.userId),
+    true,
   );
 
   if (telegramMessageIds.length === 0) {
+    await trashedItemsRepository.emptyTrash(Number(session.userId), false);
     return sendSuccess(null, "Trash is already empty", 200);
   }
 
@@ -50,6 +56,8 @@ export async function DELETE() {
     await client.deleteMessages(targetEntity, telegramMessageIds, {
       revoke: true,
     });
+
+    await trashedItemsRepository.emptyTrash(Number(session.userId), false);
 
     return sendSuccess(
       null,

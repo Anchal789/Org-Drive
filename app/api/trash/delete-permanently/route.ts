@@ -1,7 +1,7 @@
 export const dynamic = "force-dynamic";
 
-import { sendError } from "@/lib/api-response";
-import { getSessionUser } from "@/lib/session";
+import { sendError, sendSuccess } from "@/lib/api-response";
+import { getApiSession } from "@/lib/session";
 import { decrypt } from "@/lib/utils";
 import { systemSettingsRepository } from "@/repositories/system-settings.repository";
 import { trashedItemsRepository } from "@/repositories/trashed-items.repository";
@@ -19,12 +19,16 @@ export async function DELETE(request: NextRequest) {
 
   if (!trashId) return sendError("Missing id", 400);
 
-  const session = await getSessionUser();
-  if (!session?.userId) return sendError("Unauthorized", 401);
+  const session = await getApiSession(request);
+
+  if (!session || !session.userId) {
+    return sendError("Access token missing or expired", 401);
+  }
 
   const telegramMessageIds = await trashedItemsRepository.permanentlyDeleteItem(
     Number(session.userId),
     Number(trashId),
+    true,
   );
 
   if (!telegramMessageIds) {
@@ -32,13 +36,13 @@ export async function DELETE(request: NextRequest) {
   }
 
   if (telegramMessageIds.length === 0) {
-    return new Response(
-      JSON.stringify({ message: "Item permanently deleted" }),
-      {
-        status: 200,
-        headers: { "Content-Type": "application/json" },
-      },
+    await trashedItemsRepository.permanentlyDeleteItem(
+      Number(session.userId),
+      Number(trashId),
+      false,
     );
+
+    return sendSuccess(null, "Item deleted permanently", 200);
   }
 
   const botSessionString = await systemSettingsRepository.getBotSessionString();
@@ -69,22 +73,22 @@ export async function DELETE(request: NextRequest) {
       revoke: true,
     });
 
-    return new Response(
-      JSON.stringify({ message: "Item permanently deleted" }),
-      {
-        status: 200,
-        headers: { "Content-Type": "application/json" },
-      },
+    await trashedItemsRepository.permanentlyDeleteItem(
+      Number(session.userId),
+      Number(trashId),
+      false,
     );
+
+    return sendSuccess(null, "Item deleted permanently", 200);
   } catch (err: unknown) {
     const errMsg = err instanceof Error ? err.message : String(err);
+    console.error("SINGLE TELEGRAM DELETE ERROR:", errMsg);
+
     if (errMsg?.includes("AUTH_KEY_UNREGISTERED")) {
       return sendError("Telegram session expired.", 401);
     }
-    return sendError(
-      "Removed from drive, but failed to free Telegram space",
-      500,
-    );
+
+    return sendError(`Telegram Error: ${errMsg}. (Database protected)`, 500);
   } finally {
     if (client) {
       await client.disconnect().catch(() => {});

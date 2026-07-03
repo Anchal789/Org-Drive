@@ -17,16 +17,20 @@ export const restoreFile = async (trashId: number) => {
 };
 
 export const permanentDeleteFile = async (trashId: number) => {
-  const response = await deleteData({
-    url: `/api/trash/delete-permanently?id=${encrypt(String(trashId))}`,
-  });
+  try {
+    const response = await deleteData({
+      url: `/api/trash/delete-permanently?id=${encrypt(String(trashId))}`,
+    });
 
-  if (response.success) {
-    toast.success(response.message);
-  } else {
-    toast.error(response.message);
+    if (response.success) {
+      toast.success(response.message);
+    } else {
+      toast.error(response.message);
+    }
+    return response;
+  } catch (error) {
+    toast.error("Something went wrong");
   }
-  return response;
 };
 
 export const emptyTrash = async () => {

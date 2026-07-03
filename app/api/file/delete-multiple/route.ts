@@ -1,7 +1,13 @@
 import { sendError, sendSuccess } from "@/lib/api-response";
+import { getApiSession } from "@/lib/session";
 import { uploadedFilesRepository } from "@/repositories/uploaded-files.respository";
+import { NextRequest } from "next/server";
 
-export async function POST(request: Request) {
+export async function POST(request: NextRequest) {
+  const session = await getApiSession(request);
+
+  if (!session?.userId) return sendError("Unauthorized", 401);
+
   try {
     const { items } = await request.json();
 

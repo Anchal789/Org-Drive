@@ -35,6 +35,7 @@ const Bookmark = async () => {
 
   const sharedFolders = (await uploadedFoldersRepository.getFoldersByIds(
     sharedFolderIds,
+    Number(user?.userId),
   )) as Array<UploadedFolder>;
 
   bookmarkedFiles.push(...sharedFiles);

@@ -1,11 +1,15 @@
 import { sendError, sendSuccess } from "@/lib/api-response";
-import { getSessionUser } from "@/lib/session";
+import { getApiSession } from "@/lib/session";
 import { decrypt } from "@/lib/utils";
 import { trashedItemsRepository } from "@/repositories/trashed-items.repository";
 import { NextRequest } from "next/server";
 
 export async function POST(request: NextRequest) {
-  const user = await getSessionUser();
+  const user = await getApiSession(request);
+
+  if (!user || !user.userId) {
+    return sendError("Access token missing or expired", 401);
+  }
   const { id } = await request.json();
 
   if (!id) {

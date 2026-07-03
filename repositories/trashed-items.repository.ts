@@ -43,6 +43,7 @@ export const trashedItemsRepository = {
 
     return trashedItems;
   },
+
   async restoreTrashItem(userId: number, id: number) {
     const [folderOrFile] = await db
       .select()
@@ -97,7 +98,12 @@ export const trashedItemsRepository = {
     }
     return null;
   },
-  async permanentlyDeleteFile(userId: number, trashId: number) {
+
+  async permanentlyDeleteFile(
+    userId: number,
+    trashId: number,
+    onlyGetIds: boolean = false,
+  ) {
     const [trashedItem] = await db
       .select()
       .from(trashedTable)
@@ -117,13 +123,19 @@ export const trashedItemsRepository = {
       );
 
     if (!originalFile) return null;
-    await db.delete(trashedTable).where(eq(trashedTable.id, trashId));
-    await db
-      .delete(uploadedFilesTable)
-      .where(eq(uploadedFilesTable.id, originalFile.id));
-    return originalFile.telegramMessageId;
+
+    if (!onlyGetIds) {
+      await db.delete(trashedTable).where(eq(trashedTable.id, trashId));
+      await db
+        .delete(uploadedFilesTable)
+        .where(eq(uploadedFilesTable.id, originalFile.id));
+    }
+
+    const tId = Number(originalFile.telegramMessageId);
+    return !isNaN(tId) && tId > 0 ? tId : null;
   },
-  async emptyTrash(userId: number) {
+
+  async emptyTrash(userId: number, onlyGetIds: boolean = false) {
     const trashedItems = await db
       .select()
       .from(trashedTable)
@@ -162,25 +174,30 @@ export const trashedItemsRepository = {
       );
     }
 
-    await db.delete(trashedTable).where(eq(trashedTable.userId, userId));
+    if (!onlyGetIds) {
+      await db.delete(trashedTable).where(eq(trashedTable.userId, userId));
 
-    if (fileIds.length > 0) {
-      await db
-        .delete(uploadedFilesTable)
-        .where(inArray(uploadedFilesTable.id, fileIds));
+      if (fileIds.length > 0) {
+        await db
+          .delete(uploadedFilesTable)
+          .where(inArray(uploadedFilesTable.id, fileIds));
+      }
+
+      if (folderIds.length > 0) {
+        await db
+          .delete(uploadedFilesTable)
+          .where(inArray(uploadedFilesTable.folderId, folderIds));
+        await db
+          .delete(uploadFoldersTable)
+          .where(inArray(uploadFoldersTable.id, folderIds));
+      }
     }
 
-    if (folderIds.length > 0) {
-      await db
-        .delete(uploadedFilesTable)
-        .where(inArray(uploadedFilesTable.folderId, folderIds));
-      await db
-        .delete(uploadFoldersTable)
-        .where(inArray(uploadFoldersTable.id, folderIds));
-    }
-
-    return telegramIdsToRevoke.filter((id) => !isNaN(id));
+    return Array.from(
+      new Set(telegramIdsToRevoke.filter((id) => !isNaN(id) && id > 0)),
+    );
   },
+
   async getUsersWithExpiredTrash() {
     const thirtyDaysAgo = new Date(Date.now() - 30 * 24 * 60 * 60 * 1000);
 
@@ -192,7 +209,10 @@ export const trashedItemsRepository = {
     return [...new Set(expiredItems.map((item) => item.userId))];
   },
 
-  async processExpiredTrashForUser(userId: number) {
+  async processExpiredTrashForUser(
+    userId: number,
+    onlyGetIds: boolean = false,
+  ) {
     const thirtyDaysAgo = new Date(Date.now() - 30 * 24 * 60 * 60 * 1000);
 
     const expiredTrashItems = await db
@@ -241,26 +261,35 @@ export const trashedItemsRepository = {
       );
     }
 
-    await db.delete(trashedTable).where(inArray(trashedTable.id, trashIds));
+    if (!onlyGetIds) {
+      await db.delete(trashedTable).where(inArray(trashedTable.id, trashIds));
 
-    if (fileIds.length > 0) {
-      await db
-        .delete(uploadedFilesTable)
-        .where(inArray(uploadedFilesTable.id, fileIds));
+      if (fileIds.length > 0) {
+        await db
+          .delete(uploadedFilesTable)
+          .where(inArray(uploadedFilesTable.id, fileIds));
+      }
+
+      if (folderIds.length > 0) {
+        await db
+          .delete(uploadedFilesTable)
+          .where(inArray(uploadedFilesTable.folderId, folderIds));
+        await db
+          .delete(uploadFoldersTable)
+          .where(inArray(uploadFoldersTable.id, folderIds));
+      }
     }
 
-    if (folderIds.length > 0) {
-      await db
-        .delete(uploadedFilesTable)
-        .where(inArray(uploadedFilesTable.folderId, folderIds));
-      await db
-        .delete(uploadFoldersTable)
-        .where(inArray(uploadFoldersTable.id, folderIds));
-    }
-
-    return telegramIdsToRevoke.filter((id) => !isNaN(id));
+    return Array.from(
+      new Set(telegramIdsToRevoke.filter((id) => !isNaN(id) && id > 0)),
+    );
   },
-  async permanentlyDeleteItem(userId: number, trashId: number) {
+
+  async permanentlyDeleteItem(
+    userId: number,
+    trashId: number,
+    onlyGetIds: boolean = false,
+  ) {
     const [trashedItem] = await db
       .select()
       .from(trashedTable)
@@ -269,6 +298,7 @@ export const trashedItemsRepository = {
       );
     if (!trashedItem) return null;
     let telegramIdsToRevoke: number[] = [];
+
     if (trashedItem.fileId) {
       const [originalFile] = await db
         .select({ telegramMessageId: uploadedFilesTable.telegramMessageId })
@@ -283,10 +313,13 @@ export const trashedItemsRepository = {
       if (originalFile) {
         telegramIdsToRevoke.push(Number(originalFile.telegramMessageId));
       }
-      await db.delete(trashedTable).where(eq(trashedTable.id, trashId));
-      await db
-        .delete(uploadedFilesTable)
-        .where(eq(uploadedFilesTable.id, trashedItem.fileId));
+
+      if (!onlyGetIds) {
+        await db.delete(trashedTable).where(eq(trashedTable.id, trashId));
+        await db
+          .delete(uploadedFilesTable)
+          .where(eq(uploadedFilesTable.id, trashedItem.fileId));
+      }
     } else if (trashedItem.folderId) {
       const filesInFolder = await db
         .select({
@@ -295,21 +328,29 @@ export const trashedItemsRepository = {
         })
         .from(uploadedFilesTable)
         .where(eq(uploadedFilesTable.folderId, trashedItem.folderId));
+
       telegramIdsToRevoke.push(
         ...filesInFolder.map((f) => Number(f.telegramMessageId)),
       );
-      await db.delete(trashedTable).where(eq(trashedTable.id, trashId));
-      await db
-        .delete(trashedTable)
-        .where(eq(trashedTable.id, trashedItem.folderId));
-      await db
-        .delete(uploadedFilesTable)
-        .where(eq(uploadedFilesTable.folderId, trashedItem.folderId));
-      await db
-        .delete(uploadFoldersTable)
-        .where(eq(uploadFoldersTable.id, trashedItem.folderId));
+
+      if (!onlyGetIds) {
+        await db.delete(trashedTable).where(eq(trashedTable.id, trashId));
+
+        await db
+          .delete(trashedTable)
+          .where(eq(trashedTable.folderId, trashedItem.folderId));
+
+        await db
+          .delete(uploadedFilesTable)
+          .where(eq(uploadedFilesTable.folderId, trashedItem.folderId));
+        await db
+          .delete(uploadFoldersTable)
+          .where(eq(uploadFoldersTable.id, trashedItem.folderId));
+      }
     }
 
-    return telegramIdsToRevoke.filter((id) => !isNaN(id));
+    return Array.from(
+      new Set(telegramIdsToRevoke.filter((id) => !isNaN(id) && id > 0)),
+    );
   },
 };

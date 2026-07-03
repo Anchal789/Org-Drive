@@ -1,11 +1,12 @@
-import { getSessionUser } from "@/lib/session";
+import { getApiSession } from "@/lib/session";
 import { sendError, sendSuccess } from "@/lib/api-response";
 import { analyticsRepository } from "@/repositories/analytics.repository";
 import { AnalyticsDataPayload } from "@/types/analytics";
+import { NextRequest } from "next/server";
 
-export async function GET() {
-  const session = await getSessionUser();
-  if (!session?.userId) return sendError("Unauthorized", 401);
+export async function GET(request: NextRequest) {
+  const session = await getApiSession(request);
+  if (!session || !session?.userId) return sendError("Unauthorized", 401);
   const userId = Number(session.userId);
 
   try {

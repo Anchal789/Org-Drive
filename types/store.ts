@@ -16,7 +16,9 @@ export interface DragDropStore {
 
 export interface FileLayoutStore {
   fileLayout: "list" | "grid";
+  hasHydrated: boolean;
   setFileLayout: (layout: "list" | "grid") => void;
+  setHasHydrated: (state: boolean) => void;
 }
 
 export interface SortByStore {

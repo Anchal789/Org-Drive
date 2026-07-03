@@ -2,15 +2,17 @@ import { sendError, sendSuccess } from "@/lib/api-response";
 import { shareRepository } from "@/repositories/share.repository";
 import { sharedWithMeRepository } from "@/repositories/shared-with-me.repository";
 import { NextRequest } from "next/server";
-import { getSessionUser } from "@/lib/session";
+import { getApiSession } from "@/lib/session";
 import { db } from "@/db";
 import { recentTable } from "@/db/schema";
 
 export async function POST(request: NextRequest) {
-  const session = await getSessionUser();
-  const actorId = Number(session?.userId);
+  const session = await getApiSession(request);
 
-  if (!actorId) return sendError("Unauthorized", 401);
+  if (!session || !session.userId) {
+    return sendError("Access token missing or expired", 401);
+  }
+  const actorId = Number(session?.userId);
 
   const { usersToInvite, usersWithAccess, file, folder, files } =
     await request.json();

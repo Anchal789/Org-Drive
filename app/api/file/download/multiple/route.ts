@@ -20,8 +20,7 @@ export async function GET(request: NextRequest) {
   const { searchParams } = new URL(request.url);
   const session = await getSessionUser();
 
-  if (!session?.userId || !searchParams.get("userId"))
-    return sendError("Unauthorized", 401);
+  if (!session?.userId) return sendError("Unauthorized", 401);
 
   const idsParam = searchParams.get("ids");
   if (!idsParam) return sendError("No file IDs provided", 400);

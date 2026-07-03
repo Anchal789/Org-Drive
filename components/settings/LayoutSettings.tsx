@@ -13,7 +13,6 @@ const LayoutSettings = () => {
       value={fileLayout}
       onValueChange={(value) => {
         setFileLayout(value as "grid" | "list");
-        localStorage.setItem("fileLayout", value as "grid" | "list");
       }}
     >
       <TabsList>

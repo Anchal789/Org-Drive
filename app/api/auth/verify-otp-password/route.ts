@@ -6,6 +6,7 @@ import { createSession } from "@/lib/session";
 import { pendingLoginRepository } from "@/repositories/pending-login.repository";
 import { userRepository } from "@/repositories/user.repository";
 import type { UpsertUserInput } from "@/types/auth";
+import { generateAccessToken } from "@/lib/jwt";
 
 const API_ID = Number(process.env.TELEGRAM_APP_API_ID);
 const API_HASH = String(process.env.TELEGRAM_APP_API_HASH);
@@ -102,7 +103,16 @@ export async function POST(request: Request) {
       userId: String(dbUser.id),
     });
 
-    return sendSuccess({ step: "success", user: dbUser });
+    const accessToken = await generateAccessToken(
+      String(dbUser.id),
+      String(dbUser.telegramId),
+      String(dbUser.firstName),
+      String(dbUser.lastName),
+      String(dbUser.username),
+      String(dbUser.photoUrl),
+    );
+
+    return sendSuccess({ step: "success", user: dbUser, accessToken });
   } catch (err: unknown) {
     const errMsg = err instanceof Error ? err.message : String(err);
 

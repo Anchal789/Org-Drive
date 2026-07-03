@@ -14,6 +14,7 @@ import styles from "./VerifyOtpPage.module.scss";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { ChevronLeftIcon } from "lucide-react";
+import { useAuthStore } from "@/store/store";
 
 const OTP_LENGTH = 5;
 const RESEND_SECONDS = 60;
@@ -47,6 +48,9 @@ export default function VerifyOtpPage() {
       const data = response?.data;
 
       if (response.success && data.step === "success") {
+        if (data.accessToken) {
+          useAuthStore.getState().setAccessToken(data.accessToken);
+        }
         dispatch({ type: "success" });
         setTimeout(() => router.replace("/my-drive"), 1000);
       } else if (response.success && data?.step === "needs_password") {
@@ -77,6 +81,9 @@ export default function VerifyOtpPage() {
       const data = response?.data;
 
       if (response.success && data?.step === "success") {
+        if (data.accessToken) {
+          useAuthStore.getState().setAccessToken(data.accessToken);
+        }
         dispatch({ type: "success" });
         setTimeout(() => router.replace("/my-drive"), 1000);
       } else {

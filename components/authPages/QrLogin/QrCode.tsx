@@ -11,6 +11,7 @@ import type { TelegramUser } from "@/types/auth";
 import styles from "./QrCode.module.scss";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
+import { useAuthStore } from "@/store/store";
 
 const POLL_INTERVAL_MS = 2000;
 
@@ -106,6 +107,9 @@ export default function QrCode() {
             passwordHint: data.passwordHint ?? null,
           });
         } else if (data.step === "success" && data.user) {
+          if (data.accessToken) {
+            useAuthStore.getState().setAccessToken(data.accessToken);
+          }
           setState({ status: "success", user: data.user });
           setTimeout(() => navigateToMyDrive(), 1500);
         } else if (data.step === "expired") {
