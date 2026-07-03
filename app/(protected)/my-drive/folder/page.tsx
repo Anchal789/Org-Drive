@@ -1,6 +1,7 @@
 import DashFolder from "@/components/dashboard/FolderSection/DashFolder";
 import { decrypt } from "@/lib/utils";
 import { uploadedFilesRepository } from "@/repositories/uploaded-files.respository";
+import { uploadedFoldersRepository } from "@/repositories/uploaded-folders.respository";
 import type { UploadedFile } from "@/types/files";
 
 export default async function FolderPage({
@@ -15,11 +16,20 @@ export default async function FolderPage({
     Number(decryptedId),
   )) as Array<UploadedFile>;
 
+  const sharedFolder =
+    await uploadedFoldersRepository.getCountOfFolderSharedWith(
+      Number(decryptedId),
+    );
+
+  const permissions = sharedFolder.map((folder) => folder.permission);
+
   return (
     <DashFolder
       files={filesInFolders}
       folderName={folderName}
       folderId={Number(decryptedId)}
+      membersCount={sharedFolder.length}
+      permissions={permissions}
     />
   );
 }

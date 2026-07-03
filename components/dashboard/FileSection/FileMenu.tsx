@@ -127,7 +127,7 @@ const FileMenu: FunctionComponent<{
                 size={14}
                 className={styles.icon}
               />
-              Bookmark
+              {file.bookmark ? "Unbookmark" : "Bookmark"}
             </DropdownMenuItem>
             <Separator className={styles.separator} />
             <DropdownMenuItem

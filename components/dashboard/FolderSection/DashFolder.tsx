@@ -9,24 +9,40 @@ import UploadWidget from "../upload-widget/UploadWidget";
 import styles from "./DashFolder.module.scss";
 import { DownloadAllButton } from "./DownloadAllButton";
 import LayoutForInsideFolder from "./LayoutForInsideFolder";
+import FileSelectionBar from "../FileSection/FileSelectionBar";
 
 export default function DashFolder({
   files,
   folderName,
   folderId,
+  membersCount,
+  permissions,
 }: {
   files: Array<UploadedFile>;
   folderName: string;
   folderId: number;
+  membersCount: number;
+  permissions: string[];
 }) {
+  const canEdit = permissions.includes("editor");
+  const canView = permissions.includes("viewer");
+
   return (
     <>
       <DriveCrumb inFolder={folderName ?? "Folder name"} />
 
       <div className={styles.subHeader}>
-        <Icon d={iconsWithPaths.users} size={13} /> Shared with 4 people
-        <span className={styles.divider} />
-        <Icon d={iconsWithPaths.shield} size={13} /> Members can edit
+        <Icon d={iconsWithPaths.users} size={13} />{" "}
+        {membersCount
+          ? `Shared with ${membersCount} people`
+          : "Shared with no one"}
+        {!!membersCount && (
+          <>
+            <span className={styles.divider} />
+            <Icon d={iconsWithPaths.shield} size={13} /> Members can
+            {canEdit && " edit"} {canEdit && canView && "&"} {canView && "view"}
+          </>
+        )}
         <div className={styles.flex} />
         <Btn variant="ghost" size="sm" icon={iconsWithPaths.share}>
           Share
@@ -49,13 +65,7 @@ export default function DashFolder({
           <span className={styles.flatHintAction}>About this</span>
         </div>
 
-        {/* Files grid */}
-        {/* <div className={styles.filesGrid}>
-          {files?.map((file) => (
-            <FileCard key={file.id} file={file} />
-          ))}
-        </div>
-        <FileTable files={files} /> */}
+        <FileSelectionBar files={files} />
         <LayoutForInsideFolder files={files} />
       </div>
 

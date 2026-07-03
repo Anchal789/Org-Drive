@@ -34,6 +34,7 @@ export default async function Page() {
 
   const sharedFolders = (await uploadedFoldersRepository.getFoldersByIds(
     sharedFolderIds,
+    userId,
   )) as Array<UploadedFolder>;
 
   const sharedFilesWithAlias = sharedFiles.map((file) => {
