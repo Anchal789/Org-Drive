@@ -21,6 +21,7 @@ import { Separator } from "@/components/ui/separator";
 import FileType from "@/components/ui/fileType";
 import { FileKind } from "@/types/dashboard";
 import { UploadedFile } from "@/types/files";
+import { encrypt } from "@/lib/utils";
 
 type SharePermission = "viewer" | "editor" | "owner" | "commenter";
 
@@ -176,7 +177,7 @@ export default function ShareDialog({
   userId: number;
   allUsers: Array<User>;
 }) {
-  const { open, setOpen, file, folder, files, onSuccess } =
+  const { open, setOpen, file, folder, files, onSuccess, onCancel } =
     useShareDialogStore();
 
   const [state, dispatch] = useReducer(shareReducer, initialShareState);
@@ -197,6 +198,10 @@ export default function ShareDialog({
   const debouncedSearchTerm = useDebounce(searchTerm, 300);
 
   const isMultiShare = Array.isArray(files) && files.length > 1;
+
+  const isSharedFiles = isMultiShare
+    ? files.some((f) => f?.shareId)
+    : file?.shareId;
 
   const actualFile =
     file ||
@@ -308,6 +313,56 @@ export default function ShareDialog({
     }
   };
 
+  // Inside your handleCopyLink function in ShareDialog.tsx
+
+  const handleCopyLink = async () => {
+    try {
+      let payload: {
+        type: "file" | "folder" | "multi";
+        ids: number[];
+        userId?: number;
+      } = {
+        type: "file",
+        ids: [],
+        userId: undefined,
+      };
+
+      if (isMultiShare && files && files.length > 0) {
+        payload = {
+          type: "multi",
+          ids: files.map((f) => f.id),
+          userId: files[0].userId,
+        };
+      } else if (actualFile) {
+        payload = {
+          type: "file",
+          ids: [actualFile.id],
+          userId: actualFile.userId,
+        };
+      } else if (folder) {
+        payload = {
+          type: "folder",
+          ids: [folder.id],
+          userId: folder.userId,
+        };
+      }
+
+      if (!payload.userId || !payload.ids || payload.ids.length === 0) {
+        return toast.error("Failed to copy link");
+      }
+
+      const token = encrypt(JSON.stringify(payload));
+
+      const url = `${window.location.origin}/share/${token}`;
+
+      await navigator.clipboard.writeText(url);
+      toast.success("Secure link copied to clipboard!");
+    } catch (err) {
+      toast.error("Failed to copy link");
+      console.error(err);
+    }
+  };
+
   if (!open || (!activeItem && !isMultiShare)) return null;
 
   let activeName: string | undefined = undefined;
@@ -332,7 +387,10 @@ export default function ShareDialog({
           folderId={actualFile?.folderId}
           isLoading={isLoading}
           parentFolderName={parentFolderName}
-          onClose={() => setOpen(false)}
+          onClose={() => {
+            setOpen(false);
+            onCancel?.();
+          }}
           isMultiShare={isMultiShare}
           multiFileCount={files?.length}
         />
@@ -391,12 +449,21 @@ export default function ShareDialog({
         {/* FOOTER */}
         <Separator />
         <div className={styles.footer}>
-          <Button variant="outline" size="sm">
-            <Icon d={iconsWithPaths.link} size={14} />
-            Copy link
-          </Button>
+          {!isSharedFiles && (
+            <Button variant="outline" size="sm" onClick={handleCopyLink}>
+              <Icon d={iconsWithPaths.link} size={14} />
+              Copy link
+            </Button>
+          )}
           <div className={styles.footerSpacer} />
-          <Button variant="ghost" size="sm" onClick={() => setOpen(false)}>
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={() => {
+              setOpen(false);
+              onCancel?.();
+            }}
+          >
             Cancel
           </Button>
           <Button variant="primary" size="sm" onClick={handleInviteUser}>

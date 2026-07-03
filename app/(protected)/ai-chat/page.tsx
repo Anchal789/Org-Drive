@@ -1,5 +1,7 @@
-const Analytics = async () => {
-  return <>Analytics</>;
+import AiChatsPage from "@/components/ai-chats/AiChatsPage";
+
+const AiChats = async () => {
+  return <AiChatsPage />;
 };
 
-export default Analytics;
+export default AiChats;

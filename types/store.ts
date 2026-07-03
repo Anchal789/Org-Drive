@@ -50,11 +50,12 @@ export interface UploadStore {
 export interface ShareWithMeDialogStore {
   open: boolean;
   setOpen: (open: boolean) => void;
-  file: (UploadedFile & { fileName?: string }) | null;
+  file: (UploadedFile & { fileName?: string; shareId?: number }) | null;
   folder: (UploadedFolder & { folderName?: string }) | null;
-  files: UploadedFile[];
+  files: Array<UploadedFile & { fileName?: string; shareId?: number }>;
   setFiles: (files: UploadedFile[]) => void;
   setFile: (file: UploadedFile) => void;
   setFolder: (folder: UploadedFolder) => void;
   onSuccess?: () => void;
+  onCancel?: () => void;
 }

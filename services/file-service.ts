@@ -4,6 +4,15 @@ import { isTelegramSessionValid } from "@/lib/session";
 import { encrypt } from "@/lib/utils";
 import { UploadedFile } from "@/types/files";
 
+const triggerHiddenDownload = (url: string) => {
+  const a = document.createElement("a");
+  a.href = url;
+  a.style.display = "none";
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+};
+
 export const downloadFile = async (fileId: number, userId?: number) => {
   const telegramSession = await isTelegramSessionValid();
 
@@ -12,7 +21,15 @@ export const downloadFile = async (fileId: number, userId?: number) => {
     return;
   }
 
-  window.location.href = `/api/file/download/file?fileId=${fileId}${userId ? `&userId=${userId}` : ""}`;
+  const encryptedFileId = encrypt(String(fileId));
+  let url = `/api/file/download/file?token=${encodeURIComponent(encryptedFileId)}`;
+
+  if (userId) {
+    const encryptedUserId = encrypt(String(userId));
+    url += `&u=${encodeURIComponent(encryptedUserId)}`;
+  }
+
+  triggerHiddenDownload(url);
 };
 
 export const downloadAllFolderFiles = async (
@@ -120,16 +137,19 @@ export const downloadMultiple = (selectedFiles: UploadedFile[]) => {
   }
 
   if (filesToDownload.length === 1) {
-    window.open(
-      `/api/file/download/file?fileId=${filesToDownload[0].id}`,
-      "_blank",
+    const encryptedFileId = encrypt(String(filesToDownload[0].id));
+    triggerHiddenDownload(
+      `/api/file/download/file?token=${encodeURIComponent(encryptedFileId)}`,
     );
     toast.success(`Downloading ${filesToDownload[0].name}...`);
     return;
   }
 
-  const ids = filesToDownload.map((f) => f.id).join(",");
-  window.open(`/api/file/download/multiple?ids=${ids}`, "_blank");
+  const idString = filesToDownload.map((f) => f.id).join(",");
+  const encryptedIds = encrypt(idString);
 
+  triggerHiddenDownload(
+    `/api/file/download/multiple?token=${encodeURIComponent(encryptedIds)}`,
+  );
   toast.success(`Zipping ${filesToDownload.length} files...`);
 };

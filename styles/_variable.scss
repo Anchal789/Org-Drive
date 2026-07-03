@@ -1,6 +1,7 @@
 // Typography
 $font-sans:
-  "Inter",
+  "Geist",
+  ui-sans-serif,
   system-ui,
   -apple-system,
   BlinkMacSystemFont,
@@ -9,13 +10,7 @@ $font-sans:
 
 $font-heading: $font-sans;
 
-$font-mono:
-  "JetBrains Mono",
-  "Fira Code",
-  ui-monospace,
-  "Cascadia Code",
-  "Courier New",
-  monospace;
+$font-mono: "JetBrains Mono", "Fira Code", ui-monospace, "Cascadia Code", "Courier New", monospace;
 
 // Font Sizes
 $text-xs: 0.75rem;
@@ -76,54 +71,53 @@ $shadow-xl:
   0 20px 25px -5px oklch(0 0 0 / 0.1),
   0 8px 10px -6px oklch(0 0 0 / 0.1);
 
-$shadow-2xl:
-  0 25px 50px -12px oklch(0 0 0 / 0.25);
+$shadow-2xl: 0 25px 50px -12px oklch(0 0 0 / 0.25);
 
 // Tint Colors
 $tints: (
   teal: (
     bg: #a1e0dd,
     border: #5cc2c6,
-    text: oklch(0.3 0.065 192),
+    text: oklch(0.3 0.065 192)
   ),
   blue: (
     bg: #a4e9ff,
     border: #88aed2,
-    text: oklch(0.34 0.07 228),
+    text: oklch(0.34 0.07 228)
   ),
   green: (
     bg: #d4f1d8,
     border: #8fcca0,
-    text: oklch(0.36 0.075 150),
+    text: oklch(0.36 0.075 150)
   ),
   amber: (
     bg: #ffdbba,
     border: #ffaca8,
-    text: oklch(0.42 0.09 50),
+    text: oklch(0.42 0.09 50)
   ),
   red: (
     bg: #ffd0d5,
     border: #ff8894,
-    text: oklch(0.42 0.1 10),
-  ),
+    text: oklch(0.42 0.1 10)
+  )
 );
 
 // Theme Colors
 $themes: (
   blue: (
     primary: oklch(0.5461 0.215 262.88),
-    foreground: oklch(0.97 0.014 254.604),
+    foreground: oklch(0.97 0.014 254.604)
   ),
   violet: (
     primary: oklch(0.491 0.27 292.581),
-    foreground: oklch(0.969 0.016 293.756),
+    foreground: oklch(0.969 0.016 293.756)
   ),
   green: (
     primary: oklch(0.527 0.154 150.069),
-    foreground: oklch(0.982 0.018 155.826),
+    foreground: oklch(0.982 0.018 155.826)
   ),
   teal: (
     primary: oklch(0.511 0.096 186.391),
-    foreground: oklch(0.984 0.014 180.72),
-  ),
+    foreground: oklch(0.984 0.014 180.72)
+  )
 );

@@ -24,7 +24,8 @@ export async function GET(request: NextRequest) {
   const folderId = decrypt(searchParams.get("folderId") || "");
   const folderName = searchParams.get("folderName") || "folder";
 
-  if (!session?.userId) return sendError("Unauthorized", 401);
+  if (!session?.userId || !searchParams.get("userId"))
+    return sendError("Unauthorized", 401);
   if (!folderId) return sendError("Missing folderId", 400);
 
   const filesInFolder = (await uploadedFilesRepository.getFilesInFolder(
@@ -35,7 +36,7 @@ export async function GET(request: NextRequest) {
     return sendError("Folder is empty or not found", 404);
   }
 
-  const actorId = Number(session.userId);
+  const actorId = Number(session.userId || searchParams.get("userId"));
   const ownerId = Number(filesInFolder[0].userId);
 
   const logs = [
