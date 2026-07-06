@@ -1,6 +1,6 @@
 import UserAvatar from "@/components/ui/user-avatar";
 import { getAvatarColor } from "@/lib/utils";
-import { User } from "@/types/auth";
+import type { User } from "@/types/auth";
 import { InputGroupAddon } from "@/components/ui/input-group";
 import {
   Combobox,
@@ -19,6 +19,13 @@ interface UserSearchBoxProps {
   setSearchTerm: (term: string) => void;
   onSelectUsers: (users: User[]) => void;
 }
+const getInitials = (first?: string, last?: string) =>
+  `${first?.charAt(0) ?? ""}${last?.charAt(0) ?? ""}`;
+
+const userToStringLabel = (u: User) =>
+  `${u.firstName || ""} ${u.lastName || ""}`;
+
+const userToStringValue = (u: User) => String(u.id);
 
 export default function UserSearchBox({
   filteredUsers,
@@ -26,16 +33,11 @@ export default function UserSearchBox({
   setSearchTerm,
   onSelectUsers,
 }: UserSearchBoxProps) {
-  const initials = (first?: string, last?: string) =>
-    `${first?.charAt(0) ?? ""}${last?.charAt(0) ?? ""}`;
-
   return (
     <Combobox
       items={filteredUsers}
-      itemToStringLabel={(u: User) =>
-        `${u.firstName || ""} ${u.lastName || ""}`
-      }
-      itemToStringValue={(u: User) => String(u.id)}
+      itemToStringLabel={userToStringLabel}
+      itemToStringValue={userToStringValue}
       onValueChange={(value: User | User[]) => {
         const selectedUsers = Array.isArray(value) ? value : [value];
         onSelectUsers(selectedUsers);
@@ -65,7 +67,10 @@ export default function UserSearchBox({
               className={styles.comboboxUserRow}
             >
               <UserAvatar
-                initials={initials(user.firstName ?? "", user.lastName ?? "")}
+                initials={getInitials(
+                  user.firstName ?? "",
+                  user.lastName ?? "",
+                )}
                 src={user.photoUrl ?? undefined}
                 tone={getAvatarColor(String(user.id))}
                 size="sm"

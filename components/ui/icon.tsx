@@ -4,7 +4,7 @@ export default function Icon({
   stroke = 1.6,
   fill = "none",
   className = "",
-  style = {},
+  style,
 }: {
   d: string;
   size?: number;

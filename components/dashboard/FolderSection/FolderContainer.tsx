@@ -11,14 +11,15 @@ import FolderMenu from "./FolderMenu/FolderMenu";
 import UserAvatar from "@/components/ui/user-avatar";
 import { Folder, Tag } from "lucide-react";
 
+const getFolderToneStyle = (folder: UploadedFolder) =>
+  TINTS?.[getFolderTone(folder.id)];
+
 const FolderContainer: FunctionComponent<{
   folder: UploadedFolder;
   layout?: string;
 }> = ({ folder, layout }) => {
   const router = useRouter();
   const folderId = encrypt(folder.id.toString());
-  const folderTone = (folder: UploadedFolder) =>
-    TINTS?.[getFolderTone(folder.id)];
 
   const ownerInitials = folder
     ? `${folder.ownerFirstName?.charAt(0) ?? ""}${folder.ownerLastName?.charAt(0) ?? ""}`
@@ -75,8 +76,8 @@ const FolderContainer: FunctionComponent<{
           <div className={styles.folderInfo}>
             <Folder
               size={14}
-              color={folderTone(folder)?.bg}
-              fill={folderTone(folder)?.bg}
+              color={getFolderToneStyle(folder)?.bg}
+              fill={getFolderToneStyle(folder)?.bg}
             />
             <span className={styles.folderName}>{folder.name}</span>
           </div>

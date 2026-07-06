@@ -20,7 +20,7 @@ export default function FileSelectionBar({
   folders,
 }: {
   files: Array<UploadedFile>;
-  folders: Array<UploadedFolder>;
+  folders?: Array<UploadedFolder>;
 }) {
   const { selectedFiles, setSelectedFiles, clearSelection, fileCount } =
     useSelectedFilesStore();
@@ -103,6 +103,7 @@ export default function FileSelectionBar({
           <span className={styles.selectedCount}>{selectedCount} selected</span>
 
           <button
+            type="button"
             title="Clear selection"
             onClick={clearSelection}
             className={styles.clearBtn}
@@ -142,7 +143,7 @@ export default function FileSelectionBar({
                 action: "move",
               })
             }
-            disabled={folders.length === 0}
+            disabled={folders?.length === 0}
           >
             <Folder size={14} /> Move
           </Button>

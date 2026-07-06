@@ -73,7 +73,6 @@ export async function getApiSession(
   }
   const token = authHeader.split(" ")[1];
   const payload = await verifyToken(token);
-  console.log("authHeader", payload);
   if (!payload || !isSessionPayload(payload)) {
     return null;
   }

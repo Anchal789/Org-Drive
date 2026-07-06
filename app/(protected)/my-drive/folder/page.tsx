@@ -1,3 +1,5 @@
+export const dynamic = "force-dynamic";
+
 import DashFolder from "@/components/dashboard/FolderSection/DashFolder";
 import { decrypt } from "@/lib/utils";
 import { uploadedFilesRepository } from "@/repositories/uploaded-files.respository";

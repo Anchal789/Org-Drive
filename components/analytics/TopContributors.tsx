@@ -25,7 +25,7 @@ export default function TopContributors({
                 style={{
                   background: TINTS[p.tone].bg,
                   color: TINTS[p.tone].bd,
-                  fontSize: 10,
+                  fontSize: 12,
                 }}
               >
                 {p.initials}

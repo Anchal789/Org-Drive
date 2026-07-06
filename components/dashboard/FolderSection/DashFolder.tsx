@@ -1,5 +1,3 @@
-export const dynamic = "force-dynamic";
-
 import Btn from "@/components/ui/btn";
 import { iconsWithPaths } from "@/constants/common-constants";
 import type { UploadedFile } from "@/types/files";

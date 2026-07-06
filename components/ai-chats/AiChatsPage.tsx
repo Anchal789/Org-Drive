@@ -179,8 +179,8 @@ export default function AiChatPage() {
           </div>
 
           <div className={styles.selectAllRow}>
-            <label className={styles.checkboxLabel}>
-              <Checkbox checked="indeterminate" />
+            <label htmlFor="select-all-docs" className={styles.checkboxLabel}>
+              <Checkbox id="select-all-docs" checked="indeterminate" />
               <span>Select all</span>
             </label>
             <span className={styles.scopeText}>Scope: Compliance folder</span>
@@ -324,15 +324,16 @@ export default function AiChatPage() {
             </div>
             <input
               type="text"
+              aria-label="Ask a question about the selected documents"
               className={styles.textInput}
               placeholder="Ask anything about the selected documents…"
             />
             <div className={styles.inputActions}>
               <div className={styles.actionGroup}>
-                <button type="button" className={styles.iconButton}>
+                <button type="button" aria-label="Attach file" className={styles.iconButton}>
                   <Paperclip size={15} />
                 </button>
-                <button type="button" className={styles.iconButton}>
+                <button type="button" aria-label="Open command palette" className={styles.iconButton}>
                   <SquareTerminal size={15} />
                 </button>
               </div>
@@ -355,10 +356,11 @@ export default function AiChatPage() {
           <div className={styles.mobileInputWrapper}>
             <input
               type="text"
+              aria-label="Ask a question about the selected documents"
               className={styles.mobileTextInput}
               placeholder="Ask the docs…"
             />
-            <button type="button" className={styles.mobileSendBtn}>
+            <button type="button" aria-label="Send message" className={styles.mobileSendBtn}>
               <Send size={13} />
             </button>
           </div>

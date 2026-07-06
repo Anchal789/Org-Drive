@@ -54,7 +54,7 @@ const SidebarItem: FunctionComponent<{ item: SidebarItemProps }> = ({
         <span className={styles.navItemCount}>{item.count}</span>
       )}
       {!collapsed && item.badge && (
-        <Badge tone="violet" style={{ padding: "1px 6px", fontSize: 9 }}>
+        <Badge tone="violet" style={{ padding: "1px 6px", fontSize: 12 }}>
           {item.badge}
         </Badge>
       )}

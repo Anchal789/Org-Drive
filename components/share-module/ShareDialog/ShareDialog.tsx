@@ -14,160 +14,15 @@ import { postData } from "@/lib/api-fn";
 import { toast } from "sonner";
 import ShareHeader from "./ShareHeader";
 import UserSearchBox from "./UserSearchBox";
-import UserAccessRow from "./UserAccessRow";
 import { Separator } from "@/components/ui/separator";
 import FileType from "@/components/ui/fileType";
 import type { FileKind } from "@/types/dashboard";
 import type { UploadedFile } from "@/types/files";
 import { encrypt } from "@/lib/utils";
 import { Link } from "lucide-react";
-
-type SharePermission = "viewer" | "editor" | "owner" | "commenter";
-
-type InviteUser = User & { permission: SharePermission };
-
-type ShareState = {
-  searchTerm: string;
-  parentFolderName: string | null;
-  isLoading: boolean;
-  usersWithAccess: ShareWithMePerson[];
-  usersToInvite: InviteUser[];
-};
-
-const initialShareState: ShareState = {
-  searchTerm: "",
-  parentFolderName: null,
-  isLoading: false,
-  usersWithAccess: [],
-  usersToInvite: [],
-};
-
-type ShareAction =
-  | { type: "reset" }
-  | { type: "set_search_term"; searchTerm: string }
-  | { type: "set_loading"; isLoading: boolean }
-  | { type: "set_parent_folder_name"; parentFolderName: string | null }
-  | { type: "set_users_with_access"; usersWithAccess: ShareWithMePerson[] }
-  | { type: "set_users_to_invite"; usersToInvite: InviteUser[] }
-  | {
-      type: "update_invite_permission";
-      index: number;
-      permission: InviteUser["permission"];
-    }
-  | {
-      type: "update_access_permission";
-      index: number;
-      permission: ShareWithMePerson["permission"];
-    };
-
-function shareReducer(state: ShareState, action: ShareAction): ShareState {
-  switch (action.type) {
-    case "reset":
-      return initialShareState;
-    case "set_search_term":
-      return { ...state, searchTerm: action.searchTerm };
-    case "set_loading":
-      return { ...state, isLoading: action.isLoading };
-    case "set_parent_folder_name":
-      return { ...state, parentFolderName: action.parentFolderName };
-    case "set_users_with_access":
-      return { ...state, usersWithAccess: action.usersWithAccess };
-    case "set_users_to_invite":
-      return { ...state, usersToInvite: action.usersToInvite };
-    case "update_invite_permission":
-      return {
-        ...state,
-        usersToInvite: state.usersToInvite.map((user, i) =>
-          i === action.index
-            ? { ...user, permission: action.permission }
-            : user,
-        ),
-      };
-    case "update_access_permission":
-      return {
-        ...state,
-        usersWithAccess: state.usersWithAccess.map((user, i) =>
-          i === action.index
-            ? { ...user, permission: action.permission }
-            : user,
-        ),
-      };
-    default:
-      return state;
-  }
-}
-
-type InvitePeopleSectionProps = {
-  users: InviteUser[];
-  onPermissionChange: (
-    index: number,
-    permission: InviteUser["permission"],
-  ) => void;
-};
-
-function InvitePeopleSection({
-  users,
-  onPermissionChange,
-}: InvitePeopleSectionProps) {
-  if (users.length === 0) return null;
-
-  return (
-    <div>
-      <div className={styles.sectionLabel}>Invite people</div>
-      <div className={styles.personsWithAccess}>
-        {users.map((person, index) => (
-          <UserAccessRow
-            key={`invite-${person.id}`}
-            user={person}
-            permission={person.permission}
-            hideOwnerOption
-            onPermissionChange={(val) => onPermissionChange(index, val)}
-            showSeparator={index < users.length - 1}
-          />
-        ))}
-      </div>
-    </div>
-  );
-}
-
-type PeopleWithAccessSectionProps = {
-  users: ShareWithMePerson[];
-  currentUserId: number;
-  isMultiShare: boolean;
-  onPermissionChange: (
-    index: number,
-    permission: ShareWithMePerson["permission"],
-  ) => void;
-};
-
-function PeopleWithAccessSection({
-  users,
-  currentUserId,
-  isMultiShare,
-  onPermissionChange,
-}: PeopleWithAccessSectionProps) {
-  return (
-    <div>
-      <div className={styles.sectionLabel}>People with access</div>
-      <div className={styles.personsWithAccess}>
-        {users.map((person, index) => (
-          <UserAccessRow
-            key={`access-${person.id}`}
-            user={person}
-            permission={person.permission}
-            isOwner={person.permission?.toLowerCase() === "owner"}
-            isCurrentUser={person.id === currentUserId}
-            disabled={person.id === currentUserId}
-            // Block transferring ownership when doing bulk multi-file changes
-            hideOwnerOption={isMultiShare}
-            onPermissionChange={(val) => onPermissionChange(index, val)}
-            showSeparator={index < users.length - 1}
-          />
-        ))}
-      </div>
-    </div>
-  );
-}
+import { initialShareState, shareReducer } from "./share-reducer";
+import InvitePeopleSection from "./InvitePeopleSection";
+import PeopleWithAccessSection from "./PeopleWithAccessSection";
 
 export default function ShareDialog({
   userId,
@@ -311,8 +166,6 @@ export default function ShareDialog({
       );
     }
   };
-
-  // Inside your handleCopyLink function in ShareDialog.tsx
 
   const handleCopyLink = async () => {
     try {

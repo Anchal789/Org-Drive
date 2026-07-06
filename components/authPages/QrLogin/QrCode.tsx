@@ -12,6 +12,7 @@ import styles from "./QrCode.module.scss";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { useAuthStore } from "@/store/store";
+import { useCallback } from "react";
 
 const POLL_INTERVAL_MS = 2000;
 
@@ -75,9 +76,9 @@ export default function QrCode() {
   const currentLoginId = "loginId" in state ? state.loginId : null;
   const expiresAt = state.status === "waiting" ? state.expiresAt : null;
 
-  const navigateToMyDrive = () => {
+  const navigateToMyDrive = useCallback(() => {
     router.replace("/my-drive");
-  };
+  }, [router]);
 
   useEffect(() => {
     if (state.status !== "waiting" || !currentLoginId) return;
@@ -132,7 +133,7 @@ export default function QrCode() {
       cancelled = true;
       clearInterval(id);
     };
-  }, [state.status, currentLoginId, router]);
+  }, [state.status, currentLoginId, router, navigateToMyDrive]);
 
   const restart = () => {
     startedRef.current = false;

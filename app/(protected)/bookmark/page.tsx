@@ -1,3 +1,5 @@
+export const dynamic = "force-dynamic";
+
 import BookmarkPage from "@/components/bookmark/BookmarkPage";
 import { getSessionUser } from "@/lib/session";
 import { bookmarkRepository } from "@/repositories/bookmark.repository";

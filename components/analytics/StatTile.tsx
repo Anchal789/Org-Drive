@@ -17,6 +17,7 @@ export default function StatTile({
     <div
       className={`${styles.statCard} ${onClickAction ? styles.clickableStat : ""}`}
       onClick={onClickAction}
+      role="button"
     >
       <div className={styles.statHeader}>
         <div className={styles.statLabel}>{data.label}</div>

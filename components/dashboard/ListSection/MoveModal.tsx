@@ -59,6 +59,7 @@ const MoveModal: FunctionComponent<{
   };
 
   useEffect(() => {
+    let isMounted = true;
     const getAllFoldersWithIdName = async () => {
       const response = await fetchData<
         Array<{ id: string | null; name: string }>
@@ -66,24 +67,30 @@ const MoveModal: FunctionComponent<{
         url: "/api/all/get/folders-with-id-name",
       });
 
-      if (response.success) {
-        const updatedFolders: Array<{ id: string; name: string }> = [];
-        if (currentFolderId) {
-          updatedFolders.push({ id: "my-drive", name: "My Drive" });
-        }
+      if (response.success && isMounted) {
+        const updatedFolders: Array<{ id: string | null; name: string }> =
+          currentFolderId ? [{ id: "my-drive", name: "My Drive" }] : [];
 
         const combinedFolders = [...updatedFolders, ...response.data];
         setAllFolders(combinedFolders);
 
-        if (currentFolderId) {
-          setSelectedFolder("my-drive");
-        } else if (response.data.length > 0) {
-          setSelectedFolder(String(response.data[0].id));
+        const initialSelected = currentFolderId
+          ? "my-drive"
+          : response.data.length > 0
+            ? String(response.data[0].id)
+            : null;
+
+        if (initialSelected) {
+          setSelectedFolder(initialSelected);
         }
       }
     };
 
     getAllFoldersWithIdName();
+
+    return () => {
+      isMounted = false;
+    };
   }, [currentFolderId]);
 
   return (

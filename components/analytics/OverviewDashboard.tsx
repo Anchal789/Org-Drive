@@ -5,17 +5,6 @@ import { TINTS } from "@/constants/common-constants";
 import styles from "./Analytics.module.scss";
 import StatTile from "./StatTile";
 import ActivityFeed from "./ActivityFeed";
-
-import {
-  Bar,
-  BarChart,
-  CartesianGrid,
-  Cell,
-  Label,
-  Pie,
-  PieChart,
-  XAxis,
-} from "recharts";
 import {
   ChartConfig,
   ChartContainer,
@@ -24,6 +13,32 @@ import {
   ChartTooltip,
   ChartTooltipContent,
 } from "@/components/ui/chart";
+import dynamic from "next/dynamic";
+const Bar = dynamic(() => import("recharts").then((mod) => mod.Bar), {
+  ssr: false,
+});
+const BarChart = dynamic(() => import("recharts").then((mod) => mod.BarChart), {
+  ssr: false,
+});
+const CartesianGrid = dynamic(
+  () => import("recharts").then((mod) => mod.CartesianGrid),
+  { ssr: false },
+);
+const Cell = dynamic(() => import("recharts").then((mod) => mod.Cell), {
+  ssr: false,
+});
+const Label = dynamic(() => import("recharts").then((mod) => mod.Label), {
+  ssr: false,
+});
+const Pie = dynamic(() => import("recharts").then((mod) => mod.Pie), {
+  ssr: false,
+});
+const PieChart = dynamic(() => import("recharts").then((mod) => mod.PieChart), {
+  ssr: false,
+});
+const XAxis = dynamic(() => import("recharts").then((mod) => mod.XAxis), {
+  ssr: false,
+});
 
 const chartConfig = {
   uploads: {
@@ -122,8 +137,8 @@ export default function OverviewDashboard({
                   outerRadius={60}
                   strokeWidth={0}
                 >
-                  {data.storageByType.map((entry, index) => (
-                    <Cell key={`cell-${index}`} fill={TINTS[entry.tone].bd} />
+                  {data.storageByType.map((entry) => (
+                    <Cell key={entry.sizeBytes} fill={TINTS[entry.tone].bd} />
                   ))}
 
                   <Label

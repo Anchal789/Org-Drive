@@ -32,6 +32,7 @@ const FilesContainer = ({ files }: { files: Array<UploadedFile> }) => {
         <div
           key={file.id}
           data-slot="file-card"
+          role="button"
           className={styles.cardWrapper}
           onClick={() => handleToggleSelect(file)}
         >

@@ -37,7 +37,7 @@ export default function Badge({
         gap: "0.25rem",
         padding: "0.125rem 0.5rem",
         borderRadius: "var(--radius-md)",
-        fontSize: "11px",
+        fontSize: "12px",
         fontWeight: 500,
         lineHeight: 1.4,
         whiteSpace: "nowrap",

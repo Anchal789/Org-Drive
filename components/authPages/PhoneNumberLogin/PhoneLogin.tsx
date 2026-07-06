@@ -36,6 +36,25 @@ const flagSrc = (code: string) =>
 const DEFAULT_COUNTRY =
   countryWithPhoneCode.find((c) => c.code === "IN") ?? countryWithPhoneCode[0];
 
+const fullNumber = (dialCode: string, phoneNumber?: string) =>
+  `${dialCode}${phoneNumber}`.replace(/\s/g, "");
+
+const itemToStringLabel = (c: CountryType) => c.name;
+const itemToStringValue = (c: CountryType) => c.code;
+const renderComboboxValue = (c: CountryType | null) =>
+  c ? (
+    <span className={styles.flagWrapper}>
+      <Image
+        src={flagSrc(c.code)}
+        alt={c.name}
+        width={16}
+        height={16}
+        className={styles.flagIcon}
+      />
+      {c.phoneCode}
+    </span>
+  ) : null;
+
 export default function PhoneLogin() {
   const router = useRouter();
 
@@ -51,9 +70,6 @@ export default function PhoneLogin() {
     },
     mode: "onChange",
   });
-
-  const fullNumber = (dialCode: string, phoneNumber?: string) =>
-    `${dialCode}${phoneNumber}`.replace(/\s/g, "");
 
   const onSubmit = async (payload: {
     phoneNumber: string;
@@ -85,29 +101,14 @@ export default function PhoneLogin() {
           <Combobox
             items={countryWithPhoneCode.filter((c) => c.code !== "")}
             defaultValue={DEFAULT_COUNTRY}
-            itemToStringLabel={(c: CountryType) => c.name}
-            itemToStringValue={(c: CountryType) => c.code}
+            itemToStringLabel={itemToStringLabel}
+            itemToStringValue={itemToStringValue}
             onValueChange={(c: CountryType | null) => {
               setValue("dialCode", c?.phoneCode ?? "");
             }}
           >
             <ComboboxTrigger className={styles.comboboxTrigger}>
-              <ComboboxValue>
-                {(c: CountryType | null) =>
-                  c ? (
-                    <span className={styles.flagWrapper}>
-                      <Image
-                        src={flagSrc(c.code)}
-                        alt={c.name}
-                        width={16}
-                        height={16}
-                        className={styles.flagIcon}
-                      />
-                      {c.phoneCode}
-                    </span>
-                  ) : null
-                }
-              </ComboboxValue>
+              <ComboboxValue>{renderComboboxValue}</ComboboxValue>
             </ComboboxTrigger>
 
             <ComboboxContent className={styles.comboboxContent}>

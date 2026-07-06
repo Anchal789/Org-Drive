@@ -12,8 +12,8 @@ export default function ActivityFeed({ events }: { events: ActivityEvent[] }) {
         <span className={styles.cardSub}>Live · last 24h</span>
       </div>
       <div className={styles.activityList}>
-        {events.map((a, i) => (
-          <div key={i} className={styles.activityRow}>
+        {events.map((a) => (
+          <div key={a.id} className={styles.activityRow}>
             <Avatar
               className="h-7 w-7 border"
               style={{ borderColor: TINTS[a.tone].bd }}
@@ -22,7 +22,7 @@ export default function ActivityFeed({ events }: { events: ActivityEvent[] }) {
                 style={{
                   background: TINTS[a.tone].bg,
                   color: TINTS[a.tone].bd,
-                  fontSize: 10,
+                  fontSize: 12,
                 }}
               >
                 {a.userInitials}

@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useRef } from "react";
 import {
   Search,
   File,
@@ -9,7 +9,6 @@ import {
   Sparkles,
   ChevronRight,
 } from "lucide-react";
-import { useDebounce } from "@/hooks/use-debounce";
 import { fetchData } from "@/lib/api-fn";
 import { UploadedFile, UploadedFolder } from "@/types/files";
 import { Switch } from "@/components/ui/switch";
@@ -30,80 +29,110 @@ export default function SmartSearchPage() {
   const router = useRouter();
 
   const [searchTerm, setSearchTerm] = useState("");
+  const [activeQuery, setActiveQuery] = useState("");
   const [isSmartMode, setIsSmartMode] = useState(true);
   const [results, setResults] = useState<{
     files: Array<UploadedFile>;
     folders: Array<UploadedFolder>;
   }>({ files: [], folders: [] });
   const [isSearching, setIsSearching] = useState(false);
-  const [recentSearches, setRecentSearches] = useState<string[]>([]);
 
-  const debouncedSearchTerm = useDebounce(searchTerm, 300);
+  const searchTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
-  // ─── 1. LOAD RECENT SEARCHES ON MOUNT ───
-  useEffect(() => {
-    const savedSearches = localStorage.getItem("smart_drive_recent_searches");
+  const [recentSearches, setRecentSearches] = useState<string[]>(() => {
+    if (typeof window === "undefined") return [];
+
+    const savedSearches = window.localStorage.getItem(
+      "smart_drive_recent_searches:v1",
+    );
     if (savedSearches) {
       try {
-        setRecentSearches(JSON.parse(savedSearches));
-      } catch (e) {
-        console.error("Failed to parse recent searches", e);
+        return JSON.parse(savedSearches) as string[];
+      } catch (e: unknown) {
+        console.error(
+          "Failed to parse recent searches",
+          e instanceof Error ? e : new Error(String(e)),
+        );
+        return [];
       }
     }
-  }, []);
+    return [];
+  });
 
-  // ─── 2. SAVE SEARCH FUNCTION (KEEPS TOP 3) ───
+  // ─── 1. SAVE SEARCH FUNCTION (KEEPS TOP 3) ───
   const saveRecentSearch = (term: string) => {
     const trimmed = term.trim();
     if (!trimmed) return;
 
     setRecentSearches((prev) => {
-      // Remove the term if it already exists to prevent duplicates
       const filtered = prev.filter(
         (t) => t.toLowerCase() !== trimmed.toLowerCase(),
       );
-      // Prepend the new term and slice to keep only the top 3
       const updated = [trimmed, ...filtered].slice(0, 3);
-
       localStorage.setItem(
-        "smart_drive_recent_searches",
+        "smart_drive_recent_searches:v1",
         JSON.stringify(updated),
       );
+
       return updated;
     });
   };
 
-  // ─── 3. PERFORM SEARCH API CALL ───
-  useEffect(() => {
-    const performSearch = async () => {
-      if (!debouncedSearchTerm.trim()) {
-        setResults({ files: [], folders: [] });
-        return;
-      }
+  // ─── 2. PERFORM SEARCH API CALL ───
+  const performSearch = async (query: string) => {
+    if (!query.trim()) {
+      setResults({ files: [], folders: [] });
+      setIsSearching(false);
+      return;
+    }
 
-      setIsSearching(true);
+    setIsSearching(true);
 
+    try {
       const response = await fetchData<{
         files: Array<UploadedFile>;
         folders: Array<UploadedFolder>;
       }>({
-        url: `/api/search?q=${encodeURIComponent(debouncedSearchTerm)}`,
+        url: `/api/search?q=${encodeURIComponent(query)}`,
       });
 
       if (response.success && response.data) {
         setResults(response.data);
       }
-
+    } catch (error: unknown) {
+      console.error(
+        "Search request failed",
+        error instanceof Error ? error : new Error(String(error)),
+      );
+    } finally {
       setIsSearching(false);
-    };
-
-    performSearch();
-  }, [debouncedSearchTerm]);
+    }
+  };
 
   // ─── HANDLERS ───
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const val = e.target.value;
+    setSearchTerm(val);
+
+    if (searchTimerRef.current) {
+      clearTimeout(searchTimerRef.current);
+    }
+
+    searchTimerRef.current = setTimeout(() => {
+      setActiveQuery(val);
+      performSearch(val);
+    }, 300);
+  };
+
   const handleSuggestionClick = (suggestion: string) => {
     setSearchTerm(suggestion);
     saveRecentSearch(suggestion);
+
+    if (searchTimerRef.current) {
+      clearTimeout(searchTimerRef.current);
+    }
+    setActiveQuery(suggestion);
+    performSearch(suggestion);
   };
 
   const handleInputKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
@@ -112,7 +141,7 @@ export default function SmartSearchPage() {
     }
   };
 
-  const isIdle = !debouncedSearchTerm.trim();
+  const isIdle = !activeQuery.trim();
   const displayFolders = results.folders.slice(0, 6);
   const displayFiles = results.files.slice(0, 6);
 
@@ -136,12 +165,12 @@ export default function SmartSearchPage() {
           <Search size={18} strokeWidth={1.6} className={styles.searchIcon} />
           <input
             type="text"
+            aria-label="Search across your drive"
             placeholder='Try "compliance risks in Q3"…'
             value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
+            onChange={handleInputChange}
             onKeyDown={handleInputKeyDown}
             className={styles.searchInput}
-            autoFocus
           />
 
           {isSearching && <span className={styles.loader}>Searching...</span>}
@@ -165,8 +194,9 @@ export default function SmartSearchPage() {
                   <div className={styles.sectionTitle}>Recent searches</div>
                   {recentSearches.map((term, index) => (
                     <div
-                      key={`recent-${index}`}
+                      key={term + index}
                       className={styles.resultItem}
+                      role="button"
                       onClick={() => handleSuggestionClick(term)}
                     >
                       <History
@@ -189,6 +219,7 @@ export default function SmartSearchPage() {
                 <span className={styles.suggestionLabel}>Suggested:</span>
                 {SUGGESTED_SEARCHES.map((suggestion) => (
                   <button
+                    type="button"
                     key={suggestion}
                     className={styles.suggestionChip}
                     onClick={() => handleSuggestionClick(suggestion)}
@@ -222,7 +253,7 @@ export default function SmartSearchPage() {
                         ) {
                           return;
                         }
-                        saveRecentSearch(debouncedSearchTerm);
+                        saveRecentSearch(activeQuery);
                         router.push(
                           `/my-drive/folder?folderId=${encrypt(String(folder.id))}&folderName=${folder.name}`,
                         );
@@ -246,8 +277,9 @@ export default function SmartSearchPage() {
                     <div
                       key={file.id}
                       className={styles.resultItem}
+                      role="button"
                       onClick={() => {
-                        saveRecentSearch(debouncedSearchTerm);
+                        saveRecentSearch(activeQuery);
                       }}
                     >
                       <div className={styles.info}>
@@ -266,7 +298,7 @@ export default function SmartSearchPage() {
                 displayFolders.length === 0 && (
                   <div className={styles.noResults}>
                     No files or folders found matching &quot;
-                    {debouncedSearchTerm}&quot;
+                    {activeQuery}&quot;
                   </div>
                 )}
             </div>

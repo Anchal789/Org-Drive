@@ -1,5 +1,3 @@
-export const dynamic = "force-dynamic";
-
 import styles from "./Bookmark.module.scss";
 import { FunctionComponent } from "react";
 import { UploadedFile, UploadedFolder } from "@/types/files";
