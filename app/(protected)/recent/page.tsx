@@ -1,9 +1,9 @@
-import { getSessionUser } from "@/lib/session";
-import { recentRepository } from "@/repositories/recent.repository";
-import dynamic from "next/dynamic";
+import dynamic from 'next/dynamic';
+import { getSessionUser } from '@/lib/session';
+import { recentRepository } from '@/repositories/recent.repository';
 
 const RecentPage = dynamic(
-  () => import("@/components/recent-module/RecentPage"),
+  () => import('@/components/recent-module/RecentPage'),
 );
 
 const Recent = async () => {

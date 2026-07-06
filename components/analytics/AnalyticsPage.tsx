@@ -1,24 +1,24 @@
-"use client";
+'use client';
 
-import { useState, useMemo } from "react";
-import { AnalyticsDataPayload, Timeframe } from "@/types/analytics";
+import { useMemo, useState } from 'react';
 import {
   formatBytes,
-  getCutoffDate,
   generateTimeBuckets,
-} from "@/helpers/analytics.helper";
-import styles from "./Analytics.module.scss";
-import AnalyticsHeader from "./AnalyticsHeader";
-import OverviewDashboard from "./OverviewDashboard";
-import StorageInsights from "./StorageInsights";
+  getCutoffDate,
+} from '@/helpers/analytics.helper';
+import type { AnalyticsDataPayload, Timeframe } from '@/types/analytics';
+import styles from './Analytics.module.scss';
+import AnalyticsHeader from './AnalyticsHeader';
+import OverviewDashboard from './OverviewDashboard';
+import StorageInsights from './StorageInsights';
 
 export default function AnalyticsPage({
   initialData,
 }: {
   initialData: AnalyticsDataPayload;
 }) {
-  const [view, setView] = useState<"overview" | "insights">("overview");
-  const [timeframe, setTimeframe] = useState<Timeframe>("30d");
+  const [view, setView] = useState<'overview' | 'insights'>('overview');
+  const [timeframe, setTimeframe] = useState<Timeframe>('30d');
 
   const currentUploads = useMemo(() => {
     const cutoff = getCutoffDate(timeframe);
@@ -33,32 +33,32 @@ export default function AnalyticsPage({
 
   const overviewProps = {
     storageUsed: {
-      label: "Storage used",
+      label: 'Storage used',
       value: formatBytes(initialData.overview.totalSizeBytes),
-      sub: "across your drive",
-      tone: "violet" as const,
+      sub: 'across your drive',
+      tone: 'violet' as const,
       sparkData: [40, 44, 48, 52, 58, 62, 64],
     },
     totalFiles: {
-      label: "Files",
+      label: 'Files',
       value: String(initialData.overview.totalFilesCount),
-      sub: "total indexed",
+      sub: 'total indexed',
       delta: `+${currentUploads.length}`,
-      tone: "green" as const,
+      tone: 'green' as const,
       sparkData: [180, 192, 201, 213, 220, 235, 248],
     },
     activeMembers: {
-      label: "Active members",
+      label: 'Active members',
       value: String(initialData.overview.activeMembers),
-      sub: "your account",
-      tone: "sky" as const,
+      sub: 'your account',
+      tone: 'sky' as const,
     },
     systemHealth: {
-      label: "Telegram p95",
-      value: "84ms",
-      sub: "EU/US/AP healthy",
-      delta: "-12%",
-      tone: "green" as const,
+      label: 'Telegram p95',
+      value: '84ms',
+      sub: 'EU/US/AP healthy',
+      delta: '-12%',
+      tone: 'green' as const,
       sparkData: [12, 10, 11, 9, 8, 9, 8],
     },
     uploadActivity,
@@ -77,11 +77,11 @@ export default function AnalyticsPage({
           setTimeframe={setTimeframe}
         />
 
-        {view === "overview" ? (
+        {view === 'overview' ? (
           <OverviewDashboard
             data={overviewProps}
             timeframe={timeframe}
-            onStorageClickAction={() => setView("insights")}
+            onStorageClickAction={() => setView('insights')}
           />
         ) : (
           <StorageInsights data={initialData.insights} />

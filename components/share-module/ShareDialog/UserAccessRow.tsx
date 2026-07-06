@@ -1,6 +1,3 @@
-import UserAvatar from "@/components/ui/user-avatar";
-import { getAvatarColor } from "@/lib/utils";
-import { Separator } from "@/components/ui/separator";
 import {
   Select,
   SelectContent,
@@ -9,8 +6,11 @@ import {
   SelectLabel,
   SelectTrigger,
   SelectValue,
-} from "@/components/ui/select";
-import styles from "./ShareDialog.module.scss";
+} from '@/components/ui/select';
+import { Separator } from '@/components/ui/separator';
+import UserAvatar from '@/components/ui/user-avatar';
+import { getAvatarColor } from '@/lib/utils';
+import styles from './ShareDialog.module.scss';
 
 interface UserAccessRowProps {
   user: {
@@ -26,7 +26,7 @@ interface UserAccessRowProps {
   disabled?: boolean;
   hideOwnerOption?: boolean;
   onPermissionChange?: (
-    value: "viewer" | "editor" | "owner" | "commenter",
+    value: 'viewer' | 'editor' | 'owner' | 'commenter',
   ) => void;
   showSeparator?: boolean;
 }
@@ -40,13 +40,13 @@ export default function UserAccessRow({
   onPermissionChange,
   showSeparator = true,
 }: UserAccessRowProps) {
-  const initials = `${user.firstName?.charAt(0) ?? ""}${user.lastName?.charAt(0) ?? ""}`;
+  const initials = `${user.firstName?.charAt(0) ?? ''}${user.lastName?.charAt(0) ?? ''}`;
 
   return (
     <>
       <div className={styles.personRow}>
         <UserAvatar
-          src={user.photoUrl ?? "https://github.com/shadcn.png"}
+          src={user.photoUrl ?? 'https://github.com/shadcn.png'}
           initials={initials}
           tone={getAvatarColor(String(user.id))}
           size="default"
@@ -57,11 +57,11 @@ export default function UserAccessRow({
             {isCurrentUser && <span className={styles.youTag}>(you)</span>}
           </div>
           <div className={styles.personUserName}>
-            {user.username ? `@${user.username}` : ""}
+            {user.username ? `@${user.username}` : ''}
           </div>
         </div>
         <Select
-          defaultValue={isOwner ? "owner" : permission?.toLowerCase()}
+          defaultValue={isOwner ? 'owner' : permission?.toLowerCase()}
           onValueChange={onPermissionChange}
           disabled={disabled || isOwner}
         >

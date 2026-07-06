@@ -1,7 +1,7 @@
-"use client";
+'use client';
 
-import { useDragDropStore } from "@/store/store";
-import styles from "./DashGrid.module.scss";
+import { useDragDropStore } from '@/store/store';
+import styles from './DashGrid.module.scss';
 
 export default function DashGridWrapper({
   children,
@@ -13,7 +13,8 @@ export default function DashGridWrapper({
   const { isDragging, setIsDragging } = useDragDropStore();
 
   return (
-    <div
+    <section
+      aria-label="Drag and drop area"
       onDragEnter={(e) => {
         e.preventDefault();
         setIsDragging(true);
@@ -29,6 +30,6 @@ export default function DashGridWrapper({
       className={styles.wrapper}
     >
       {isDragging ? overlay : children}
-    </div>
+    </section>
   );
 }

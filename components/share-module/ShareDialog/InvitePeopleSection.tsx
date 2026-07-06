@@ -1,12 +1,12 @@
-import UserAccessRow from "./UserAccessRow";
-import styles from "./ShareDialog.module.scss";
-import type { InviteUser } from "@/types/share";
+import type { InviteUser } from '@/types/share';
+import styles from './ShareDialog.module.scss';
+import UserAccessRow from './UserAccessRow';
 
 type InvitePeopleSectionProps = {
   users: InviteUser[];
   onPermissionChange: (
     index: number,
-    permission: InviteUser["permission"],
+    permission: InviteUser['permission'],
   ) => void;
 };
 

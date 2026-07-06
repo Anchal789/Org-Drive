@@ -1,33 +1,33 @@
 import {
   Sidebar,
   SidebarContent,
-  SidebarHeader,
   SidebarFooter,
-} from "@/components/ui/sidebar";
-import { getSessionUser } from "@/lib/session";
-import { uploadedFilesRepository } from "@/repositories/uploaded-files.respository";
-import type { SidebarItemProps } from "@/types/component-types";
-import styles from "./DriveSidebar.module.scss";
-import NewItemButton from "./NewItemButton";
-import { OrgPill } from "./OrgPill";
-import { StorageCard } from "./SidebarFooter";
-import SidebarItem from "./SidebarItem";
-import { SidebarSection } from "./SidebarSection";
-import { SidebarToggleButton } from "./SidebarToggleButton";
+  SidebarHeader,
+} from '@/components/ui/sidebar';
+import { getSessionUser } from '@/lib/session';
+import { uploadedFilesRepository } from '@/repositories/uploaded-files.respository';
+import type { SidebarItemProps } from '@/types/component-types';
+import styles from './DriveSidebar.module.scss';
+import NewItemButton from './NewItemButton';
+import { OrgPill } from './OrgPill';
+import { StorageCard } from './SidebarFooter';
+import SidebarItem from './SidebarItem';
+import { SidebarSection } from './SidebarSection';
+import { SidebarToggleButton } from './SidebarToggleButton';
 
 const OPTIONAL_ITEMS: SidebarItemProps[] = [
   {
-    icon: "Sparkle",
-    label: "AI chat",
-    badge: "Beta",
-    url: "/ai-chat",
+    icon: 'Sparkle',
+    label: 'AI chat',
+    badge: 'Beta',
+    url: '/ai-chat',
   },
-  { icon: "Search", label: "Smart search", url: "/smart-search" },
+  { icon: 'Search', label: 'Smart search', url: '/smart-search' },
 ];
 
 const ADMIN_ITEMS: SidebarItemProps[] = [
-  { icon: "Activity", label: "Analytics", url: "/analytics" },
-  { icon: "Settings", label: "Settings", url: "/settings" },
+  { icon: 'Activity', label: 'Analytics', url: '/analytics' },
+  { icon: 'Settings', label: 'Settings', url: '/settings' },
 ];
 
 export default async function DriveSidebar({
@@ -47,25 +47,25 @@ export default async function DriveSidebar({
 
   const MAIN_ITEMS: SidebarItemProps[] = [
     {
-      icon: "Cloud",
-      label: "My drive",
+      icon: 'Cloud',
+      label: 'My drive',
       count: fileFolderCount,
-      url: "/my-drive",
+      url: '/my-drive',
     },
     {
-      icon: "Users",
-      label: "Shared with me",
+      icon: 'Users',
+      label: 'Shared with me',
       count: sharedWithMeFileCount,
-      url: "/shared-with-me",
+      url: '/shared-with-me',
     },
-    { icon: "Clock", label: "Recent", url: "/recent" },
+    { icon: 'Clock', label: 'Recent', url: '/recent' },
     {
-      icon: "Tag",
-      label: "Bookmark",
+      icon: 'Tag',
+      label: 'Bookmark',
       count: bookmarksCount,
-      url: "/bookmark",
+      url: '/bookmark',
     },
-    { icon: "Trash2", label: "Trash", url: "/trash" },
+    { icon: 'Trash2', label: 'Trash', url: '/trash' },
   ];
 
   return (

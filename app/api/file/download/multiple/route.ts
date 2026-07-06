@@ -1,16 +1,16 @@
 export const dynamic = "force-dynamic";
 
+import { PassThrough, Readable } from "node:stream";
+import { ZipArchive as Archiver } from "archiver";
+import { inArray } from "drizzle-orm";
 import type { NextRequest } from "next/server";
 import { type Api, TelegramClient } from "telegram";
 import { StringSession } from "telegram/sessions";
+import { db } from "@/db";
+import { recentTable, uploadedFilesTable } from "@/db/schema";
 import { sendError } from "@/lib/api-response";
 import { getSessionUser } from "@/lib/session";
 import { systemSettingsRepository } from "@/repositories/system-settings.repository";
-import { db } from "@/db";
-import { recentTable, uploadedFilesTable } from "@/db/schema";
-import { inArray } from "drizzle-orm";
-import { ZipArchive as Archiver } from "archiver";
-import { PassThrough, Readable } from "stream";
 
 const API_ID = Number(process.env.TELEGRAM_APP_API_ID);
 const API_HASH = String(process.env.TELEGRAM_APP_API_HASH);
@@ -72,7 +72,7 @@ export async function GET(request: NextRequest) {
     return sendError("System error: Bot session is not configured.", 500);
   }
 
-  let client: TelegramClient | null = new TelegramClient(
+  const client: TelegramClient | null = new TelegramClient(
     new StringSession(botSessionString),
     API_ID,
     API_HASH,
@@ -93,7 +93,10 @@ export async function GET(request: NextRequest) {
     targetEntity = await client.getEntity(formattedChannelId);
   } catch (err: unknown) {
     const errMsg = err instanceof Error ? err.message : String(err);
-    if (client) await client.disconnect().catch(() => {});
+    if (client)
+      await client.disconnect().catch(() => {
+        void 0;
+      });
     return sendError(`Bot connection failed: ${errMsg}`, 500);
   }
 
@@ -114,7 +117,7 @@ export async function GET(request: NextRequest) {
           const msg = messages.find(
             (m) => m.id === Number(fileInfo.telegramMessageId),
           );
-          if (!msg || !msg.media || !("document" in msg.media)) continue;
+          if (!msg?.media || !("document" in msg.media)) continue;
 
           let fileName = fileInfo.name || "downloaded-file";
           let counter = 1;
@@ -126,7 +129,8 @@ export async function GET(request: NextRequest) {
           }
           usedNames.add(fileName);
 
-          const chunkIterator = client!.iterDownload({
+          if (!client) continue;
+          const chunkIterator = client.iterDownload({
             file: msg.media,
             requestSize: 1024 * 1024,
           });
@@ -137,10 +141,13 @@ export async function GET(request: NextRequest) {
         }
         await archive.finalize();
       } catch (err) {
-        console.error("Zipping process failed:", err);
+        void err;
         archive.abort();
       } finally {
-        if (client) await client.disconnect().catch(() => {});
+        if (client)
+          await client.disconnect().catch(() => {
+            void 0;
+          });
       }
     })();
 
@@ -152,13 +159,18 @@ export async function GET(request: NextRequest) {
       },
       cancel() {
         archive.abort();
-        if (client) client.disconnect().catch(() => {});
+        if (client)
+          client.disconnect().catch(() => {
+            void 0;
+          });
       },
     });
 
     db.insert(recentTable)
       .values(logs)
-      .catch((err) => console.error("Log error", err));
+      .catch(() => {
+        void 0;
+      });
 
     return new Response(webStream, {
       headers: {
@@ -167,8 +179,11 @@ export async function GET(request: NextRequest) {
         "Cache-Control": "no-store, max-age=0",
       },
     });
-  } catch (error: unknown) {
-    if (client) await client.disconnect().catch(() => {});
+  } catch {
+    if (client)
+      await client.disconnect().catch(() => {
+        void 0;
+      });
     return sendError("Failed to initiate zip stream", 500);
   }
 }

@@ -1,23 +1,23 @@
-export const dynamic = "force-dynamic";
+export const dynamic = 'force-dynamic';
 
-import { NextResponse } from "next/server";
-import { trashedItemsRepository } from "@/repositories/trashed-items.repository";
-import { userRepository } from "@/repositories/user.repository";
-import { Api, TelegramClient } from "telegram";
-import { StringSession } from "telegram/sessions";
-import { sendError } from "@/lib/api-response";
+import { NextResponse } from 'next/server';
+import { type Api, TelegramClient } from 'telegram';
+import { StringSession } from 'telegram/sessions';
+import { sendError } from '@/lib/api-response';
+import { trashedItemsRepository } from '@/repositories/trashed-items.repository';
+import { userRepository } from '@/repositories/user.repository';
 
 const API_ID = Number(process.env.TELEGRAM_APP_API_ID);
 const API_HASH = String(process.env.TELEGRAM_APP_API_HASH);
 const STORAGE_CHANNEL = String(process.env.TELEGRAM_STORAGE_CHANNEL_ID);
 
 export async function GET(request: Request) {
-  const authHeader = request.headers.get("authorization");
+  const authHeader = request.headers.get('authorization');
   if (
     process.env.NEXT_PRIVATE_CRON_SECRET &&
     authHeader !== `Bearer ${process.env.NEXT_PRIVATE_CRON_SECRET}`
   ) {
-    return new Response("Unauthorized", { status: 401 });
+    return new Response('Unauthorized', { status: 401 });
   }
 
   const usersToSweep = await trashedItemsRepository.getUsersWithExpiredTrash();
@@ -31,8 +31,8 @@ export async function GET(request: Request) {
       await trashedItemsRepository.processExpiredTrashForUser(userId);
 
     if (telegramMessageIds.length > 0) {
-      let client: TelegramClient | null = new TelegramClient(
-        new StringSession(""),
+      const client: TelegramClient | null = new TelegramClient(
+        new StringSession(''),
         API_ID,
         API_HASH,
         {
@@ -50,7 +50,10 @@ export async function GET(request: Request) {
         targetEntity = await client.getEntity(formattedChannelId);
       } catch (err: unknown) {
         const errMsg = err instanceof Error ? err.message : String(err);
-        if (client) await client.disconnect().catch(() => {});
+        if (client)
+          await client.disconnect().catch(() => {
+            void 0;
+          });
         return sendError(
           `Bot authorization or channel mapping failed: ${errMsg}`,
           500,
@@ -66,9 +69,11 @@ export async function GET(request: Request) {
 
         totalDeletedFiles += telegramMessageIds.length;
       } catch (error) {
-        console.error(`Cron Telegram Error for user ${userId}:`, error);
+        void error;
       } finally {
-        await client.disconnect().catch(() => {});
+        await client.disconnect().catch(() => {
+          void 0;
+        });
       }
     }
   }

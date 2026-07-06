@@ -1,22 +1,22 @@
-"use client";
+'use client';
 
-import { Button } from "@/components/ui/button";
+import { Settings, Users } from 'lucide-react';
+import { Button } from '@/components/ui/button';
 import {
   Popover,
   PopoverContent,
   PopoverTrigger,
-} from "@/components/ui/popover";
-import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import styles from "./LayoutSettings.module.scss";
-import { Switch } from "@/components/ui/switch";
-import { useFileLayout, useSortByStore } from "@/store/store";
-import { Settings, Users } from "lucide-react";
+} from '@/components/ui/popover';
+import { Switch } from '@/components/ui/switch';
+import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { useFileLayout, useSortByStore } from '@/store/store';
+import styles from './LayoutSettings.module.scss';
 
 const LayoutSettings = () => {
   const { fileLayout, setFileLayout } = useFileLayout();
   const { sortBy, setSortBy } = useSortByStore();
 
-  const handleChangeDriveLayout = (layout: "list" | "grid") => {
+  const handleChangeDriveLayout = (layout: 'list' | 'grid') => {
     setFileLayout(layout);
   };
   return (
@@ -39,7 +39,7 @@ const LayoutSettings = () => {
             defaultValue="name"
             value={sortBy}
             onValueChange={(value) =>
-              setSortBy(value as "name" | "modified" | "size" | "type")
+              setSortBy(value as 'name' | 'modified' | 'size' | 'type')
             }
           >
             <TabsList fullwidth>
@@ -69,7 +69,7 @@ const LayoutSettings = () => {
             defaultValue="grid"
             value={fileLayout}
             onValueChange={(value: string) =>
-              handleChangeDriveLayout(value as "grid" | "list")
+              handleChangeDriveLayout(value as 'grid' | 'list')
             }
           >
             <TabsList>

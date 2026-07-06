@@ -1,13 +1,13 @@
-export const dynamic = "force-dynamic";
+export const dynamic = 'force-dynamic';
 
-import BookmarkPage from "@/components/bookmark/BookmarkPage";
-import { getSessionUser } from "@/lib/session";
-import { bookmarkRepository } from "@/repositories/bookmark.repository";
-import { sharedWithMeRepository } from "@/repositories/shared-with-me.repository";
-import { uploadedFilesRepository } from "@/repositories/uploaded-files.respository";
-import { uploadedFoldersRepository } from "@/repositories/uploaded-folders.respository";
-import { UploadedFile, UploadedFolder } from "@/types/files";
-import { SharedWithMeItemsType } from "@/types/share-with-me";
+import BookmarkPage from '@/components/bookmark/BookmarkPage';
+import { getSessionUser } from '@/lib/session';
+import { bookmarkRepository } from '@/repositories/bookmark.repository';
+import { sharedWithMeRepository } from '@/repositories/shared-with-me.repository';
+import { uploadedFilesRepository } from '@/repositories/uploaded-files.respository';
+import { uploadedFoldersRepository } from '@/repositories/uploaded-folders.respository';
+import type { UploadedFile, UploadedFolder } from '@/types/files';
+import type { SharedWithMeItemsType } from '@/types/share-with-me';
 
 const Bookmark = async () => {
   const user = await getSessionUser();

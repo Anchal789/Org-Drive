@@ -15,7 +15,14 @@ export default function Spark({
     .join(' ');
 
   return (
-    <svg width={w} height={h} viewBox={`0 0 ${w} ${h}`} data-slot="spark">
+    <svg
+      width={w}
+      height={h}
+      viewBox={`0 0 ${w} ${h}`}
+      data-slot="spark"
+      aria-hidden="true"
+      focusable="false"
+    >
       <polyline
         fill="none"
         stroke={color}

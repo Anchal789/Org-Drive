@@ -1,28 +1,28 @@
 // app/api/auth/qr-password/route.ts
 
-import type { NextRequest } from "next/server";
-import { Api } from "telegram";
-import { computeCheck } from "telegram/Password";
-import { sendError, sendSuccess } from "@/lib/api-response";
-import { createSession } from "@/lib/session";
-import { finalizeLogin } from "@/lib/telegram-qr";
-import { qrStore } from "@/lib/telegram-qr-store";
-import { userRepository } from "@/repositories/user.repository";
-import { generateAccessToken } from "@/lib/jwt";
+import type { NextRequest } from 'next/server';
+import { Api } from 'telegram';
+import { computeCheck } from 'telegram/Password';
+import { sendError, sendSuccess } from '@/lib/api-response';
+import { generateAccessToken } from '@/lib/jwt';
+import { createSession } from '@/lib/session';
+import { finalizeLogin } from '@/lib/telegram-qr';
+import { qrStore } from '@/lib/telegram-qr-store';
+import { userRepository } from '@/repositories/user.repository';
 
 export async function POST(request: NextRequest) {
   const { loginId, password } = await request.json();
 
   if (!loginId || !password) {
-    return sendError("Missing loginId or password", 400);
+    return sendError('Missing loginId or password', 400);
   }
 
   const entry = qrStore.get(loginId);
   if (!entry) {
-    return sendError("Login session not found or expired", 410);
+    return sendError('Login session not found or expired', 410);
   }
 
-  if (entry.status !== "needs_password") {
+  if (entry.status !== 'needs_password') {
     return sendError(`Cannot submit password in state: ${entry.status}`, 400);
   }
 
@@ -42,8 +42,8 @@ export async function POST(request: NextRequest) {
         err instanceof Error
           ? ((err as { errorMessage?: string }).errorMessage ?? err.message)
           : String(err);
-      if (errMsg === "PASSWORD_HASH_INVALID") {
-        return sendError("Incorrect password", 401);
+      if (errMsg === 'PASSWORD_HASH_INVALID') {
+        return sendError('Incorrect password', 401);
       }
       throw err;
     }
@@ -51,7 +51,7 @@ export async function POST(request: NextRequest) {
     await finalizeLogin(loginId, entry.client);
 
     const updated = qrStore.get(loginId);
-    if (updated?.status === "success" && updated.user) {
+    if (updated?.status === 'success' && updated.user) {
       const tgUser = updated.user;
       await qrStore.delete(loginId);
 
@@ -81,18 +81,17 @@ export async function POST(request: NextRequest) {
 
       return sendSuccess(
         {
-          step: "success",
+          step: 'success',
           user: dbUser,
           accessToken,
         },
-        "Login successful",
+        'Login successful',
       );
     }
 
-    return sendError("Login finalized in unexpected state", 500);
+    return sendError('Login finalized in unexpected state', 500);
   } catch (err: unknown) {
     const errMsg = err instanceof Error ? err.message : String(err);
-    console.error("Password submit failed:", errMsg ?? err);
-    return sendError(errMsg ?? "Password submit failed", 500);
+    return sendError(errMsg ?? 'Password submit failed', 500);
   }
 }

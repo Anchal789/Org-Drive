@@ -1,10 +1,10 @@
-export const dynamic = "force-dynamic";
+export const dynamic = 'force-dynamic';
 
-import type { UploadedFile, UploadedFolder } from "@/types/files";
-import DriveCrumb from "../DriveCrumb/DriveCrumb";
-import styles from "./DashList.module.scss";
-import FileTable from "./FileTable";
-import FolderContainer from "../FolderSection/FolderContainer";
+import type { UploadedFile, UploadedFolder } from '@/types/files';
+import DriveCrumb from '../DriveCrumb/DriveCrumb';
+import FolderContainer from '../FolderSection/FolderContainer';
+import styles from './DashList.module.scss';
+import FileTable from './FileTable';
 
 export default function DashList({
   files,

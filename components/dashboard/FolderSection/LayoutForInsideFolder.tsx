@@ -1,11 +1,11 @@
-"use client";
+'use client';
 
-import { UploadedFile } from "@/types/files";
-import { FunctionComponent, useMemo } from "react";
-import styles from "./DashFolder.module.scss";
-import FileTable from "../ListSection/FileTable";
-import { useFileLayout, useSortByStore } from "@/store/store";
-import FilesContainer from "../FileSection/FilesContainer";
+import { type FunctionComponent, useMemo } from 'react';
+import { useFileLayout, useSortByStore } from '@/store/store';
+import type { UploadedFile } from '@/types/files';
+import FilesContainer from '../FileSection/FilesContainer';
+import FileTable from '../ListSection/FileTable';
+import styles from './DashFolder.module.scss';
 
 const LayoutForInsideFolder: FunctionComponent<{
   files: Array<UploadedFile>;
@@ -22,23 +22,23 @@ const LayoutForInsideFolder: FunctionComponent<{
     const sortedFiles = [...files];
 
     switch (sortBy) {
-      case "name":
+      case 'name':
         sortedFiles.sort((a, b) => a.name.localeCompare(b.name));
         break;
 
-      case "modified":
+      case 'modified':
         sortedFiles.sort((a, b) => getModTime(b) - getModTime(a));
         break;
 
-      case "size":
+      case 'size':
         sortedFiles.sort((a, b) => (b.size || 0) - (a.size || 0));
 
         break;
 
-      case "type":
+      case 'type':
         sortedFiles.sort((a, b) => {
-          const typeA = a.mimeType || "";
-          const typeB = b.mimeType || "";
+          const typeA = a.mimeType || '';
+          const typeB = b.mimeType || '';
           return typeA.localeCompare(typeB);
         });
         break;
@@ -54,7 +54,7 @@ const LayoutForInsideFolder: FunctionComponent<{
     return null;
   }
 
-  return fileLayout === "grid" ? (
+  return fileLayout === 'grid' ? (
     <div className={styles.filesGrid}>
       <FilesContainer files={sortedData.files} />
     </div>

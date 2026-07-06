@@ -1,7 +1,8 @@
-import "dotenv/config";
-import { drizzle } from "drizzle-orm/postgres-js";
-import postgres from "postgres";
-import * as schema from "./schema";
+import 'dotenv/config';
+import { drizzle } from 'drizzle-orm/postgres-js';
+import postgres from 'postgres';
+import * as schema from './schema';
+
 declare global {
   var postgresClient: postgres.Sql | undefined;
 }
@@ -15,7 +16,7 @@ const client =
     idle_timeout: 20,
   });
 
-if (process.env.NODE_ENV !== "production") {
+if (process.env.NODE_ENV !== 'production') {
   globalThis.postgresClient = client;
 }
 

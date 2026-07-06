@@ -1,15 +1,15 @@
-import { RefreshCw, Send, Settings, SquarePen, Trash2 } from "lucide-react";
-import styles from "./Settings.module.scss";
-import LayoutSettings from "./LayoutSettings";
+import { RefreshCw, Send, Settings, SquarePen, Trash2 } from 'lucide-react';
+import Badge from '../ui/badge';
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "../ui/select";
-import { Switch } from "../ui/switch";
-import Badge from "../ui/badge";
+} from '../ui/select';
+import { Switch } from '../ui/switch';
+import LayoutSettings from './LayoutSettings';
+import styles from './Settings.module.scss';
 
 const SettingsPage = async () => {
   return (
@@ -44,8 +44,8 @@ const SettingsPage = async () => {
                 <Badge
                   outline
                   customTone={{
-                    color: "var(--foreground)",
-                    border: "var(--border)",
+                    color: 'var(--foreground)',
+                    border: 'var(--border)',
                   }}
                   className={styles.organizationNameEditable}
                 >
@@ -110,7 +110,7 @@ const SettingsPage = async () => {
                   </p>
                 </div>
                 <div className={styles.connectionStatus}>
-                  <div className={styles.dot}></div> Healthy
+                  <div className={styles.dot} /> Healthy
                 </div>
               </div>
               <div className={styles.contentRow}>
@@ -134,8 +134,8 @@ const SettingsPage = async () => {
                 <Badge
                   outline
                   customTone={{
-                    color: "var(--foreground)",
-                    border: "var(--border)",
+                    color: 'var(--foreground)',
+                    border: 'var(--border)',
                   }}
                   className={styles.organizationNameEditable}
                 >
@@ -199,9 +199,9 @@ const SettingsPage = async () => {
                 <Badge
                   outline
                   customTone={{
-                    color: "var(--destructive)",
+                    color: 'var(--destructive)',
                     border:
-                      "color-mix(in oklch, var(--destructive) 40%, var(--border))",
+                      'color-mix(in oklch, var(--destructive) 40%, var(--border))',
                   }}
                   className={styles.organizationNameEditable}
                 >

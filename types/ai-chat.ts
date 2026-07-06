@@ -1,3 +1,5 @@
+import type { ReactNode } from 'react';
+
 export interface KnowledgeDocument {
   id: string;
   name: string;
@@ -11,12 +13,12 @@ export interface PromptOption {
   id: string;
   title: string;
   description: string;
-  icon: any;
+  icon: ReactNode;
 }
 
 export interface ChatMessage {
   id: string;
-  role: "user" | "assistant";
+  role: 'user' | 'assistant';
   initials?: string;
   content: string;
   citations?: { label: string; file: string; page: string }[];

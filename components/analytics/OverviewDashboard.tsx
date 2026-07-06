@@ -1,52 +1,53 @@
-"use client";
+'use client';
 
-import { AnalyticsOverviewData, Timeframe } from "@/types/analytics";
-import { TINTS } from "@/constants/common-constants";
-import styles from "./Analytics.module.scss";
-import StatTile from "./StatTile";
-import ActivityFeed from "./ActivityFeed";
+import dynamic from 'next/dynamic';
 import {
-  ChartConfig,
+  type ChartConfig,
   ChartContainer,
   ChartLegend,
   ChartLegendContent,
   ChartTooltip,
   ChartTooltipContent,
-} from "@/components/ui/chart";
-import dynamic from "next/dynamic";
-const Bar = dynamic(() => import("recharts").then((mod) => mod.Bar), {
+} from '@/components/ui/chart';
+import { TINTS } from '@/constants/common-constants';
+import type { AnalyticsOverviewData, Timeframe } from '@/types/analytics';
+import ActivityFeed from './ActivityFeed';
+import styles from './Analytics.module.scss';
+import StatTile from './StatTile';
+
+const Bar = dynamic(() => import('recharts').then((mod) => mod.Bar), {
   ssr: false,
 });
-const BarChart = dynamic(() => import("recharts").then((mod) => mod.BarChart), {
+const BarChart = dynamic(() => import('recharts').then((mod) => mod.BarChart), {
   ssr: false,
 });
 const CartesianGrid = dynamic(
-  () => import("recharts").then((mod) => mod.CartesianGrid),
+  () => import('recharts').then((mod) => mod.CartesianGrid),
   { ssr: false },
 );
-const Cell = dynamic(() => import("recharts").then((mod) => mod.Cell), {
+const Cell = dynamic(() => import('recharts').then((mod) => mod.Cell), {
   ssr: false,
 });
-const Label = dynamic(() => import("recharts").then((mod) => mod.Label), {
+const Label = dynamic(() => import('recharts').then((mod) => mod.Label), {
   ssr: false,
 });
-const Pie = dynamic(() => import("recharts").then((mod) => mod.Pie), {
+const Pie = dynamic(() => import('recharts').then((mod) => mod.Pie), {
   ssr: false,
 });
-const PieChart = dynamic(() => import("recharts").then((mod) => mod.PieChart), {
+const PieChart = dynamic(() => import('recharts').then((mod) => mod.PieChart), {
   ssr: false,
 });
-const XAxis = dynamic(() => import("recharts").then((mod) => mod.XAxis), {
+const XAxis = dynamic(() => import('recharts').then((mod) => mod.XAxis), {
   ssr: false,
 });
 
 const chartConfig = {
   uploads: {
-    label: "Uploads",
-    color: "var(--primary)",
+    label: 'Uploads',
+    color: 'var(--primary)',
   },
   indexed: {
-    label: "Indexed",
+    label: 'Indexed',
     color: TINTS.violet.bd,
   },
 } satisfies ChartConfig;
@@ -119,7 +120,7 @@ export default function OverviewDashboard({
             <ChartContainer
               config={{
                 sizeBytes: {
-                  label: "Storage Used",
+                  label: 'Storage Used',
                 },
               }}
               className={styles.donutChart}
@@ -143,7 +144,7 @@ export default function OverviewDashboard({
 
                   <Label
                     content={({ viewBox }) => {
-                      if (viewBox && "cx" in viewBox && "cy" in viewBox) {
+                      if (viewBox && 'cx' in viewBox && 'cy' in viewBox) {
                         return (
                           <text
                             x={viewBox.cx}
@@ -156,14 +157,14 @@ export default function OverviewDashboard({
                               y={viewBox.cy - 4}
                               className="fill-foreground text-[22px] font-bold"
                             >
-                              {data.storageUsed.value.split(" ")[0]}
+                              {data.storageUsed.value.split(' ')[0]}
                             </tspan>
                             <tspan
                               x={viewBox.cx}
                               y={viewBox.cy + 16}
                               className="fill-muted-foreground text-[10px]"
                             >
-                              {data.storageUsed.value.split(" ")[1]} used
+                              {data.storageUsed.value.split(' ')[1]} used
                             </tspan>
                           </text>
                         );

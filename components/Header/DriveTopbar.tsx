@@ -1,8 +1,3 @@
-import Badge from "@/components/ui/badge";
-import UserAvatar from "@/components/ui/user-avatar";
-import type { SessionUser } from "@/types/auth";
-import styles from "./DriveTopbar.module.scss";
-import { Popover, PopoverContent, PopoverTrigger } from "../ui/popover";
 import {
   Bell,
   CircleQuestionMark,
@@ -12,18 +7,23 @@ import {
   Shield,
   Sparkle,
   User,
-} from "lucide-react";
-import { Separator } from "../ui/separator";
-import { uploadedFilesRepository } from "@/repositories/uploaded-files.respository";
-import { formatBytes } from "@/store/store";
-import { Button } from "../ui/button";
-import DarkModeBtn from "./DarkModeBtn";
-import LogoutBtn from "./LogoutBtn";
+} from 'lucide-react';
+import Badge from '@/components/ui/badge';
+import UserAvatar from '@/components/ui/user-avatar';
+import { uploadedFilesRepository } from '@/repositories/uploaded-files.respository';
+import { formatBytes } from '@/store/store';
+import type { SessionUser } from '@/types/auth';
+import { Button } from '../ui/button';
+import { Popover, PopoverContent, PopoverTrigger } from '../ui/popover';
+import { Separator } from '../ui/separator';
+import DarkModeBtn from './DarkModeBtn';
+import styles from './DriveTopbar.module.scss';
+import LogoutBtn from './LogoutBtn';
 
 export default async function DriveTopbar({ user }: { user: SessionUser }) {
   const userInitials = user
-    ? `${user.firstName?.charAt(0) ?? ""}${user.lastName?.charAt(0) ?? ""}`
-    : "";
+    ? `${user.firstName?.charAt(0) ?? ''}${user.lastName?.charAt(0) ?? ''}`
+    : '';
 
   const filesize = await uploadedFilesRepository.totalStorage(
     Number(user?.userId),
@@ -69,7 +69,7 @@ export default async function DriveTopbar({ user }: { user: SessionUser }) {
                 {user?.firstName} {user?.lastName}
               </span>
               <span className={styles.username}>
-                {user?.username ? `@${user?.username}` : ""}
+                {user?.username ? `@${user?.username}` : ''}
               </span>
             </div>
           </div>

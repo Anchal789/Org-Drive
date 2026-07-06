@@ -1,12 +1,14 @@
-"use client";
+'use client';
 
-import { Moon } from "lucide-react";
-import { Switch } from "../ui/switch";
-import styles from "./DriveTopbar.module.scss";
-import { useSyncExternalStore } from "react";
-import { useTheme } from "next-themes";
+import { Moon } from 'lucide-react';
+import { useTheme } from 'next-themes';
+import { useSyncExternalStore } from 'react';
+import { Switch } from '../ui/switch';
+import styles from './DriveTopbar.module.scss';
 
-const subscribe = () => () => {};
+const subscribe = () => () => {
+  void 0;
+};
 const getSnapshot = () => true;
 const getServerSnapshot = () => false;
 
@@ -24,7 +26,7 @@ const DarkModeBtn = () => {
     );
   }
 
-  const isDark = resolvedTheme === "dark";
+  const isDark = resolvedTheme === 'dark';
 
   return (
     <div className={`${styles.actionButton} ${styles.actionAction}`}>
@@ -34,7 +36,7 @@ const DarkModeBtn = () => {
       </div>
       <Switch
         checked={isDark}
-        onCheckedChange={(value) => setTheme(value ? "dark" : "light")}
+        onCheckedChange={(value) => setTheme(value ? 'dark' : 'light')}
       />
     </div>
   );

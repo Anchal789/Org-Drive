@@ -1,31 +1,31 @@
-"use client";
+'use client';
 
-import { SharedWithMeItemsType } from "@/types/share-with-me";
-import { UploadedFile, UploadedFolder } from "@/types/files";
-import { FunctionComponent, useState } from "react";
-import styles from "./ShareWithMePage.module.scss";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuGroup,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from "../ui/dropdown-menu";
-import { Button } from "../ui/button";
-import { downloadFile } from "@/services/file-service";
-import AlertModal from "../ui/alert-modal";
-import { useRouter } from "next/navigation";
-import { trashSharedFile } from "@/services/shared-with-me-service";
-import RenameItem from "../rename/RenameIterm";
-import { Separator } from "../ui/separator";
-import { useShareDialogStore } from "@/store/store";
 import {
   Download,
   MoreHorizontal,
   PencilLine,
   Share,
   Trash2,
-} from "lucide-react";
+} from 'lucide-react';
+import { useRouter } from 'next/navigation';
+import { type FunctionComponent, useState } from 'react';
+import { downloadFile } from '@/services/file-service';
+import { trashSharedFile } from '@/services/shared-with-me-service';
+import { useShareDialogStore } from '@/store/store';
+import type { UploadedFile, UploadedFolder } from '@/types/files';
+import type { SharedWithMeItemsType } from '@/types/share-with-me';
+import RenameItem from '../rename/RenameIterm';
+import AlertModal from '../ui/alert-modal';
+import { Button } from '../ui/button';
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuGroup,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from '../ui/dropdown-menu';
+import { Separator } from '../ui/separator';
+import styles from './ShareWithMePage.module.scss';
 
 const ShareWithMeActionColumn: FunctionComponent<{
   props: SharedWithMeItemsType;
@@ -43,7 +43,7 @@ const ShareWithMeActionColumn: FunctionComponent<{
     }
   };
 
-  const canEdit = props.permission === "editor";
+  const canEdit = props.permission === 'editor';
 
   const targetFile = props.fileId
     ? ({
@@ -51,14 +51,14 @@ const ShareWithMeActionColumn: FunctionComponent<{
         id: props.fileId,
         name: props.fileName,
         telegramMessageId: 0,
-        documentId: "",
-        accessHash: "",
+        documentId: '',
+        accessHash: '',
         size: 0,
-        type: "",
+        type: '',
         isDeleted: false,
         updatedAt: props.createdAt,
         shareId: props.id,
-        mimeType: "pdf",
+        mimeType: 'pdf',
       } as UploadedFile & { shareId?: number })
     : undefined;
 
@@ -116,7 +116,10 @@ const ShareWithMeActionColumn: FunctionComponent<{
 
             {props.fileId && (
               <DropdownMenuItem
-                onClick={() => downloadFile(props.fileId!, props.userId)}
+                onClick={() => {
+                  const fileId = props.fileId;
+                  if (fileId) downloadFile(fileId, props.userId);
+                }}
                 className={styles.menuItem}
               >
                 <Download size={14} />

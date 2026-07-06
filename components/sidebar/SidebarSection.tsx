@@ -1,8 +1,8 @@
-"use client";
-import { useSidebar } from "@/components/ui/sidebar";
-import styles from "./DriveSidebar.module.scss";
-import type { SidebarItemProps } from "@/types/component-types";
-import SidebarItem from "./SidebarItem";
+'use client';
+import { useSidebar } from '@/components/ui/sidebar';
+import type { SidebarItemProps } from '@/types/component-types';
+import styles from './DriveSidebar.module.scss';
+import SidebarItem from './SidebarItem';
 
 export function SidebarSection({
   label,
@@ -12,7 +12,7 @@ export function SidebarSection({
   items: SidebarItemProps[];
 }) {
   const { state } = useSidebar();
-  if (state === "collapsed") return null;
+  if (state === 'collapsed') return null;
   return (
     <>
       <div className={styles.sectionLabel}>{label}</div>

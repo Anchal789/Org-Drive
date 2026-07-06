@@ -1,6 +1,6 @@
-import { Tone } from "./dashboard";
+import type { Tone } from './dashboard';
 
-export type Timeframe = "24h" | "7d" | "30d" | "90d";
+export type Timeframe = '24h' | '7d' | '30d' | '90d';
 
 export interface StatData {
   label: string;

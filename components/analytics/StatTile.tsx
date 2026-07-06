@@ -1,10 +1,10 @@
-"use client";
+'use client';
 
-import { StatData } from "@/types/analytics";
-import { TINTS } from "@/constants/common-constants";
-import styles from "./Analytics.module.scss";
-import { generateSparklinePath } from "@/helpers/analytics.helper";
-import Badge from "../ui/badge";
+import { TINTS } from '@/constants/common-constants';
+import { generateSparklinePath } from '@/helpers/analytics.helper';
+import type { StatData } from '@/types/analytics';
+import Badge from '../ui/badge';
+import styles from './Analytics.module.scss';
 
 export default function StatTile({
   data,
@@ -14,10 +14,10 @@ export default function StatTile({
   onClickAction?: () => void;
 }) {
   return (
-    <div
-      className={`${styles.statCard} ${onClickAction ? styles.clickableStat : ""}`}
+    <button
+      type="button"
+      className={`${styles.statCard} ${onClickAction ? styles.clickableStat : ''}`}
       onClick={onClickAction}
-      role="button"
     >
       <div className={styles.statHeader}>
         <div className={styles.statLabel}>{data.label}</div>
@@ -42,7 +42,13 @@ export default function StatTile({
           {data.sub && <div className={styles.statSub}>{data.sub}</div>}
         </div>
         {data.sparkData && (
-          <svg width="70" height="26" viewBox="0 0 70 26">
+          <svg
+            width="70"
+            height="26"
+            viewBox="0 0 70 26"
+            aria-hidden="true"
+            focusable="false"
+          >
             <path
               d={generateSparklinePath(data.sparkData, 70, 26)}
               fill="none"
@@ -54,6 +60,6 @@ export default function StatTile({
           </svg>
         )}
       </div>
-    </div>
+    </button>
   );
 }

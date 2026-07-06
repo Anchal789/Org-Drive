@@ -1,10 +1,10 @@
-import UserAvatar from "@/components/ui/user-avatar";
-import { TINTS } from "@/constants/common-constants";
-import { getAvatarColor, getFolderTone } from "@/lib/utils";
-import type { UploadedFolder } from "@/types/files";
-import styles from "./FolderTile.module.scss";
-import FolderMenu from "./FolderMenu/FolderMenu";
-import { Folder, Tag } from "lucide-react";
+import { Folder, Tag } from 'lucide-react';
+import UserAvatar from '@/components/ui/user-avatar';
+import { TINTS } from '@/constants/common-constants';
+import { getAvatarColor, getFolderTone } from '@/lib/utils';
+import type { UploadedFolder } from '@/types/files';
+import FolderMenu from './FolderMenu/FolderMenu';
+import styles from './FolderTile.module.scss';
 
 export default function FolderTile({
   folder,
@@ -15,12 +15,12 @@ export default function FolderTile({
 }) {
   const tint = TINTS[getFolderTone(folder.id)];
   const ownerInitials = folder
-    ? `${folder.ownerFirstName?.charAt(0) ?? ""}${folder.ownerLastName?.charAt(0) ?? ""}`
-    : "";
+    ? `${folder.ownerFirstName?.charAt(0) ?? ''}${folder.ownerLastName?.charAt(0) ?? ''}`
+    : '';
 
   return (
     <div
-      className={`${styles.tile} ${active ? styles.tileActive : ""}`}
+      className={`${styles.tile} ${active ? styles.tileActive : ''}`}
       data-slot="folder-tile"
     >
       <div
@@ -36,7 +36,7 @@ export default function FolderTile({
       {folder.bookmark && <Tag size={13} className={styles.starIcon} />}
       <UserAvatar
         initials={ownerInitials}
-        tone={getAvatarColor(folder?.userId ?? "")}
+        tone={getAvatarColor(folder?.userId ?? '')}
         size="sm"
       />
       <FolderMenu folder={folder} />

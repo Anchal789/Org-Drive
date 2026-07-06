@@ -1,19 +1,19 @@
-"use client";
+'use client';
 
-import { Checkbox } from "@/components/ui/checkbox";
-import { X, Download, Share, Folder, Trash2, Tag, Sparkle } from "lucide-react";
-import styles from "./FileSelectionBar.module.scss";
-import { Separator } from "@/components/ui/separator";
-import { useSelectedFilesStore, useShareDialogStore } from "@/store/store";
-import { UploadedFile, UploadedFolder } from "@/types/files";
-import { Button } from "@/components/ui/button";
-import { downloadMultiple } from "@/services/file-service";
-import { useState } from "react";
-import { useRouter } from "next/navigation";
-import { handleBookmarMultiple, handleDeleteMultiple } from "@/helpers/file-fn";
-import { Dialog } from "@/components/ui/dialog";
-import MoveModal from "../ListSection/MoveModal";
-import AlertModal from "@/components/ui/alert-modal";
+import { Download, Folder, Share, Sparkle, Tag, Trash2, X } from 'lucide-react';
+import { useRouter } from 'next/navigation';
+import { useState } from 'react';
+import AlertModal from '@/components/ui/alert-modal';
+import { Button } from '@/components/ui/button';
+import { Checkbox } from '@/components/ui/checkbox';
+import { Dialog } from '@/components/ui/dialog';
+import { Separator } from '@/components/ui/separator';
+import { handleBookmarMultiple, handleDeleteMultiple } from '@/helpers/file-fn';
+import { downloadMultiple } from '@/services/file-service';
+import { useSelectedFilesStore, useShareDialogStore } from '@/store/store';
+import type { UploadedFile, UploadedFolder } from '@/types/files';
+import MoveModal from '../ListSection/MoveModal';
+import styles from './FileSelectionBar.module.scss';
 
 export default function FileSelectionBar({
   files,
@@ -29,7 +29,7 @@ export default function FileSelectionBar({
   const [modalState, setModalState] = useState<{
     open: boolean;
     file: Array<UploadedFile> | null;
-    action: "share" | "move" | "bookmark" | "delete" | null;
+    action: 'share' | 'move' | 'bookmark' | 'delete' | null;
   }>({
     open: false,
     file: null,
@@ -57,7 +57,7 @@ export default function FileSelectionBar({
   return (
     <>
       <Dialog
-        open={modalState.open && modalState.action === "move"}
+        open={modalState.open && modalState.action === 'move'}
         onOpenChange={(open) => {
           if (!open) {
             setModalState({ open: false, file: null, action: null });
@@ -65,7 +65,7 @@ export default function FileSelectionBar({
         }}
         modal
       >
-        {modalState.open && modalState.action === "move" && (
+        {modalState.open && modalState.action === 'move' && (
           <MoveModal files={modalState.file || []} closeModal={closeModal} />
         )}
       </Dialog>
@@ -140,7 +140,7 @@ export default function FileSelectionBar({
               setModalState({
                 open: true,
                 file: selectedFiles,
-                action: "move",
+                action: 'move',
               })
             }
             disabled={folders?.length === 0}
@@ -166,8 +166,8 @@ export default function FileSelectionBar({
 
           <Separator orientation="vertical" />
           <Button
-            className={`${styles.actionButton} ${styles["actionButton-destructive"]}`}
-            variant={"destructive"}
+            className={`${styles.actionButton} ${styles['actionButton-destructive']}`}
+            variant={'destructive'}
             onClick={() => {
               setOpenDeleteDialog(true);
             }}

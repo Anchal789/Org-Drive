@@ -1,7 +1,7 @@
-import { eq } from "drizzle-orm";
-import { db } from "@/db";
-import { userTable } from "@/db/schema";
-import type { UpsertUserInput, User } from "@/types/auth";
+import { eq } from 'drizzle-orm';
+import { db } from '@/db';
+import { userTable } from '@/db/schema';
+import type { UpsertUserInput, User } from '@/types/auth';
 
 export const userRepository = {
   async findByTelegramId(telegramId: string): Promise<User | null> {

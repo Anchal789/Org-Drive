@@ -1,11 +1,11 @@
-"use client";
+'use client';
 
-import { useState } from "react";
-import { Button } from "../ui/button";
-import AlertModal from "../ui/alert-modal";
-import { useRouter } from "next/navigation";
-import { emptyTrash } from "@/services/trash-service";
-import { Trash2 } from "lucide-react";
+import { Trash2 } from 'lucide-react';
+import { useRouter } from 'next/navigation';
+import { useState } from 'react';
+import { emptyTrash } from '@/services/trash-service';
+import AlertModal from '../ui/alert-modal';
+import { Button } from '../ui/button';
 
 export default function EmptyTrashButton({
   isDisabled,
@@ -33,7 +33,7 @@ export default function EmptyTrashButton({
         onOpenChange={setIsOpen}
         title="Empty Trash?"
         description="Are you absolutely sure? All files and folders in the trash will be permanently deleted from Telegram. This action cannot be undone."
-        confirmText={isDeleting ? "Emptying..." : "Delete Permanently"}
+        confirmText={isDeleting ? 'Emptying...' : 'Delete Permanently'}
         confirmVariant="destructive"
         cancelText="Cancel"
         onConfirm={handleEmptyTrash}
@@ -45,7 +45,7 @@ export default function EmptyTrashButton({
         disabled={isDisabled || isDeleting}
       >
         <Trash2 size={14} />
-        {isDeleting ? "Emptying..." : "Empty trash"}
+        {isDeleting ? 'Emptying...' : 'Empty trash'}
       </Button>
     </>
   );

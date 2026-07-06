@@ -1,13 +1,13 @@
-import { toast } from "sonner";
-import { deleteData, postData } from "@/lib/api-fn";
-import { isTelegramSessionValid } from "@/lib/session";
-import { encrypt } from "@/lib/utils";
-import { UploadedFile } from "@/types/files";
+import { toast } from 'sonner';
+import { deleteData, postData } from '@/lib/api-fn';
+import { isTelegramSessionValid } from '@/lib/session';
+import { encrypt } from '@/lib/utils';
+import type { UploadedFile } from '@/types/files';
 
 const triggerHiddenDownload = (url: string) => {
-  const a = document.createElement("a");
+  const a = document.createElement('a');
   a.href = url;
-  a.style.display = "none";
+  a.style.display = 'none';
   document.body.appendChild(a);
   a.click();
   document.body.removeChild(a);
@@ -48,7 +48,7 @@ export const downloadAllFolderFiles = async (
 
 export const trashFile = async (fileId: number, shareId?: number) => {
   const response = await deleteData({
-    url: "/api/file/delete-file",
+    url: '/api/file/delete-file',
     params: {
       fileId: encrypt(String(fileId)),
       shareId: encrypt(String(shareId)),
@@ -69,7 +69,7 @@ export const bookmarkItem = async (
   bookmark: boolean,
 ) => {
   const response = await postData({
-    url: "/api/bookmark",
+    url: '/api/bookmark',
     payload: { id: encrypt(`${id}`), isFile, bookmark, shared: false },
   });
 
@@ -83,7 +83,7 @@ export const bookmarkItem = async (
 
 export const moveFile = async (filesId: number[], folderId: string) => {
   const response = await postData({
-    url: "/api/move-file",
+    url: '/api/move-file',
     payload: { filesId, folderId: Number(folderId) },
   });
 
@@ -100,7 +100,7 @@ export const bookmarkMultiple = async (
   bookmarkState: boolean,
 ) => {
   const response = await postData({
-    url: "/api/bookmark/all",
+    url: '/api/bookmark/all',
     payload: { items, bookmarkState },
   });
 
@@ -116,7 +116,7 @@ export const deleteMultiple = async (
   items: { id: number; isFile: boolean; shared: boolean }[],
 ) => {
   const response = await postData({
-    url: "/api/file/delete-multiple",
+    url: '/api/file/delete-multiple',
     payload: { items },
   });
 
@@ -132,7 +132,7 @@ export const downloadMultiple = (selectedFiles: UploadedFile[]) => {
   const filesToDownload = selectedFiles.filter((f) => !f.folderId);
 
   if (filesToDownload.length === 0) {
-    toast.error("No downloadable files selected.");
+    toast.error('No downloadable files selected.');
     return;
   }
 
@@ -145,7 +145,7 @@ export const downloadMultiple = (selectedFiles: UploadedFile[]) => {
     return;
   }
 
-  const idString = filesToDownload.map((f) => f.id).join(",");
+  const idString = filesToDownload.map((f) => f.id).join(',');
   const encryptedIds = encrypt(idString);
 
   triggerHiddenDownload(

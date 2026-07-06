@@ -1,7 +1,7 @@
-import { Contributor } from "@/types/analytics";
-import { TINTS } from "@/constants/common-constants";
-import styles from "./Analytics.module.scss";
-import { Avatar, AvatarFallback } from "@/components/ui/avatar";
+import { Avatar, AvatarFallback } from '@/components/ui/avatar';
+import { TINTS } from '@/constants/common-constants';
+import type { Contributor } from '@/types/analytics';
+import styles from './Analytics.module.scss';
 
 export default function TopContributors({
   contributors,

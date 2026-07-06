@@ -1,7 +1,7 @@
-import { bookmarkMultiple, deleteMultiple } from "@/services/file-service";
-import { UploadedFile } from "@/types/files";
-import { AppRouterInstance } from "next/dist/shared/lib/app-router-context.shared-runtime";
-import { toast } from "sonner";
+import type { AppRouterInstance } from 'next/dist/shared/lib/app-router-context.shared-runtime';
+import { toast } from 'sonner';
+import { bookmarkMultiple, deleteMultiple } from '@/services/file-service';
+import type { UploadedFile } from '@/types/files';
 
 export const handleDeleteMultiple = async ({
   selectedFileObjects,
@@ -43,8 +43,8 @@ export const handleBookmarMultiple = async ({
   );
 
   if (alreadyInTargetState.length > 0) {
-    const stateStr = targetState ? "bookmarked" : "unbookmarked";
-    const fileNames = alreadyInTargetState.map((f) => f.name).join(", ");
+    const stateStr = targetState ? 'bookmarked' : 'unbookmarked';
+    const fileNames = alreadyInTargetState.map((f) => f.name).join(', ');
 
     toast.error(`Already ${stateStr}: ${fileNames}`);
   }

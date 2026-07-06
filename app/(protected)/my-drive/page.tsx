@@ -1,12 +1,12 @@
-import DriveDropOverlay from "@/components/dashboard/DriveDropOverlay";
-import DashGridWrapper from "@/components/dashboard/GridSection/DashGridWrapper";
-import SwitchLayout from "@/components/dashboard/SwitchLayout";
-import UploadWidget from "@/components/dashboard/upload-widget/UploadWidget";
-import { getSessionUser } from "@/lib/session";
-import { sharedWithMeRepository } from "@/repositories/shared-with-me.repository";
-import { uploadedFilesRepository } from "@/repositories/uploaded-files.respository";
-import { uploadedFoldersRepository } from "@/repositories/uploaded-folders.respository";
-import type { UploadedFile, UploadedFolder } from "@/types/files";
+import DriveDropOverlay from '@/components/dashboard/DriveDropOverlay';
+import DashGridWrapper from '@/components/dashboard/GridSection/DashGridWrapper';
+import SwitchLayout from '@/components/dashboard/SwitchLayout';
+import UploadWidget from '@/components/dashboard/upload-widget/UploadWidget';
+import { getSessionUser } from '@/lib/session';
+import { sharedWithMeRepository } from '@/repositories/shared-with-me.repository';
+import { uploadedFilesRepository } from '@/repositories/uploaded-files.respository';
+import { uploadedFoldersRepository } from '@/repositories/uploaded-folders.respository';
+import type { UploadedFile, UploadedFolder } from '@/types/files';
 
 export default async function Page() {
   const user = await getSessionUser();

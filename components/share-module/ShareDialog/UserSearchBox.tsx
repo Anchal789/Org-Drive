@@ -1,7 +1,4 @@
-import UserAvatar from "@/components/ui/user-avatar";
-import { getAvatarColor } from "@/lib/utils";
-import type { User } from "@/types/auth";
-import { InputGroupAddon } from "@/components/ui/input-group";
+import { Users } from 'lucide-react';
 import {
   Combobox,
   ComboboxContent,
@@ -9,9 +6,12 @@ import {
   ComboboxInput,
   ComboboxItem,
   ComboboxList,
-} from "@/components/ui/combobox";
-import styles from "./ShareDialog.module.scss";
-import { Users } from "lucide-react";
+} from '@/components/ui/combobox';
+import { InputGroupAddon } from '@/components/ui/input-group';
+import UserAvatar from '@/components/ui/user-avatar';
+import { getAvatarColor } from '@/lib/utils';
+import type { User } from '@/types/auth';
+import styles from './ShareDialog.module.scss';
 
 interface UserSearchBoxProps {
   filteredUsers: User[];
@@ -20,10 +20,10 @@ interface UserSearchBoxProps {
   onSelectUsers: (users: User[]) => void;
 }
 const getInitials = (first?: string, last?: string) =>
-  `${first?.charAt(0) ?? ""}${last?.charAt(0) ?? ""}`;
+  `${first?.charAt(0) ?? ''}${last?.charAt(0) ?? ''}`;
 
 const userToStringLabel = (u: User) =>
-  `${u.firstName || ""} ${u.lastName || ""}`;
+  `${u.firstName || ''} ${u.lastName || ''}`;
 
 const userToStringValue = (u: User) => String(u.id);
 
@@ -68,8 +68,8 @@ export default function UserSearchBox({
             >
               <UserAvatar
                 initials={getInitials(
-                  user.firstName ?? "",
-                  user.lastName ?? "",
+                  user.firstName ?? '',
+                  user.lastName ?? '',
                 )}
                 src={user.photoUrl ?? undefined}
                 tone={getAvatarColor(String(user.id))}

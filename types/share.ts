@@ -1,7 +1,7 @@
-import type { ShareWithMePerson } from "@/types/share-with-me";
-import type { User } from "@/types/auth";
+import type { User } from '@/types/auth';
+import type { ShareWithMePerson } from '@/types/share-with-me';
 
-export type SharePermission = "viewer" | "editor" | "owner" | "commenter";
+export type SharePermission = 'viewer' | 'editor' | 'owner' | 'commenter';
 
 export type InviteUser = User & { permission: SharePermission };
 
@@ -14,19 +14,19 @@ export type ShareState = {
 };
 
 export type ShareAction =
-  | { type: "reset" }
-  | { type: "set_search_term"; searchTerm: string }
-  | { type: "set_loading"; isLoading: boolean }
-  | { type: "set_parent_folder_name"; parentFolderName: string | null }
-  | { type: "set_users_with_access"; usersWithAccess: ShareWithMePerson[] }
-  | { type: "set_users_to_invite"; usersToInvite: InviteUser[] }
+  | { type: 'reset' }
+  | { type: 'set_search_term'; searchTerm: string }
+  | { type: 'set_loading'; isLoading: boolean }
+  | { type: 'set_parent_folder_name'; parentFolderName: string | null }
+  | { type: 'set_users_with_access'; usersWithAccess: ShareWithMePerson[] }
+  | { type: 'set_users_to_invite'; usersToInvite: InviteUser[] }
   | {
-      type: "update_invite_permission";
+      type: 'update_invite_permission';
       index: number;
-      permission: InviteUser["permission"];
+      permission: InviteUser['permission'];
     }
   | {
-      type: "update_access_permission";
+      type: 'update_access_permission';
       index: number;
-      permission: ShareWithMePerson["permission"];
+      permission: ShareWithMePerson['permission'];
     };

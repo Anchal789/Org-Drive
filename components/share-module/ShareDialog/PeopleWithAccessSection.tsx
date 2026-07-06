@@ -1,6 +1,6 @@
-import UserAccessRow from "./UserAccessRow";
-import styles from "./ShareDialog.module.scss";
-import type { ShareWithMePerson } from "@/types/share-with-me";
+import type { ShareWithMePerson } from '@/types/share-with-me';
+import styles from './ShareDialog.module.scss';
+import UserAccessRow from './UserAccessRow';
 
 type PeopleWithAccessSectionProps = {
   users: ShareWithMePerson[];
@@ -8,7 +8,7 @@ type PeopleWithAccessSectionProps = {
   isMultiShare: boolean;
   onPermissionChange: (
     index: number,
-    permission: ShareWithMePerson["permission"],
+    permission: ShareWithMePerson['permission'],
   ) => void;
 };
 
@@ -29,7 +29,7 @@ export default function PeopleWithAccessSection({
             key={`access-${person.id}`}
             user={person}
             permission={person.permission}
-            isOwner={person.permission?.toLowerCase() === "owner"}
+            isOwner={person.permission?.toLowerCase() === 'owner'}
             isCurrentUser={person.id === currentUserId}
             disabled={person.id === currentUserId}
             // Block transferring ownership when doing bulk multi-file changes

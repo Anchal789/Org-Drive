@@ -1,8 +1,8 @@
-"use client";
+'use client';
 
-import { useEffect, useMemo, useRef } from "react";
-import styles from "./VerifyOtpPage.module.scss";
-import { Input } from "@/components/ui/input";
+import { useEffect, useMemo, useRef } from 'react';
+import { Input } from '@/components/ui/input';
+import styles from './VerifyOtpPage.module.scss';
 
 type OtpInputGroupProps = {
   length: number;
@@ -29,7 +29,7 @@ export default function OtpInputGroup({
       })),
     [length],
   );
-  const digits = Array.from({ length }, (_, i) => value[i] ?? "");
+  const digits = Array.from({ length }, (_, i) => value[i] ?? '');
 
   const focusCell = (index: number) => {
     const clamped = Math.max(0, Math.min(index, length - 1));
@@ -37,10 +37,10 @@ export default function OtpInputGroup({
   };
 
   const updateDigit = (index: number, newDigit: string) => {
-    const cleaned = newDigit.replace(/\D/g, "").slice(-1);
+    const cleaned = newDigit.replace(/\D/g, '').slice(-1);
     const next = [...digits];
     next[index] = cleaned;
-    const joined = next.join("");
+    const joined = next.join('');
 
     onChangeAction(joined);
 
@@ -48,7 +48,7 @@ export default function OtpInputGroup({
       focusCell(index + 1);
     }
 
-    if (cleaned && index === length - 1 && next.every((d) => d !== "")) {
+    if (cleaned && index === length - 1 && next.every((d) => d !== '')) {
       onCompleteAction();
     }
   };
@@ -57,13 +57,13 @@ export default function OtpInputGroup({
     index: number,
     e: React.KeyboardEvent<HTMLInputElement>,
   ) => {
-    if (e.key === "Backspace" && !digits[index] && index > 0) {
+    if (e.key === 'Backspace' && !digits[index] && index > 0) {
       focusCell(index - 1);
     }
-    if (e.key === "ArrowLeft" && index > 0) {
+    if (e.key === 'ArrowLeft' && index > 0) {
       focusCell(index - 1);
     }
-    if (e.key === "ArrowRight" && index < length - 1) {
+    if (e.key === 'ArrowRight' && index < length - 1) {
       focusCell(index + 1);
     }
   };
@@ -71,8 +71,8 @@ export default function OtpInputGroup({
   const handlePaste = (e: React.ClipboardEvent<HTMLInputElement>) => {
     e.preventDefault();
     const pasted = e.clipboardData
-      .getData("text")
-      .replace(/\D/g, "")
+      .getData('text')
+      .replace(/\D/g, '')
       .slice(0, length);
     if (!pasted) return;
 
@@ -83,10 +83,7 @@ export default function OtpInputGroup({
       onCompleteAction();
     }
   };
-  const activeIndex = Math.min(
-    digits.findIndex((d) => d === ""),
-    length - 1,
-  );
+  const activeIndex = Math.min(digits.indexOf(''), length - 1);
   const resolvedActiveIndex = activeIndex === -1 ? length - 1 : activeIndex;
 
   useEffect(() => {
@@ -94,9 +91,8 @@ export default function OtpInputGroup({
   }, []);
 
   return (
-    <div
+    <fieldset
       className={styles.otpContainer}
-      role="group"
       aria-label={`Verification code, ${length} digits`}
     >
       {cells.map(({ id, index }) => {
@@ -105,7 +101,7 @@ export default function OtpInputGroup({
         return (
           <label
             key={id}
-            className={`${styles.otpLabel} ${isActive ? styles.active : ""}`}
+            className={`${styles.otpLabel} ${isActive ? styles.active : ''}`}
             htmlFor={id}
           >
             <Input
@@ -129,6 +125,6 @@ export default function OtpInputGroup({
           </label>
         );
       })}
-    </div>
+    </fieldset>
   );
 }

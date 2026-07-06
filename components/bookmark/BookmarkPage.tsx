@@ -1,11 +1,11 @@
-import styles from "./Bookmark.module.scss";
-import { FunctionComponent } from "react";
-import { UploadedFile, UploadedFolder } from "@/types/files";
-import FileCard from "../dashboard/FileSection/FileCard";
-import FolderContainer from "../dashboard/FolderSection/FolderContainer";
-import Image from "next/image";
-import NoDataImage from "@/public/assets/No-Data.svg";
-import { Tag } from "lucide-react";
+import { Tag } from 'lucide-react';
+import Image from 'next/image';
+import type { FunctionComponent } from 'react';
+import NoDataImage from '@/public/assets/No-Data.svg';
+import type { UploadedFile, UploadedFolder } from '@/types/files';
+import FileCard from '../dashboard/FileSection/FileCard';
+import FolderContainer from '../dashboard/FolderSection/FolderContainer';
+import styles from './Bookmark.module.scss';
 
 const BookmarkPage: FunctionComponent<{
   bookmarkedFolders: UploadedFolder[];

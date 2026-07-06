@@ -1,10 +1,10 @@
-"use client";
+'use client';
 
-import { useMemo, type FunctionComponent } from "react";
-import { useFileLayout, useSortByStore } from "@/store/store";
-import type { UploadedFile, UploadedFolder } from "@/types/files";
-import DashGrid from "./GridSection/DashGrid";
-import DashList from "./ListSection/DashList";
+import { type FunctionComponent, useMemo } from 'react';
+import { useFileLayout, useSortByStore } from '@/store/store';
+import type { UploadedFile, UploadedFolder } from '@/types/files';
+import DashGrid from './GridSection/DashGrid';
+import DashList from './ListSection/DashList';
 
 const SwitchLayout: FunctionComponent<{
   files: Array<UploadedFile>;
@@ -24,17 +24,17 @@ const SwitchLayout: FunctionComponent<{
     const sortedFolders = [...folders];
 
     switch (sortBy) {
-      case "name":
+      case 'name':
         sortedFiles.sort((a, b) => a.name.localeCompare(b.name));
         sortedFolders.sort((a, b) => a.name.localeCompare(b.name));
         break;
 
-      case "modified":
+      case 'modified':
         sortedFiles.sort((a, b) => getModTime(b) - getModTime(a));
         sortedFolders.sort((a, b) => getModTime(b) - getModTime(a));
         break;
 
-      case "size":
+      case 'size':
         sortedFiles.sort((a, b) => (b.size || 0) - (a.size || 0));
         sortedFolders.sort((a, b) => {
           const sizeA = a.fileCount || 0;
@@ -43,10 +43,10 @@ const SwitchLayout: FunctionComponent<{
         });
         break;
 
-      case "type":
+      case 'type':
         sortedFiles.sort((a, b) => {
-          const typeA = a.mimeType || "";
-          const typeB = b.mimeType || "";
+          const typeA = a.mimeType || '';
+          const typeB = b.mimeType || '';
           return typeA.localeCompare(typeB);
         });
         sortedFolders.sort((a, b) => a.name.localeCompare(b.name));
@@ -62,7 +62,7 @@ const SwitchLayout: FunctionComponent<{
   if (!hasHydrated) {
     return null;
   }
-  return fileLayout === "list" ? (
+  return fileLayout === 'list' ? (
     <DashList files={sortedData.files} folders={sortedData.folders} />
   ) : (
     <DashGrid files={sortedData.files} folders={sortedData.folders} />

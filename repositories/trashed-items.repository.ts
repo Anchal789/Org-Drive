@@ -1,25 +1,25 @@
-import { db } from "@/db";
+import {
+  and,
+  eq,
+  exists,
+  inArray,
+  isNotNull,
+  isNull,
+  lt,
+  not,
+  sql,
+} from 'drizzle-orm';
+import { alias } from 'drizzle-orm/pg-core';
+import { db } from '@/db';
 import {
   trashedTable,
   uploadedFilesTable,
   uploadFoldersTable,
-} from "@/db/schema";
-import {
-  and,
-  eq,
-  inArray,
-  lt,
-  sql,
-  isNull,
-  not,
-  isNotNull,
-  exists,
-} from "drizzle-orm";
-import { alias } from "drizzle-orm/pg-core";
+} from '@/db/schema';
 
 export const trashedItemsRepository = {
   async getTrashedItems(userId: number) {
-    const folderRow = alias(trashedTable, "folder_row");
+    const folderRow = alias(trashedTable, 'folder_row');
     const hiddenChildFile = and(
       isNotNull(trashedTable.fileId),
       isNotNull(trashedTable.folderId),
@@ -35,11 +35,16 @@ export const trashedItemsRepository = {
             ),
           ),
       ),
-    )!;
+    );
     const trashedItems = await db
       .select()
       .from(trashedTable)
-      .where(and(eq(trashedTable.userId, userId), not(hiddenChildFile)));
+      .where(
+        and(
+          eq(trashedTable.userId, userId),
+          hiddenChildFile ? not(hiddenChildFile) : undefined,
+        ),
+      );
 
     return trashedItems;
   },
@@ -102,7 +107,7 @@ export const trashedItemsRepository = {
   async permanentlyDeleteFile(
     userId: number,
     trashId: number,
-    onlyGetIds: boolean = false,
+    onlyGetIds = false,
   ) {
     const [trashedItem] = await db
       .select()
@@ -111,7 +116,7 @@ export const trashedItemsRepository = {
         and(eq(trashedTable.userId, userId), eq(trashedTable.id, trashId)),
       );
 
-    if (!trashedItem || !trashedItem.fileId) return null;
+    if (!trashedItem?.fileId) return null;
     const [originalFile] = await db
       .select()
       .from(uploadedFilesTable)
@@ -132,10 +137,10 @@ export const trashedItemsRepository = {
     }
 
     const tId = Number(originalFile.telegramMessageId);
-    return !isNaN(tId) && tId > 0 ? tId : null;
+    return !Number.isNaN(tId) && tId > 0 ? tId : null;
   },
 
-  async emptyTrash(userId: number, onlyGetIds: boolean = false) {
+  async emptyTrash(userId: number, onlyGetIds = false) {
     const trashedItems = await db
       .select()
       .from(trashedTable)
@@ -151,7 +156,7 @@ export const trashedItemsRepository = {
       .filter((t) => t.fileId === null && t.folderId !== null)
       .map((t) => t.folderId as number);
 
-    let telegramIdsToRevoke: number[] = [];
+    const telegramIdsToRevoke: number[] = [];
 
     if (fileIds.length > 0) {
       const files = await db
@@ -194,7 +199,7 @@ export const trashedItemsRepository = {
     }
 
     return Array.from(
-      new Set(telegramIdsToRevoke.filter((id) => !isNaN(id) && id > 0)),
+      new Set(telegramIdsToRevoke.filter((id) => !Number.isNaN(id) && id > 0)),
     );
   },
 
@@ -209,10 +214,7 @@ export const trashedItemsRepository = {
     return [...new Set(expiredItems.map((item) => item.userId))];
   },
 
-  async processExpiredTrashForUser(
-    userId: number,
-    onlyGetIds: boolean = false,
-  ) {
+  async processExpiredTrashForUser(userId: number, onlyGetIds = false) {
     const thirtyDaysAgo = new Date(Date.now() - 30 * 24 * 60 * 60 * 1000);
 
     const expiredTrashItems = await db
@@ -237,7 +239,7 @@ export const trashedItemsRepository = {
 
     const trashIds = expiredTrashItems.map((t) => t.id);
 
-    let telegramIdsToRevoke: number[] = [];
+    const telegramIdsToRevoke: number[] = [];
 
     if (fileIds.length > 0) {
       const files = await db
@@ -281,14 +283,14 @@ export const trashedItemsRepository = {
     }
 
     return Array.from(
-      new Set(telegramIdsToRevoke.filter((id) => !isNaN(id) && id > 0)),
+      new Set(telegramIdsToRevoke.filter((id) => !Number.isNaN(id) && id > 0)),
     );
   },
 
   async permanentlyDeleteItem(
     userId: number,
     trashId: number,
-    onlyGetIds: boolean = false,
+    onlyGetIds = false,
   ) {
     const [trashedItem] = await db
       .select()
@@ -297,7 +299,7 @@ export const trashedItemsRepository = {
         and(eq(trashedTable.userId, userId), eq(trashedTable.id, trashId)),
       );
     if (!trashedItem) return null;
-    let telegramIdsToRevoke: number[] = [];
+    const telegramIdsToRevoke: number[] = [];
 
     if (trashedItem.fileId) {
       const [originalFile] = await db
@@ -350,7 +352,7 @@ export const trashedItemsRepository = {
     }
 
     return Array.from(
-      new Set(telegramIdsToRevoke.filter((id) => !isNaN(id) && id > 0)),
+      new Set(telegramIdsToRevoke.filter((id) => !Number.isNaN(id) && id > 0)),
     );
   },
 };

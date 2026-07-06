@@ -1,8 +1,8 @@
-import { ActivityEvent } from "@/types/analytics";
-import { TINTS } from "@/constants/common-constants";
-import styles from "./Analytics.module.scss";
-import { Avatar, AvatarFallback } from "@/components/ui/avatar";
-import Badge from "../ui/badge";
+import { Avatar, AvatarFallback } from '@/components/ui/avatar';
+import { TINTS } from '@/constants/common-constants';
+import type { ActivityEvent } from '@/types/analytics';
+import Badge from '../ui/badge';
+import styles from './Analytics.module.scss';
 
 export default function ActivityFeed({ events }: { events: ActivityEvent[] }) {
   return (
@@ -29,8 +29,8 @@ export default function ActivityFeed({ events }: { events: ActivityEvent[] }) {
               </AvatarFallback>
             </Avatar>
             <div className={styles.activityInfo}>
-              <span className={styles.activityName}>{a.userName}</span>{" "}
-              <span className={styles.activityAction}>{a.action}</span>{" "}
+              <span className={styles.activityName}>{a.userName}</span>{' '}
+              <span className={styles.activityAction}>{a.action}</span>{' '}
               <span className={styles.activityItem}>{a.itemName}</span>
             </div>
             <Badge

@@ -1,6 +1,13 @@
-"use client";
+'use client';
 
-import { Button } from "@/components/ui/button";
+import { useRouter } from 'next/navigation';
+import { type FunctionComponent, useEffect, useState } from 'react';
+import { Button } from '@/components/ui/button';
+import {
+  Collapsible,
+  CollapsibleContent,
+  CollapsibleTrigger,
+} from '@/components/ui/collapsible';
 import {
   DialogClose,
   DialogContent,
@@ -8,33 +15,26 @@ import {
   DialogFooter,
   DialogHeader,
   DialogTitle,
-} from "@/components/ui/dialog";
-import { UploadedFile } from "@/types/files";
-import { FunctionComponent, useEffect, useState } from "react";
-import styles from "./MoveModal.module.scss";
-import {
-  Collapsible,
-  CollapsibleContent,
-  CollapsibleTrigger,
-} from "@/components/ui/collapsible";
+} from '@/components/ui/dialog';
 import {
   Field,
   FieldContent,
   FieldLabel,
   FieldTitle,
-} from "@/components/ui/field";
-import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
-import { moveFile } from "@/services/file-service";
-import { decrypt } from "@/lib/utils";
-import { fetchData } from "@/lib/api-fn";
-import { useRouter } from "next/navigation";
+} from '@/components/ui/field';
+import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
+import { fetchData } from '@/lib/api-fn';
+import { decrypt } from '@/lib/utils';
+import { moveFile } from '@/services/file-service';
+import type { UploadedFile } from '@/types/files';
+import styles from './MoveModal.module.scss';
 
 const MoveModal: FunctionComponent<{
   files: Array<UploadedFile>;
   closeModal: () => void;
 }> = ({ files, closeModal }) => {
   const [open, setOpen] = useState<boolean>(false);
-  const [selectedFolder, setSelectedFolder] = useState<string>("");
+  const [selectedFolder, setSelectedFolder] = useState<string>('');
   const [allFolders, setAllFolders] = useState<
     Array<{ id: string | null; name: string }>
   >([]);
@@ -42,9 +42,9 @@ const MoveModal: FunctionComponent<{
   const router = useRouter();
 
   const [currentFolderId] = useState<string | null>(() => {
-    if (typeof window === "undefined") return null;
+    if (typeof window === 'undefined') return null;
     const urlSearchParams = new URLSearchParams(window.location.search);
-    return decrypt(urlSearchParams.get("folderId") || "");
+    return decrypt(urlSearchParams.get('folderId') || '');
   });
 
   const handleMove = async () => {
@@ -64,18 +64,18 @@ const MoveModal: FunctionComponent<{
       const response = await fetchData<
         Array<{ id: string | null; name: string }>
       >({
-        url: "/api/all/get/folders-with-id-name",
+        url: '/api/all/get/folders-with-id-name',
       });
 
       if (response.success && isMounted) {
         const updatedFolders: Array<{ id: string | null; name: string }> =
-          currentFolderId ? [{ id: "my-drive", name: "My Drive" }] : [];
+          currentFolderId ? [{ id: 'my-drive', name: 'My Drive' }] : [];
 
         const combinedFolders = [...updatedFolders, ...response.data];
         setAllFolders(combinedFolders);
 
         const initialSelected = currentFolderId
-          ? "my-drive"
+          ? 'my-drive'
           : response.data.length > 0
             ? String(response.data[0].id)
             : null;
@@ -126,7 +126,7 @@ const MoveModal: FunctionComponent<{
                   <FieldTitle>{folder.name}</FieldTitle>
                 </FieldContent>
                 <RadioGroupItem
-                  value={String(folder.id) || ""}
+                  value={String(folder.id) || ''}
                   id={folder.name}
                 />
               </Field>

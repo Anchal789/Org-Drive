@@ -1,9 +1,9 @@
-"use client";
+'use client';
 
-import TelegramButton from "@/components/ui/telegram-button";
-import QrCode from "./QrCode";
-import styles from "./TelegramQrGenerator.module.scss";
-import { Send } from "lucide-react";
+import { Send } from 'lucide-react';
+import TelegramButton from '@/components/ui/telegram-button';
+import QrCode from './QrCode';
+import styles from './TelegramQrGenerator.module.scss';
 
 export default function TelegramQrGenerator() {
   return (
@@ -39,8 +39,8 @@ export default function TelegramQrGenerator() {
         </TelegramButton>
 
         <div className={styles.termsText}>
-          By continuing you agree to the{" "}
-          <span className={styles.termsLink}>Terms</span> and{" "}
+          By continuing you agree to the{' '}
+          <span className={styles.termsLink}>Terms</span> and{' '}
           <span className={styles.termsLink}>Privacy Policy</span>.
         </div>
       </div>

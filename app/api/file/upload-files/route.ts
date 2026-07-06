@@ -1,18 +1,18 @@
 export const dynamic = "force-dynamic";
 
+import fs from "node:fs/promises";
+import os from "node:os";
+import path from "node:path";
 import { and, eq } from "drizzle-orm";
-import fs from "fs/promises";
 import { type NextRequest, NextResponse } from "next/server";
-import os from "os";
-import path from "path";
 import { type Api, TelegramClient } from "telegram";
 import { StringSession } from "telegram/sessions";
 import { db } from "@/db";
 import { uploadFoldersTable } from "@/db/schema";
 import { sendError } from "@/lib/api-response";
 import { getSessionUser } from "@/lib/session";
-import { uploadedFilesRepository } from "@/repositories/uploaded-files.respository";
 import { systemSettingsRepository } from "@/repositories/system-settings.repository";
+import { uploadedFilesRepository } from "@/repositories/uploaded-files.respository";
 import type { UploadFilesResponse } from "@/types/files";
 
 const API_ID = Number(process.env.TELEGRAM_APP_API_ID);
@@ -69,7 +69,7 @@ export async function POST(request: NextRequest) {
     }
 
     const encoder = new TextEncoder();
-    let client: TelegramClient | null = new TelegramClient(
+    const client: TelegramClient | null = new TelegramClient(
       new StringSession(botSessionString),
       API_ID,
       API_HASH,
@@ -91,7 +91,10 @@ export async function POST(request: NextRequest) {
       targetEntity = await client.getEntity(formattedChannelId);
     } catch (err: unknown) {
       const errMsg = err instanceof Error ? err.message : String(err);
-      if (client) await client.disconnect().catch(() => {});
+      if (client)
+        await client.disconnect().catch(() => {
+          void 0;
+        });
       return sendError(
         `Bot authorization or channel mapping failed: ${errMsg}`,
         500,
@@ -166,11 +169,7 @@ export async function POST(request: NextRequest) {
                 },
               });
 
-              if (
-                !message ||
-                !message.media ||
-                !("document" in message.media)
-              ) {
+              if (!message?.media || !("document" in message.media)) {
                 throw new Error(`Telegram rejected file: ${file.name}`);
               }
 
@@ -192,7 +191,9 @@ export async function POST(request: NextRequest) {
               uploadedFiles.push(newFileRecord);
               await uploadedFilesRepository.uploadFiles([newFileRecord]);
             } finally {
-              await fs.unlink(tempFilePath).catch(() => {});
+              await fs.unlink(tempFilePath).catch(() => {
+                void 0;
+              });
             }
           }
 
@@ -200,9 +201,14 @@ export async function POST(request: NextRequest) {
         } catch (err: unknown) {
           if (err instanceof Error) {
             sendEvent("error", { message: err.message });
+          } else {
+            void err;
           }
         } finally {
-          if (client) await client.disconnect().catch(() => {});
+          if (client)
+            await client.disconnect().catch(() => {
+              void 0;
+            });
           controller.close();
         }
       },

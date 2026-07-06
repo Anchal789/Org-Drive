@@ -1,10 +1,10 @@
-export const dynamic = "force-dynamic";
+export const dynamic = 'force-dynamic';
 
-import DashFolder from "@/components/dashboard/FolderSection/DashFolder";
-import { decrypt } from "@/lib/utils";
-import { uploadedFilesRepository } from "@/repositories/uploaded-files.respository";
-import { uploadedFoldersRepository } from "@/repositories/uploaded-folders.respository";
-import type { UploadedFile } from "@/types/files";
+import DashFolder from '@/components/dashboard/FolderSection/DashFolder';
+import { decrypt } from '@/lib/utils';
+import { uploadedFilesRepository } from '@/repositories/uploaded-files.respository';
+import { uploadedFoldersRepository } from '@/repositories/uploaded-folders.respository';
+import type { UploadedFile } from '@/types/files';
 
 export default async function FolderPage({
   searchParams,

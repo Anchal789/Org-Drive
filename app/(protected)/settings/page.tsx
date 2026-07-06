@@ -1,4 +1,4 @@
-import SettingsPage from "@/components/settings/SettingsPage";
+import SettingsPage from '@/components/settings/SettingsPage';
 
 const Settings = async () => {
   return <SettingsPage />;

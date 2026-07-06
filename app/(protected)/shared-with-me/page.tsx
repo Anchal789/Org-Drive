@@ -1,7 +1,7 @@
-import ShareWithMePage from "@/components/share-module/ShareWithMePage";
-import { getSessionUser } from "@/lib/session";
-import { sharedWithMeRepository } from "@/repositories/shared-with-me.repository";
-import { SharedWithMeItemsType } from "@/types/share-with-me";
+import ShareWithMePage from '@/components/share-module/ShareWithMePage';
+import { getSessionUser } from '@/lib/session';
+import { sharedWithMeRepository } from '@/repositories/shared-with-me.repository';
+import type { SharedWithMeItemsType } from '@/types/share-with-me';
 
 const ShareWithMe = async () => {
   const user = await getSessionUser();

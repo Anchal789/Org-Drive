@@ -1,7 +1,7 @@
-"use client";
+'use client';
 
-import { usePathname } from "next/navigation";
-import React from "react";
+import { usePathname } from 'next/navigation';
+import type React from 'react';
 
 export default function TopbarWrapper({
   children,
@@ -10,7 +10,7 @@ export default function TopbarWrapper({
 }) {
   const pathname = usePathname();
 
-  const hiddenRoutes = ["/analytics", "/smart-search", "/ai-chat"];
+  const hiddenRoutes = ['/analytics', '/smart-search', '/ai-chat'];
   const shouldHide = hiddenRoutes.includes(pathname);
 
   if (shouldHide) {

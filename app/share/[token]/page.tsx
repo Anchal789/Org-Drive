@@ -1,6 +1,6 @@
-import { decrypt } from "@/lib/utils";
-import { FileIcon, FolderIcon } from "lucide-react";
-import ShareDownloadClient from "./ShareDownloadClient";
+import { FileIcon, FolderIcon } from 'lucide-react';
+import { decrypt } from '@/lib/utils';
+import ShareDownloadClient from './ShareDownloadClient';
 
 export default async function SharedLinkPage({
   params,
@@ -9,11 +9,11 @@ export default async function SharedLinkPage({
 }) {
   const tokenParam = await params;
   const decodedToken = tokenParam.token;
-  let shareData = "";
+  let shareData = '';
 
   try {
-    shareData = decrypt(decodedToken) || "";
-  } catch (error) {
+    shareData = decrypt(decodedToken) || '';
+  } catch {
     return (
       <div className="flex h-screen w-full items-center justify-center bg-background text-foreground">
         <div className="text-center">
@@ -31,17 +31,17 @@ export default async function SharedLinkPage({
   // Optional: You can do a quick DB fetch here to get the actual file names
   // to display them beautifully on this page before downloading.
   const title =
-    type === "multi"
+    type === 'multi'
       ? `${ids.length} Shared Files`
-      : type === "folder"
-        ? "Shared Folder"
-        : "Shared File";
+      : type === 'folder'
+        ? 'Shared Folder'
+        : 'Shared File';
 
   return (
     <div className="flex h-screen w-full flex-col items-center justify-center bg-background p-6">
       <div className="w-full max-w-md rounded-2xl border border-border bg-card p-8 shadow-xl text-center">
         <div className="mx-auto mb-6 flex h-16 w-16 items-center justify-center rounded-full bg-primary/10 text-primary">
-          {type === "folder" ? (
+          {type === 'folder' ? (
             <FolderIcon size={32} />
           ) : (
             <FileIcon size={32} />

@@ -1,5 +1,5 @@
-import { and, count, eq, inArray, isNull, sql } from "drizzle-orm";
-import { db } from "@/db";
+import { and, count, eq, inArray, isNull, sql } from 'drizzle-orm';
+import { db } from '@/db';
 import {
   recentTable,
   sharedItemsTable,
@@ -7,8 +7,8 @@ import {
   uploadedFilesTable,
   uploadFoldersTable,
   userTable,
-} from "@/db/schema";
-import type { UploadFilesResponse } from "@/types/files";
+} from '@/db/schema';
+import type { UploadFilesResponse } from '@/types/files';
 
 export const uploadedFilesRepository = {
   async uploadFiles(files: Array<UploadFilesResponse & { userId: number }>) {
@@ -20,11 +20,16 @@ export const uploadedFilesRepository = {
       userId: file.userId,
       fileId: file.id,
       folderId: file.folderId || undefined,
-      action: "uploaded",
+      action: 'uploaded',
       actionBy: file.userId,
     }));
     if (logs.length > 0) {
-      await db.insert(recentTable).values(logs).catch(console.error);
+      await db
+        .insert(recentTable)
+        .values(logs)
+        .catch((err) => {
+          void err;
+        });
     }
     return uploadedFiles;
   },
@@ -106,13 +111,13 @@ export const uploadedFilesRepository = {
         .set({ fileCount: sql`${uploadFoldersTable.fileCount} - 1` })
         .where(eq(uploadFoldersTable.id, deletedFile.folderId));
     }
-    let folderName = "";
+    let folderName = '';
     if (deletedFile.folderId) {
       const [folder] = await db
         .select({ name: uploadFoldersTable.name })
         .from(uploadFoldersTable)
         .where(eq(uploadFoldersTable.id, deletedFile.folderId));
-      folderName = folder?.name || "";
+      folderName = folder?.name || '';
     }
 
     await db.insert(trashedTable).values({
@@ -243,17 +248,17 @@ export const uploadedFilesRepository = {
     dashboardOwners.add(actorId);
     dashboardOwners.add(file.ownerId);
 
-    sharedRecords.forEach((record) => {
+    for (const record of sharedRecords) {
       if (record.sharedWithUserId) {
         dashboardOwners.add(record.sharedWithUserId);
       }
-    });
+    }
 
     const logs = Array.from(dashboardOwners).map((dashboardUserId) => ({
       userId: dashboardUserId,
       fileId: id,
       folderId: file.folderId || undefined,
-      action: "edited",
+      action: 'edited',
       actionBy: actorId,
     }));
 

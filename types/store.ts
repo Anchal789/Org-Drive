@@ -1,5 +1,5 @@
-import type { UploadItem } from "./dashboard";
-import { UploadedFile, UploadedFolder } from "./files";
+import type { UploadItem } from './dashboard';
+import type { UploadedFile, UploadedFolder } from './files';
 
 export interface AuthStateStore {
   accessToken: string | null;
@@ -15,15 +15,15 @@ export interface DragDropStore {
 }
 
 export interface FileLayoutStore {
-  fileLayout: "list" | "grid";
+  fileLayout: 'list' | 'grid';
   hasHydrated: boolean;
-  setFileLayout: (layout: "list" | "grid") => void;
+  setFileLayout: (layout: 'list' | 'grid') => void;
   setHasHydrated: (state: boolean) => void;
 }
 
 export interface SortByStore {
-  sortBy: "name" | "modified" | "size" | "type";
-  setSortBy: (sortBy: "name" | "modified" | "size" | "type") => void;
+  sortBy: 'name' | 'modified' | 'size' | 'type';
+  setSortBy: (sortBy: 'name' | 'modified' | 'size' | 'type') => void;
 }
 
 export interface QueuedFile {

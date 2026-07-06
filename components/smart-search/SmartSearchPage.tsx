@@ -1,35 +1,35 @@
-"use client";
+'use client';
 
-import { useState, useRef } from "react";
 import {
-  Search,
+  ChevronRight,
   File,
   Folder,
   History,
+  Search,
   Sparkles,
-  ChevronRight,
-} from "lucide-react";
-import { fetchData } from "@/lib/api-fn";
-import { UploadedFile, UploadedFolder } from "@/types/files";
-import { Switch } from "@/components/ui/switch";
-import styles from "./SmartSearch.module.scss";
-import FolderMenu from "../dashboard/FolderSection/FolderMenu/FolderMenu";
-import FileMenu from "../dashboard/FileSection/FileMenu";
-import { useRouter } from "next/navigation";
-import { encrypt } from "@/lib/utils";
+} from 'lucide-react';
+import { useRouter } from 'next/navigation';
+import { useRef, useState } from 'react';
+import { Switch } from '@/components/ui/switch';
+import { fetchData } from '@/lib/api-fn';
+import { encrypt } from '@/lib/utils';
+import type { UploadedFile, UploadedFolder } from '@/types/files';
+import FileMenu from '../dashboard/FileSection/FileMenu';
+import FolderMenu from '../dashboard/FolderSection/FolderMenu/FolderMenu';
+import styles from './SmartSearch.module.scss';
 
 const SUGGESTED_SEARCHES = [
-  "files I shared last week",
-  "PDFs in Engineering",
-  "drafts",
-  "contracts expiring soon",
+  'files I shared last week',
+  'PDFs in Engineering',
+  'drafts',
+  'contracts expiring soon',
 ];
 
 export default function SmartSearchPage() {
   const router = useRouter();
 
-  const [searchTerm, setSearchTerm] = useState("");
-  const [activeQuery, setActiveQuery] = useState("");
+  const [searchTerm, setSearchTerm] = useState('');
+  const [activeQuery, setActiveQuery] = useState('');
   const [isSmartMode, setIsSmartMode] = useState(true);
   const [results, setResults] = useState<{
     files: Array<UploadedFile>;
@@ -40,19 +40,16 @@ export default function SmartSearchPage() {
   const searchTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   const [recentSearches, setRecentSearches] = useState<string[]>(() => {
-    if (typeof window === "undefined") return [];
+    if (typeof window === 'undefined') return [];
 
     const savedSearches = window.localStorage.getItem(
-      "smart_drive_recent_searches:v1",
+      'smart_drive_recent_searches:v1',
     );
     if (savedSearches) {
       try {
         return JSON.parse(savedSearches) as string[];
       } catch (e: unknown) {
-        console.error(
-          "Failed to parse recent searches",
-          e instanceof Error ? e : new Error(String(e)),
-        );
+        void e;
         return [];
       }
     }
@@ -70,7 +67,7 @@ export default function SmartSearchPage() {
       );
       const updated = [trimmed, ...filtered].slice(0, 3);
       localStorage.setItem(
-        "smart_drive_recent_searches:v1",
+        'smart_drive_recent_searches:v1',
         JSON.stringify(updated),
       );
 
@@ -100,10 +97,7 @@ export default function SmartSearchPage() {
         setResults(response.data);
       }
     } catch (error: unknown) {
-      console.error(
-        "Search request failed",
-        error instanceof Error ? error : new Error(String(error)),
-      );
+      void error;
     } finally {
       setIsSearching(false);
     }
@@ -136,7 +130,7 @@ export default function SmartSearchPage() {
   };
 
   const handleInputKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
-    if (e.key === "Enter") {
+    if (e.key === 'Enter') {
       saveRecentSearch(searchTerm);
     }
   };
@@ -154,7 +148,7 @@ export default function SmartSearchPage() {
         </div>
         <h1 className={styles.title}>Search across your drive</h1>
         <p className={styles.subtitle}>
-          Find files by name, content, or meaning. Toggle <strong>Smart</strong>{" "}
+          Find files by name, content, or meaning. Toggle <strong>Smart</strong>{' '}
           for natural-language queries.
         </p>
       </div>
@@ -192,11 +186,11 @@ export default function SmartSearchPage() {
               {recentSearches.length > 0 && (
                 <>
                   <div className={styles.sectionTitle}>Recent searches</div>
-                  {recentSearches.map((term, index) => (
-                    <div
-                      key={term + index}
+                  {recentSearches.map((term) => (
+                    <button
+                      type="button"
+                      key={term}
                       className={styles.resultItem}
-                      role="button"
                       onClick={() => handleSuggestionClick(term)}
                     >
                       <History
@@ -210,7 +204,7 @@ export default function SmartSearchPage() {
                         strokeWidth={1.6}
                         className={styles.searchIcon}
                       />
-                    </div>
+                    </button>
                   ))}
                 </>
               )}
@@ -239,15 +233,14 @@ export default function SmartSearchPage() {
                 <div className={styles.resultGroup}>
                   <div className={styles.sectionTitle}>Folders</div>
                   {displayFolders.map((folder) => (
-                    <div
+                    <button
+                      type="button"
                       key={folder.id}
                       className={styles.resultItem}
-                      role="button"
-                      tabIndex={0}
                       onClick={(e) => {
                         const target = e.target as HTMLElement;
                         if (
-                          target.closest("button") ||
+                          target.closest('button') ||
                           target.closest('[role="dialog"]') ||
                           target.closest('[data-slot="dialog-content"]')
                         ) {
@@ -264,7 +257,7 @@ export default function SmartSearchPage() {
                         <span className={styles.folderName}>{folder.name}</span>
                       </div>
                       <FolderMenu folder={folder} />
-                    </div>
+                    </button>
                   ))}
                 </div>
               )}
@@ -274,10 +267,10 @@ export default function SmartSearchPage() {
                 <div className={styles.resultGroup}>
                   <div className={styles.sectionTitle}>Files</div>
                   {displayFiles.map((file: UploadedFile) => (
-                    <div
+                    <button
+                      type="button"
                       key={file.id}
                       className={styles.resultItem}
-                      role="button"
                       onClick={() => {
                         saveRecentSearch(activeQuery);
                       }}
@@ -287,7 +280,7 @@ export default function SmartSearchPage() {
                         <span className={styles.resultText}>{file.name}</span>
                       </div>
                       <FileMenu file={file} />
-                    </div>
+                    </button>
                   ))}
                 </div>
               )}

@@ -1,3 +1,12 @@
+import { useRouter } from 'next/navigation';
+import {
+  type Dispatch,
+  type FunctionComponent,
+  type SetStateAction,
+  useState,
+} from 'react';
+import { toast } from 'sonner';
+import { Button } from '@/components/ui/button';
 import {
   Dialog,
   DialogClose,
@@ -6,22 +15,18 @@ import {
   DialogFooter,
   DialogHeader,
   DialogTitle,
-} from "@/components/ui/dialog";
-import { Field, FieldError, FieldGroup } from "@/components/ui/field";
-import { Label } from "@/components/ui/label";
-import { toast } from "sonner";
-import { useRouter } from "next/navigation";
-import { Dispatch, FunctionComponent, SetStateAction, useState } from "react";
-import { Button } from "@/components/ui/button";
+} from '@/components/ui/dialog';
+import { Field, FieldError, FieldGroup } from '@/components/ui/field';
 import {
   InputGroup,
   InputGroupAddon,
   InputGroupInput,
-} from "@/components/ui/input-group";
-import { renameItem } from "@/services/folder-service";
-import { UploadedFile, UploadedFolder } from "@/types/files";
-import { getFileExtension, getFileNameWithoutExtension } from "@/lib/utils";
-import styles from "./Rename.module.scss";
+} from '@/components/ui/input-group';
+import { Label } from '@/components/ui/label';
+import { getFileExtension, getFileNameWithoutExtension } from '@/lib/utils';
+import { renameItem } from '@/services/folder-service';
+import type { UploadedFile, UploadedFolder } from '@/types/files';
+import styles from './Rename.module.scss';
 
 const RenameItem: FunctionComponent<{
   file?: UploadedFile & { shareId?: number };
@@ -34,7 +39,7 @@ const RenameItem: FunctionComponent<{
     name: string;
     error: string | null;
   }>({
-    name: "",
+    name: '',
     error: null,
   });
   const [prevRenameOpen, setPrevRenameOpen] = useState(renameOpen);
@@ -45,11 +50,11 @@ const RenameItem: FunctionComponent<{
         ? {
             name: file?.name
               ? getFileNameWithoutExtension(file?.name)
-              : folder?.name || "",
+              : folder?.name || '',
             error: null,
           }
         : {
-            name: "",
+            name: '',
             error: null,
           },
     );
@@ -58,15 +63,15 @@ const RenameItem: FunctionComponent<{
   const handleRename = async () => {
     if (!newNameState.name) {
       setNewNameState({
-        name: "",
-        error: "Name cannot be empty",
+        name: '',
+        error: 'Name cannot be empty',
       });
       return;
     }
 
-    const finalName = `${newNameState.name}${file ? "." + fileExtension : ""}`;
+    const finalName = `${newNameState.name}${file ? `.${fileExtension}` : ''}`;
 
-    let response;
+    let response: Awaited<ReturnType<typeof renameItem>>;
     response = await renameItem(
       folder?.id || file?.id || 0,
       finalName,
@@ -83,7 +88,7 @@ const RenameItem: FunctionComponent<{
     }
   };
 
-  const fileExtension = getFileExtension(file?.name || "");
+  const fileExtension = getFileExtension(file?.name || '');
 
   return (
     <Dialog open={renameOpen} onOpenChange={setRenameOpen} modal>
@@ -110,8 +115,8 @@ const RenameItem: FunctionComponent<{
                     });
                   } else {
                     setNewNameState({
-                      name: "",
-                      error: "Name cannot be empty",
+                      name: '',
+                      error: 'Name cannot be empty',
                     });
                   }
                 }}

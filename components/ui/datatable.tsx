@@ -1,5 +1,5 @@
-import { Checkbox } from "@/components/ui/checkbox";
-import { DataTableProps } from "@/types/component-types";
+import { X } from 'lucide-react';
+import { Checkbox } from '@/components/ui/checkbox';
 import {
   Table,
   TableBody,
@@ -7,9 +7,9 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from "@/components/ui/table";
-import styles from "./Component.module.scss";
-import { X } from "lucide-react";
+} from '@/components/ui/table';
+import type { DataTableProps } from '@/types/component-types';
+import styles from './Component.module.scss';
 
 const EMPTY_SELECTED_IDS: Array<string | number> = [];
 
@@ -57,7 +57,7 @@ export default function DataTable<T>({
   const showSelectionBar = hasSelection && !!renderSelectionActions;
 
   return (
-    <div className={`${styles.table} ${classes?.table || ""}`}>
+    <div className={`${styles.table} ${classes?.table || ''}`}>
       <Table>
         <TableHeader className={classes?.header}>
           <TableRow notApplyBackground className={classes?.header}>
@@ -92,7 +92,7 @@ export default function DataTable<T>({
                   <div className={styles.actionsGap} />
 
                   <div className={styles.actionsGroup}>
-                    {renderSelectionActions!(selectedIds, clearSelection)}
+                    {renderSelectionActions?.(selectedIds, clearSelection)}
                   </div>
                 </div>
               </TableHead>
@@ -138,8 +138,8 @@ export default function DataTable<T>({
               return (
                 <TableRow
                   key={rowId}
-                  className={`${classes?.row || ""} ${
-                    isSelected ? styles.selectedRow : ""
+                  className={`${classes?.row || ''} ${
+                    isSelected ? styles.selectedRow : ''
                   }`}
                 >
                   {enableSelection && (

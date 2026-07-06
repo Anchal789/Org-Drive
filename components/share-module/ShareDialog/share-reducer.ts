@@ -1,7 +1,7 @@
-import { ShareAction, ShareState } from "@/types/share";
+import type { ShareAction, ShareState } from '@/types/share';
 
 export const initialShareState: ShareState = {
-  searchTerm: "",
+  searchTerm: '',
   parentFolderName: null,
   isLoading: false,
   usersWithAccess: [],
@@ -13,19 +13,19 @@ export function shareReducer(
   action: ShareAction,
 ): ShareState {
   switch (action.type) {
-    case "reset":
+    case 'reset':
       return initialShareState;
-    case "set_search_term":
+    case 'set_search_term':
       return { ...state, searchTerm: action.searchTerm };
-    case "set_loading":
+    case 'set_loading':
       return { ...state, isLoading: action.isLoading };
-    case "set_parent_folder_name":
+    case 'set_parent_folder_name':
       return { ...state, parentFolderName: action.parentFolderName };
-    case "set_users_with_access":
+    case 'set_users_with_access':
       return { ...state, usersWithAccess: action.usersWithAccess };
-    case "set_users_to_invite":
+    case 'set_users_to_invite':
       return { ...state, usersToInvite: action.usersToInvite };
-    case "update_invite_permission":
+    case 'update_invite_permission':
       return {
         ...state,
         usersToInvite: state.usersToInvite.map((user, i) =>
@@ -34,7 +34,7 @@ export function shareReducer(
             : user,
         ),
       };
-    case "update_access_permission":
+    case 'update_access_permission':
       return {
         ...state,
         usersWithAccess: state.usersWithAccess.map((user, i) =>

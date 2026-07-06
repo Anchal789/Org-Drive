@@ -1,15 +1,15 @@
 "use client";
 
+import { Folder, Tag } from "lucide-react";
 import { useRouter } from "next/navigation";
 import type { FunctionComponent } from "react";
+import UserAvatar from "@/components/ui/user-avatar";
+import { TINTS } from "@/constants/common-constants";
 import { encrypt, getAvatarColor, getFolderTone } from "@/lib/utils";
 import type { UploadedFolder } from "@/types/files";
 import styles from "./FolderContainer.module.scss";
-import FolderTile from "./FolderTile";
-import { TINTS } from "@/constants/common-constants";
 import FolderMenu from "./FolderMenu/FolderMenu";
-import UserAvatar from "@/components/ui/user-avatar";
-import { Folder, Tag } from "lucide-react";
+import FolderTile from "./FolderTile";
 
 const getFolderToneStyle = (folder: UploadedFolder) =>
   TINTS?.[getFolderTone(folder.id)];
@@ -29,7 +29,6 @@ const FolderContainer: FunctionComponent<{
     return (
       <div
         role="button"
-        tabIndex={0}
         className={styles.folderContainer}
         onClick={(e) => {
           const target = e.target as HTMLElement;
@@ -55,7 +54,6 @@ const FolderContainer: FunctionComponent<{
     return (
       <div
         role="button"
-        tabIndex={0}
         className={styles.folderContainer}
         onClick={(e) => {
           const target = e.target as HTMLElement;

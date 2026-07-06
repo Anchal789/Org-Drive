@@ -1,9 +1,9 @@
-import { fetchData, postData } from "@/lib/api-fn";
-import type { User } from "@/types/auth";
+import { fetchData, postData } from '@/lib/api-fn';
+import type { User } from '@/types/auth';
 
 export async function requestOtp(phoneNumber: string) {
   const res = await postData({
-    url: "/api/auth/request-otp",
+    url: '/api/auth/request-otp',
     payload: {
       phoneNumber,
     },
@@ -19,7 +19,7 @@ export async function verifyOtp(phoneNumber: string, otpCode: string) {
     user?: User;
     accessToken?: string;
   }>({
-    url: "/api/auth/verify-otp",
+    url: '/api/auth/verify-otp',
     payload: {
       phoneNumber,
       otpCode,
@@ -36,7 +36,7 @@ export async function verifyOtpPassword(phoneNumber: string, password: string) {
     user?: User;
     accessToken?: string;
   }>({
-    url: "/api/auth/verify-otp-password",
+    url: '/api/auth/verify-otp-password',
     payload: {
       phoneNumber,
       password,
@@ -52,7 +52,7 @@ export async function qrStart() {
     qrDataUrl: string;
     expiresAt: number;
   }>({
-    url: "/api/auth/qr-start",
+    url: '/api/auth/qr-start',
     payload: {},
   });
 

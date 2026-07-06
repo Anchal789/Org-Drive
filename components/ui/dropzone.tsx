@@ -1,9 +1,9 @@
-"use client";
+'use client';
 
-import { toast } from "sonner";
-import { useDragDropStore, useUploadStore } from "@/store/store";
-import styles from "./Component.module.scss";
-import { Input } from "./input";
+import { toast } from 'sonner';
+import { useDragDropStore, useUploadStore } from '@/store/store';
+import styles from './Component.module.scss';
+import { Input } from './input';
 
 export default function Dropzone({
   onDraggingAction,
@@ -25,7 +25,7 @@ export default function Dropzone({
       const reader = directoryEntry.createReader();
       reader.readEntries(async (entries: FileSystemEntry[]) => {
         if (entries.some((entry) => entry.isDirectory)) {
-          reject(new Error("Nested folders are not allowed."));
+          reject(new Error('Nested folders are not allowed.'));
           return;
         }
 
@@ -48,7 +48,7 @@ export default function Dropzone({
     handleDrag(false);
 
     const items = e.dataTransfer.items;
-    let folderName = "";
+    let folderName = '';
 
     try {
       const nestedFiles = await Promise.all(
@@ -80,7 +80,7 @@ export default function Dropzone({
       const errorMessage =
         error instanceof Error
           ? error.message
-          : "Failed to read folder contents.";
+          : 'Failed to read folder contents.';
       toast.error(errorMessage);
     }
   };
@@ -92,21 +92,21 @@ export default function Dropzone({
     const fileArray = Array.from(files);
 
     const hasNestedFolders = fileArray.some(
-      (file) => file.webkitRelativePath.split("/").length > 2,
+      (file) => file.webkitRelativePath.split('/').length > 2,
     );
 
     if (hasNestedFolders) {
-      toast.error("Nested folders are not allowed.");
-      e.target.value = "";
+      toast.error('Nested folders are not allowed.');
+      e.target.value = '';
       return;
     }
 
-    let folderName;
+    let folderName: string | undefined;
     if (fileArray[0].webkitRelativePath) {
-      folderName = fileArray[0].webkitRelativePath.split("/")[0];
+      folderName = fileArray[0].webkitRelativePath.split('/')[0];
     }
     startUploads(fileArray, folderName, fileArray.length);
-    e.target.value = "";
+    e.target.value = '';
   };
 
   return (
@@ -124,7 +124,7 @@ export default function Dropzone({
         handleDrag(false);
       }}
       onDrop={handleDrop}
-      {...{ webkitdirectory: "true" }}
+      {...{ webkitdirectory: 'true' }}
     />
   );
 }

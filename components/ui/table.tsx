@@ -1,10 +1,10 @@
-"use client";
+'use client';
 
-import * as React from "react";
+import type * as React from 'react';
 
-import { cn } from "@/lib/utils";
+import { cn } from '@/lib/utils';
 
-function Table({ className, ...props }: React.ComponentProps<"table">) {
+function Table({ className, ...props }: React.ComponentProps<'table'>) {
   return (
     <div
       data-slot="table-container"
@@ -12,19 +12,19 @@ function Table({ className, ...props }: React.ComponentProps<"table">) {
     >
       <table
         data-slot="table"
-        className={cn("w-full caption-bottom text-sm", className)}
+        className={cn('w-full caption-bottom text-sm', className)}
         {...props}
       />
     </div>
   );
 }
 
-function TableHeader({ className, ...props }: React.ComponentProps<"thead">) {
+function TableHeader({ className, ...props }: React.ComponentProps<'thead'>) {
   return (
     <thead
       data-slot="table-header"
       className={cn(
-        "border-b border-border bg-surface text-[10px] font-semibold text-muted-foreground uppercase tracking-[0.04em]",
+        'border-b border-border bg-surface text-[10px] font-semibold text-muted-foreground uppercase tracking-[0.04em]',
         className,
       )}
       {...props}
@@ -32,22 +32,22 @@ function TableHeader({ className, ...props }: React.ComponentProps<"thead">) {
   );
 }
 
-function TableBody({ className, ...props }: React.ComponentProps<"tbody">) {
+function TableBody({ className, ...props }: React.ComponentProps<'tbody'>) {
   return (
     <tbody
       data-slot="table-body"
-      className={cn("[&_tr:last-child]:border-0", className)}
+      className={cn('[&_tr:last-child]:border-0', className)}
       {...props}
     />
   );
 }
 
-function TableFooter({ className, ...props }: React.ComponentProps<"tfoot">) {
+function TableFooter({ className, ...props }: React.ComponentProps<'tfoot'>) {
   return (
     <tfoot
       data-slot="table-footer"
       className={cn(
-        "border-t bg-muted/50 font-medium [&>tr]:last:border-b-0",
+        'border-t bg-muted/50 font-medium [&>tr]:last:border-b-0',
         className,
       )}
       {...props}
@@ -59,14 +59,14 @@ function TableRow({
   className,
   notApplyBackground = false,
   ...props
-}: React.ComponentProps<"tr"> & {
+}: React.ComponentProps<'tr'> & {
   notApplyBackground?: boolean;
 }) {
   return (
     <tr
       data-slot="table-row"
       className={cn(
-        `border-b border-border transition-colors text-xs ${notApplyBackground ? "" : "data-[state=selected]:bg-muted bg-card hover:bg-muted/30"}`,
+        `border-b border-border transition-colors text-xs ${notApplyBackground ? '' : 'data-[state=selected]:bg-muted bg-card hover:bg-muted/30'}`,
         className,
       )}
       {...props}
@@ -74,12 +74,12 @@ function TableRow({
   );
 }
 
-function TableHead({ className, ...props }: React.ComponentProps<"th">) {
+function TableHead({ className, ...props }: React.ComponentProps<'th'>) {
   return (
     <th
       data-slot="table-head"
       className={cn(
-        "px-3.5 py-2.5 text-left align-middle font-semibold whitespace-nowrap has-[[role=checkbox]]:pr-0 leading-5.5",
+        'px-3.5 py-2.5 text-left align-middle font-semibold whitespace-nowrap has-[[role=checkbox]]:pr-0 leading-5.5',
         className,
       )}
       {...props}
@@ -91,12 +91,12 @@ function TableCell({
   className,
   noData = false,
   ...props
-}: React.ComponentProps<"td"> & { noData?: boolean }) {
+}: React.ComponentProps<'td'> & { noData?: boolean }) {
   return (
     <td
       data-slot="table-cell"
       className={cn(
-        `align-middle whitespace-nowrap has-[[role=checkbox]]:pr-0 ${noData ? "p-6 text-center" : "px-3.5 py-2.5"}`,
+        `align-middle whitespace-nowrap has-[[role=checkbox]]:pr-0 ${noData ? 'p-6 text-center' : 'px-3.5 py-2.5'}`,
         className,
       )}
       {...props}
@@ -107,11 +107,11 @@ function TableCell({
 function TableCaption({
   className,
   ...props
-}: React.ComponentProps<"caption">) {
+}: React.ComponentProps<'caption'>) {
   return (
     <caption
       data-slot="table-caption"
-      className={cn("mt-4 text-sm text-muted-foreground", className)}
+      className={cn('mt-4 text-sm text-muted-foreground', className)}
       {...props}
     />
   );
@@ -119,11 +119,11 @@ function TableCaption({
 
 export {
   Table,
-  TableHeader,
   TableBody,
+  TableCaption,
+  TableCell,
   TableFooter,
   TableHead,
+  TableHeader,
   TableRow,
-  TableCell,
-  TableCaption,
 };

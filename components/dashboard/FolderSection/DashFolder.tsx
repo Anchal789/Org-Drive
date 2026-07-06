@@ -1,13 +1,13 @@
-import Btn from "@/components/ui/btn";
-import { iconsWithPaths } from "@/constants/common-constants";
-import type { UploadedFile } from "@/types/files";
-import DriveCrumb from "../DriveCrumb/DriveCrumb";
-import UploadWidget from "../upload-widget/UploadWidget";
-import styles from "./DashFolder.module.scss";
-import { DownloadAllButton } from "./DownloadAllButton";
-import LayoutForInsideFolder from "./LayoutForInsideFolder";
-import FileSelectionBar from "../FileSection/FileSelectionBar";
-import { Folder, Shield, Users } from "lucide-react";
+import { Folder, Shield, Users } from 'lucide-react';
+import Btn from '@/components/ui/btn';
+import { iconsWithPaths } from '@/constants/common-constants';
+import type { UploadedFile } from '@/types/files';
+import DriveCrumb from '../DriveCrumb/DriveCrumb';
+import FileSelectionBar from '../FileSection/FileSelectionBar';
+import UploadWidget from '../upload-widget/UploadWidget';
+import styles from './DashFolder.module.scss';
+import { DownloadAllButton } from './DownloadAllButton';
+import LayoutForInsideFolder from './LayoutForInsideFolder';
 
 export default function DashFolder({
   files,
@@ -22,23 +22,23 @@ export default function DashFolder({
   membersCount: number;
   permissions: string[];
 }) {
-  const canEdit = permissions.includes("editor");
-  const canView = permissions.includes("viewer");
+  const canEdit = permissions.includes('editor');
+  const canView = permissions.includes('viewer');
 
   return (
     <>
-      <DriveCrumb inFolder={folderName ?? "Folder name"} />
+      <DriveCrumb inFolder={folderName ?? 'Folder name'} />
 
       <div className={styles.subHeader}>
-        <Users size={13} />{" "}
+        <Users size={13} />{' '}
         {membersCount
           ? `Shared with ${membersCount} people`
-          : "Shared with no one"}
+          : 'Shared with no one'}
         {!!membersCount && (
           <>
             <span className={styles.divider} />
             <Shield size={13} /> Members can
-            {canEdit && " edit"} {canEdit && canView && "&"} {canView && "view"}
+            {canEdit && ' edit'} {canEdit && canView && '&'} {canView && 'view'}
           </>
         )}
         <div className={styles.flex} />

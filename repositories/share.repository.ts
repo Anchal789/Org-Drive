@@ -1,14 +1,15 @@
 // repositories/share.repository.ts
-import { db } from "@/db";
-import { sharedItemsTable } from "@/db/schema";
-import { eq, inArray, and } from "drizzle-orm";
+
+import { and, eq, inArray } from 'drizzle-orm';
+import { db } from '@/db';
+import { sharedItemsTable } from '@/db/schema';
 
 export const shareRepository = {
   async uploadSharedItem(
     userId: number,
     fileId: number | null,
     folderId: number | null,
-    permission: "viewer" | "editor" | "owner" | "commenter",
+    permission: 'viewer' | 'editor' | 'owner' | 'commenter',
     sharedWithUserId: number,
   ) {
     return await db.insert(sharedItemsTable).values({
@@ -21,7 +22,7 @@ export const shareRepository = {
   },
   async updateSharedItem(
     sharedItemId: number,
-    permission: "viewer" | "editor" | "owner" | "commenter",
+    permission: 'viewer' | 'editor' | 'owner' | 'commenter',
   ) {
     return await db
       .update(sharedItemsTable)
@@ -34,7 +35,7 @@ export const shareRepository = {
       userId: number;
       fileId: number | null;
       folderId: number | null;
-      permission: "viewer" | "editor" | "owner" | "commenter";
+      permission: 'viewer' | 'editor' | 'owner' | 'commenter';
       sharedWithUserId: number;
     }[],
   ) {
@@ -45,7 +46,7 @@ export const shareRepository = {
   async updateSharedItemPermissionsBulk(
     fileIds: number[],
     sharedWithUserId: number,
-    permission: "viewer" | "editor" | "owner" | "commenter",
+    permission: 'viewer' | 'editor' | 'owner' | 'commenter',
   ) {
     if (fileIds.length === 0) return;
     return await db

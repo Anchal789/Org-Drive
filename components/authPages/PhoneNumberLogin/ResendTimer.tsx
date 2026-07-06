@@ -1,10 +1,10 @@
-"use client";
+'use client';
 
-import { useEffect, useState } from "react";
-import { iconsWithPaths } from "@/constants/common-constants";
-import styles from "./VerifyOtpPage.module.scss";
-import { Button } from "@/components/ui/button";
-import { Clock } from "lucide-react";
+import { Clock } from 'lucide-react';
+import { useEffect, useState } from 'react';
+import { Button } from '@/components/ui/button';
+import { iconsWithPaths } from '@/constants/common-constants';
+import styles from './VerifyOtpPage.module.scss';
 
 type ResendTimerProps = {
   seconds: number;
@@ -34,10 +34,10 @@ export default function ResendTimer({ seconds }: ResendTimerProps) {
       <Clock d={iconsWithPaths.clock} size={12} />
       {resendIn > 0 ? (
         <>
-          Resend code in{" "}
+          Resend code in{' '}
           <span className={styles.resendTimer}>
-            {String(Math.floor(resendIn / 60)).padStart(2, "0")}:
-            {String(resendIn % 60).padStart(2, "0")}
+            {String(Math.floor(resendIn / 60)).padStart(2, '0')}:
+            {String(resendIn % 60).padStart(2, '0')}
           </span>
         </>
       ) : (

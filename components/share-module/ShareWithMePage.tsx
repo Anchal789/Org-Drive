@@ -1,28 +1,28 @@
-import { TINTS } from "@/constants/common-constants";
-import styles from "./ShareWithMePage.module.scss";
-import DataTable from "../ui/datatable";
-import type { FunctionComponent } from "react";
-import type { ColumnDef } from "@/types/component-types";
-import FileType from "../ui/fileType";
-import UserAvatar from "../ui/user-avatar";
-import { formatFileDate, getAvatarColor, getFileExtension } from "@/lib/utils";
-import type { SharedWithMeItemsType } from "@/types/share-with-me";
-import ShareWithMeActionColumn from "./ShareWithMeActionColumn";
-import { ChevronDown, Folder, Users } from "lucide-react";
+import { ChevronDown, Folder, Users } from 'lucide-react';
+import type { FunctionComponent } from 'react';
+import { TINTS } from '@/constants/common-constants';
+import { formatFileDate, getAvatarColor, getFileExtension } from '@/lib/utils';
+import type { ColumnDef } from '@/types/component-types';
+import type { SharedWithMeItemsType } from '@/types/share-with-me';
+import DataTable from '../ui/datatable';
+import FileType from '../ui/fileType';
+import UserAvatar from '../ui/user-avatar';
+import ShareWithMeActionColumn from './ShareWithMeActionColumn';
+import styles from './ShareWithMePage.module.scss';
 
 const getPermissionColor = (permission: string) => {
   switch (permission) {
-    case "editor":
+    case 'editor':
       return {
         bg: TINTS.green.bg,
         color: TINTS.green.tx,
       };
-    case "viewer":
+    case 'viewer':
       return {
         bg: TINTS.slate.bg,
         color: TINTS.slate.tx,
       };
-    case "commenter":
+    case 'commenter':
       return {
         bg: TINTS.amber.bg,
         color: TINTS.amber.tx,
@@ -37,8 +37,8 @@ const getPermissionColor = (permission: string) => {
 
 const columns: ColumnDef<SharedWithMeItemsType>[] = [
   {
-    id: "name",
-    width: "100%",
+    id: 'name',
+    width: '100%',
     header: (
       <span className={styles.sortable}>
         Name <ChevronDown size={10} />
@@ -66,17 +66,17 @@ const columns: ColumnDef<SharedWithMeItemsType>[] = [
     ),
   },
   {
-    id: "sharedBy",
-    width: "200px",
-    header: "Shared by",
+    id: 'sharedBy',
+    width: '200px',
+    header: 'Shared by',
     className: styles.metaCell,
     cell: (item) => {
-      const ownerInitials = `${item.ownerFirstName?.charAt(0) ?? ""}${item.ownerLastName?.charAt(0) ?? ""}`;
+      const ownerInitials = `${item.ownerFirstName?.charAt(0) ?? ''}${item.ownerLastName?.charAt(0) ?? ''}`;
       return (
         <div className={styles.owner}>
           <UserAvatar
             initials={ownerInitials}
-            tone={getAvatarColor(item?.userId ?? "")}
+            tone={getAvatarColor(item?.userId ?? '')}
             size="sm"
           />
           <span className={styles.ownerName}>
@@ -87,16 +87,16 @@ const columns: ColumnDef<SharedWithMeItemsType>[] = [
     },
   },
   {
-    id: "dateShared",
-    width: "130px",
-    header: "Date shared",
+    id: 'dateShared',
+    width: '130px',
+    header: 'Date shared',
     className: styles.metaCell,
     cell: (item) => <span>{formatFileDate(item.sharedDate)}</span>,
   },
   {
-    id: "permission",
-    width: "110px",
-    header: "Your Access",
+    id: 'permission',
+    width: '110px',
+    header: 'Your Access',
     className: styles.metaCell,
     cell: (file) => {
       const colorStyle = getPermissionColor(file.permission);
@@ -114,9 +114,9 @@ const columns: ColumnDef<SharedWithMeItemsType>[] = [
     },
   },
   {
-    id: "actions",
-    width: "32px",
-    header: "",
+    id: 'actions',
+    width: '32px',
+    header: '',
     className: styles.actions,
     cell: (item) => <ShareWithMeActionColumn props={item} />,
   },

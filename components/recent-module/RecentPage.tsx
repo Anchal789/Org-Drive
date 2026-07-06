@@ -1,13 +1,13 @@
-"use client";
+'use client';
 
-import { FunctionComponent, useMemo } from "react";
-import styles from "./Recent.module.scss";
-import { getFileExtension } from "@/lib/utils";
-import { formatBytes } from "@/store/store";
-import FileType from "../ui/fileType";
-import { RecentLogsType } from "@/types/recent";
-import { Button } from "../ui/button";
-import { Clock, Folder, MoreHorizontal } from "lucide-react";
+import { Clock, Folder, MoreHorizontal } from 'lucide-react';
+import { type FunctionComponent, useMemo } from 'react';
+import { getFileExtension } from '@/lib/utils';
+import { formatBytes } from '@/store/store';
+import type { RecentLogsType } from '@/types/recent';
+import { Button } from '../ui/button';
+import FileType from '../ui/fileType';
+import styles from './Recent.module.scss';
 
 const RecentPage: FunctionComponent<{
   recentLogs: Array<RecentLogsType>;
@@ -17,7 +17,7 @@ const RecentPage: FunctionComponent<{
     const groups: Record<string, typeof recentLogs> = {
       Today: [],
       Yesterday: [],
-      "Earlier this week": [],
+      'Earlier this week': [],
       Older: [],
     };
 
@@ -30,7 +30,7 @@ const RecentPage: FunctionComponent<{
     const startOfWeek = new Date(today);
     startOfWeek.setDate(today.getDate() - 6);
 
-    recentLogs.forEach((log) => {
+    for (const log of recentLogs) {
       const logDate = new Date(log.createdAt);
       logDate.setHours(0, 0, 0, 0);
 
@@ -39,11 +39,11 @@ const RecentPage: FunctionComponent<{
       } else if (logDate.getTime() === yesterday.getTime()) {
         groups.Yesterday.push(log);
       } else if (logDate >= startOfWeek) {
-        groups["Earlier this week"].push(log);
+        groups['Earlier this week'].push(log);
       } else {
         groups.Older.push(log);
       }
-    });
+    }
 
     return groups;
   }, [recentLogs]);
@@ -71,23 +71,23 @@ const RecentPage: FunctionComponent<{
               <div className={styles.list}>
                 {logs.map((log) => {
                   const isMe = log.actionBy === currentUserId;
-                  const actorName = isMe ? "You" : log.editorFirstName;
+                  const actorName = isMe ? 'You' : log.editorFirstName;
                   const itemName =
-                    log.fileName || log.folderName || "Unknown File";
+                    log.fileName || log.folderName || 'Unknown File';
                   const dateObj = new Date(log.createdAt);
                   const timeString =
-                    groupName === "Earlier this week" || groupName === "Older"
-                      ? dateObj.toLocaleDateString("en-US", {
-                          weekday: "short",
+                    groupName === 'Earlier this week' || groupName === 'Older'
+                      ? dateObj.toLocaleDateString('en-US', {
+                          weekday: 'short',
                         })
-                      : dateObj.toLocaleTimeString("en-US", {
-                          hour: "numeric",
-                          minute: "2-digit",
+                      : dateObj.toLocaleTimeString('en-US', {
+                          hour: 'numeric',
+                          minute: '2-digit',
                         });
 
                   return (
                     <div key={log.id} className={styles.row}>
-                      <FileType kind={getFileExtension(log.fileName || "")} />
+                      <FileType kind={getFileExtension(log.fileName || '')} />
 
                       <div className={styles.details}>
                         <div className={styles.fileName}>{itemName}</div>
@@ -101,13 +101,13 @@ const RecentPage: FunctionComponent<{
                             className={styles.metaIcon}
                             fill="currentColor"
                           />
-                          <span>{log.folderName || "Drive"}</span>
+                          <span>{log.folderName || 'Drive'}</span>
                         </div>
                       </div>
 
                       <span className={styles.timestamp}>{timeString}</span>
                       <span className={styles.size}>
-                        {log.fileSize ? formatBytes(log.fileSize) : "--"}
+                        {log.fileSize ? formatBytes(log.fileSize) : '--'}
                       </span>
 
                       <Button className={styles.moreBtn}>

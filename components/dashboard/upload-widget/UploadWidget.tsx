@@ -1,12 +1,5 @@
-"use client";
+'use client';
 
-import { useRouter } from "next/navigation";
-import { useEffect, useState } from "react";
-import { TINTS } from "@/constants/common-constants";
-import { formatBytes, useUploadStore } from "@/store/store";
-import styles from "./UploadWidget.module.scss";
-import type { DisplayItem, Tone, UploadItem } from "@/types/dashboard";
-import { Button } from "@/components/ui/button";
 import {
   Check,
   ChevronDown,
@@ -18,15 +11,22 @@ import {
   Shield,
   Sparkle,
   X,
-} from "lucide-react";
+} from 'lucide-react';
+import { useRouter } from 'next/navigation';
+import { useEffect, useState } from 'react';
+import { Button } from '@/components/ui/button';
+import { TINTS } from '@/constants/common-constants';
+import { formatBytes, useUploadStore } from '@/store/store';
+import type { DisplayItem, Tone, UploadItem } from '@/types/dashboard';
+import styles from './UploadWidget.module.scss';
 
-const STATE_TO_TONE: Record<UploadItem["state"], Tone> = {
-  done: "green",
-  indexing: "violet",
-  queued: "slate",
-  uploading: "sky",
-  error: "red",
-  aborted: "red",
+const STATE_TO_TONE: Record<UploadItem['state'], Tone> = {
+  done: 'green',
+  indexing: 'violet',
+  queued: 'slate',
+  uploading: 'sky',
+  error: 'red',
+  aborted: 'red',
 };
 
 function UploadItemRow({
@@ -41,32 +41,34 @@ function UploadItemRow({
   const tone = STATE_TO_TONE[item.state];
   const tint = TINTS[tone];
   const stateLabel =
-    item.state === "indexing"
-      ? "Indexing for AI"
-      : item.state === "error"
-        ? "Upload Failed"
-        : item.state === "aborted"
-          ? "Upload Cancelled"
+    item.state === 'indexing'
+      ? 'Indexing for AI'
+      : item.state === 'error'
+        ? 'Upload Failed'
+        : item.state === 'aborted'
+          ? 'Upload Cancelled'
           : item.state;
 
   return (
-    <div className={`${styles.itemRow} ${isLast ? styles.itemRowLast : ""}`}>
+    <div className={`${styles.itemRow} ${isLast ? styles.itemRowLast : ''}`}>
       <div
         className={styles.itemIcon}
         style={{ background: tint.bg, color: tint.tx }}
       >
-        {item.state === "done" && <Check size={14} />}
-        {item.state === "indexing" && (
-          <Sparkle size={13} style={{ animation: "spin 1s linear infinite" }} />
+        {item.state === 'done' && <Check size={14} />}
+        {item.state === 'indexing' && (
+          <Sparkle size={13} style={{ animation: 'spin 1s linear infinite' }} />
         )}
-        {item.state === "queued" && <Clock size={13} />}
-        {item.state === "uploading" && (
+        {item.state === 'queued' && <Clock size={13} />}
+        {item.state === 'uploading' && (
           <>
             <svg
               width="30"
               height="30"
               viewBox="0 0 30 30"
               className={styles.uploadingRing}
+              aria-hidden="true"
+              focusable="false"
             >
               <circle
                 cx="15"
@@ -91,7 +93,7 @@ function UploadItemRow({
             <span className={styles.uploadingPct}>{item.pct}%</span>
           </>
         )}
-        {(item.state === "error" || item.state === "aborted") && (
+        {(item.state === 'error' || item.state === 'aborted') && (
           <X size={14} />
         )}
       </div>
@@ -102,7 +104,7 @@ function UploadItemRow({
             <Folder
               fill="currentColor"
               size={12}
-              style={{ marginRight: 6, display: "inline" }}
+              style={{ marginRight: 6, display: 'inline' }}
             />
           )}
           {item.name}
@@ -119,9 +121,9 @@ function UploadItemRow({
       </div>
 
       <Button onClick={() => onAbort(item)}>
-        {item.state === "done" ? (
+        {item.state === 'done' ? (
           <Check size={13} color="var(--muted-foreground)" />
-        ) : item.state === "uploading" || item.state === "queued" ? (
+        ) : item.state === 'uploading' || item.state === 'queued' ? (
           <X size={13} color="var(--muted-foreground)" />
         ) : (
           <MoreHorizontal size={13} color="var(--muted-foreground)" />
@@ -147,27 +149,27 @@ export default function UploadWidget() {
   const displayItems: DisplayItem[] = [];
   const folderMap = new Map<string, UploadItem[]>();
 
-  rawItems.forEach((item) => {
+  for (const item of rawItems) {
     if (item.folderName) {
       if (!folderMap.has(item.folderName)) folderMap.set(item.folderName, []);
-      folderMap.get(item.folderName)!.push(item);
+      folderMap.get(item.folderName)?.push(item);
     } else {
       displayItems.push(item);
     }
-  });
+  }
 
-  folderMap.forEach((folderFiles, folderName) => {
+  for (const [folderName, folderFiles] of folderMap) {
     const totalFiles = folderFiles.length;
-    const doneFiles = folderFiles.filter((f) => f.state === "done").length;
+    const doneFiles = folderFiles.filter((f) => f.state === 'done').length;
     const errorFiles = folderFiles.filter(
-      (f) => f.state === "error" || f.state === "aborted",
+      (f) => f.state === 'error' || f.state === 'aborted',
     ).length;
-    const uploadingFile = folderFiles.find((f) => f.state === "uploading");
+    const uploadingFile = folderFiles.find((f) => f.state === 'uploading');
 
-    let state: UploadItem["state"] = "queued";
-    if (doneFiles === totalFiles) state = "done";
-    else if (errorFiles + doneFiles === totalFiles) state = "error";
-    else if (uploadingFile || doneFiles > 0) state = "uploading";
+    let state: UploadItem['state'] = 'queued';
+    if (doneFiles === totalFiles) state = 'done';
+    else if (errorFiles + doneFiles === totalFiles) state = 'error';
+    else if (uploadingFile || doneFiles > 0) state = 'uploading';
 
     const donePct = (doneFiles / totalFiles) * 100;
     const uploadingPct = uploadingFile ? uploadingFile.pct / totalFiles : 0;
@@ -188,13 +190,13 @@ export default function UploadWidget() {
       pct: totalPct,
       eta: uploadingFile?.eta,
     });
-  });
+  }
 
   const itemsStillUploading = displayItems.filter(
     (i) =>
-      i.state === "uploading" || i.state === "queued" || i.state === "indexing",
+      i.state === 'uploading' || i.state === 'queued' || i.state === 'indexing',
   );
-  const doneCount = displayItems.filter((i) => i.state === "done").length;
+  const doneCount = displayItems.filter((i) => i.state === 'done').length;
 
   const estimateTime = rawItems.reduce((acc, i) => acc + (i?.eta || 0) || 0, 0);
   const estimateHours = Math.floor(estimateTime / 60 / 60);
@@ -203,7 +205,7 @@ export default function UploadWidget() {
 
   const handleAbort = (item: DisplayItem) => {
     if (item.isFolderGroup) {
-      item.originalFiles.forEach((f) => abortUpload(f.id));
+      for (const f of item.originalFiles) abortUpload(f.id);
     } else {
       abortUpload(item.id);
     }
@@ -225,18 +227,18 @@ export default function UploadWidget() {
             <RefreshCw
               size={14}
               style={{
-                animation: "spin 1.6s linear infinite",
-                color: "var(--primary)",
+                animation: 'spin 1.6s linear infinite',
+                color: 'var(--primary)',
               }}
             />
             <span className={styles.headTitle}>
-              Uploading {displayItems.length - doneCount} of{" "}
+              Uploading {displayItems.length - doneCount} of{' '}
               {displayItems.length}
             </span>
           </>
         ) : (
           <>
-            <Check size={14} style={{ color: "var(--primary)" }} />
+            <Check size={14} style={{ color: 'var(--primary)' }} />
             <span className={styles.headTitle}>
               {doneCount} of {displayItems.length} uploaded successfully
             </span>
@@ -261,7 +263,7 @@ export default function UploadWidget() {
       </div>
 
       <div
-        className={`${styles.list} ${collapseWidget ? styles.listCollapsed : ""}`}
+        className={`${styles.list} ${collapseWidget ? styles.listCollapsed : ''}`}
       >
         <div className={styles.listInner}>
           {displayItems.map((item, i) => (

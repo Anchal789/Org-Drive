@@ -1,14 +1,14 @@
-"use client";
+'use client';
 
-import { TrashInterface } from "@/types/trash";
-import { FunctionComponent, useState } from "react";
-import styles from "./TrashPage.module.scss";
-import { Button } from "../ui/button";
-import AlertModal from "../ui/alert-modal";
-import { useRouter } from "next/navigation";
-import { permanentDeleteFile, restoreFile } from "@/services/trash-service";
-import CustomTooltip from "../ui/custom-tooltip";
-import { RefreshCw, X } from "lucide-react";
+import { RefreshCw, X } from 'lucide-react';
+import { useRouter } from 'next/navigation';
+import { type FunctionComponent, useState } from 'react';
+import { permanentDeleteFile, restoreFile } from '@/services/trash-service';
+import type { TrashInterface } from '@/types/trash';
+import AlertModal from '../ui/alert-modal';
+import { Button } from '../ui/button';
+import CustomTooltip from '../ui/custom-tooltip';
+import styles from './TrashPage.module.scss';
 
 const TrashTableActionColumn: FunctionComponent<{
   trashed: TrashInterface;
@@ -16,10 +16,10 @@ const TrashTableActionColumn: FunctionComponent<{
   const router = useRouter();
   const [dialogState, setDialogState] = useState<{
     open: boolean;
-    action: "delete" | "restore" | null;
+    action: 'delete' | 'restore' | null;
   }>({
     open: false,
-    action: "delete",
+    action: 'delete',
   });
 
   const handleRestore = async () => {
@@ -52,9 +52,9 @@ const TrashTableActionColumn: FunctionComponent<{
         onOpenChange={closeDialog}
         title="Delete file?"
         description={
-          dialogState.action === "delete"
-            ? `Are you sure you want to delete this ${trashed.folderId ? "folder" : "file"}?`
-            : `Are you sure you want to restore this ${trashed.folderId ? "folder" : "file"}?`
+          dialogState.action === 'delete'
+            ? `Are you sure you want to delete this ${trashed.folderId ? 'folder' : 'file'}?`
+            : `Are you sure you want to restore this ${trashed.folderId ? 'folder' : 'file'}?`
         }
         confirmText="Delete"
         confirmVariant="destructive"
@@ -78,7 +78,7 @@ const TrashTableActionColumn: FunctionComponent<{
             onClick={() => {
               setDialogState({
                 open: true,
-                action: "delete",
+                action: 'delete',
               });
             }}
             className={styles.iconButton}

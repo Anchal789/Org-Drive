@@ -1,21 +1,21 @@
-import styles from "./TrashPage.module.scss";
-import { ColumnDef } from "@/types/component-types";
-import { TrashInterface } from "@/types/trash";
-import FileType from "../ui/fileType";
-import { formatBytes } from "@/store/store";
-import { formatFileDate, getFileExtension } from "@/lib/utils";
-import { FunctionComponent } from "react";
-import DataTable from "../ui/datatable";
-import TrashTableActionColumn from "./TrashTableActionColumn";
-import EmptyTrashButton from "./EmptyTrashButton";
-import { ChevronDown, Folder, Shield, Trash2 } from "lucide-react";
+import { ChevronDown, Folder, Shield, Trash2 } from 'lucide-react';
+import type { FunctionComponent } from 'react';
+import { formatFileDate, getFileExtension } from '@/lib/utils';
+import { formatBytes } from '@/store/store';
+import type { ColumnDef } from '@/types/component-types';
+import type { TrashInterface } from '@/types/trash';
+import DataTable from '../ui/datatable';
+import FileType from '../ui/fileType';
+import EmptyTrashButton from './EmptyTrashButton';
+import styles from './TrashPage.module.scss';
+import TrashTableActionColumn from './TrashTableActionColumn';
 
 const TrashPage: FunctionComponent<{
   trashedItems: Array<TrashInterface>;
 }> = async ({ trashedItems }) => {
   const columns: ColumnDef<TrashInterface>[] = [
     {
-      id: "name",
+      id: 'name',
       header: (
         <span className={styles.sortable}>
           Name <ChevronDown size={10} />
@@ -43,23 +43,23 @@ const TrashPage: FunctionComponent<{
       ),
     },
     {
-      id: "size",
-      width: "120px",
-      header: "Size",
+      id: 'size',
+      width: '120px',
+      header: 'Size',
       className: styles.metaCell,
       cell: (file) => <span>{formatBytes(file?.size)}</span>,
     },
     {
-      id: "deleted",
-      width: "130px",
-      header: "Deleted",
+      id: 'deleted',
+      width: '130px',
+      header: 'Deleted',
       className: styles.metaCell,
       cell: (file) => <span>{formatFileDate(file.createdAt)}</span>,
     },
     {
-      id: "autodelete",
-      width: "110px",
-      header: "Auto-delete",
+      id: 'autodelete',
+      width: '110px',
+      header: 'Auto-delete',
       className: styles.metaCell,
       cell: (file) => {
         const autoDeleteAt =
@@ -70,16 +70,16 @@ const TrashPage: FunctionComponent<{
         );
 
         return (
-          <span className={daysLeft < 10 ? styles.autoDeleteIn10Days : ""}>
-            {daysLeft > 0 ? `in ${daysLeft} days` : "Expired"}
+          <span className={daysLeft < 10 ? styles.autoDeleteIn10Days : ''}>
+            {daysLeft > 0 ? `in ${daysLeft} days` : 'Expired'}
           </span>
         );
       },
     },
     {
-      id: "actions",
-      width: "64px",
-      header: "",
+      id: 'actions',
+      width: '64px',
+      header: '',
       className: styles.actions,
       cell: (item) => <TrashTableActionColumn trashed={item} />,
     },

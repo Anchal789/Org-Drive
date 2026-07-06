@@ -1,23 +1,23 @@
-import { db } from "@/db";
+import { and, desc, eq, gte, sql } from 'drizzle-orm';
+import { db } from '@/db';
 import {
+  recentTable,
   uploadedFilesTable,
   uploadFoldersTable,
   userTable,
-  recentTable,
-} from "@/db/schema";
-import { eq, sql, desc, and, gte } from "drizzle-orm";
+} from '@/db/schema';
 import {
+  calculatePercentage,
+  formatBytes,
+  getActionTone,
+} from '@/helpers/analytics.helper';
+import type {
   ActivityEvent,
   Contributor,
   FileTypeStat,
   FolderInsight,
-} from "@/types/analytics";
-import {
-  formatBytes,
-  getActionTone,
-  calculatePercentage,
-} from "@/helpers/analytics.helper";
-import { Tone } from "@/types/dashboard";
+} from '@/types/analytics';
+import type { Tone } from '@/types/dashboard';
 
 export const analyticsRepository = {
   async getOverviewStats(userId: number) {
@@ -59,10 +59,7 @@ export const analyticsRepository = {
     }));
   },
 
-  async getRecentActivity(
-    userId: number,
-    limit: number = 6,
-  ): Promise<ActivityEvent[]> {
+  async getRecentActivity(userId: number, limit = 6): Promise<ActivityEvent[]> {
     const logs = await db
       .select({
         id: recentTable.id,
@@ -84,14 +81,14 @@ export const analyticsRepository = {
       .limit(limit);
 
     return logs.map((log) => {
-      const fName = log.firstName || "";
-      const lName = log.lastName || "";
+      const fName = log.firstName || '';
+      const lName = log.lastName || '';
       return {
         id: String(log.id),
         userInitials: `${fName.charAt(0)}${lName.charAt(0)}`.toUpperCase(),
         userName: fName,
         action: log.action,
-        itemName: log.fileName || "Unknown Item",
+        itemName: log.fileName || 'Unknown Item',
         timeAgo: new Date(log.createdAt).toLocaleDateString(),
         tone: getActionTone(log.action),
       };
@@ -104,57 +101,57 @@ export const analyticsRepository = {
       .from(uploadedFilesTable)
       .where(eq(uploadedFilesTable.userId, userId));
 
-    let pdf = 0,
-      docs = 0,
-      sheets = 0,
-      slides = 0,
-      other = 0,
-      total = 0;
+    let pdf = 0;
+    let docs = 0;
+    let sheets = 0;
+    let slides = 0;
+    let other = 0;
+    let total = 0;
 
-    files.forEach((f) => {
-      const ext = f.name?.split(".").pop()?.toLowerCase() || "";
+    for (const f of files) {
+      const ext = f.name?.split('.').pop()?.toLowerCase() || '';
       const size = Number(f.size || 0);
       total += size;
 
-      if (ext === "pdf") pdf += size;
-      else if (["doc", "docx", "txt"].includes(ext)) docs += size;
-      else if (["xls", "xlsx", "csv"].includes(ext)) sheets += size;
-      else if (["ppt", "pptx"].includes(ext)) slides += size;
+      if (ext === 'pdf') pdf += size;
+      else if (['doc', 'docx', 'txt'].includes(ext)) docs += size;
+      else if (['xls', 'xlsx', 'csv'].includes(ext)) sheets += size;
+      else if (['ppt', 'pptx'].includes(ext)) slides += size;
       else other += size;
-    });
+    }
 
     const types: FileTypeStat[] = [
       {
-        name: "PDF",
-        tone: "blue",
+        name: 'PDF',
+        tone: 'blue',
         sizeBytes: pdf,
         sizeFormatted: formatBytes(pdf),
         percentage: calculatePercentage(pdf, total),
       },
       {
-        name: "Documents",
-        tone: "violet",
+        name: 'Documents',
+        tone: 'violet',
         sizeBytes: docs,
         sizeFormatted: formatBytes(docs),
         percentage: calculatePercentage(docs, total),
       },
       {
-        name: "Spreadsheets",
-        tone: "green",
+        name: 'Spreadsheets',
+        tone: 'green',
         sizeBytes: sheets,
         sizeFormatted: formatBytes(sheets),
         percentage: calculatePercentage(sheets, total),
       },
       {
-        name: "Slides",
-        tone: "amber",
+        name: 'Slides',
+        tone: 'amber',
         sizeBytes: slides,
         sizeFormatted: formatBytes(slides),
         percentage: calculatePercentage(slides, total),
       },
       {
-        name: "Other",
-        tone: "slate",
+        name: 'Other',
+        tone: 'slate',
         sizeBytes: other,
         sizeFormatted: formatBytes(other),
         percentage: calculatePercentage(other, total),
@@ -184,9 +181,9 @@ export const analyticsRepository = {
     const maxVal = Math.max(...contributorsRaw.map((c) => Number(c.totalSize)));
 
     return contributorsRaw.map((c, i) => {
-      const fName = c.firstName || "";
-      const lName = c.lastName || "";
-      const tones: Tone[] = ["violet", "blue", "green", "teal", "amber"];
+      const fName = c.firstName || '';
+      const lName = c.lastName || '';
+      const tones: Tone[] = ['violet', 'blue', 'green', 'teal', 'amber'];
       return {
         id: c.id,
         name: `${fName} ${lName}`,
@@ -218,18 +215,18 @@ export const analyticsRepository = {
       .orderBy(desc(sql`COALESCE(SUM(${uploadedFilesTable.size}), 0)`));
 
     const tones: Tone[] = [
-      "violet",
-      "blue",
-      "teal",
-      "sky",
-      "amber",
-      "red",
-      "slate",
+      'violet',
+      'blue',
+      'teal',
+      'sky',
+      'amber',
+      'red',
+      'slate',
     ];
 
     return foldersData.map((f, i) => ({
       id: f.id,
-      name: f.name || "Unknown",
+      name: f.name || 'Unknown',
       sizeBytes: Number(f.totalSize),
       sizeFormatted: formatBytes(Number(f.totalSize)),
       filesCount: Number(f.fileCount),

@@ -1,7 +1,6 @@
-import { iconsWithPaths, TG_BLUE } from "@/constants/common-constants";
+import { iconsWithPaths, TG_BLUE } from '@/constants/common-constants';
 
-const seed = (x: number, y: number) =>
-  (x * 73 + y * 31 + (x ^ y) * 17) % 7 > 3;
+const seed = (x: number, y: number) => (x * 73 + y * 31 + (x ^ y) * 17) % 7 > 3;
 
 export default function QrSampleImage({ size = 168 }) {
   const cells = 21;
@@ -26,9 +25,9 @@ export default function QrSampleImage({ size = 168 }) {
     >
       <title>Telegram QR</title>
       <rect width={size} height={size} fill="#fff" />
-      {blocks.map(([x, y], i) => (
+      {blocks.map(([x, y]) => (
         <rect
-          key={`qr-${i}`}
+          key={`qr-${x}-${y}`}
           x={x * s}
           y={y * s}
           width={s}
@@ -41,8 +40,8 @@ export default function QrSampleImage({ size = 168 }) {
         [0, 0],
         [cells - 7, 0],
         [0, cells - 7],
-      ].map(([fx, fy], i) => (
-        <g key={`telegram-${i}`}>
+      ].map(([fx, fy]) => (
+        <g key={`telegram-${fx}-${fy}`}>
           <rect
             x={fx * s}
             y={fy * s}

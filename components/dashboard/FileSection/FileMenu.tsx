@@ -1,23 +1,5 @@
-"use client";
+'use client';
 
-import { useRouter } from "next/navigation";
-import { type FunctionComponent, useState } from "react";
-import AlertModal from "@/components/ui/alert-modal";
-import { Button } from "@/components/ui/button";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuGroup,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
-import { bookmarkItem, downloadFile, trashFile } from "@/services/file-service";
-import type { UploadedFile } from "@/types/files";
-import styles from "./FileCard.module.scss";
-import { useShareDialogStore } from "@/store/store";
-import { Separator } from "@/components/ui/separator";
-import RenameItem from "@/components/rename/RenameIterm";
-import { bookmarkSharedItem } from "@/services/shared-with-me-service";
 import {
   Download,
   MoreHorizontal,
@@ -26,7 +8,25 @@ import {
   Tag,
   Trash2,
   UserMinus,
-} from "lucide-react";
+} from 'lucide-react';
+import { useRouter } from 'next/navigation';
+import { type FunctionComponent, useState } from 'react';
+import RenameItem from '@/components/rename/RenameIterm';
+import AlertModal from '@/components/ui/alert-modal';
+import { Button } from '@/components/ui/button';
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuGroup,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu';
+import { Separator } from '@/components/ui/separator';
+import { bookmarkItem, downloadFile, trashFile } from '@/services/file-service';
+import { bookmarkSharedItem } from '@/services/shared-with-me-service';
+import { useShareDialogStore } from '@/store/store';
+import type { UploadedFile } from '@/types/files';
+import styles from './FileCard.module.scss';
 
 const FileMenu: FunctionComponent<{
   file: UploadedFile & { shareId?: number; permission?: string };
@@ -53,7 +53,7 @@ const FileMenu: FunctionComponent<{
     }
   };
 
-  const canEdit = file?.permission === "editor" || !file?.permission;
+  const canEdit = file?.permission === 'editor' || !file?.permission;
   return (
     <>
       <AlertModal
@@ -114,7 +114,7 @@ const FileMenu: FunctionComponent<{
               className={styles.menuItem}
             >
               <Tag size={14} className={styles.icon} />
-              {file.bookmark ? "Unbookmark" : "Bookmark"}
+              {file.bookmark ? 'Unbookmark' : 'Bookmark'}
             </DropdownMenuItem>
             <Separator className={styles.separator} />
             <DropdownMenuItem
@@ -126,7 +126,7 @@ const FileMenu: FunctionComponent<{
               ) : (
                 <Trash2 size={14} className={styles.icon} />
               )}
-              {file.shareId ? "Remove for me" : "Delete"}
+              {file.shareId ? 'Remove for me' : 'Delete'}
             </DropdownMenuItem>
           </DropdownMenuGroup>
         </DropdownMenuContent>

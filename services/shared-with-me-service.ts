@@ -1,10 +1,10 @@
-import { deleteData, postData } from "@/lib/api-fn";
-import { encrypt } from "@/lib/utils";
-import { toast } from "sonner";
+import { toast } from 'sonner';
+import { deleteData, postData } from '@/lib/api-fn';
+import { encrypt } from '@/lib/utils';
 
 export const trashSharedFile = async (id: number) => {
   const response = await deleteData({
-    url: "/api/shared-with-me/delete",
+    url: '/api/shared-with-me/delete',
     params: { id: encrypt(String(id)) },
   });
 
@@ -18,7 +18,7 @@ export const trashSharedFile = async (id: number) => {
 
 export const bookmarkSharedItem = async (id: number, bookmark: boolean) => {
   const response = await postData({
-    url: "/api/bookmark",
+    url: '/api/bookmark',
     payload: { id: encrypt(String(id)), bookmark, shared: true },
   });
   if (response.success) {

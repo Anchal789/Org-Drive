@@ -1,25 +1,5 @@
-"use client";
+'use client';
 
-import { useRouter } from "next/navigation";
-import { useState } from "react";
-import AlertModal from "@/components/ui/alert-modal";
-import { Button } from "@/components/ui/button";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuGroup,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
-import styles from "../FolderContainer.module.scss";
-import { useShareDialogStore } from "@/store/store";
-import { UploadedFolder } from "@/types/files";
-import { Separator } from "@/components/ui/separator";
-import { bookmarkItem, downloadAllFolderFiles } from "@/services/file-service";
-import { encrypt } from "@/lib/utils";
-import RenameItem from "@/components/rename/RenameIterm";
-import { bookmarkSharedItem } from "@/services/shared-with-me-service";
-import { trashFolder } from "@/services/folder-service";
 import {
   Download,
   MoreHorizontal,
@@ -28,7 +8,27 @@ import {
   Tag,
   Trash2,
   UserMinus,
-} from "lucide-react";
+} from 'lucide-react';
+import { useRouter } from 'next/navigation';
+import { useState } from 'react';
+import RenameItem from '@/components/rename/RenameIterm';
+import AlertModal from '@/components/ui/alert-modal';
+import { Button } from '@/components/ui/button';
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuGroup,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu';
+import { Separator } from '@/components/ui/separator';
+import { encrypt } from '@/lib/utils';
+import { bookmarkItem, downloadAllFolderFiles } from '@/services/file-service';
+import { trashFolder } from '@/services/folder-service';
+import { bookmarkSharedItem } from '@/services/shared-with-me-service';
+import { useShareDialogStore } from '@/store/store';
+import type { UploadedFolder } from '@/types/files';
+import styles from '../FolderContainer.module.scss';
 
 const FolderMenu = ({
   folder,
@@ -142,7 +142,7 @@ const FolderMenu = ({
               ) : (
                 <Trash2 size={14} className={styles.icon} />
               )}
-              {folder.shareId ? "Remove for me" : "Delete"}
+              {folder.shareId ? 'Remove for me' : 'Delete'}
             </DropdownMenuItem>
           </DropdownMenuGroup>
         </DropdownMenuContent>

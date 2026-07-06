@@ -1,14 +1,14 @@
-export const dynamic = "force-dynamic";
+export const dynamic = 'force-dynamic';
 
-import type { UploadedFile, UploadedFolder } from "@/types/files";
-import DriveCrumb from "../DriveCrumb/DriveCrumb";
-import FileCard from "../FileSection/FileCard";
-import FolderContainer from "../FolderSection/FolderContainer";
-import styles from "./DashGrid.module.scss";
-import Image from "next/image";
-import NoDataImage from "@/public/assets/No-Data.svg";
-import FilesContainer from "../FileSection/FilesContainer";
-import FileSelectionBar from "../FileSection/FileSelectionBar";
+import Image from 'next/image';
+import NoDataImage from '@/public/assets/No-Data.svg';
+import type { UploadedFile, UploadedFolder } from '@/types/files';
+import DriveCrumb from '../DriveCrumb/DriveCrumb';
+import FileCard from '../FileSection/FileCard';
+import FileSelectionBar from '../FileSection/FileSelectionBar';
+import FilesContainer from '../FileSection/FilesContainer';
+import FolderContainer from '../FolderSection/FolderContainer';
+import styles from './DashGrid.module.scss';
 
 export default function DashGrid({
   files,

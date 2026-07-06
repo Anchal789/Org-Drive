@@ -1,5 +1,5 @@
-import HeroPanel from "@/components/authPages/HeroPanel";
-import LoginForm from "@/components/authPages/LoginForm";
+import HeroPanel from '@/components/authPages/HeroPanel';
+import LoginForm from '@/components/authPages/LoginForm';
 
 export default function LoginPage() {
   return (
