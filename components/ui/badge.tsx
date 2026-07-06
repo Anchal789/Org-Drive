@@ -1,12 +1,14 @@
 import { TINTS } from "@/constants/common-constants";
 import type { BadgeProps } from "@/types/component-types";
 
+const EMPTY_STYLE: React.CSSProperties = {};
+
 export default function Badge({
   children,
   tone,
   outline = false,
   className = "",
-  style = {},
+  style = EMPTY_STYLE,
   customTone,
 }: BadgeProps) {
   const toneKey = tone as keyof typeof TINTS;

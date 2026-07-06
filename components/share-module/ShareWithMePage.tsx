@@ -1,6 +1,5 @@
-import { iconsWithPaths, TINTS } from "@/constants/common-constants";
+import { TINTS } from "@/constants/common-constants";
 import styles from "./ShareWithMePage.module.scss";
-import Icon from "../ui/icon";
 import DataTable from "../ui/datatable";
 import { FunctionComponent } from "react";
 import { ColumnDef } from "@/types/component-types";
@@ -9,6 +8,7 @@ import UserAvatar from "../ui/user-avatar";
 import { formatFileDate, getAvatarColor, getFileExtension } from "@/lib/utils";
 import { SharedWithMeItemsType } from "@/types/share-with-me";
 import ShareWithMeActionColumn from "./ShareWithMeActionColumn";
+import { ChevronDown, Folder, Users } from "lucide-react";
 
 const ShareWithMePage: FunctionComponent<{
   sharedItems: Array<SharedWithMeItemsType>;
@@ -44,7 +44,7 @@ const ShareWithMePage: FunctionComponent<{
       width: "100%",
       header: (
         <span className={styles.sortable}>
-          Name <Icon d={iconsWithPaths.chevDown} size={10} />
+          Name <ChevronDown size={10} />
         </span>
       ),
       className: styles.fileCell,
@@ -52,8 +52,7 @@ const ShareWithMePage: FunctionComponent<{
         <>
           {item.fileId === null ? (
             <>
-              <Icon
-                d={iconsWithPaths.folder}
+              <Folder
                 size={14}
                 fill="currentColor"
                 className={styles.folderIcon}
@@ -131,7 +130,7 @@ const ShareWithMePage: FunctionComponent<{
         <div className={styles.headingsContainer}>
           <div className={styles.headings}>
             <div className={styles.iconBox}>
-              <Icon d={iconsWithPaths.users} size={20} />
+              <Users size={20} />
             </div>
             <div>
               <div className={styles.title}>

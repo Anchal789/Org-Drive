@@ -2,11 +2,21 @@
 import { usePathname, useRouter } from "next/navigation";
 import type { FunctionComponent } from "react";
 import Badge from "@/components/ui/badge";
-import Icon from "@/components/ui/icon";
 import { useSidebar } from "@/components/ui/sidebar";
 import styles from "./DriveSidebar.module.scss";
 import type { SidebarItemProps } from "@/types/component-types";
 import { Button } from "../ui/button";
+import {
+  Activity,
+  Clock,
+  Cloud,
+  Search,
+  Settings,
+  Sparkle,
+  Tag,
+  Trash2,
+  Users,
+} from "lucide-react";
 
 const SidebarItem: FunctionComponent<{ item: SidebarItemProps }> = ({
   item,
@@ -17,6 +27,20 @@ const SidebarItem: FunctionComponent<{ item: SidebarItemProps }> = ({
   const collapsed = state === "collapsed";
   const isActive = pathname.includes(item.url);
 
+  const ICONS = {
+    Cloud,
+    Users,
+    Clock,
+    Tag,
+    Trash2,
+    Sparkle,
+    Search,
+    Activity,
+    Settings,
+  };
+
+  const IconComponent = ICONS[item.icon as keyof typeof ICONS];
+
   return (
     <Button
       type="button"
@@ -24,7 +48,7 @@ const SidebarItem: FunctionComponent<{ item: SidebarItemProps }> = ({
       className={`${styles.navItem} ${isActive ? styles.navItemActive : ""}`}
       onClick={() => router.push(item.url)}
     >
-      <Icon d={item.icon} size={16} />
+      <IconComponent size={16} />
       {!collapsed && <span className={styles.navItemLabel}>{item.label}</span>}
       {!collapsed && item.count != null && (
         <span className={styles.navItemCount}>{item.count}</span>

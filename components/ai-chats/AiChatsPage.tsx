@@ -166,7 +166,7 @@ export default function AiChatPage() {
                 · 1,284 chunks indexed
               </div>
             </div>
-            <button className={styles.iconButton}>
+            <button type="button" className={styles.iconButton}>
               <Plus size={15} />
             </button>
           </div>
@@ -210,10 +210,10 @@ export default function AiChatPage() {
         </div>
 
         <div className={styles.sidebarFooter}>
-          <button className={styles.actionBtnPrimary}>
+          <button type="button" className={styles.actionBtnPrimary}>
             <Plus size={14} /> Save as collection
           </button>
-          <button className={styles.actionBtnGhost}>
+          <button type="button" className={styles.actionBtnGhost}>
             <RefreshCw size={14} /> Sync
           </button>
         </div>
@@ -232,7 +232,7 @@ export default function AiChatPage() {
               </div>
             </div>
           </div>
-          <button className={styles.actionBtnGhost}>
+          <button type="button" className={styles.actionBtnGhost}>
             <History size={14} /> History
           </button>
         </div>
@@ -261,7 +261,11 @@ export default function AiChatPage() {
           </div>
           <div className={styles.promptGrid}>
             {PROMPT_OPTIONS.map((prompt) => (
-              <button key={prompt.id} className={styles.promptCard}>
+              <button
+                type="button"
+                key={prompt.id}
+                className={styles.promptCard}
+              >
                 <div className={styles.promptIcon}>{prompt.icon}</div>
                 <div>
                   <div className={styles.promptTitle}>{prompt.title}</div>

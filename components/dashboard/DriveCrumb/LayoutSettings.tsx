@@ -1,17 +1,16 @@
 "use client";
 
 import { Button } from "@/components/ui/button";
-import Icon from "@/components/ui/icon";
 import {
   Popover,
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { iconsWithPaths } from "@/constants/common-constants";
 import styles from "./LayoutSettings.module.scss";
 import { Switch } from "@/components/ui/switch";
 import { useFileLayout, useSortByStore } from "@/store/store";
+import { Settings, Users } from "lucide-react";
 
 const LayoutSettings = () => {
   const { fileLayout, setFileLayout } = useFileLayout();
@@ -24,7 +23,7 @@ const LayoutSettings = () => {
     <Popover>
       <PopoverTrigger asChild>
         <Button variant="ghost" size="icon" className={styles.triggerBtn}>
-          <Icon d={iconsWithPaths.settings} size={16} />
+          <Settings size={16} />
         </Button>
       </PopoverTrigger>
 
@@ -96,11 +95,7 @@ const LayoutSettings = () => {
 
         {/* 5. Action Button */}
         <Button className={styles.actionButton}>
-          <Icon
-            d={iconsWithPaths.users}
-            size={15}
-            className={styles.actionIcon}
-          />
+          <Users size={15} className={styles.actionIcon} />
           <span>Manage access</span>
         </Button>
       </PopoverContent>

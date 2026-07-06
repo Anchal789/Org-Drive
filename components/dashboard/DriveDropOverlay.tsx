@@ -1,21 +1,20 @@
-'use client';
+"use client";
 
-import { useState } from 'react';
-import Icon from '@/components/ui/icon';
-import { iconsWithPaths } from '@/constants/common-constants';
-import styles from '@/styles/components/DriveDropOverlay.module.scss';
-import Dropzone from '../ui/dropzone';
+import { useState } from "react";
+import styles from "@/styles/components/DriveDropOverlay.module.scss";
+import Dropzone from "../ui/dropzone";
+import { Upload } from "lucide-react";
 
 export default function DriveDropOverlay() {
   const [isDragging, setIsDragging] = useState(false);
   return (
     <div
-      className={`${styles.overlay} ${isDragging ? styles.overlayActive : ''}`}
+      className={`${styles.overlay} ${isDragging ? styles.overlayActive : ""}`}
     >
       <div className={styles.inner}>
         <Dropzone onDraggingAction={setIsDragging} />
         <div className={styles.iconBox}>
-          <Icon d={iconsWithPaths.upload} size={28} stroke={2} />
+          <Upload size={28} />
         </div>
         <div className={styles.title}>Drop to upload</div>
         <div className={styles.subtitle}>

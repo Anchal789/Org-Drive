@@ -1,13 +1,12 @@
 import FileType from "@/components/ui/fileType";
-import Icon from "@/components/ui/icon";
 import UserAvatar from "@/components/ui/user-avatar";
-import { iconsWithPaths } from "@/constants/common-constants";
 import { formatFileDate, getAvatarColor } from "@/lib/utils";
 import type { FileKind } from "@/types/dashboard";
 import type { UploadedFile } from "@/types/files";
 import styles from "./FileCard.module.scss";
 import FileMenu from "./FileMenu";
 import { Checkbox } from "@/components/ui/checkbox";
+import { FileText, Tag } from "lucide-react";
 
 export default function FileCard({
   file,
@@ -36,23 +35,13 @@ export default function FileCard({
           <FileType kind={fileExtension} />
         )}
         <div className={styles.headerActions}>
-          {file.bookmark && (
-            <Icon
-              d={iconsWithPaths.bookmark}
-              size={13}
-              className={styles.starIcon}
-            />
-          )}
+          {file.bookmark && <Tag size={13} className={styles.starIcon} />}
           <FileMenu file={file} />
         </div>
       </div>
 
       <div className={styles.preview}>
-        <Icon
-          d={iconsWithPaths.file}
-          size={big ? 30 : 24}
-          className={styles.fileIcon}
-        />
+        <FileText size={big ? 30 : 24} className={styles.fileIcon} />
       </div>
 
       <div>

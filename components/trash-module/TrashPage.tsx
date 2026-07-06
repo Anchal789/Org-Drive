@@ -1,5 +1,3 @@
-import { iconsWithPaths } from "@/constants/common-constants";
-import Icon from "../ui/icon";
 import styles from "./TrashPage.module.scss";
 import { ColumnDef } from "@/types/component-types";
 import { TrashInterface } from "@/types/trash";
@@ -10,6 +8,7 @@ import { FunctionComponent } from "react";
 import DataTable from "../ui/datatable";
 import TrashTableActionColumn from "./TrashTableActionColumn";
 import EmptyTrashButton from "./EmptyTrashButton";
+import { ChevronDown, Folder, Shield, Trash2 } from "lucide-react";
 
 const TrashPage: FunctionComponent<{
   trashedItems: Array<TrashInterface>;
@@ -19,7 +18,7 @@ const TrashPage: FunctionComponent<{
       id: "name",
       header: (
         <span className={styles.sortable}>
-          Name <Icon d={iconsWithPaths.chevDown} size={10} />
+          Name <ChevronDown size={10} />
         </span>
       ),
       className: styles.fileCell,
@@ -27,8 +26,7 @@ const TrashPage: FunctionComponent<{
         <>
           {item.folderId && item.fileId === null ? (
             <>
-              <Icon
-                d={iconsWithPaths.folder}
+              <Folder
                 size={14}
                 fill="currentColor"
                 className={styles.folderIcon}
@@ -93,7 +91,7 @@ const TrashPage: FunctionComponent<{
         <div className={styles.headingsContainer}>
           <div className={styles.headings}>
             <div className={styles.iconBox}>
-              <Icon d={iconsWithPaths.trash} size={20} />
+              <Trash2 size={20} />
             </div>
             <div>
               <div className={styles.title}>
@@ -110,11 +108,7 @@ const TrashPage: FunctionComponent<{
         <div className={styles.content}>
           {/* Flat folder hint */}
           <div className={styles.flatHint}>
-            <Icon
-              d={iconsWithPaths.shield}
-              size={14}
-              className={styles.flatHintIcon}
-            />
+            <Shield size={14} className={styles.flatHintIcon} />
             <span className={styles.flatHintText}>
               Files in Trash still count toward your channel storage until
               they&apos;re permanently deleted.

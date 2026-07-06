@@ -3,13 +3,11 @@
 import { useEffect, useMemo, useReducer } from "react";
 import type { Dispatch, SetStateAction } from "react";
 import { Button } from "@/components/ui/button";
-import Icon from "@/components/ui/icon";
-import { iconsWithPaths } from "@/constants/common-constants";
 import { fetchFolderFromFile } from "@/lib/share";
 import { useShareDialogStore } from "@/store/store";
 import styles from "./ShareDialog.module.scss";
-import { ShareWithMePerson } from "@/types/share-with-me";
-import { User } from "@/types/auth";
+import type { ShareWithMePerson } from "@/types/share-with-me";
+import type { User } from "@/types/auth";
 import { useDebounce } from "@/hooks/use-debounce";
 import { getUsersWithAccessAction } from "@/actions/share-actions";
 import { postData } from "@/lib/api-fn";
@@ -19,9 +17,10 @@ import UserSearchBox from "./UserSearchBox";
 import UserAccessRow from "./UserAccessRow";
 import { Separator } from "@/components/ui/separator";
 import FileType from "@/components/ui/fileType";
-import { FileKind } from "@/types/dashboard";
-import { UploadedFile } from "@/types/files";
+import type { FileKind } from "@/types/dashboard";
+import type { UploadedFile } from "@/types/files";
 import { encrypt } from "@/lib/utils";
+import { Link } from "lucide-react";
 
 type SharePermission = "viewer" | "editor" | "owner" | "commenter";
 
@@ -263,7 +262,7 @@ export default function ShareDialog({
         dispatch({ type: "set_users_with_access", usersWithAccess: users }),
       )
       .catch(console.error);
-  }, [open, activeId, activeUserId, isMultiShare, multiFileIds]);
+  }, [open, activeId, activeUserId, isMultiShare, multiFileIds, files]);
 
   useEffect(() => {
     if (!open) {
@@ -451,7 +450,7 @@ export default function ShareDialog({
         <div className={styles.footer}>
           {!isSharedFiles && (
             <Button variant="outline" size="sm" onClick={handleCopyLink}>
-              <Icon d={iconsWithPaths.link} size={14} />
+              <Link size={14} />
               Copy link
             </Button>
           )}

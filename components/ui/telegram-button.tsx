@@ -2,13 +2,12 @@
 
 import type { Route } from "next";
 import { useRouter } from "next/navigation";
-import { iconsWithPaths } from "@/constants/common-constants";
-import Icon from "./icon";
+import { Send } from "lucide-react";
 
 export default function TelegramButton({
   children,
   size = "lg",
-  onClick,
+  onClickAction,
   className = "",
   isNavigatingButton = false,
   navigateTo = "/",
@@ -19,7 +18,7 @@ export default function TelegramButton({
 }: {
   children: React.ReactNode;
   size?: "sm" | "lg";
-  onClick?: () => void;
+  onClickAction?: () => void;
   className?: string;
   isNavigatingButton?: boolean;
   navigateTo?: Route<string>;
@@ -34,7 +33,9 @@ export default function TelegramButton({
     <button
       type={type}
       onClick={
-        isNavigatingButton ? () => navigate.push(`${navigateTo}`) : onClick
+        isNavigatingButton
+          ? () => navigate.push(`${navigateTo}`)
+          : onClickAction
       }
       disabled={disabled || loading}
       style={{
@@ -74,12 +75,7 @@ export default function TelegramButton({
         </>
       ) : (
         <>
-          <Icon
-            d={iconsWithPaths.send}
-            size={16}
-            stroke={2}
-            className="rotate-15"
-          />
+          <Send size={16} className="rotate-15" />
           {children}
         </>
       )}

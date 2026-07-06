@@ -1,15 +1,13 @@
-// components/recent-module/RecentPage.tsx
 "use client";
 
 import { FunctionComponent, useMemo } from "react";
-import Icon from "../ui/icon";
 import styles from "./Recent.module.scss";
-import { iconsWithPaths } from "@/constants/common-constants";
 import { getFileExtension } from "@/lib/utils";
 import { formatBytes } from "@/store/store";
 import FileType from "../ui/fileType";
 import { RecentLogsType } from "@/types/recent";
 import { Button } from "../ui/button";
+import { Clock, Folder, MoreHorizontal } from "lucide-react";
 
 const RecentPage: FunctionComponent<{
   recentLogs: Array<RecentLogsType>;
@@ -54,7 +52,7 @@ const RecentPage: FunctionComponent<{
     <>
       <div className={styles.header}>
         <div className={styles.iconBox}>
-          <Icon d={iconsWithPaths.clock} size={20} />
+          <Clock size={20} />
         </div>
         <div>
           <div className={styles.title}>Recent</div>
@@ -98,8 +96,7 @@ const RecentPage: FunctionComponent<{
                             {actorName} {log.action}
                           </span>
                           <span>·</span>
-                          <Icon
-                            d={iconsWithPaths.folder}
+                          <Folder
                             size={11}
                             className={styles.metaIcon}
                             fill="currentColor"
@@ -114,7 +111,7 @@ const RecentPage: FunctionComponent<{
                       </span>
 
                       <Button className={styles.moreBtn}>
-                        <Icon d={iconsWithPaths.more} size={14} />
+                        <MoreHorizontal size={14} />
                       </Button>
                     </div>
                   );

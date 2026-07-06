@@ -11,8 +11,6 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import Icon from "@/components/ui/icon";
-import { iconsWithPaths } from "@/constants/common-constants";
 import { bookmarkItem, downloadFile, trashFile } from "@/services/file-service";
 import type { UploadedFile } from "@/types/files";
 import styles from "./FileCard.module.scss";
@@ -20,6 +18,15 @@ import { useShareDialogStore } from "@/store/store";
 import { Separator } from "@/components/ui/separator";
 import RenameItem from "@/components/rename/RenameIterm";
 import { bookmarkSharedItem } from "@/services/shared-with-me-service";
+import {
+  Download,
+  MoreHorizontal,
+  PencilLine,
+  Share,
+  Tag,
+  Trash2,
+  UserMinus,
+} from "lucide-react";
 
 const FileMenu: FunctionComponent<{
   file: UploadedFile & { shareId?: number; permission?: string };
@@ -69,11 +76,7 @@ const FileMenu: FunctionComponent<{
       <DropdownMenu>
         <DropdownMenuTrigger asChild className={styles.dropdownTrigger}>
           <Button type="button" className={styles.moreBtn}>
-            <Icon
-              d={iconsWithPaths.more}
-              size={14}
-              className={styles.moreIcon}
-            />
+            <MoreHorizontal size={14} className={styles.moreIcon} />
           </Button>
         </DropdownMenuTrigger>
         <DropdownMenuContent className={styles.menuContent} align="start">
@@ -83,11 +86,7 @@ const FileMenu: FunctionComponent<{
                 onClick={() => setRenameOpen(true)}
                 className={styles.menuItem}
               >
-                <Icon
-                  d={iconsWithPaths.pencil}
-                  size={14}
-                  className={styles.icon}
-                />
+                <PencilLine size={14} className={styles.icon} />
                 Rename
               </DropdownMenuItem>
             )}
@@ -95,11 +94,7 @@ const FileMenu: FunctionComponent<{
               onClick={() => downloadFile(file.id)}
               className={styles.menuItem}
             >
-              <Icon
-                d={iconsWithPaths.download}
-                size={14}
-                className={styles.icon}
-              />
+              <Download size={14} className={styles.icon} />
               Download
             </DropdownMenuItem>
             <DropdownMenuItem
@@ -109,11 +104,7 @@ const FileMenu: FunctionComponent<{
               }}
               className={styles.menuItem}
             >
-              <Icon
-                d={iconsWithPaths.share}
-                size={14}
-                className={styles.icon}
-              />
+              <Share size={14} className={styles.icon} />
               Share
             </DropdownMenuItem>
             <DropdownMenuItem
@@ -122,11 +113,7 @@ const FileMenu: FunctionComponent<{
               }}
               className={styles.menuItem}
             >
-              <Icon
-                d={iconsWithPaths.bookmark}
-                size={14}
-                className={styles.icon}
-              />
+              <Tag size={14} className={styles.icon} />
               {file.bookmark ? "Unbookmark" : "Bookmark"}
             </DropdownMenuItem>
             <Separator className={styles.separator} />
@@ -134,15 +121,11 @@ const FileMenu: FunctionComponent<{
               onClick={() => setOpenDeleteDialog(true)}
               className={`${styles.menuItem} ${styles.deleteItem}`}
             >
-              <Icon
-                d={
-                  file.shareId
-                    ? iconsWithPaths.userRemove
-                    : iconsWithPaths.trash
-                }
-                size={14}
-                className={styles.icon}
-              />
+              {file.shareId ? (
+                <UserMinus size={14} className={styles.icon} />
+              ) : (
+                <Trash2 size={14} className={styles.icon} />
+              )}
               {file.shareId ? "Remove for me" : "Delete"}
             </DropdownMenuItem>
           </DropdownMenuGroup>

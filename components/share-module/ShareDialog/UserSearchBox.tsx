@@ -1,6 +1,4 @@
-import Icon from "@/components/ui/icon";
 import UserAvatar from "@/components/ui/user-avatar";
-import { iconsWithPaths } from "@/constants/common-constants";
 import { getAvatarColor } from "@/lib/utils";
 import { User } from "@/types/auth";
 import { InputGroupAddon } from "@/components/ui/input-group";
@@ -13,6 +11,7 @@ import {
   ComboboxList,
 } from "@/components/ui/combobox";
 import styles from "./ShareDialog.module.scss";
+import { Users } from "lucide-react";
 
 interface UserSearchBoxProps {
   filteredUsers: User[];
@@ -51,7 +50,7 @@ export default function UserSearchBox({
         onChange={(e) => setSearchTerm(e.target.value)}
       >
         <InputGroupAddon>
-          <Icon d={iconsWithPaths.users} size={14} />
+          <Users size={14} />
         </InputGroupAddon>
       </ComboboxInput>
       <ComboboxContent className={styles.comboboxContent}>

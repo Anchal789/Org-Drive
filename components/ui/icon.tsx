@@ -1,12 +1,10 @@
-const EMPTY_STYLE: React.CSSProperties = {};
-
 export default function Icon({
   d,
   size = 16,
   stroke = 1.6,
-  fill = 'none',
-  className = '',
-  style = EMPTY_STYLE,
+  fill = "none",
+  className = "",
+  style = {},
 }: {
   d: string;
   size?: number;

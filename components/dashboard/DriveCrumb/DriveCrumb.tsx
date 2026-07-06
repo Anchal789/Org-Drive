@@ -3,11 +3,11 @@
 import { useRouter } from "next/navigation";
 import Btn from "@/components/ui/btn";
 import { Button } from "@/components/ui/button";
-import Icon from "@/components/ui/icon";
 import { iconsWithPaths } from "@/constants/common-constants";
 import { useFileLayout } from "@/store/store";
 import styles from "./DriveCrumb.module.scss";
 import LayoutSettings from "./LayoutSettings";
+import { ChevronDown, ChevronRight } from "lucide-react";
 
 export default function DriveCrumb({ inFolder }: { inFolder?: string }) {
   const { fileLayout, setFileLayout } = useFileLayout();
@@ -30,26 +30,13 @@ export default function DriveCrumb({ inFolder }: { inFolder?: string }) {
             >
               My drive
             </Button>
-            <Icon
-              d={iconsWithPaths.chev}
-              size={14}
-              className={styles.chevron}
-            />
+            <ChevronRight size={14} className={styles.chevron} />
             <span>{inFolder}</span>
-            <Icon
-              d={iconsWithPaths.chevDown}
-              size={14}
-              className={styles.chevron}
-            />
           </>
         ) : (
           <>
             <span>My drive</span>
-            <Icon
-              d={iconsWithPaths.chevDown}
-              size={14}
-              className={styles.chevron}
-            />
+            <ChevronDown size={14} className={styles.chevron} />
           </>
         )}
       </div>

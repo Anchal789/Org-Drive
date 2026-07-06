@@ -11,13 +11,7 @@ import { Field, FieldError, FieldGroup } from "@/components/ui/field";
 import { Label } from "@/components/ui/label";
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";
-import {
-  Dispatch,
-  FunctionComponent,
-  SetStateAction,
-  useEffect,
-  useState,
-} from "react";
+import { Dispatch, FunctionComponent, SetStateAction, useState } from "react";
 import { Button } from "@/components/ui/button";
 import {
   InputGroup,
@@ -43,22 +37,23 @@ const RenameItem: FunctionComponent<{
     name: "",
     error: null,
   });
-
-  useEffect(() => {
-    if (renameOpen) {
-      setNewNameState({
-        name: file?.name
-          ? getFileNameWithoutExtension(file?.name)
-          : folder?.name || "",
-        error: null,
-      });
-    } else {
-      setNewNameState({
-        name: "",
-        error: null,
-      });
-    }
-  }, [renameOpen, file?.name, folder?.name]);
+  const [prevRenameOpen, setPrevRenameOpen] = useState(renameOpen);
+  if (prevRenameOpen !== renameOpen) {
+    setPrevRenameOpen(renameOpen);
+    setNewNameState(
+      renameOpen
+        ? {
+            name: file?.name
+              ? getFileNameWithoutExtension(file?.name)
+              : folder?.name || "",
+            error: null,
+          }
+        : {
+            name: "",
+            error: null,
+          },
+    );
+  }
 
   const handleRename = async () => {
     if (!newNameState.name) {

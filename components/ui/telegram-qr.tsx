@@ -1,9 +1,10 @@
 import { iconsWithPaths, TG_BLUE } from "@/constants/common-constants";
 
+const seed = (x: number, y: number) =>
+  (x * 73 + y * 31 + (x ^ y) * 17) % 7 > 3;
+
 export default function QrSampleImage({ size = 168 }) {
   const cells = 21;
-  const seed = (x: number, y: number) =>
-    (x * 73 + y * 31 + (x ^ y) * 17) % 7 > 3;
   const blocks = [];
   for (let y = 0; y < cells; y++) {
     for (let x = 0; x < cells; x++) {

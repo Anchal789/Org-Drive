@@ -60,6 +60,7 @@ export default function AnalyticsHeader({
         <div className={styles.filterGroup}>
           {(["24h", "7d", "30d", "90d"] as Timeframe[]).map((p) => (
             <button
+              type="button"
               key={p}
               onClick={() => setTimeframe(p)}
               className={`${styles.filterBtn} ${timeframe === p ? styles.filterBtnActive : ""}`}

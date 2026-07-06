@@ -1,7 +1,6 @@
 export const dynamic = "force-dynamic";
 
 import Btn from "@/components/ui/btn";
-import Icon from "@/components/ui/icon";
 import { iconsWithPaths } from "@/constants/common-constants";
 import type { UploadedFile } from "@/types/files";
 import DriveCrumb from "../DriveCrumb/DriveCrumb";
@@ -10,6 +9,7 @@ import styles from "./DashFolder.module.scss";
 import { DownloadAllButton } from "./DownloadAllButton";
 import LayoutForInsideFolder from "./LayoutForInsideFolder";
 import FileSelectionBar from "../FileSection/FileSelectionBar";
+import { Folder, Shield, Users } from "lucide-react";
 
 export default function DashFolder({
   files,
@@ -32,14 +32,14 @@ export default function DashFolder({
       <DriveCrumb inFolder={folderName ?? "Folder name"} />
 
       <div className={styles.subHeader}>
-        <Icon d={iconsWithPaths.users} size={13} />{" "}
+        <Users size={13} />{" "}
         {membersCount
           ? `Shared with ${membersCount} people`
           : "Shared with no one"}
         {!!membersCount && (
           <>
             <span className={styles.divider} />
-            <Icon d={iconsWithPaths.shield} size={13} /> Members can
+            <Shield size={13} /> Members can
             {canEdit && " edit"} {canEdit && canView && "&"} {canView && "view"}
           </>
         )}
@@ -53,11 +53,7 @@ export default function DashFolder({
       <div className={styles.content}>
         {/* Flat folder hint */}
         <div className={styles.flatHint}>
-          <Icon
-            d={iconsWithPaths.folder}
-            size={14}
-            className={styles.flatHintIcon}
-          />
+          <Folder size={14} className={styles.flatHintIcon} />
           <span className={styles.flatHintText}>
             <strong>Flat folder.</strong> Org Drive keeps things simple: folders
             contain files, not other folders. Use tags for finer organization.

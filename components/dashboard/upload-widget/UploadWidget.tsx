@@ -2,13 +2,23 @@
 
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
-import Icon from "@/components/ui/icon";
-import { iconsWithPaths, TINTS } from "@/constants/common-constants";
+import { TINTS } from "@/constants/common-constants";
 import { formatBytes, useUploadStore } from "@/store/store";
 import styles from "./UploadWidget.module.scss";
 import type { DisplayItem, Tone, UploadItem } from "@/types/dashboard";
 import { Button } from "@/components/ui/button";
-import { Check, RefreshCw } from "lucide-react";
+import {
+  Check,
+  ChevronDown,
+  ChevronUp,
+  Clock,
+  Folder,
+  MoreHorizontal,
+  RefreshCw,
+  Shield,
+  Sparkle,
+  X,
+} from "lucide-react";
 
 const STATE_TO_TONE: Record<UploadItem["state"], Tone> = {
   done: "green",
@@ -45,17 +55,11 @@ function UploadItemRow({
         className={styles.itemIcon}
         style={{ background: tint.bg, color: tint.tx }}
       >
-        {item.state === "done" && (
-          <Icon d={iconsWithPaths.check} size={14} stroke={2.4} />
-        )}
+        {item.state === "done" && <Check size={14} />}
         {item.state === "indexing" && (
-          <Icon
-            d={iconsWithPaths.sparkle}
-            size={13}
-            style={{ animation: "spin 1s linear infinite" }}
-          />
+          <Sparkle size={13} style={{ animation: "spin 1s linear infinite" }} />
         )}
-        {item.state === "queued" && <Icon d={iconsWithPaths.clock} size={13} />}
+        {item.state === "queued" && <Clock size={13} />}
         {item.state === "uploading" && (
           <>
             <svg
@@ -88,15 +92,15 @@ function UploadItemRow({
           </>
         )}
         {(item.state === "error" || item.state === "aborted") && (
-          <Icon d={iconsWithPaths.x} size={14} stroke={2.4} />
+          <X size={14} />
         )}
       </div>
 
       <div className={styles.itemBody}>
         <div className={styles.itemName}>
           {item.isFolderGroup && (
-            <Icon
-              d={iconsWithPaths.folder}
+            <Folder
+              fill="currentColor"
               size={12}
               style={{ marginRight: 6, display: "inline" }}
             />
@@ -115,17 +119,13 @@ function UploadItemRow({
       </div>
 
       <Button onClick={() => onAbort(item)}>
-        <Icon
-          d={
-            item.state === "done"
-              ? iconsWithPaths.check
-              : item.state === "uploading" || item.state === "queued"
-                ? iconsWithPaths.x
-                : iconsWithPaths.more
-          }
-          size={13}
-          style={{ color: "var(--muted-foreground)", flexShrink: 0 }}
-        />
+        {item.state === "done" ? (
+          <Check size={13} color="var(--muted-foreground)" />
+        ) : item.state === "uploading" || item.state === "queued" ? (
+          <X size={13} color="var(--muted-foreground)" />
+        ) : (
+          <MoreHorizontal size={13} color="var(--muted-foreground)" />
+        )}
       </Button>
     </div>
   );
@@ -249,14 +249,14 @@ export default function UploadWidget() {
           </span>
         )}
         <Button onClick={() => setCollapseWidget(!collapseWidget)}>
-          <Icon
-            d={collapseWidget ? iconsWithPaths.chevUp : iconsWithPaths.chevDown}
-            size={14}
-            style={{ opacity: 0.8 }}
-          />
+          {collapseWidget ? (
+            <ChevronUp size={14} color="var(--muted-foreground)" />
+          ) : (
+            <ChevronDown size={14} color="var(--muted-foreground)" />
+          )}
         </Button>
         <Button onClick={closeWidget}>
-          <Icon d={iconsWithPaths.x} size={14} />
+          <X size={14} color="var(--muted-foreground)" />
         </Button>
       </div>
 
@@ -276,7 +276,7 @@ export default function UploadWidget() {
       </div>
 
       <div className={styles.footer}>
-        <Icon d={iconsWithPaths.shield} size={11} />
+        <Shield size={11} />
         End-to-end encrypted via your Telegram channel.
       </div>
     </div>

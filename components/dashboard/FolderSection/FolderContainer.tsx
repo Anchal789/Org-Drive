@@ -6,10 +6,10 @@ import { encrypt, getAvatarColor, getFolderTone } from "@/lib/utils";
 import type { UploadedFolder } from "@/types/files";
 import styles from "./FolderContainer.module.scss";
 import FolderTile from "./FolderTile";
-import Icon from "@/components/ui/icon";
-import { iconsWithPaths, TINTS } from "@/constants/common-constants";
+import { TINTS } from "@/constants/common-constants";
 import FolderMenu from "./FolderMenu/FolderMenu";
 import UserAvatar from "@/components/ui/user-avatar";
+import { Folder, Tag } from "lucide-react";
 
 const FolderContainer: FunctionComponent<{
   folder: UploadedFolder;
@@ -73,22 +73,15 @@ const FolderContainer: FunctionComponent<{
       >
         <div key={folder.name} className={styles.folderChip}>
           <div className={styles.folderInfo}>
-            <Icon
-              d={iconsWithPaths.folder}
+            <Folder
               size={14}
+              color={folderTone(folder)?.bg}
               fill={folderTone(folder)?.bg}
-              stroke={0}
             />
             <span className={styles.folderName}>{folder.name}</span>
           </div>
           <div className={styles.folderActions}>
-            {folder.bookmark && (
-              <Icon
-                d={iconsWithPaths.bookmark}
-                size={13}
-                className={styles.starIcon}
-              />
-            )}
+            {folder.bookmark && <Tag size={13} className={styles.starIcon} />}
             <UserAvatar
               initials={ownerInitials}
               tone={getAvatarColor(folder?.userId ?? "")}

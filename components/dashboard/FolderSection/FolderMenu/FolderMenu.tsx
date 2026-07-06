@@ -11,8 +11,6 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import Icon from "@/components/ui/icon";
-import { iconsWithPaths } from "@/constants/common-constants";
 import styles from "../FolderContainer.module.scss";
 import { useShareDialogStore } from "@/store/store";
 import { UploadedFolder } from "@/types/files";
@@ -22,6 +20,15 @@ import { encrypt } from "@/lib/utils";
 import RenameItem from "@/components/rename/RenameIterm";
 import { bookmarkSharedItem } from "@/services/shared-with-me-service";
 import { trashFolder } from "@/services/folder-service";
+import {
+  Download,
+  MoreHorizontal,
+  PencilLine,
+  Share,
+  Tag,
+  Trash2,
+  UserMinus,
+} from "lucide-react";
 
 const FolderMenu = ({
   folder,
@@ -75,11 +82,7 @@ const FolderMenu = ({
             className={styles.moreBtn}
             onClick={(e) => e.stopPropagation()}
           >
-            <Icon
-              d={iconsWithPaths.more}
-              size={14}
-              className={styles.moreIcon}
-            />
+            <MoreHorizontal size={14} className={styles.moreIcon} />
           </Button>
         </DropdownMenuTrigger>
         <DropdownMenuContent className={styles.menuContent} align="start">
@@ -91,11 +94,7 @@ const FolderMenu = ({
               }}
               className={styles.menuItem}
             >
-              <Icon
-                d={iconsWithPaths.pencil}
-                size={14}
-                className={styles.icon}
-              />
+              <PencilLine size={14} className={styles.icon} />
               Rename
             </DropdownMenuItem>
             <DropdownMenuItem
@@ -106,11 +105,7 @@ const FolderMenu = ({
               }}
               className={styles.menuItem}
             >
-              <Icon
-                d={iconsWithPaths.download}
-                size={14}
-                className={styles.icon}
-              />
+              <Download size={14} className={styles.icon} />
               Download
             </DropdownMenuItem>
             <DropdownMenuItem
@@ -121,11 +116,7 @@ const FolderMenu = ({
               }}
               className={styles.menuItem}
             >
-              <Icon
-                d={iconsWithPaths.share}
-                size={14}
-                className={styles.icon}
-              />
+              <Share size={14} className={styles.icon} />
               Share
             </DropdownMenuItem>
             <DropdownMenuItem
@@ -135,11 +126,7 @@ const FolderMenu = ({
               }}
               className={styles.menuItem}
             >
-              <Icon
-                d={iconsWithPaths.bookmark}
-                size={14}
-                className={styles.icon}
-              />
+              <Tag size={14} className={styles.icon} />
               Bookmark
             </DropdownMenuItem>
             <Separator className={styles.separator} />
@@ -150,15 +137,11 @@ const FolderMenu = ({
               }}
               className={`${styles.menuItem} ${styles.deleteItem}`}
             >
-              <Icon
-                d={
-                  folder.shareId
-                    ? iconsWithPaths.userRemove
-                    : iconsWithPaths.trash
-                }
-                size={14}
-                className={styles.icon}
-              />
+              {folder.shareId ? (
+                <UserMinus size={14} className={styles.icon} />
+              ) : (
+                <Trash2 size={14} className={styles.icon} />
+              )}
               {folder.shareId ? "Remove for me" : "Delete"}
             </DropdownMenuItem>
           </DropdownMenuGroup>

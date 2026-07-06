@@ -41,15 +41,11 @@ const MoveModal: FunctionComponent<{
 
   const router = useRouter();
 
-  const [currentFolderId, setCurrentFolderId] = useState<string | null>(null);
-
-  useEffect(() => {
-    if (typeof window !== "undefined") {
-      const urlSearchParams = new URLSearchParams(window.location.search);
-      const decryptedId = decrypt(urlSearchParams.get("folderId") || "");
-      setCurrentFolderId(decryptedId);
-    }
-  }, []);
+  const [currentFolderId] = useState<string | null>(() => {
+    if (typeof window === "undefined") return null;
+    const urlSearchParams = new URLSearchParams(window.location.search);
+    return decrypt(urlSearchParams.get("folderId") || "");
+  });
 
   const handleMove = async () => {
     const folderIdStr = String(selectedFolder);
@@ -71,7 +67,7 @@ const MoveModal: FunctionComponent<{
       });
 
       if (response.success) {
-        const updatedFolders = [];
+        const updatedFolders: Array<{ id: string; name: string }> = [];
         if (currentFolderId) {
           updatedFolders.push({ id: "my-drive", name: "My Drive" });
         }

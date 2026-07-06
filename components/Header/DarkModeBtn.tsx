@@ -3,16 +3,20 @@
 import { Moon } from "lucide-react";
 import { Switch } from "../ui/switch";
 import styles from "./DriveTopbar.module.scss";
-import { useEffect, useState } from "react";
+import { useSyncExternalStore } from "react";
 import { useTheme } from "next-themes";
 
-const DarkModeBtn = () => {
-  const [mounted, setMounted] = useState(false);
-  const { setTheme, resolvedTheme } = useTheme();
+const subscribe = () => () => {};
+const getSnapshot = () => true;
+const getServerSnapshot = () => false;
 
-  useEffect(() => {
-    setMounted(true);
-  }, []);
+const DarkModeBtn = () => {
+  const mounted = useSyncExternalStore(
+    subscribe,
+    getSnapshot,
+    getServerSnapshot,
+  );
+  const { setTheme, resolvedTheme } = useTheme();
 
   if (!mounted) {
     return (

@@ -11,6 +11,8 @@ import {
 import styles from "./Component.module.scss";
 import { X } from "lucide-react";
 
+const EMPTY_SELECTED_IDS: Array<string | number> = [];
+
 type ExtendedDataTableProps<T> = DataTableProps<T> & {
   renderSelectionActions?: (
     selectedIds: (string | number)[],
@@ -24,7 +26,7 @@ export default function DataTable<T>({
   getRowId,
   classes,
   enableSelection = false,
-  selectedIds = [],
+  selectedIds = EMPTY_SELECTED_IDS,
   onSelectionChange,
   renderSelectionActions,
 }: ExtendedDataTableProps<T>) {

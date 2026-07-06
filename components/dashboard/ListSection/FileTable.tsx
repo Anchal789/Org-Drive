@@ -3,9 +3,8 @@
 import { useMemo, useState } from "react";
 import type { FunctionComponent } from "react";
 import FileType from "@/components/ui/fileType";
-import Icon from "@/components/ui/icon";
 import UserAvatar from "@/components/ui/user-avatar";
-import { iconsWithPaths, TINTS } from "@/constants/common-constants";
+import { TINTS } from "@/constants/common-constants";
 import { formatFileDate, getAvatarColor, getFileExtension } from "@/lib/utils";
 import { formatBytes, useShareDialogStore } from "@/store/store";
 import type { UploadedFile } from "@/types/files";
@@ -13,7 +12,15 @@ import FileMenu from "../FileSection/FileMenu";
 import styles from "./FileTable.module.scss";
 import { ColumnDef } from "@/types/component-types";
 import DataTable from "@/components/ui/datatable";
-import { Download, Folder, Share, Sparkle, Tag, Trash2 } from "lucide-react";
+import {
+  ChevronDown,
+  Download,
+  Folder,
+  Share,
+  Sparkle,
+  Tag,
+  Trash2,
+} from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 import dynamic from "next/dynamic";
@@ -49,7 +56,7 @@ const FileTable: FunctionComponent<{
       width: "100%",
       header: (
         <span className={styles.sortable}>
-          Name <Icon d={iconsWithPaths.chevDown} size={10} />
+          Name <ChevronDown size={10} />
         </span>
       ),
       className: styles.fileCell,
@@ -57,13 +64,7 @@ const FileTable: FunctionComponent<{
         <>
           <FileType kind={getFileExtension(file.name || "")} />
           <span className={styles.fileName}>{file.name}</span>
-          {file.bookmark && (
-            <Icon
-              d={iconsWithPaths.bookmark}
-              size={12}
-              style={{ color: TINTS.amber.bd }}
-            />
-          )}
+          {file.bookmark && <Tag size={12} style={{ color: TINTS.amber.bd }} />}
         </>
       ),
     },

@@ -11,8 +11,6 @@ import {
   DropdownMenuTrigger,
 } from "../ui/dropdown-menu";
 import { Button } from "../ui/button";
-import Icon from "../ui/icon";
-import { iconsWithPaths } from "@/constants/common-constants";
 import { downloadFile } from "@/services/file-service";
 import AlertModal from "../ui/alert-modal";
 import { useRouter } from "next/navigation";
@@ -20,6 +18,13 @@ import { trashSharedFile } from "@/services/shared-with-me-service";
 import RenameItem from "../rename/RenameIterm";
 import { Separator } from "../ui/separator";
 import { useShareDialogStore } from "@/store/store";
+import {
+  Download,
+  MoreHorizontal,
+  PencilLine,
+  Share,
+  Trash2,
+} from "lucide-react";
 
 const ShareWithMeActionColumn: FunctionComponent<{
   props: SharedWithMeItemsType;
@@ -79,11 +84,7 @@ const ShareWithMeActionColumn: FunctionComponent<{
       <DropdownMenu>
         <DropdownMenuTrigger asChild>
           <Button type="button" className={styles.moreBtn}>
-            <Icon
-              d={iconsWithPaths.more}
-              size={14}
-              className={styles.moreIcon}
-            />
+            <MoreHorizontal size={14} className={styles.moreIcon} />
           </Button>
         </DropdownMenuTrigger>
         <DropdownMenuContent className="w-40" align="start">
@@ -93,7 +94,7 @@ const ShareWithMeActionColumn: FunctionComponent<{
                 onSelect={() => setRenameOpen(true)}
                 className={styles.menuItem}
               >
-                <Icon d={iconsWithPaths.pencil} size={14} />
+                <PencilLine size={14} />
                 Rename
               </DropdownMenuItem>
             )}
@@ -101,7 +102,7 @@ const ShareWithMeActionColumn: FunctionComponent<{
               onClick={() => downloadFile(props.fileId, props.userId)}
               className={styles.menuItem}
             >
-              <Icon d={iconsWithPaths.download} size={14} />
+              <Download size={14} />
               Download
             </DropdownMenuItem>
             <DropdownMenuItem
@@ -112,11 +113,7 @@ const ShareWithMeActionColumn: FunctionComponent<{
               }}
               className={styles.menuItem}
             >
-              <Icon
-                d={iconsWithPaths.share}
-                size={14}
-                className={styles.icon}
-              />
+              <Share size={14} className={styles.icon} />
               Share
             </DropdownMenuItem>
             <Separator />
@@ -124,7 +121,7 @@ const ShareWithMeActionColumn: FunctionComponent<{
               onClick={() => setOpenDeleteDialog(true)}
               className={`${styles.menuItem} ${styles.deleteItem}`}
             >
-              <Icon d={iconsWithPaths.trash} size={14} />
+              <Trash2 size={14} />
               Remove for me
             </DropdownMenuItem>
           </DropdownMenuGroup>
