@@ -75,7 +75,7 @@ export default function TelegramButton({
         </>
       ) : (
         <>
-          <Send size={16} className="rotate-15" />
+          <Send size={16} className='rotate-15' />
           {children}
         </>
       )}

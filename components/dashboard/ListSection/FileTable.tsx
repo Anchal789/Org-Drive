@@ -87,7 +87,7 @@ const FileTable: FunctionComponent<{
             <UserAvatar
               initials={ownerInitials}
               tone={getAvatarColor(file?.userId ?? '')}
-              size="sm"
+              size='sm'
             />
             <span className={styles.ownerName} />
           </>
@@ -149,11 +149,11 @@ const FileTable: FunctionComponent<{
       <AlertModal
         open={openDeleteDialog}
         onOpenChange={setOpenDeleteDialog}
-        title="Delete file?"
+        title='Delete file?'
         description={`Are you sure you want to delete ${selectedFileObjects.length} items?`}
-        confirmText="Delete"
-        confirmVariant="destructive"
-        cancelText="Cancel"
+        confirmText='Delete'
+        confirmVariant='destructive'
+        cancelText='Cancel'
         onConfirm={() =>
           handleDeleteMultiple({
             selectedFileObjects,
@@ -218,12 +218,12 @@ const FileTable: FunctionComponent<{
             >
               <Tag size={14} /> Bookmark
             </Button>
-            <Separator orientation="vertical" />
+            <Separator orientation='vertical' />
             <Button className={styles.actionButton}>
               <Sparkle size={14} /> Ask AI
             </Button>
 
-            <Separator orientation="vertical" />
+            <Separator orientation='vertical' />
             <Button
               className={`${styles.actionButton} ${styles['actionButton-destructive']}`}
               onClick={() => {

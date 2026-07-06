@@ -100,7 +100,7 @@ const MoveModal: FunctionComponent<{
         <DialogDescription>
           <Collapsible open={open} onOpenChange={setOpen}>
             <CollapsibleTrigger asChild>
-              <Button variant="outline">Files to move {files.length}</Button>
+              <Button variant='outline'>Files to move {files.length}</Button>
             </CollapsibleTrigger>
             <CollapsibleContent>
               <div className={styles.fileToMoveList}>
@@ -121,7 +121,7 @@ const MoveModal: FunctionComponent<{
         >
           {allFolders.map((folder) => (
             <FieldLabel key={folder.id} htmlFor={folder.name}>
-              <Field orientation="horizontal">
+              <Field orientation='horizontal'>
                 <FieldContent>
                   <FieldTitle>{folder.name}</FieldTitle>
                 </FieldContent>
@@ -137,9 +137,9 @@ const MoveModal: FunctionComponent<{
 
       <DialogFooter>
         <DialogClose asChild>
-          <Button variant="destructive">Cancel</Button>
+          <Button variant='destructive'>Cancel</Button>
         </DialogClose>
-        <Button variant="primary" onClick={handleMove}>
+        <Button variant='primary' onClick={handleMove}>
           Move
         </Button>
       </DialogFooter>

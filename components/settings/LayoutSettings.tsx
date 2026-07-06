@@ -9,18 +9,18 @@ const LayoutSettings = () => {
   const { fileLayout, setFileLayout } = useFileLayout();
   return (
     <Tabs
-      defaultValue="grid"
+      defaultValue='grid'
       value={fileLayout}
       onValueChange={(value) => {
         setFileLayout(value as 'grid' | 'list');
       }}
     >
       <TabsList>
-        <TabsTrigger value="grid" className={styles.viewOption}>
+        <TabsTrigger value='grid' className={styles.viewOption}>
           <LayoutGrid size={16} />
           Grid
         </TabsTrigger>
-        <TabsTrigger value="list" className={styles.viewOption}>
+        <TabsTrigger value='list' className={styles.viewOption}>
           <List size={16} />
           List
         </TabsTrigger>

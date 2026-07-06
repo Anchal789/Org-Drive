@@ -45,7 +45,7 @@ export default function UserSearchBox({
       multiple
     >
       <ComboboxInput
-        placeholder="Search people by name or @telegram-handle"
+        placeholder='Search people by name or @telegram-handle'
         showTrigger={false}
         className={styles.invite}
         value={searchTerm}
@@ -73,7 +73,7 @@ export default function UserSearchBox({
                 )}
                 src={user.photoUrl ?? undefined}
                 tone={getAvatarColor(String(user.id))}
-                size="sm"
+                size='sm'
               />
               <div className={styles.comboboxUserDetails}>
                 <span className={styles.comboboxUserName}>

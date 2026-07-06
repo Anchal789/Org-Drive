@@ -19,17 +19,17 @@ export default function Spark({
       width={w}
       height={h}
       viewBox={`0 0 ${w} ${h}`}
-      data-slot="spark"
-      aria-hidden="true"
-      focusable="false"
+      data-slot='spark'
+      aria-hidden='true'
+      focusable='false'
     >
       <polyline
-        fill="none"
+        fill='none'
         stroke={color}
         strokeWidth={1.5}
         points={pts}
-        strokeLinecap="round"
-        strokeLinejoin="round"
+        strokeLinecap='round'
+        strokeLinejoin='round'
       />
     </svg>
   );

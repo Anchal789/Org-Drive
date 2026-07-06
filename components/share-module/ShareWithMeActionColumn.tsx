@@ -78,11 +78,11 @@ const ShareWithMeActionColumn: FunctionComponent<{
       <AlertModal
         open={openDeleteDialog}
         onOpenChange={setOpenDeleteDialog}
-        title="Delete file?"
+        title='Delete file?'
         description={`Are you sure you want to delete "${props.fileName || props.folderName}"?`}
-        confirmText="Delete"
-        confirmVariant="destructive"
-        cancelText="Cancel"
+        confirmText='Delete'
+        confirmVariant='destructive'
+        cancelText='Cancel'
         onConfirm={handleDelete}
         onCancel={() => setOpenDeleteDialog(false)}
       />
@@ -98,11 +98,11 @@ const ShareWithMeActionColumn: FunctionComponent<{
 
       <DropdownMenu>
         <DropdownMenuTrigger asChild>
-          <Button type="button" className={styles.moreBtn}>
+          <Button type='button' className={styles.moreBtn}>
             <MoreHorizontal size={14} className={styles.moreIcon} />
           </Button>
         </DropdownMenuTrigger>
-        <DropdownMenuContent className="w-40" align="start">
+        <DropdownMenuContent className='w-40' align='start'>
           <DropdownMenuGroup>
             {canEdit && (
               <DropdownMenuItem

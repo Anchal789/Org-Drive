@@ -13,7 +13,7 @@ function Checkbox({
 }) {
   return (
     <CheckboxPrimitive.Root
-      data-slot="checkbox"
+      data-slot='checkbox'
       className={className}
       style={{
         display: 'inline-flex',
@@ -33,8 +33,8 @@ function Checkbox({
       {...props}
     >
       <CheckboxPrimitive.Indicator
-        data-slot="checkbox-indicator"
-        className="grid place-content-center text-current transition-none [&>svg]:size-3.5"
+        data-slot='checkbox-indicator'
+        className='grid place-content-center text-current transition-none [&>svg]:size-3.5'
       >
         <CheckIcon />
       </CheckboxPrimitive.Indicator>

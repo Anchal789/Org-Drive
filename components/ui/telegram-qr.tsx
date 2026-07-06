@@ -21,10 +21,10 @@ export default function QrSampleImage({ size = 168 }) {
       width={size}
       height={size}
       viewBox={`0 0 ${size} ${size}`}
-      className="block rounded-lg shrink-0"
+      className='block rounded-lg shrink-0'
     >
       <title>Telegram QR</title>
-      <rect width={size} height={size} fill="#fff" />
+      <rect width={size} height={size} fill='#fff' />
       {blocks.map(([x, y]) => (
         <rect
           key={`qr-${x}-${y}`}
@@ -32,7 +32,7 @@ export default function QrSampleImage({ size = 168 }) {
           y={y * s}
           width={s}
           height={s}
-          fill="#111"
+          fill='#111'
           rx={s * 0.2}
         />
       ))}
@@ -47,8 +47,8 @@ export default function QrSampleImage({ size = 168 }) {
             y={fy * s}
             width={s * 7}
             height={s * 7}
-            fill="none"
-            stroke="#111"
+            fill='none'
+            stroke='#111'
             strokeWidth={s}
           />
           <rect
@@ -56,22 +56,22 @@ export default function QrSampleImage({ size = 168 }) {
             y={(fy + 2) * s}
             width={s * 3}
             height={s * 3}
-            fill="#111"
+            fill='#111'
             rx={s * 0.6}
           />
         </g>
       ))}
-      <circle cx={size / 2} cy={size / 2} r={size * 0.13} fill="#fff" />
+      <circle cx={size / 2} cy={size / 2} r={size * 0.13} fill='#fff' />
       <circle cx={size / 2} cy={size / 2} r={size * 0.11} fill={TG_BLUE} />
       <g transform={`translate(${size / 2 - 8}, ${size / 2 - 8})`}>
         <path
           d={iconsWithPaths.send}
-          fill="none"
-          stroke="#fff"
-          strokeWidth="2"
-          strokeLinecap="round"
-          strokeLinejoin="round"
-          transform="scale(0.7)"
+          fill='none'
+          stroke='#fff'
+          strokeWidth='2'
+          strokeLinecap='round'
+          strokeLinejoin='round'
+          transform='scale(0.7)'
         />
       </g>
     </svg>

@@ -16,28 +16,28 @@ export default function Ring({
       viewBox={`0 0 ${size} ${size}`}
       className={className}
       style={{ display: 'block', flexShrink: 0 }}
-      data-slot="ring"
+      data-slot='ring'
       data-pct={pct}
-      aria-hidden="true"
-      focusable="false"
+      aria-hidden='true'
+      focusable='false'
     >
       <circle
         cx={size / 2}
         cy={size / 2}
         r={r}
-        fill="none"
-        stroke="var(--border)"
+        fill='none'
+        stroke='var(--border)'
         strokeWidth={5}
       />
       <circle
         cx={size / 2}
         cy={size / 2}
         r={r}
-        fill="none"
+        fill='none'
         stroke={color}
         strokeWidth={5}
         strokeDasharray={`${(c * pct) / 100} ${c}`}
-        strokeLinecap="round"
+        strokeLinecap='round'
         transform={`rotate(-90 ${size / 2} ${size / 2})`}
       />
     </svg>

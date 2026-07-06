@@ -1,15 +1,15 @@
-"use client";
+'use client';
 
-import { Folder, Tag } from "lucide-react";
-import { useRouter } from "next/navigation";
-import type { FunctionComponent } from "react";
-import UserAvatar from "@/components/ui/user-avatar";
-import { TINTS } from "@/constants/common-constants";
-import { encrypt, getAvatarColor, getFolderTone } from "@/lib/utils";
-import type { UploadedFolder } from "@/types/files";
-import styles from "./FolderContainer.module.scss";
-import FolderMenu from "./FolderMenu/FolderMenu";
-import FolderTile from "./FolderTile";
+import { Folder, Tag } from 'lucide-react';
+import { useRouter } from 'next/navigation';
+import type { FunctionComponent } from 'react';
+import UserAvatar from '@/components/ui/user-avatar';
+import { TINTS } from '@/constants/common-constants';
+import { encrypt, getAvatarColor, getFolderTone } from '@/lib/utils';
+import type { UploadedFolder } from '@/types/files';
+import styles from './FolderContainer.module.scss';
+import FolderMenu from './FolderMenu/FolderMenu';
+import FolderTile from './FolderTile';
 
 const getFolderToneStyle = (folder: UploadedFolder) =>
   TINTS?.[getFolderTone(folder.id)];
@@ -22,19 +22,20 @@ const FolderContainer: FunctionComponent<{
   const folderId = encrypt(folder.id.toString());
 
   const ownerInitials = folder
-    ? `${folder.ownerFirstName?.charAt(0) ?? ""}${folder.ownerLastName?.charAt(0) ?? ""}`
-    : "";
+    ? `${folder.ownerFirstName?.charAt(0) ?? ''}${folder.ownerLastName?.charAt(0) ?? ''}`
+    : '';
 
-  if (layout === "grid")
+  if (layout === 'grid')
     return (
       <div
-        role="button"
+        role='button'
+        tabIndex={0}
         className={styles.folderContainer}
         onClick={(e) => {
           const target = e.target as HTMLElement;
 
           if (
-            target.closest("button") ||
+            target.closest('button') ||
             target.closest('[role="dialog"]') ||
             target.closest('[data-slot="dialog-content"]')
           ) {
@@ -45,21 +46,30 @@ const FolderContainer: FunctionComponent<{
             `/my-drive/folder?folderId=${folderId}&folderName=${folder.name}`,
           );
         }}
+        onKeyDown={(e) => {
+          if (e.key === 'Enter' || e.key === ' ') {
+            e.preventDefault();
+            router.push(
+              `/my-drive/folder?folderId=${folderId}&folderName=${folder.name}`,
+            );
+          }
+        }}
       >
         <FolderTile folder={folder} />
       </div>
     );
 
-  if (layout === "list")
+  if (layout === 'list')
     return (
       <div
-        role="button"
+        role='button'
+        tabIndex={0}
         className={styles.folderContainer}
         onClick={(e) => {
           const target = e.target as HTMLElement;
 
           if (
-            target.closest("button") ||
+            target.closest('button') ||
             target.closest('[role="dialog"]') ||
             target.closest('[data-slot="dialog-content"]')
           ) {
@@ -68,6 +78,14 @@ const FolderContainer: FunctionComponent<{
           router.push(
             `/my-drive/folder?folderId=${folderId}&folderName=${folder.name}`,
           );
+        }}
+        onKeyDown={(e) => {
+          if (e.key === 'Enter' || e.key === ' ') {
+            e.preventDefault();
+            router.push(
+              `/my-drive/folder?folderId=${folderId}&folderName=${folder.name}`,
+            );
+          }
         }}
       >
         <div key={folder.name} className={styles.folderChip}>
@@ -83,8 +101,8 @@ const FolderContainer: FunctionComponent<{
             {folder.bookmark && <Tag size={13} className={styles.starIcon} />}
             <UserAvatar
               initials={ownerInitials}
-              tone={getAvatarColor(folder?.userId ?? "")}
-              size="sm"
+              tone={getAvatarColor(folder?.userId ?? '')}
+              size='sm'
             />
             <FolderMenu folder={folder} />
           </div>

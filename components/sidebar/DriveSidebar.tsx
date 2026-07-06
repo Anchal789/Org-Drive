@@ -69,7 +69,7 @@ export default async function DriveSidebar({
   ];
 
   return (
-    <Sidebar collapsible="icon" className={styles.sidebar}>
+    <Sidebar collapsible='icon' className={styles.sidebar}>
       {/* 1. Wrap top elements in SidebarHeader */}
       <SidebarHeader className={styles.sidebarHeader}>
         <SidebarToggleButton />
@@ -85,8 +85,8 @@ export default async function DriveSidebar({
           ))}
         </nav>
 
-        <SidebarSection label="AI (optional)" items={OPTIONAL_ITEMS} />
-        <SidebarSection label="Admin" items={ADMIN_ITEMS} />
+        <SidebarSection label='AI (optional)' items={OPTIONAL_ITEMS} />
+        <SidebarSection label='Admin' items={ADMIN_ITEMS} />
       </SidebarContent>
 
       {/* 3. Wrap bottom elements in SidebarFooter */}

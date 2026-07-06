@@ -34,8 +34,8 @@ const BookmarkPage: FunctionComponent<{
             src={NoDataImage}
             width={350}
             height={350}
-            alt="No data"
-            loading="eager"
+            alt='No data'
+            loading='eager'
             className={styles.emptyHintImage}
           />
           Drag your files and folders here or use the &apos;New&apos; button to
@@ -53,7 +53,7 @@ const BookmarkPage: FunctionComponent<{
                   <FolderContainer
                     key={folder.id}
                     folder={folder}
-                    layout="grid"
+                    layout='grid'
                   />
                 ))}
               </div>

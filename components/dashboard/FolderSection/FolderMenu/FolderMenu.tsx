@@ -61,11 +61,11 @@ const FolderMenu = ({
       <AlertModal
         open={openDeleteDialog}
         onOpenChange={setOpenDeleteDialog}
-        title="Delete folder?"
+        title='Delete folder?'
         description={`Are you sure you want to delete "${folder.name}"?`}
-        confirmText="Delete"
-        confirmVariant="destructive"
-        cancelText="Cancel"
+        confirmText='Delete'
+        confirmVariant='destructive'
+        cancelText='Cancel'
         onConfirm={handleDelete}
         onCancel={() => setOpenDeleteDialog(false)}
       />
@@ -78,14 +78,14 @@ const FolderMenu = ({
       <DropdownMenu>
         <DropdownMenuTrigger asChild>
           <Button
-            type="button"
+            type='button'
             className={styles.moreBtn}
             onClick={(e) => e.stopPropagation()}
           >
             <MoreHorizontal size={14} className={styles.moreIcon} />
           </Button>
         </DropdownMenuTrigger>
-        <DropdownMenuContent className={styles.menuContent} align="start">
+        <DropdownMenuContent className={styles.menuContent} align='start'>
           <DropdownMenuGroup>
             <DropdownMenuItem
               onClick={(e) => {

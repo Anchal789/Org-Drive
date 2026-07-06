@@ -34,7 +34,7 @@ export default function TelegramQrGenerator() {
           <div className={styles.orLine} />
         </div>
 
-        <TelegramButton navigateTo="/login" isNavigatingButton>
+        <TelegramButton navigateTo='/login' isNavigatingButton>
           Continue with Telegram
         </TelegramButton>
 

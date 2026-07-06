@@ -12,7 +12,7 @@ export default function DashMobile() {
       <div className={styles.topbar}>
         <Icon d={iconsWithPaths.list} size={20} />
         <div className={styles.title}>My drive</div>
-        <UserAvatar initials="MK" tone="violet" size="sm" ring />
+        <UserAvatar initials='MK' tone='violet' size='sm' ring />
       </div>
 
       {/* Search */}
@@ -73,39 +73,39 @@ export default function DashMobile() {
       {/* Mobile upload mini widget */}
       <div className={styles.uploadMini}>
         <svg
-          width="36"
-          height="36"
-          viewBox="0 0 36 36"
+          width='36'
+          height='36'
+          viewBox='0 0 36 36'
           className={styles.miniRing}
-          aria-hidden="true"
-          focusable="false"
+          aria-hidden='true'
+          focusable='false'
         >
           <circle
-            cx="18"
-            cy="18"
-            r="15"
-            fill="none"
-            stroke="var(--secondary)"
-            strokeWidth="2.5"
+            cx='18'
+            cy='18'
+            r='15'
+            fill='none'
+            stroke='var(--secondary)'
+            strokeWidth='2.5'
           />
           <circle
-            cx="18"
-            cy="18"
-            r="15"
-            fill="none"
-            stroke="var(--primary)"
-            strokeWidth="2.5"
+            cx='18'
+            cy='18'
+            r='15'
+            fill='none'
+            stroke='var(--primary)'
+            strokeWidth='2.5'
             strokeDasharray={`${(2 * Math.PI * 15 * 62) / 100} 999`}
-            strokeLinecap="round"
-            transform="rotate(-90 18 18)"
+            strokeLinecap='round'
+            transform='rotate(-90 18 18)'
           />
           <text
-            x="18"
-            y="22"
-            textAnchor="middle"
-            fontSize="11"
-            fontWeight="700"
-            fill="var(--primary)"
+            x='18'
+            y='22'
+            textAnchor='middle'
+            fontSize='11'
+            fontWeight='700'
+            fill='var(--primary)'
           >
             62
           </text>
@@ -143,7 +143,7 @@ export default function DashMobile() {
       </div>
 
       {/* FAB */}
-      <button type="button" className={styles.fab}>
+      <button type='button' className={styles.fab}>
         <Icon d={iconsWithPaths.plus} size={22} stroke={2.4} />
       </button>
     </div>

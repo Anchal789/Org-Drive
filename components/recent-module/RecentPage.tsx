@@ -99,7 +99,7 @@ const RecentPage: FunctionComponent<{
                           <Folder
                             size={11}
                             className={styles.metaIcon}
-                            fill="currentColor"
+                            fill='currentColor'
                           />
                           <span>{log.folderName || 'Drive'}</span>
                         </div>

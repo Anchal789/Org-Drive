@@ -11,7 +11,7 @@ export default function NewItemButton() {
   const collapsed = state === 'collapsed';
   return (
     <Button
-      type="button"
+      type='button'
       className={`${styles.newButton} ${collapsed ? styles.newButtonCollapsed : ''}`}
       onClick={() => setIsDragging(!isDragging)}
     >

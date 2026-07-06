@@ -92,7 +92,7 @@ export default function PhoneLogin() {
   return (
     <form onSubmit={handleSubmit(onSubmit)} className={styles.formWrapper}>
       <div>
-        <label htmlFor="phoneNumber" className={styles.label}>
+        <label htmlFor='phoneNumber' className={styles.label}>
           Phone number
         </label>
 
@@ -112,7 +112,7 @@ export default function PhoneLogin() {
 
             <ComboboxContent className={styles.comboboxContent}>
               <ComboboxInput
-                placeholder="Search countries..."
+                placeholder='Search countries...'
                 showTrigger={false}
                 className={styles.comboboxSearch}
               />
@@ -122,7 +122,7 @@ export default function PhoneLogin() {
               <ComboboxList>
                 {(country) => (
                   <ComboboxItem key={country.code} value={country}>
-                    <Item size="xs" className={styles.listItem}>
+                    <Item size='xs' className={styles.listItem}>
                       <ItemContent className={styles.listContent}>
                         <Image
                           src={flagSrc(country.code)}
@@ -148,7 +148,7 @@ export default function PhoneLogin() {
 
           <Controller
             control={control}
-            name="phoneNumber"
+            name='phoneNumber'
             rules={{
               required: 'Phone number is required',
               minLength: {
@@ -170,7 +170,7 @@ export default function PhoneLogin() {
                   field.onChange(value);
                 }}
                 className={styles.phoneInput}
-                placeholder="347 821 4498"
+                placeholder='347 821 4498'
               />
             )}
           />
@@ -188,8 +188,8 @@ export default function PhoneLogin() {
 
       <TelegramButton
         loading={isSubmitting}
-        loadingText="Sending code..."
-        type="submit"
+        loadingText='Sending code...'
+        type='submit'
       >
         Send code on Telegram
       </TelegramButton>

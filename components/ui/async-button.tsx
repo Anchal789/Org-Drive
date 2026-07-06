@@ -45,7 +45,7 @@ export function AsyncButton({
       disabled={disabled || isPending}
       {...(props as ButtonComponentProps)}
     >
-      {isPending && <Loader2 className="mr-2 size-4 animate-spin" />}
+      {isPending && <Loader2 className='mr-2 size-4 animate-spin' />}
       {children}
     </Button>
   );

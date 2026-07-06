@@ -41,16 +41,16 @@ export default function ShareDownloadClient({
     <Button
       onClick={handleDownload}
       disabled={isDownloading}
-      className="w-full py-6 text-base"
+      className='w-full py-6 text-base'
     >
       {isDownloading ? (
         <>
-          <Loader2 className="mr-2 h-5 w-5 animate-spin" />
+          <Loader2 className='mr-2 h-5 w-5 animate-spin' />
           Preparing Download...
         </>
       ) : (
         <>
-          <DownloadCloud className="mr-2 h-5 w-5" />
+          <DownloadCloud className='mr-2 h-5 w-5' />
           Download Now
         </>
       )}

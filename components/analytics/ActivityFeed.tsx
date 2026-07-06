@@ -15,7 +15,7 @@ export default function ActivityFeed({ events }: { events: ActivityEvent[] }) {
         {events.map((a) => (
           <div key={a.id} className={styles.activityRow}>
             <Avatar
-              className="h-7 w-7 border"
+              className='h-7 w-7 border'
               style={{ borderColor: TINTS[a.tone].bd }}
             >
               <AvatarFallback

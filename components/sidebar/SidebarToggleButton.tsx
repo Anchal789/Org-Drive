@@ -10,8 +10,8 @@ export function SidebarToggleButton() {
   const collapsed = state === 'collapsed';
   return (
     <Button
-      type="button"
-      variant="secondary"
+      type='button'
+      variant='secondary'
       onClick={toggleSidebar}
       className={styles.sidebarToggleButton}
     >

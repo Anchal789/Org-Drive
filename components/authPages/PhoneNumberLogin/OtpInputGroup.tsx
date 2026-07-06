@@ -110,9 +110,9 @@ export default function OtpInputGroup({
               ref={(el) => {
                 inputsRef.current[index] = el;
               }}
-              type="text"
-              inputMode="numeric"
-              pattern="[0-9]*"
+              type='text'
+              inputMode='numeric'
+              pattern='[0-9]*'
               maxLength={1}
               value={digit}
               onChange={(e) => updateDigit(index, e.target.value)}

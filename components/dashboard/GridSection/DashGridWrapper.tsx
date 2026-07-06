@@ -14,7 +14,7 @@ export default function DashGridWrapper({
 
   return (
     <section
-      aria-label="Drag and drop area"
+      aria-label='Drag and drop area'
       onDragEnter={(e) => {
         e.preventDefault();
         setIsDragging(true);

@@ -92,7 +92,7 @@ const RenameItem: FunctionComponent<{
 
   return (
     <Dialog open={renameOpen} onOpenChange={setRenameOpen} modal>
-      <DialogContent className="sm:max-w-sm">
+      <DialogContent className='sm:max-w-sm'>
         <DialogHeader>
           <DialogTitle>Rename</DialogTitle>
           <DialogDescription className={styles.originalName}>
@@ -101,11 +101,11 @@ const RenameItem: FunctionComponent<{
         </DialogHeader>
         <FieldGroup>
           <Field>
-            <Label htmlFor="name">New name</Label>
-            <InputGroup className="max-w-xs">
+            <Label htmlFor='name'>New name</Label>
+            <InputGroup className='max-w-xs'>
               <InputGroupInput
-                id="name"
-                name="name"
+                id='name'
+                name='name'
                 value={newNameState.name}
                 onChange={(event) => {
                   if (event.target.value) {
@@ -122,7 +122,7 @@ const RenameItem: FunctionComponent<{
                 }}
               />
               {fileExtension && (
-                <InputGroupAddon align="inline-end">
+                <InputGroupAddon align='inline-end'>
                   .{fileExtension}
                 </InputGroupAddon>
               )}
@@ -132,9 +132,9 @@ const RenameItem: FunctionComponent<{
         </FieldGroup>
         <DialogFooter>
           <DialogClose asChild>
-            <Button variant="destructive">Cancel</Button>
+            <Button variant='destructive'>Cancel</Button>
           </DialogClose>
-          <Button variant="primary" onClick={handleRename}>
+          <Button variant='primary' onClick={handleRename}>
             Save changes
           </Button>
         </DialogFooter>

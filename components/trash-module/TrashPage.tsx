@@ -28,7 +28,7 @@ const TrashPage: FunctionComponent<{
             <>
               <Folder
                 size={14}
-                fill="currentColor"
+                fill='currentColor'
                 className={styles.folderIcon}
               />
               <span className={styles.fileName}>{item.folderName}</span>

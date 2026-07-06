@@ -72,11 +72,11 @@ export default function FileSelectionBar({
       <AlertModal
         open={openDeleteDialog}
         onOpenChange={setOpenDeleteDialog}
-        title="Delete file?"
+        title='Delete file?'
         description={`Are you sure you want to delete ${selectedFiles.length} items?`}
-        confirmText="Delete"
-        confirmVariant="destructive"
-        cancelText="Cancel"
+        confirmText='Delete'
+        confirmVariant='destructive'
+        cancelText='Cancel'
         onConfirm={() =>
           handleDeleteMultiple({
             selectedFileObjects: selectedFiles,
@@ -103,8 +103,8 @@ export default function FileSelectionBar({
           <span className={styles.selectedCount}>{selectedCount} selected</span>
 
           <button
-            type="button"
-            title="Clear selection"
+            type='button'
+            title='Clear selection'
             onClick={clearSelection}
             className={styles.clearBtn}
           >
@@ -159,12 +159,12 @@ export default function FileSelectionBar({
           >
             <Tag size={14} /> Bookmark
           </Button>
-          <Separator orientation="vertical" />
+          <Separator orientation='vertical' />
           <Button className={styles.actionButton}>
             <Sparkle size={14} /> Ask AI
           </Button>
 
-          <Separator orientation="vertical" />
+          <Separator orientation='vertical' />
           <Button
             className={`${styles.actionButton} ${styles['actionButton-destructive']}`}
             variant={'destructive'}

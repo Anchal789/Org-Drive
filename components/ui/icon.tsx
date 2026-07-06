@@ -17,12 +17,12 @@ export default function Icon({
     <svg
       width={size}
       height={size}
-      viewBox="0 0 24 24"
+      viewBox='0 0 24 24'
       fill={fill}
-      stroke="currentColor"
+      stroke='currentColor'
       strokeWidth={stroke}
-      strokeLinecap="round"
-      strokeLinejoin="round"
+      strokeLinecap='round'
+      strokeLinejoin='round'
       className={`shrink-0 ${className}`}
       style={style}
     >

@@ -91,11 +91,11 @@ export default function OverviewDashboard({
             <BarChart accessibilityLayer data={data.uploadActivity}>
               <CartesianGrid
                 vertical={false}
-                strokeDasharray="3 3"
-                stroke="var(--border)"
+                strokeDasharray='3 3'
+                stroke='var(--border)'
               />
               <XAxis
-                dataKey="label"
+                dataKey='label'
                 tickLine={false}
                 tickMargin={10}
                 axisLine={false}
@@ -103,8 +103,8 @@ export default function OverviewDashboard({
               <ChartTooltip content={<ChartTooltipContent />} />
               <ChartLegend content={<ChartLegendContent />} />
               <Bar
-                dataKey="uploads"
-                fill="var(--color-uploads)"
+                dataKey='uploads'
+                fill='var(--color-uploads)'
                 radius={[4, 4, 0, 0]}
               />
             </BarChart>
@@ -132,8 +132,8 @@ export default function OverviewDashboard({
                 />
                 <Pie
                   data={data.storageByType}
-                  dataKey="sizeBytes"
-                  nameKey="name"
+                  dataKey='sizeBytes'
+                  nameKey='name'
                   innerRadius={44}
                   outerRadius={60}
                   strokeWidth={0}
@@ -149,20 +149,20 @@ export default function OverviewDashboard({
                           <text
                             x={viewBox.cx}
                             y={viewBox.cy}
-                            textAnchor="middle"
-                            dominantBaseline="middle"
+                            textAnchor='middle'
+                            dominantBaseline='middle'
                           >
                             <tspan
                               x={viewBox.cx}
                               y={viewBox.cy - 4}
-                              className="fill-foreground text-[22px] font-bold"
+                              className='fill-foreground text-[22px] font-bold'
                             >
                               {data.storageUsed.value.split(' ')[0]}
                             </tspan>
                             <tspan
                               x={viewBox.cx}
                               y={viewBox.cy + 16}
-                              className="fill-muted-foreground text-[10px]"
+                              className='fill-muted-foreground text-[10px]'
                             >
                               {data.storageUsed.value.split(' ')[1]} used
                             </tspan>

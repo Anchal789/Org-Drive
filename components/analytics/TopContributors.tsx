@@ -18,7 +18,7 @@ export default function TopContributors({
         {contributors.map((p) => (
           <div key={p.id} className={styles.contributorRow}>
             <Avatar
-              className="h-7 w-7 border"
+              className='h-7 w-7 border'
               style={{ borderColor: TINTS[p.tone].bd }}
             >
               <AvatarFallback

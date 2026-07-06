@@ -63,31 +63,31 @@ function UploadItemRow({
         {item.state === 'uploading' && (
           <>
             <svg
-              width="30"
-              height="30"
-              viewBox="0 0 30 30"
+              width='30'
+              height='30'
+              viewBox='0 0 30 30'
               className={styles.uploadingRing}
-              aria-hidden="true"
-              focusable="false"
+              aria-hidden='true'
+              focusable='false'
             >
               <circle
-                cx="15"
-                cy="15"
-                r="12"
-                fill="none"
-                stroke="var(--border)"
-                strokeWidth="2"
+                cx='15'
+                cy='15'
+                r='12'
+                fill='none'
+                stroke='var(--border)'
+                strokeWidth='2'
               />
               <circle
-                cx="15"
-                cy="15"
-                r="12"
-                fill="none"
-                stroke="var(--primary)"
-                strokeWidth="2"
+                cx='15'
+                cy='15'
+                r='12'
+                fill='none'
+                stroke='var(--primary)'
+                strokeWidth='2'
                 strokeDasharray={`${(2 * Math.PI * 12 * item.pct) / 100} 999`}
-                strokeLinecap="round"
-                transform="rotate(-90 15 15)"
+                strokeLinecap='round'
+                transform='rotate(-90 15 15)'
               />
             </svg>
             <span className={styles.uploadingPct}>{item.pct}%</span>
@@ -102,7 +102,7 @@ function UploadItemRow({
         <div className={styles.itemName}>
           {item.isFolderGroup && (
             <Folder
-              fill="currentColor"
+              fill='currentColor'
               size={12}
               style={{ marginRight: 6, display: 'inline' }}
             />
@@ -122,11 +122,11 @@ function UploadItemRow({
 
       <Button onClick={() => onAbort(item)}>
         {item.state === 'done' ? (
-          <Check size={13} color="var(--muted-foreground)" />
+          <Check size={13} color='var(--muted-foreground)' />
         ) : item.state === 'uploading' || item.state === 'queued' ? (
-          <X size={13} color="var(--muted-foreground)" />
+          <X size={13} color='var(--muted-foreground)' />
         ) : (
-          <MoreHorizontal size={13} color="var(--muted-foreground)" />
+          <MoreHorizontal size={13} color='var(--muted-foreground)' />
         )}
       </Button>
     </div>
@@ -252,13 +252,13 @@ export default function UploadWidget() {
         )}
         <Button onClick={() => setCollapseWidget(!collapseWidget)}>
           {collapseWidget ? (
-            <ChevronUp size={14} color="var(--muted-foreground)" />
+            <ChevronUp size={14} color='var(--muted-foreground)' />
           ) : (
-            <ChevronDown size={14} color="var(--muted-foreground)" />
+            <ChevronDown size={14} color='var(--muted-foreground)' />
           )}
         </Button>
         <Button onClick={closeWidget}>
-          <X size={14} color="var(--muted-foreground)" />
+          <X size={14} color='var(--muted-foreground)' />
         </Button>
       </div>
 

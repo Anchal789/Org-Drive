@@ -187,4 +187,8 @@
 
 .footerReset {
   padding: 14px 10px;
+
+  @media (max-width: 768px) {
+    padding: 5px;
+  }
 }

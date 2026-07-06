@@ -7,6 +7,10 @@
   align-items: center;
   gap: 16px;
   background: v(background);
+
+  @media (max-width: 768px) {
+    padding: 10px 16px;
+  }
 }
 
 .searchBox {
@@ -167,4 +171,21 @@
 .logoutButton,
 .logoutIcon {
   color: v(--tint-red-tx);
+}
+
+.activePage {
+  flex: 1 1 0%;
+  font-size: 15px;
+  font-weight: 600;
+}
+
+.listButton {
+  padding: 0;
+  margin: 0;
+  flex: 0;
+
+  .icon {
+    width: 20px;
+    height: 20px;
+  }
 }

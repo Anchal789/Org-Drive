@@ -44,11 +44,11 @@ export default function ShareHeader({
     <div className={styles.header}>
       {isMultiShare ? (
         <div className={styles.folderIcon}>
-          <Folder size={20} fill="currentColor" />
+          <Folder size={20} fill='currentColor' />
         </div>
       ) : isSharingFolder ? (
         <div className={styles.folderIcon}>
-          <Folder size={20} fill="currentColor" />
+          <Folder size={20} fill='currentColor' />
         </div>
       ) : (
         <FileType kind={fileExtension} />
@@ -61,7 +61,7 @@ export default function ShareHeader({
         </div>
         <div className={styles.headerSubtitle}>{subtitleText}</div>
       </div>
-      <Button variant="ghost" size="sm" onClick={onClose}>
+      <Button variant='ghost' size='sm' onClick={onClose}>
         <X size={16} />
       </Button>
     </div>

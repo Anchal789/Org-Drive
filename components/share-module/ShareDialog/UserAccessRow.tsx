@@ -49,7 +49,7 @@ export default function UserAccessRow({
           src={user.photoUrl ?? 'https://github.com/shadcn.png'}
           initials={initials}
           tone={getAvatarColor(String(user.id))}
-          size="default"
+          size='default'
         />
         <div className={styles.personInfo}>
           <div className={styles.personName}>
@@ -66,14 +66,14 @@ export default function UserAccessRow({
           disabled={disabled || isOwner}
         >
           <SelectTrigger>
-            <SelectValue placeholder="Select a role" />
+            <SelectValue placeholder='Select a role' />
           </SelectTrigger>
           <SelectContent>
             <SelectGroup>
               <SelectLabel>Role</SelectLabel>
-              <SelectItem value="viewer">Viewer</SelectItem>
-              <SelectItem value="editor">Editor</SelectItem>
-              <SelectItem value="owner" disabled>
+              <SelectItem value='viewer'>Viewer</SelectItem>
+              <SelectItem value='editor'>Editor</SelectItem>
+              <SelectItem value='owner' disabled>
                 Owner
               </SelectItem>
             </SelectGroup>

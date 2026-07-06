@@ -11,7 +11,7 @@ function Tabs({
 }: React.ComponentProps<typeof TabsPrimitive.Root>) {
   return (
     <TabsPrimitive.Root
-      data-slot="tabs"
+      data-slot='tabs'
       data-orientation={orientation}
       className={`${styles.tabsWrapper} ${className || ''}`}
       {...props}
@@ -26,7 +26,7 @@ function TabsList({
 }: React.ComponentProps<typeof TabsPrimitive.List> & { fullwidth?: boolean }) {
   return (
     <TabsPrimitive.List
-      data-slot="tabs-list"
+      data-slot='tabs-list'
       className={`${styles.tabsList} ${className || ''} ${fullwidth ? 'w-full' : ''}`}
       {...props}
     />
@@ -39,7 +39,7 @@ function TabsTrigger({
 }: React.ComponentProps<typeof TabsPrimitive.Trigger>) {
   return (
     <TabsPrimitive.Trigger
-      data-slot="tabs-trigger"
+      data-slot='tabs-trigger'
       className={`${styles.tabTrigger} ${className || ''}`}
       {...props}
     />
@@ -52,7 +52,7 @@ function TabsContent({
 }: React.ComponentProps<typeof TabsPrimitive.Content>) {
   return (
     <TabsPrimitive.Content
-      data-slot="tabs-content"
+      data-slot='tabs-content'
       className={className}
       {...props}
     />

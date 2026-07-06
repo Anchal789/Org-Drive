@@ -8,7 +8,7 @@ export function OrgPill() {
   const collapsed = state === 'collapsed';
   return (
     <Button
-      type="button"
+      type='button'
       className={`${styles.orgPill} ${collapsed ? styles.orgPillCollapsed : ''}`}
     >
       <div className={styles.orgLogo}>Z</div>

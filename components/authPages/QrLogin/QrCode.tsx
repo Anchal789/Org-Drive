@@ -200,7 +200,7 @@ export default function QrCode() {
           {state.status === 'waiting' && state.qrDataUrl && (
             <Image
               src={state.qrDataUrl}
-              alt="Telegram QR Login"
+              alt='Telegram QR Login'
               width={280}
               height={280}
             />
@@ -210,7 +210,7 @@ export default function QrCode() {
             <div className={styles.stateWrapper}>
               <p className={styles.stateTitle}>QR code expired</p>
               <Button
-                type="button"
+                type='button'
                 onClick={restart}
                 className={styles.btnPrimary}
               >
@@ -232,13 +232,13 @@ export default function QrCode() {
               >
                 <Input
                   className={styles.input}
-                  type="password"
-                  name="password"
+                  type='password'
+                  name='password'
                   required
-                  placeholder="Your Telegram password"
+                  placeholder='Your Telegram password'
                 />
                 <Button
-                  type="submit"
+                  type='submit'
                   disabled={isSubmittingPassword}
                   className={styles.btnPrimary}
                 >
@@ -262,7 +262,7 @@ export default function QrCode() {
             <div className={styles.stateWrapper}>
               <p className={styles.errorText}>{state.message}</p>
               <Button
-                type="button"
+                type='button'
                 onClick={start}
                 className={styles.btnPrimary}
               >

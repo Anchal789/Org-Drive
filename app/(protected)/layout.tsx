@@ -41,9 +41,10 @@ export default async function ProtectedLayout({
           />
           <div className={styles.shell}>
             <div className={styles.main}>
-              <TopbarWrapper>
-                <DriveTopbar user={user} />
-              </TopbarWrapper>
+              <TopbarWrapper
+                mobileTopBar={<DriveTopbar isMobile={true} user={user} />}
+                desktopTopBar={<DriveTopbar isMobile={false} user={user} />}
+              />
               <div className={styles.mainContent}>{children}</div>
             </div>
           </div>

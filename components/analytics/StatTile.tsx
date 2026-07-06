@@ -15,7 +15,7 @@ export default function StatTile({
 }) {
   return (
     <button
-      type="button"
+      type='button'
       className={`${styles.statCard} ${onClickAction ? styles.clickableStat : ''}`}
       onClick={onClickAction}
     >
@@ -43,19 +43,19 @@ export default function StatTile({
         </div>
         {data.sparkData && (
           <svg
-            width="70"
-            height="26"
-            viewBox="0 0 70 26"
-            aria-hidden="true"
-            focusable="false"
+            width='70'
+            height='26'
+            viewBox='0 0 70 26'
+            aria-hidden='true'
+            focusable='false'
           >
             <path
               d={generateSparklinePath(data.sparkData, 70, 26)}
-              fill="none"
+              fill='none'
               stroke={TINTS[data.tone].bd}
-              strokeWidth="2"
-              strokeLinecap="round"
-              strokeLinejoin="round"
+              strokeWidth='2'
+              strokeLinecap='round'
+              strokeLinejoin='round'
             />
           </svg>
         )}

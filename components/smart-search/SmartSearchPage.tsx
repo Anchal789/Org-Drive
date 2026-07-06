@@ -158,8 +158,8 @@ export default function SmartSearchPage() {
         <div className={styles.inputWrapper}>
           <Search size={18} strokeWidth={1.6} className={styles.searchIcon} />
           <input
-            type="text"
-            aria-label="Search across your drive"
+            type='text'
+            aria-label='Search across your drive'
             placeholder='Try "compliance risks in Q3"…'
             value={searchTerm}
             onChange={handleInputChange}
@@ -188,7 +188,7 @@ export default function SmartSearchPage() {
                   <div className={styles.sectionTitle}>Recent searches</div>
                   {recentSearches.map((term) => (
                     <button
-                      type="button"
+                      type='button'
                       key={term}
                       className={styles.resultItem}
                       onClick={() => handleSuggestionClick(term)}
@@ -213,7 +213,7 @@ export default function SmartSearchPage() {
                 <span className={styles.suggestionLabel}>Suggested:</span>
                 {SUGGESTED_SEARCHES.map((suggestion) => (
                   <button
-                    type="button"
+                    type='button'
                     key={suggestion}
                     className={styles.suggestionChip}
                     onClick={() => handleSuggestionClick(suggestion)}
@@ -234,7 +234,7 @@ export default function SmartSearchPage() {
                   <div className={styles.sectionTitle}>Folders</div>
                   {displayFolders.map((folder) => (
                     <button
-                      type="button"
+                      type='button'
                       key={folder.id}
                       className={styles.resultItem}
                       onClick={(e) => {
@@ -268,7 +268,7 @@ export default function SmartSearchPage() {
                   <div className={styles.sectionTitle}>Files</div>
                   {displayFiles.map((file: UploadedFile) => (
                     <button
-                      type="button"
+                      type='button'
                       key={file.id}
                       className={styles.resultItem}
                       onClick={() => {

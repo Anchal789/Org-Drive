@@ -23,7 +23,7 @@ const SidebarItem: FunctionComponent<{ item: SidebarItemProps }> = ({
 }) => {
   const router = useRouter();
   const pathname = usePathname();
-  const { state } = useSidebar();
+  const { state, toggleSidebar } = useSidebar();
   const collapsed = state === 'collapsed';
   const isActive = pathname.includes(item.url);
 
@@ -43,10 +43,13 @@ const SidebarItem: FunctionComponent<{ item: SidebarItemProps }> = ({
 
   return (
     <Button
-      type="button"
+      type='button'
       title={collapsed ? item.label : undefined}
       className={`${styles.navItem} ${isActive ? styles.navItemActive : ''}`}
-      onClick={() => router.push(item.url)}
+      onClick={() => {
+        router.push(item.url);
+        toggleSidebar();
+      }}
     >
       <IconComponent size={16} />
       {!collapsed && <span className={styles.navItemLabel}>{item.label}</span>}
@@ -54,7 +57,7 @@ const SidebarItem: FunctionComponent<{ item: SidebarItemProps }> = ({
         <span className={styles.navItemCount}>{item.count}</span>
       )}
       {!collapsed && item.badge && (
-        <Badge tone="violet" style={{ padding: '1px 6px', fontSize: 12 }}>
+        <Badge tone='violet' style={{ padding: '1px 6px', fontSize: 12 }}>
           {item.badge}
         </Badge>
       )}

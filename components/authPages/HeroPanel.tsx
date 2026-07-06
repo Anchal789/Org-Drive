@@ -35,7 +35,7 @@ export default function HeroPanel() {
           ].map((text) => (
             <div key={text} className={styles.featureItem}>
               <span className={styles.featureIconCircle}>
-                <Check size={11} strokeWidth={2} color="white" />
+                <Check size={11} strokeWidth={2} color='white' />
               </span>
               {text}
             </div>

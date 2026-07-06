@@ -42,7 +42,7 @@ export default function ResendTimer({ seconds }: ResendTimerProps) {
         </>
       ) : (
         <Button
-          type="button"
+          type='button'
           onClick={handleResend}
           className={styles.resendButton}
         >

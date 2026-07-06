@@ -51,7 +51,7 @@ const columns: ColumnDef<SharedWithMeItemsType>[] = [
           <>
             <Folder
               size={14}
-              fill="currentColor"
+              fill='currentColor'
               className={styles.folderIcon}
             />
             <span className={styles.fileName}>{item.folderName}</span>
@@ -77,7 +77,7 @@ const columns: ColumnDef<SharedWithMeItemsType>[] = [
           <UserAvatar
             initials={ownerInitials}
             tone={getAvatarColor(item?.userId ?? '')}
-            size="sm"
+            size='sm'
           />
           <span className={styles.ownerName}>
             {item.ownerFirstName} {item.ownerLastName}

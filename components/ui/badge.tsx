@@ -27,7 +27,7 @@ export default function Badge({
 
   return (
     <span
-      data-slot="badge"
+      data-slot='badge'
       data-tone={tone}
       data-outline={outline}
       className={className}

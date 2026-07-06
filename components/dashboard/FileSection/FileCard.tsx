@@ -30,7 +30,7 @@ export default function FileCard({
     >
       <div className={styles.header}>
         {isSelected ? (
-          <Checkbox checked={isSelected} size="21.39px" />
+          <Checkbox checked={isSelected} size='21.39px' />
         ) : (
           <FileType kind={fileExtension} />
         )}
@@ -51,7 +51,7 @@ export default function FileCard({
             <UserAvatar
               initials={ownerInitials}
               tone={getAvatarColor(file?.userId ?? '')}
-              size="sm"
+              size='sm'
             />
             <span className={styles.modTime}>{createdAt}</span>
           </div>

@@ -50,31 +50,31 @@ const TrashTableActionColumn: FunctionComponent<{
       <AlertModal
         open={dialogState.open}
         onOpenChange={closeDialog}
-        title="Delete file?"
+        title='Delete file?'
         description={
           dialogState.action === 'delete'
             ? `Are you sure you want to delete this ${trashed.folderId ? 'folder' : 'file'}?`
             : `Are you sure you want to restore this ${trashed.folderId ? 'folder' : 'file'}?`
         }
-        confirmText="Delete"
-        confirmVariant="destructive"
-        cancelText="Cancel"
+        confirmText='Delete'
+        confirmVariant='destructive'
+        cancelText='Cancel'
         onConfirm={handleDelete}
         onCancel={closeDialog}
       />
       <div className={styles.actions}>
-        <CustomTooltip title="Restore">
+        <CustomTooltip title='Restore'>
           <Button
-            type="button"
+            type='button'
             onClick={handleRestore}
             className={styles.iconButton}
           >
             <RefreshCw size={14} className={styles.icon} />
           </Button>
         </CustomTooltip>
-        <CustomTooltip title="Delete Permanently">
+        <CustomTooltip title='Delete Permanently'>
           <Button
-            type="button"
+            type='button'
             onClick={() => {
               setDialogState({
                 open: true,

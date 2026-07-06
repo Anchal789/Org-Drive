@@ -26,7 +26,13 @@ export default function DashList({
               <div className={styles.emptyHint}>No folders</div>
             )}
             {folders?.map((folder) => (
-              <FolderContainer key={folder.id} folder={folder} layout="list" />
+              <FolderContainer key={folder.id} folder={folder} layout='list' />
+            ))}
+            {folders?.map((folder) => (
+              <FolderContainer key={folder.id} folder={folder} layout='list' />
+            ))}
+            {folders?.map((folder) => (
+              <FolderContainer key={folder.id} folder={folder} layout='list' />
             ))}
           </div>
 

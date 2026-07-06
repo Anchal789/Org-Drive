@@ -21,13 +21,13 @@ export default function FolderTile({
   return (
     <div
       className={`${styles.tile} ${active ? styles.tileActive : ''}`}
-      data-slot="folder-tile"
+      data-slot='folder-tile'
     >
       <div
         className={styles.iconBox}
         style={{ background: tint?.bg, color: tint?.tx }}
       >
-        <Folder size={16} fill="currentColor" />
+        <Folder size={16} fill='currentColor' />
       </div>
       <div className={styles.body}>
         <div className={styles.name}>{folder.name}</div>
@@ -37,7 +37,7 @@ export default function FolderTile({
       <UserAvatar
         initials={ownerInitials}
         tone={getAvatarColor(folder?.userId ?? '')}
-        size="sm"
+        size='sm'
       />
       <FolderMenu folder={folder} />
     </div>

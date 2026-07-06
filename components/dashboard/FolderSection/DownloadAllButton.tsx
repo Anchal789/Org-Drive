@@ -1,10 +1,10 @@
 'use client';
 
 import type { FunctionComponent } from 'react';
-import Btn from '@/components/ui/btn';
-import { iconsWithPaths } from '@/constants/common-constants';
 import { encrypt } from '@/lib/utils';
 import { downloadAllFolderFiles } from '@/services/file-service';
+import { Button } from '@/components/ui/button';
+import { Download } from 'lucide-react';
 
 export const DownloadAllButton: FunctionComponent<{
   folderId: number;
@@ -12,13 +12,13 @@ export const DownloadAllButton: FunctionComponent<{
 }> = ({ folderId, folderName }) => {
   const encryptedId = encrypt(folderId.toString());
   return (
-    <Btn
-      variant="outline"
-      size="sm"
-      icon={iconsWithPaths.download}
+    <Button
+      variant='outline'
+      size='sm'
       onClick={() => downloadAllFolderFiles(encryptedId, folderName)}
     >
+      <Download size={14} />
       Download all
-    </Btn>
+    </Button>
   );
 };

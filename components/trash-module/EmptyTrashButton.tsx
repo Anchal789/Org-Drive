@@ -31,16 +31,16 @@ export default function EmptyTrashButton({
       <AlertModal
         open={isOpen}
         onOpenChange={setIsOpen}
-        title="Empty Trash?"
-        description="Are you absolutely sure? All files and folders in the trash will be permanently deleted from Telegram. This action cannot be undone."
+        title='Empty Trash?'
+        description='Are you absolutely sure? All files and folders in the trash will be permanently deleted from Telegram. This action cannot be undone.'
         confirmText={isDeleting ? 'Emptying...' : 'Delete Permanently'}
-        confirmVariant="destructive"
-        cancelText="Cancel"
+        confirmVariant='destructive'
+        cancelText='Cancel'
         onConfirm={handleEmptyTrash}
       />
 
       <Button
-        variant="outline"
+        variant='outline'
         onClick={() => setIsOpen(true)}
         disabled={isDisabled || isDeleting}
       >

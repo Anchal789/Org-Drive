@@ -6,7 +6,7 @@ import styles from './TelegramQrDisplayPanel.module.scss';
 
 export function TelegramQrDisplayPanel() {
   return (
-    <Link href="/qr-login" className={styles.linkWrapper}>
+    <Link href='/qr-login' className={styles.linkWrapper}>
       <div className={styles.panelCard}>
         <QrSampleImage size={84} />
 

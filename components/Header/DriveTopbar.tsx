@@ -19,8 +19,15 @@ import { Separator } from '../ui/separator';
 import DarkModeBtn from './DarkModeBtn';
 import styles from './DriveTopbar.module.scss';
 import LogoutBtn from './LogoutBtn';
+import DriveTopbarMobile from './DriveTopBarMobile';
 
-export default async function DriveTopbar({ user }: { user: SessionUser }) {
+export default async function DriveTopbar({
+  user,
+  isMobile,
+}: {
+  user: SessionUser;
+  isMobile: boolean;
+}) {
   const userInitials = user
     ? `${user.firstName?.charAt(0) ?? ''}${user.lastName?.charAt(0) ?? ''}`
     : '';
@@ -31,22 +38,26 @@ export default async function DriveTopbar({ user }: { user: SessionUser }) {
   const totalSize = filesize.reduce((a, b) => a + b.size, 0);
   return (
     <div className={styles.topbar}>
-      <div className={styles.searchBox}>
-        <Search size={16} className={styles.icon} />
-        <span className={styles.searchPlaceholder}>Search in Org Drive</span>
-        <Badge tone="violet" className={styles.badge}>
-          <Sparkle size={9} /> Smart
-        </Badge>
-        <Settings size={14} className={styles.icon} />
-      </div>
+      {!isMobile ? (
+        <div className={styles.searchBox}>
+          <Search size={16} className={styles.icon} />
+          <span className={styles.searchPlaceholder}>Search in Org Drive</span>
+          <Badge tone='violet' className={styles.badge}>
+            <Sparkle size={9} /> Smart
+          </Badge>
+          <Settings size={14} className={styles.icon} />
+        </div>
+      ) : (
+        <DriveTopbarMobile />
+      )}
       <div className={styles.spacer} />
-      <Bell size={18} className={styles.icon} />
+      {!isMobile && <Bell size={18} className={styles.icon} />}
       <Popover>
         <PopoverTrigger asChild>
           <UserAvatar
             initials={userInitials}
-            tone="violet"
-            size="default"
+            tone='violet'
+            size='default'
             className={styles.avatar}
             ring
           />
@@ -54,14 +65,14 @@ export default async function DriveTopbar({ user }: { user: SessionUser }) {
 
         <PopoverContent
           className={styles.popoverContent}
-          align="end"
+          align='end'
           sideOffset={6}
         >
           <div className={styles.userHandle}>
             <UserAvatar
               initials={userInitials}
-              tone="violet"
-              size="default"
+              tone='violet'
+              size='default'
               ring
             />
             <div className={styles.userDetails}>

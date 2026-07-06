@@ -1,10 +1,10 @@
-"use client";
+'use client';
 
-import { useEffect, useMemo } from "react";
-import { useSelectedFilesStore } from "@/store/store";
-import type { UploadedFile } from "@/types/files";
-import FileCard from "./FileCard";
-import styles from "./FileCard.module.scss";
+import { useEffect, useMemo } from 'react';
+import { useSelectedFilesStore } from '@/store/store';
+import type { UploadedFile } from '@/types/files';
+import FileCard from './FileCard';
+import styles from './FileCard.module.scss';
 
 const FilesContainer = ({ files }: { files: Array<UploadedFile> }) => {
   const { selectedFiles, setSelectedFiles, setFileCount } =
@@ -30,11 +30,18 @@ const FilesContainer = ({ files }: { files: Array<UploadedFile> }) => {
     <>
       {files.map((file) => (
         <div
-          role="button"
+          role='button'
+          tabIndex={0}
           key={file.id}
-          data-slot="file-card"
+          data-slot='file-card'
           className={styles.cardWrapper}
           onClick={() => handleToggleSelect(file)}
+          onKeyDown={(e) => {
+            if (e.key === 'Enter' || e.key === ' ') {
+              e.preventDefault();
+              handleToggleSelect(file);
+            }
+          }}
         >
           <FileCard file={file} isSelected={selectedIds.includes(file.id)} />
         </div>

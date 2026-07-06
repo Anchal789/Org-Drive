@@ -1,6 +1,4 @@
-import { Folder, Shield, Users } from 'lucide-react';
-import Btn from '@/components/ui/btn';
-import { iconsWithPaths } from '@/constants/common-constants';
+import { Folder, Share, Shield, Users } from 'lucide-react';
 import type { UploadedFile } from '@/types/files';
 import DriveCrumb from '../DriveCrumb/DriveCrumb';
 import FileSelectionBar from '../FileSection/FileSelectionBar';
@@ -8,6 +6,7 @@ import UploadWidget from '../upload-widget/UploadWidget';
 import styles from './DashFolder.module.scss';
 import { DownloadAllButton } from './DownloadAllButton';
 import LayoutForInsideFolder from './LayoutForInsideFolder';
+import { Button } from '@/components/ui/button';
 
 export default function DashFolder({
   files,
@@ -42,9 +41,10 @@ export default function DashFolder({
           </>
         )}
         <div className={styles.flex} />
-        <Btn variant="ghost" size="sm" icon={iconsWithPaths.share}>
+        <Button variant='ghost'>
+          <Share size={13} />
           Share
-        </Btn>
+        </Button>
         <DownloadAllButton folderId={folderId} folderName={folderName} />
       </div>
 

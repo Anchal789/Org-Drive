@@ -19,15 +19,15 @@ export default function DashGrid({
 }) {
   return (
     <>
-      <DriveCrumb inFolder="" />
+      <DriveCrumb inFolder='' />
       {files.length === 0 && folders.length === 0 && (
         <div className={styles.emptyHint}>
           <Image
             src={NoDataImage}
             width={350}
             height={350}
-            alt="No data"
-            loading="eager"
+            alt='No data'
+            loading='eager'
             className={styles.emptyHintImage}
           />
           Drag your files and folders here or use the &apos;New&apos; button to
@@ -55,12 +55,12 @@ export default function DashGrid({
                 Top-level only · no nesting
               </span>
             </div>
-            <div className={`${styles.grid} ${styles.grid4}`}>
+            <div className={`${styles.grid} ${styles.gridFolder4}`}>
               {folders.map((folder) => (
                 <FolderContainer
                   key={folder.id}
                   folder={folder}
-                  layout="grid"
+                  layout='grid'
                 />
               ))}
             </div>

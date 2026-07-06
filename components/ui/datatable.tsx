@@ -81,9 +81,9 @@ export default function DataTable<T>({
                   </span>
 
                   <button
-                    type="button"
+                    type='button'
                     onClick={clearSelection}
-                    aria-label="Clear selection"
+                    aria-label='Clear selection'
                     className={styles.clearButton}
                   >
                     <X size={14} strokeWidth={1.6} />
@@ -153,14 +153,20 @@ export default function DataTable<T>({
                     </TableCell>
                   )}
 
-                  {columns.map((col) => (
-                    <TableCell
-                      key={`${rowId}-${col.id}`}
-                      className={col.className}
-                    >
-                      {col.cell(row, rowIndex)}
-                    </TableCell>
-                  ))}
+                  {columns.map((col) => {
+                    const headerText =
+                      typeof col.header === 'string' ? col.header : '';
+
+                    return (
+                      <TableCell
+                        key={`${rowId}-${col.id}`}
+                        className={col.className}
+                        data-label={headerText}
+                      >
+                        {col.cell(row, rowIndex)}
+                      </TableCell>
+                    );
+                  })}
                 </TableRow>
               );
             })

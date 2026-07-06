@@ -1,19 +1,19 @@
-export const dynamic = "force-dynamic";
+export const dynamic = 'force-dynamic';
 
-import fs from "node:fs/promises";
-import os from "node:os";
-import path from "node:path";
-import { and, eq } from "drizzle-orm";
-import { type NextRequest, NextResponse } from "next/server";
-import { type Api, TelegramClient } from "telegram";
-import { StringSession } from "telegram/sessions";
-import { db } from "@/db";
-import { uploadFoldersTable } from "@/db/schema";
-import { sendError } from "@/lib/api-response";
-import { getSessionUser } from "@/lib/session";
-import { systemSettingsRepository } from "@/repositories/system-settings.repository";
-import { uploadedFilesRepository } from "@/repositories/uploaded-files.respository";
-import type { UploadFilesResponse } from "@/types/files";
+import fs from 'node:fs/promises';
+import os from 'node:os';
+import path from 'node:path';
+import { and, eq } from 'drizzle-orm';
+import { type NextRequest, NextResponse } from 'next/server';
+import { type Api, TelegramClient } from 'telegram';
+import { StringSession } from 'telegram/sessions';
+import { db } from '@/db';
+import { uploadFoldersTable } from '@/db/schema';
+import { sendError } from '@/lib/api-response';
+import { getSessionUser } from '@/lib/session';
+import { systemSettingsRepository } from '@/repositories/system-settings.repository';
+import { uploadedFilesRepository } from '@/repositories/uploaded-files.respository';
+import type { UploadFilesResponse } from '@/types/files';
 
 const API_ID = Number(process.env.TELEGRAM_APP_API_ID);
 const API_HASH = String(process.env.TELEGRAM_APP_API_HASH);
@@ -22,15 +22,15 @@ const STORAGE_CHANNEL = String(process.env.TELEGRAM_STORAGE_CHANNEL_ID);
 export async function POST(request: NextRequest) {
   try {
     const session = await getSessionUser();
-    if (!session?.userId) return sendError("Unauthorized", 401);
+    if (!session?.userId) return sendError('Unauthorized', 401);
 
     const formData = await request.formData();
-    const files = formData.getAll("file") as Array<File>;
-    const folderName = formData.get("folderName") as string | null;
-    const fileCount = formData.get("fileCount") as number | null;
+    const files = formData.getAll('file') as Array<File>;
+    const folderName = formData.get('folderName') as string | null;
+    const fileCount = formData.get('fileCount') as number | null;
 
     if (!files || files.length === 0)
-      return sendError("No files uploaded", 400);
+      return sendError('No files uploaded', 400);
 
     let resolvedFolderId: number | null = null;
 
@@ -65,7 +65,7 @@ export async function POST(request: NextRequest) {
     const botSessionString =
       await systemSettingsRepository.getBotSessionString();
     if (!botSessionString) {
-      return sendError("System error: Bot session is not configured.", 500);
+      return sendError('System error: Bot session is not configured.', 500);
     }
 
     const encoder = new TextEncoder();
@@ -83,8 +83,8 @@ export async function POST(request: NextRequest) {
 
       let formattedChannelId = STORAGE_CHANNEL.trim();
       if (
-        !formattedChannelId.startsWith("@") &&
-        !formattedChannelId.startsWith("-100")
+        !formattedChannelId.startsWith('@') &&
+        !formattedChannelId.startsWith('-100')
       ) {
         formattedChannelId = `-100${formattedChannelId}`;
       }
@@ -117,7 +117,7 @@ export async function POST(request: NextRequest) {
           for (const [index, file] of files.entries()) {
             const fileNumber = index + 1;
 
-            sendEvent("file_start", {
+            sendEvent('file_start', {
               name: file.name,
               current: fileNumber,
               total: totalFiles,
@@ -126,7 +126,7 @@ export async function POST(request: NextRequest) {
             const arrayBuffer = await file.arrayBuffer();
             const buffer = Buffer.from(arrayBuffer);
 
-            const safeName = file.name.replace(/[^a-zA-Z0-9.-]/g, "_");
+            const safeName = file.name.replace(/[^a-zA-Z0-9.-]/g, '_');
             const tempFilePath = path.join(
               os.tmpdir(),
               `${Date.now()}-${safeName}`,
@@ -134,7 +134,7 @@ export async function POST(request: NextRequest) {
             await fs.writeFile(tempFilePath, buffer);
 
             if (file.size === 0) {
-              throw new Error("Telegram does not allow uploading empty files.");
+              throw new Error('Telegram does not allow uploading empty files.');
             }
 
             try {
@@ -159,7 +159,7 @@ export async function POST(request: NextRequest) {
                       );
                     }
 
-                    sendEvent("progress", {
+                    sendEvent('progress', {
                       name: file.name,
                       percentage: currentPercentage,
                       eta: etaSeconds,
@@ -169,7 +169,7 @@ export async function POST(request: NextRequest) {
                 },
               });
 
-              if (!message?.media || !("document" in message.media)) {
+              if (!message?.media || !('document' in message.media)) {
                 throw new Error(`Telegram rejected file: ${file.name}`);
               }
 
@@ -181,7 +181,7 @@ export async function POST(request: NextRequest) {
                 userId: Number(session.userId),
                 telegramMessageId: message.id,
                 folderId: resolvedFolderId || undefined,
-                documentId: document?.id.toString() || "",
+                documentId: document?.id.toString() || '',
                 accessHash: document?.accessHash.toString(),
                 name: file.name,
                 size: file.size,
@@ -197,10 +197,10 @@ export async function POST(request: NextRequest) {
             }
           }
 
-          sendEvent("complete", { uploadedFiles });
+          sendEvent('complete', { uploadedFiles });
         } catch (err: unknown) {
           if (err instanceof Error) {
-            sendEvent("error", { message: err.message });
+            sendEvent('error', { message: err.message });
           } else {
             void err;
           }
@@ -216,11 +216,11 @@ export async function POST(request: NextRequest) {
 
     return new NextResponse(stream, {
       headers: {
-        "Content-Type": "text/event-stream",
-        "Cache-Control": "no-cache, no-transform",
-        Connection: "keep-alive",
-        "Content-Encoding": "none",
-        "X-Accel-Buffering": "no",
+        'Content-Type': 'text/event-stream',
+        'Cache-Control': 'no-cache, no-transform',
+        Connection: 'keep-alive',
+        'Content-Encoding': 'none',
+        'X-Accel-Buffering': 'no',
       },
     });
   } catch (err: unknown) {

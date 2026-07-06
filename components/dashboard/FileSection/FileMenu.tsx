@@ -59,11 +59,11 @@ const FileMenu: FunctionComponent<{
       <AlertModal
         open={openDeleteDialog}
         onOpenChange={setOpenDeleteDialog}
-        title="Delete file?"
+        title='Delete file?'
         description={`Are you sure you want to delete "${file.name}"?`}
-        confirmText="Delete"
-        confirmVariant="destructive"
-        cancelText="Cancel"
+        confirmText='Delete'
+        confirmVariant='destructive'
+        cancelText='Cancel'
         onConfirm={handleDelete}
         onCancel={() => setOpenDeleteDialog(false)}
       />
@@ -75,11 +75,11 @@ const FileMenu: FunctionComponent<{
       />
       <DropdownMenu>
         <DropdownMenuTrigger asChild className={styles.dropdownTrigger}>
-          <Button type="button" className={styles.moreBtn}>
+          <Button type='button' className={styles.moreBtn}>
             <MoreHorizontal size={14} className={styles.moreIcon} />
           </Button>
         </DropdownMenuTrigger>
-        <DropdownMenuContent className={styles.menuContent} align="start">
+        <DropdownMenuContent className={styles.menuContent} align='start'>
           <DropdownMenuGroup>
             {canEdit && (
               <DropdownMenuItem

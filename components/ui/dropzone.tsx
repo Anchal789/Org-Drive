@@ -111,7 +111,7 @@ export default function Dropzone({
 
   return (
     <Input
-      type="file"
+      type='file'
       multiple
       className={styles.overlayInput}
       onChange={handleChange}

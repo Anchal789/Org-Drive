@@ -1,10 +1,8 @@
 'use client';
 
-import { ChevronDown, ChevronRight } from 'lucide-react';
+import { ChevronDown, ChevronRight, LayoutGrid, List } from 'lucide-react';
 import { useRouter } from 'next/navigation';
-import Btn from '@/components/ui/btn';
 import { Button } from '@/components/ui/button';
-import { iconsWithPaths } from '@/constants/common-constants';
 import { useFileLayout } from '@/store/store';
 import styles from './DriveCrumb.module.scss';
 import LayoutSettings from './LayoutSettings';
@@ -22,7 +20,7 @@ export default function DriveCrumb({ inFolder }: { inFolder?: string }) {
         {inFolder ? (
           <>
             <Button
-              type="button"
+              type='button'
               className={styles.parentLink}
               onClick={() => {
                 router.replace('/my-drive');
@@ -41,18 +39,22 @@ export default function DriveCrumb({ inFolder }: { inFolder?: string }) {
         )}
       </div>
       <div className={styles.actions}>
-        <Btn
-          variant={fileLayout === 'list' ? 'default' : 'ghost'}
-          size="icon"
-          icon={iconsWithPaths.list}
+        <Button
+          type='button'
+          variant={fileLayout === 'list' ? 'primary' : 'ghost'}
+          size='icon'
           onClick={() => handleChangeDriveLayout('list')}
-        />
-        <Btn
-          variant={fileLayout === 'grid' ? 'default' : 'ghost'}
-          size="icon"
-          icon={iconsWithPaths.grid}
+        >
+          <List size={16} />
+        </Button>
+        <Button
+          type='button'
+          variant={fileLayout === 'grid' ? 'primary' : 'ghost'}
+          size='icon'
           onClick={() => handleChangeDriveLayout('grid')}
-        />
+        >
+          <LayoutGrid size={16} />
+        </Button>
         <span className={styles.divider} />
         <LayoutSettings />
       </div>

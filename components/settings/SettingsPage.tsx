@@ -50,7 +50,7 @@ const SettingsPage = async () => {
                   className={styles.organizationNameEditable}
                 >
                   Zuru Tech
-                  <SquarePen size={12} color="var(--muted-foreground)" />
+                  <SquarePen size={12} color='var(--muted-foreground)' />
                 </Badge>
               </div>
               <div className={styles.contentRow}>
@@ -72,18 +72,18 @@ const SettingsPage = async () => {
                   </p>
                 </div>
                 <div className={styles.contentRowAction}>
-                  <Select defaultValue="en">
+                  <Select defaultValue='en'>
                     <SelectTrigger>
                       <SelectValue
-                        placeholder="English (US)"
-                        defaultValue="en"
+                        placeholder='English (US)'
+                        defaultValue='en'
                       />
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="en">English (US)</SelectItem>
-                      <SelectItem value="es">Spanish</SelectItem>
-                      <SelectItem value="fr">French</SelectItem>
-                      <SelectItem value="de">German</SelectItem>
+                      <SelectItem value='en'>English (US)</SelectItem>
+                      <SelectItem value='es'>Spanish</SelectItem>
+                      <SelectItem value='fr'>French</SelectItem>
+                      <SelectItem value='de'>German</SelectItem>
                     </SelectContent>
                   </Select>
                 </div>

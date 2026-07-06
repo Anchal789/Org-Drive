@@ -305,15 +305,15 @@ export default function ShareDialog({
         <Separator />
         <div className={styles.footer}>
           {!isSharedFiles && (
-            <Button variant="outline" size="sm" onClick={handleCopyLink}>
+            <Button variant='outline' size='sm' onClick={handleCopyLink}>
               <Link size={14} />
               Copy link
             </Button>
           )}
           <div className={styles.footerSpacer} />
           <Button
-            variant="ghost"
-            size="sm"
+            variant='ghost'
+            size='sm'
             onClick={() => {
               setOpen(false);
               onCancel?.();
@@ -321,7 +321,7 @@ export default function ShareDialog({
           >
             Cancel
           </Button>
-          <Button variant="primary" size="sm" onClick={handleInviteUser}>
+          <Button variant='primary' size='sm' onClick={handleInviteUser}>
             {usersToInvite.length > 0 ? 'Send invite' : 'Save changes'}
           </Button>
         </div>

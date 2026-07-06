@@ -108,7 +108,7 @@ export default function VerifyOtpPage() {
         {/* Hide the back button once successfully verified */}
         {!isSuccess && (
           <Button
-            type="button"
+            type='button'
             onClick={() => router.push('/login')}
             className={styles.backButton}
           >
@@ -131,7 +131,7 @@ export default function VerifyOtpPage() {
           >
             <Controller
               control={otpForm.control}
-              name="otp"
+              name='otp'
               rules={{
                 required: 'OTP is required',
                 minLength: {
@@ -166,12 +166,12 @@ export default function VerifyOtpPage() {
             )}
 
             <TelegramButton
-              type="submit"
+              type='submit'
               disabled={
                 otpForm.formState.isSubmitting || !otpForm.formState.isValid
               }
               loading={otpForm.formState.isSubmitting}
-              loadingText="Verifying…"
+              loadingText='Verifying…'
             >
               Verify and continue
             </TelegramButton>
@@ -185,7 +185,7 @@ export default function VerifyOtpPage() {
           >
             <Controller
               control={passwordForm.control}
-              name="password"
+              name='password'
               rules={{
                 required: 'Password is required',
                 minLength: { value: 1, message: 'Password is required' },
@@ -193,8 +193,8 @@ export default function VerifyOtpPage() {
               render={({ field }) => (
                 <Input
                   {...field}
-                  type="password"
-                  placeholder="Your Telegram password"
+                  type='password'
+                  placeholder='Your Telegram password'
                   disabled={passwordForm.formState.isSubmitting}
                   className={`${styles.passwordInput} ${passwordForm.formState.errors.password ? styles.error : ''}`}
                 />
@@ -208,13 +208,13 @@ export default function VerifyOtpPage() {
             )}
 
             <TelegramButton
-              type="submit"
+              type='submit'
               disabled={
                 passwordForm.formState.isSubmitting ||
                 !passwordForm.formState.isValid
               }
               loading={passwordForm.formState.isSubmitting}
-              loadingText="Verifying…"
+              loadingText='Verifying…'
             >
               Submit password
             </TelegramButton>
@@ -225,7 +225,7 @@ export default function VerifyOtpPage() {
           <div className={styles.helpContainer}>
             Trouble receiving codes?{' '}
             <Button
-              type="button"
+              type='button'
               onClick={() => router.push('/qr-login')}
               className={styles.linkButton}
             >

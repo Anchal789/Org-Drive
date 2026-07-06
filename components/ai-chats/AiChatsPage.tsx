@@ -170,7 +170,7 @@ export default function AiChatPage() {
                 · 1,284 chunks indexed
               </div>
             </div>
-            <button type="button" className={styles.iconButton}>
+            <button type='button' className={styles.iconButton}>
               <Plus size={15} />
             </button>
           </div>
@@ -183,8 +183,8 @@ export default function AiChatPage() {
           </div>
 
           <div className={styles.selectAllRow}>
-            <label htmlFor="select-all-docs" className={styles.checkboxLabel}>
-              <Checkbox id="select-all-docs" checked="indeterminate" />
+            <label htmlFor='select-all-docs' className={styles.checkboxLabel}>
+              <Checkbox id='select-all-docs' checked='indeterminate' />
               <span>Select all</span>
             </label>
             <span className={styles.scopeText}>Scope: Compliance folder</span>
@@ -215,10 +215,10 @@ export default function AiChatPage() {
         </div>
 
         <div className={styles.sidebarFooter}>
-          <button type="button" className={styles.actionBtnPrimary}>
+          <button type='button' className={styles.actionBtnPrimary}>
             <Plus size={14} /> Save as collection
           </button>
-          <button type="button" className={styles.actionBtnGhost}>
+          <button type='button' className={styles.actionBtnGhost}>
             <RefreshCw size={14} /> Sync
           </button>
         </div>
@@ -237,7 +237,7 @@ export default function AiChatPage() {
               </div>
             </div>
           </div>
-          <button type="button" className={styles.actionBtnGhost}>
+          <button type='button' className={styles.actionBtnGhost}>
             <History size={14} /> History
           </button>
         </div>
@@ -267,7 +267,7 @@ export default function AiChatPage() {
           <div className={styles.promptGrid}>
             {PROMPT_OPTIONS.map((prompt) => (
               <button
-                type="button"
+                type='button'
                 key={prompt.id}
                 className={styles.promptCard}
               >
@@ -328,29 +328,29 @@ export default function AiChatPage() {
               ))}
             </div>
             <input
-              type="text"
-              aria-label="Ask a question about the selected documents"
+              type='text'
+              aria-label='Ask a question about the selected documents'
               className={styles.textInput}
-              placeholder="Ask anything about the selected documents…"
+              placeholder='Ask anything about the selected documents…'
             />
             <div className={styles.inputActions}>
               <div className={styles.actionGroup}>
                 <button
-                  type="button"
-                  aria-label="Attach file"
+                  type='button'
+                  aria-label='Attach file'
                   className={styles.iconButton}
                 >
                   <Paperclip size={15} />
                 </button>
                 <button
-                  type="button"
-                  aria-label="Open command palette"
+                  type='button'
+                  aria-label='Open command palette'
                   className={styles.iconButton}
                 >
                   <SquareTerminal size={15} />
                 </button>
               </div>
-              <button type="button" className={styles.sendBtn}>
+              <button type='button' className={styles.sendBtn}>
                 <Send size={14} /> Send
               </button>
             </div>
@@ -368,14 +368,14 @@ export default function AiChatPage() {
           </div>
           <div className={styles.mobileInputWrapper}>
             <input
-              type="text"
-              aria-label="Ask a question about the selected documents"
+              type='text'
+              aria-label='Ask a question about the selected documents'
               className={styles.mobileTextInput}
-              placeholder="Ask the docs…"
+              placeholder='Ask the docs…'
             />
             <button
-              type="button"
-              aria-label="Send message"
+              type='button'
+              aria-label='Send message'
               className={styles.mobileSendBtn}
             >
               <Send size={13} />

@@ -22,7 +22,7 @@ const DarkModeBtn = () => {
 
   if (!mounted) {
     return (
-      <div className="size-10 rounded-md border border-gray-200 dark:border-gray-800 animate-pulse bg-gray-200 dark:bg-gray-800" />
+      <div className='size-10 rounded-md border border-gray-200 dark:border-gray-800 animate-pulse bg-gray-200 dark:bg-gray-800' />
     );
   }
 
