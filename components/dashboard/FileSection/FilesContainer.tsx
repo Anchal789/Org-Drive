@@ -29,8 +29,8 @@ const FilesContainer = ({ files }: { files: Array<UploadedFile> }) => {
   return (
     <>
       {files.map((file) => (
-        <div
-          role='button'
+        <button
+          type='button'
           tabIndex={0}
           key={file.id}
           data-slot='file-card'
@@ -44,7 +44,7 @@ const FilesContainer = ({ files }: { files: Array<UploadedFile> }) => {
           }}
         >
           <FileCard file={file} isSelected={selectedIds.includes(file.id)} />
-        </div>
+        </button>
       ))}
     </>
   );

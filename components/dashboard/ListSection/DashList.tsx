@@ -28,12 +28,6 @@ export default function DashList({
             {folders?.map((folder) => (
               <FolderContainer key={folder.id} folder={folder} layout='list' />
             ))}
-            {folders?.map((folder) => (
-              <FolderContainer key={folder.id} folder={folder} layout='list' />
-            ))}
-            {folders?.map((folder) => (
-              <FolderContainer key={folder.id} folder={folder} layout='list' />
-            ))}
           </div>
 
           {/* Files table */}

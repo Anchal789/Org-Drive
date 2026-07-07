@@ -6,6 +6,7 @@ import {
   useActionState,
   useCallback,
   useEffect,
+  useEffectEvent,
   useRef,
   useState,
 } from 'react';
@@ -146,18 +147,17 @@ export default function QrCode() {
     startedRef.current = true;
   };
 
+  const onExpire = useEffectEvent(() => {
+    startedRef.current = false;
+    start();
+    startedRef.current = true;
+  });
+
   useEffect(() => {
     if (expiresAt == null) return;
-    const id = setTimeout(
-      () => {
-        startedRef.current = false;
-        start();
-        startedRef.current = true;
-      },
-      Math.max(0, expiresAt - Date.now()),
-    );
+    const id = setTimeout(onExpire, Math.max(0, expiresAt - Date.now()));
     return () => clearTimeout(id);
-  }, [expiresAt, start]);
+  }, [expiresAt]);
 
   const [pwdError, submitPasswordAction, isSubmittingPassword] = useActionState(
     async (_prevState: string | null, formData: FormData) => {

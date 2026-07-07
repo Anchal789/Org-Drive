@@ -98,9 +98,8 @@ export default function SmartSearchPage() {
       }
     } catch (error: unknown) {
       void error;
-    } finally {
-      setIsSearching(false);
     }
+    setIsSearching(false);
   };
 
   // ─── HANDLERS ───

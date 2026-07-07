@@ -27,8 +27,8 @@ const FolderContainer: FunctionComponent<{
 
   if (layout === 'grid')
     return (
-      <div
-        role='button'
+      <button
+        type='button'
         tabIndex={0}
         className={styles.folderContainer}
         onClick={(e) => {
@@ -56,13 +56,13 @@ const FolderContainer: FunctionComponent<{
         }}
       >
         <FolderTile folder={folder} />
-      </div>
+      </button>
     );
 
   if (layout === 'list')
     return (
-      <div
-        role='button'
+      <button
+        type='button'
         tabIndex={0}
         className={styles.folderContainer}
         onClick={(e) => {
@@ -107,7 +107,7 @@ const FolderContainer: FunctionComponent<{
             <FolderMenu folder={folder} />
           </div>
         </div>
-      </div>
+      </button>
     );
 };
 

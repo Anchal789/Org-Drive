@@ -14,6 +14,7 @@ import { usePathname, useRouter } from 'next/navigation';
 import type { FunctionComponent } from 'react';
 import Badge from '@/components/ui/badge';
 import { useSidebar } from '@/components/ui/sidebar';
+import { useIsMobile } from '@/hooks/use-mobile';
 import type { SidebarItemProps } from '@/types/component-types';
 import { Button } from '../ui/button';
 import styles from './DriveSidebar.module.scss';
@@ -24,6 +25,7 @@ const SidebarItem: FunctionComponent<{ item: SidebarItemProps }> = ({
   const router = useRouter();
   const pathname = usePathname();
   const { state, toggleSidebar } = useSidebar();
+  const isMobile = useIsMobile();
   const collapsed = state === 'collapsed';
   const isActive = pathname.includes(item.url);
 
@@ -48,7 +50,7 @@ const SidebarItem: FunctionComponent<{ item: SidebarItemProps }> = ({
       className={`${styles.navItem} ${isActive ? styles.navItemActive : ''}`}
       onClick={() => {
         router.push(item.url);
-        toggleSidebar();
+        isMobile && toggleSidebar();
       }}
     >
       <IconComponent size={16} />
