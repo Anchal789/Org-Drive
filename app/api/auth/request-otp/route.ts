@@ -2,13 +2,9 @@ import type { NextRequest } from 'next/server';
 import { TelegramClient } from 'telegram';
 import { StringSession } from 'telegram/sessions';
 import { sendError, sendSuccess } from '@/lib/api-response';
-import { getApiSession } from '@/lib/session';
 import { pendingLoginRepository } from '@/repositories/pending-login.repository';
 
 export async function POST(request: NextRequest) {
-  const session = await getApiSession(request);
-
-  if (!session?.userId) return sendError('Unauthorized', 401);
   const { phoneNumber } = await request.json();
 
   if (!phoneNumber) {
