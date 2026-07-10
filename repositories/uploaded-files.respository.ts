@@ -1,4 +1,4 @@
-import { and, count, eq, inArray, isNull, sql } from 'drizzle-orm';
+import { and, count, eq, inArray, isNull, or, sql } from 'drizzle-orm';
 import { db } from '@/db';
 import {
   recentTable,
@@ -33,7 +33,7 @@ export const uploadedFilesRepository = {
     }
     return uploadedFiles;
   },
-  async getFiles(userId: number) {
+  async getFiles(userId: number, limit = 30, offset = 0) {
     const files = await db
       .select({
         id: uploadedFilesTable.id,
@@ -60,10 +60,56 @@ export const uploadedFilesRepository = {
           isNull(uploadedFilesTable.folderId),
           eq(uploadedFilesTable.isDeleted, false),
         ),
-      );
+      )
+      .limit(limit)
+      .offset(offset);
     return files;
   },
-
+  async getCombinedFiles(userId: number, limit = 30, offset = 0) {
+    return await db
+      .select({
+        id: uploadedFilesTable.id,
+        userId: uploadedFilesTable.userId,
+        telegramMessageId: uploadedFilesTable.telegramMessageId,
+        documentId: uploadedFilesTable.documentId,
+        accessHash: uploadedFilesTable.accessHash,
+        name: uploadedFilesTable.name,
+        size: uploadedFilesTable.size,
+        mimeType: uploadedFilesTable.mimeType,
+        createdAt: uploadedFilesTable.createdAt,
+        updatedAt: uploadedFilesTable.updatedAt,
+        isDeleted: uploadedFilesTable.isDeleted,
+        bookmark: sql<boolean>`COALESCE(${sharedItemsTable.bookmark}, ${uploadedFilesTable.bookmark})`,
+        folderId: uploadedFilesTable.folderId,
+        ownerFirstName: userTable.firstName,
+        ownerLastName: userTable.lastName,
+        shareId: sharedItemsTable.id,
+      })
+      .from(uploadedFilesTable)
+      .leftJoin(userTable, eq(uploadedFilesTable.userId, userTable.id))
+      .leftJoin(
+        sharedItemsTable,
+        and(
+          eq(sharedItemsTable.fileId, uploadedFilesTable.id),
+          eq(sharedItemsTable.sharedWithUserId, userId),
+        ),
+      )
+      .where(
+        and(
+          eq(uploadedFilesTable.isDeleted, false),
+          or(
+            and(
+              eq(uploadedFilesTable.userId, userId),
+              isNull(uploadedFilesTable.folderId),
+            ),
+            eq(sharedItemsTable.sharedWithUserId, userId),
+          ),
+        ),
+      )
+      .orderBy(uploadedFilesTable.id)
+      .limit(limit)
+      .offset(offset);
+  },
   async getFilesInFolder(folderId: number) {
     return db
       .select({

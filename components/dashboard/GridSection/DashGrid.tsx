@@ -8,16 +8,28 @@ import FileSelectionBar from '../FileSection/FileSelectionBar';
 import FilesContainer from '../FileSection/FilesContainer';
 import FolderContainer from '../FolderSection/FolderContainer';
 import styles from './DashGrid.module.scss';
+import LoadMore from './LoadMore';
+
+type Props = {
+  files: Array<UploadedFile>;
+  folders: Array<UploadedFolder>;
+  isMobile: boolean;
+  loadMoreFiles: () => Promise<void>;
+  showLessFiles: () => void;
+  loadMoreFolders: () => Promise<void>;
+  showLessFolders: () => void;
+  loadingFolders: boolean;
+  hasMoreFolders: boolean;
+  loadingFiles: boolean;
+  hasMoreFiles: boolean;
+};
 
 export default function DashGrid({
   files,
   folders,
   isMobile,
-}: {
-  files: Array<UploadedFile>;
-  folders: Array<UploadedFolder>;
-  isMobile: boolean;
-}) {
+  ...props
+}: Props) {
   return (
     <>
       {files.length === 0 && folders.length === 0 && (
@@ -77,6 +89,19 @@ export default function DashGrid({
             <div className={`${styles.grid} ${styles.grid4}`}>
               <FilesContainer files={files} />
             </div>
+
+            <LoadMore
+              hasMoreFiles={props.hasMoreFiles}
+              hasMoreFolders={props.hasMoreFolders}
+              loadMoreFiles={props.loadMoreFiles}
+              loadMoreFolders={props.loadMoreFolders}
+              loadingFiles={props.loadingFiles}
+              loadingFolders={props.loadingFolders}
+              showLessFiles={props.showLessFiles}
+              showLessFolders={props.showLessFolders}
+              localFiles={files.length}
+              localFolders={folders.length}
+            />
           </>
         )}
       </div>

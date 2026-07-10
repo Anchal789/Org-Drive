@@ -5,13 +5,20 @@ import FolderContainer from '../FolderSection/FolderContainer';
 import styles from './DashList.module.scss';
 import FileTable from './FileTable';
 
-export default function DashList({
-  files,
-  folders,
-}: {
+type FileTableProps = {
   files: Array<UploadedFile>;
   folders: Array<UploadedFolder>;
-}) {
+  loadMoreFiles: () => Promise<void>;
+  showLessFiles: () => void;
+  loadMoreFolders: () => Promise<void>;
+  showLessFolders: () => void;
+  loadingFolders: boolean;
+  hasMoreFolders: boolean;
+  loadingFiles: boolean;
+  hasMoreFiles: boolean;
+};
+
+export default function DashList({ files, folders }: FileTableProps) {
   return (
     <div className={styles.shell}>
       <div className={styles.main}>

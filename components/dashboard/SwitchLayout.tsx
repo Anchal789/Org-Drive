@@ -4,14 +4,18 @@ import { type FunctionComponent, useMemo } from 'react';
 import { useIsTab } from '@/hooks/use-mobile';
 import { useFileLayout, useSortByStore } from '@/store/store';
 import type { UploadedFile, UploadedFolder } from '@/types/files';
+import DriveDataHandler from './DriveDataHandler';
 import DashGrid from './GridSection/DashGrid';
 import DashList from './ListSection/DashList';
 
 const SwitchLayout: FunctionComponent<{
   files: Array<UploadedFile>;
   folders: Array<UploadedFolder>;
-  insideFolder?: boolean;
-}> = ({ files, folders }) => {
+  fetchMoreData(
+    type: 'files' | 'folders',
+    offset: number,
+  ): Promise<UploadedFile[] | UploadedFolder[]>;
+}> = ({ files, folders, fetchMoreData }) => {
   const { fileLayout, hasHydrated } = useFileLayout();
   const { sortBy } = useSortByStore();
   const isMobile = useIsTab();
@@ -64,14 +68,21 @@ const SwitchLayout: FunctionComponent<{
   if (!hasHydrated) {
     return null;
   }
-  return fileLayout === 'list' ? (
-    <DashList files={sortedData.files} folders={sortedData.folders} />
-  ) : (
-    <DashGrid
+  return (
+    <DriveDataHandler
+      key={fileLayout + sortBy}
       files={sortedData.files}
       folders={sortedData.folders}
-      isMobile={isMobile}
-    />
+      fetchMoreData={fetchMoreData}
+    >
+      {(data) =>
+        fileLayout === 'list' ? (
+          <DashList {...data} />
+        ) : (
+          <DashGrid {...data} isMobile={isMobile} />
+        )
+      }
+    </DriveDataHandler>
   );
 };
 

@@ -8,7 +8,7 @@ import {
 } from './../db/schema';
 
 export const sharedWithMeRepository = {
-  async getSharedWithMeFiles(userId: number) {
+  async getSharedWithMeFiles(userId: number, limit = 30, offset = 0) {
     return await db
       .select({
         id: sharedItemsTable.id,
@@ -33,7 +33,9 @@ export const sharedWithMeRepository = {
         uploadedFilesTable,
         eq(sharedItemsTable.fileId, uploadedFilesTable.id),
       )
-      .where(eq(sharedItemsTable.sharedWithUserId, userId));
+      .where(eq(sharedItemsTable.sharedWithUserId, userId))
+      .limit(limit)
+      .offset(offset);
   },
   async getSharedFileUsersAndPermissions(id: number) {
     return await db
