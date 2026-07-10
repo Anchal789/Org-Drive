@@ -1,10 +1,10 @@
 'use client';
 
 import { List } from 'lucide-react';
-import styles from './DriveTopbar.module.scss';
 import { usePathname } from 'next/navigation';
 import { Button } from '../ui/button';
 import { useSidebar } from '../ui/sidebar';
+import styles from './DriveTopbar.module.scss';
 
 export default function DriveTopbarMobile() {
   const { openMobile, setOpenMobile } = useSidebar();
@@ -32,6 +32,18 @@ export default function DriveTopbarMobile() {
       url: '/trash',
     },
     {
+      name: 'Analytics',
+      url: '/analytics',
+    },
+    {
+      name: 'Smart Search',
+      url: '/smart-search',
+    },
+    {
+      name: 'AI Chat',
+      url: '/ai-chat',
+    },
+    {
       name: 'Settings',
       url: '/settings',
     },
@@ -46,7 +58,7 @@ export default function DriveTopbarMobile() {
         className={styles.listButton}
         onClick={() => setOpenMobile(!openMobile)}
       >
-        <List size={20} className={styles.icon} />
+        <List size={20} className={styles.listButtonIcon} />
       </Button>
       <h6 className={styles.activePage}>{activePage}</h6>
     </>

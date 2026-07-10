@@ -1,0 +1,96 @@
+@use "@/styles/functions" as *;
+
+.header {
+  padding: 16px 24px 6px;
+
+  &.hideOnMobile {
+    @media (max-width: 768px) {
+      display: none;
+    }
+  }
+}
+
+.headingsContainer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+}
+
+.headings {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.iconBox {
+  width: 38px;
+  height: 38px;
+  border-radius: v(radius-md);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+
+  @media (max-width: 768px) {
+    width: 32px;
+    height: 32px;
+  }
+
+  > svg {
+    @media (max-width: 768px) {
+      width: 18px;
+      height: 18px;
+    }
+  }
+}
+
+.tone-red {
+  background: v(tint-red-bg);
+  color: v(tint-red-tx);
+}
+.tone-violet {
+  background: v(tint-violet-bg);
+  color: v(tint-violet-tx);
+}
+.tone-blue {
+  background: v(tint-blue-bg);
+  color: v(tint-blue-tx);
+}
+.tone-amber {
+  background: v(tint-amber-bg);
+  color: v(tint-amber-tx);
+}
+.tone-slate {
+  background: v(tint-slate-bg);
+  color: v(tint-slate-tx);
+}
+.tone-default {
+  background: v(secondary);
+  color: v(foreground);
+}
+
+.title {
+  font-size: 22px;
+  font-weight: 600;
+  letter-spacing: -0.02em;
+  line-height: 1.1;
+
+  @media (max-width: 768px) {
+    font-size: 18px;
+  }
+}
+
+.subHeading {
+  font-size: 12.5px;
+  color: v(muted-foreground);
+  margin-top: 3px;
+
+  @media (max-width: 768px) {
+    font-size: 11.5px;
+  }
+}
+
+.content {
+  padding-top: 16px;
+}

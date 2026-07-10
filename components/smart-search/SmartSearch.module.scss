@@ -204,6 +204,7 @@
   margin-bottom: 6px;
   cursor: pointer;
   transition: background-color 0.15s ease;
+  width: 100%;
 
   &:hover {
     background: v(muted);
@@ -215,7 +216,7 @@
 }
 
 .resultText {
-  flex: 1 1 0%;
+  // flex: 1 1 0%;
   font-size: 13px;
   color: v(foreground);
   white-space: nowrap;

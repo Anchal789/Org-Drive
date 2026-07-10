@@ -2,24 +2,22 @@ import {
   Bell,
   CircleQuestionMark,
   Cloud,
-  Search,
   Settings,
   Shield,
-  Sparkle,
   User,
 } from 'lucide-react';
-import Badge from '@/components/ui/badge';
 import UserAvatar from '@/components/ui/user-avatar';
 import { uploadedFilesRepository } from '@/repositories/uploaded-files.respository';
 import { formatBytes } from '@/store/store';
 import type { SessionUser } from '@/types/auth';
+import SearchBar from '../dashboard/DriveCrumb/SearchBar';
 import { Button } from '../ui/button';
 import { Popover, PopoverContent, PopoverTrigger } from '../ui/popover';
 import { Separator } from '../ui/separator';
 import DarkModeBtn from './DarkModeBtn';
+import DriveTopbarMobile from './DriveTopBarMobile';
 import styles from './DriveTopbar.module.scss';
 import LogoutBtn from './LogoutBtn';
-import DriveTopbarMobile from './DriveTopBarMobile';
 
 export default async function DriveTopbar({
   user,
@@ -38,18 +36,7 @@ export default async function DriveTopbar({
   const totalSize = filesize.reduce((a, b) => a + b.size, 0);
   return (
     <div className={styles.topbar}>
-      {!isMobile ? (
-        <div className={styles.searchBox}>
-          <Search size={16} className={styles.icon} />
-          <span className={styles.searchPlaceholder}>Search in Org Drive</span>
-          <Badge tone='violet' className={styles.badge}>
-            <Sparkle size={9} /> Smart
-          </Badge>
-          <Settings size={14} className={styles.icon} />
-        </div>
-      ) : (
-        <DriveTopbarMobile />
-      )}
+      {!isMobile ? <SearchBar variant='desktop' /> : <DriveTopbarMobile />}
       <div className={styles.spacer} />
       {!isMobile && <Bell size={18} className={styles.icon} />}
       <Popover>

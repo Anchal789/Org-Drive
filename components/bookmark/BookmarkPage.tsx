@@ -5,6 +5,7 @@ import NoDataImage from '@/public/assets/No-Data.svg';
 import type { UploadedFile, UploadedFolder } from '@/types/files';
 import FileCard from '../dashboard/FileSection/FileCard';
 import FolderContainer from '../dashboard/FolderSection/FolderContainer';
+import PageHeader from '../page-header/PageHeader';
 import styles from './Bookmark.module.scss';
 
 const BookmarkPage: FunctionComponent<{
@@ -13,21 +14,13 @@ const BookmarkPage: FunctionComponent<{
 }> = ({ bookmarkedFiles, bookmarkedFolders }) => {
   return (
     <>
-      <div className={styles.header}>
-        <div className={styles.headings}>
-          <div className={styles.iconBox}>
-            <Tag size={20} />
-          </div>
-          <div>
-            <div className={styles.title}>
-              <span>Bookmark</span>
-            </div>
-            <div className={styles.subHeading}>
-              Quick access to the files and folders you&apos;ve bookmarked.
-            </div>
-          </div>
-        </div>
-      </div>
+      <PageHeader
+        icon={<Tag size={20} />}
+        tone='amber'
+        title='Bookmark'
+        subHeading="Quick access to the files and folders you've bookmarked."
+        hideOnMobile
+      />
       {bookmarkedFolders.length === 0 && bookmarkedFiles.length === 0 ? (
         <div className={styles.emptyHint}>
           <Image

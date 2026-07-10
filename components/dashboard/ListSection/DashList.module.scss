@@ -20,6 +20,10 @@
   flex: 1;
   overflow: auto;
   padding: 8px 24px 24px;
+
+  @media (max-width: 768px) {
+    padding: 0 16px 16px;
+  }
 }
 
 .sectionLabel {
@@ -29,6 +33,10 @@
   color: v(muted-foreground);
   text-transform: uppercase;
   letter-spacing: 0.04em;
+
+  @media (max-width: 768px) {
+    padding: 8px 0px 4px;
+  }
 }
 
 .emptyHint {
@@ -49,8 +57,17 @@
   @media (max-width: 1024px) {
     grid-template-columns: repeat(2, 1fr);
   }
-  @media (max-width: 768px) {
+  @media (max-width: 448px) {
     grid-template-columns: repeat(1, 1fr);
+  }
+}
+
+.header {
+  @media (max-width: 768px) {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 10px 16px;
   }
 }
 

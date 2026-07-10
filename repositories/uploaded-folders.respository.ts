@@ -132,6 +132,13 @@ export const uploadedFoldersRepository = {
 
     return folders;
   },
+  async getFolderById(id: number) {
+    const [folder] = await db
+      .select()
+      .from(uploadFoldersTable)
+      .where(eq(uploadFoldersTable.id, id));
+    return folder;
+  },
   async getFoldersName(ids: number[]) {
     const folders = await db
       .select({

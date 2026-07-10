@@ -3,7 +3,6 @@ export const dynamic = 'force-dynamic';
 import Image from 'next/image';
 import NoDataImage from '@/public/assets/No-Data.svg';
 import type { UploadedFile, UploadedFolder } from '@/types/files';
-import DriveCrumb from '../DriveCrumb/DriveCrumb';
 import FileCard from '../FileSection/FileCard';
 import FileSelectionBar from '../FileSection/FileSelectionBar';
 import FilesContainer from '../FileSection/FilesContainer';
@@ -13,13 +12,14 @@ import styles from './DashGrid.module.scss';
 export default function DashGrid({
   files,
   folders,
+  isMobile,
 }: {
   files: Array<UploadedFile>;
   folders: Array<UploadedFolder>;
+  isMobile: boolean;
 }) {
   return (
     <>
-      <DriveCrumb inFolder='' />
       {files.length === 0 && folders.length === 0 && (
         <div className={styles.emptyHint}>
           <Image
@@ -36,7 +36,7 @@ export default function DashGrid({
       )}
       <div className={styles.content}>
         <FileSelectionBar files={files} folders={folders} />
-        {files.length > 0 && (
+        {!isMobile && files.length > 0 && (
           <>
             <div className={styles.sectionLabel}>Suggested</div>
             <div className={`${styles.grid} ${styles.grid4}`}>
@@ -51,9 +51,11 @@ export default function DashGrid({
           <>
             <div className={styles.sectionHeader}>
               <div className={styles.sectionLabel}>Folders</div>
-              <span className={styles.sectionMeta}>
-                Top-level only · no nesting
-              </span>
+              {!isMobile && (
+                <span className={styles.sectionMeta}>
+                  Top-level only · no nesting
+                </span>
+              )}
             </div>
             <div className={`${styles.grid} ${styles.gridFolder4}`}>
               {folders.map((folder) => (

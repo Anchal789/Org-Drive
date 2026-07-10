@@ -4,6 +4,8 @@ import { TINTS } from '@/constants/common-constants';
 import { formatFileDate, getAvatarColor, getFileExtension } from '@/lib/utils';
 import type { ColumnDef } from '@/types/component-types';
 import type { SharedWithMeItemsType } from '@/types/share-with-me';
+import PageHeader from '../page-header/PageHeader';
+import FlexibleTile from '../responsive-list/FlexibleTile';
 import DataTable from '../ui/datatable';
 import FileType from '../ui/fileType';
 import UserAvatar from '../ui/user-avatar';
@@ -127,24 +129,43 @@ const ShareWithMePage: FunctionComponent<{
 }> = ({ sharedItems }) => {
   return (
     <>
-      <div className={styles.header}>
-        <div className={styles.headingsContainer}>
-          <div className={styles.headings}>
-            <div className={styles.iconBox}>
-              <Users size={20} />
-            </div>
-            <div>
-              <div className={styles.title}>
-                <span>Shared with me</span>
-              </div>
-              <div className={styles.subHeading}>
-                Files and folders other people have given you access to.
-              </div>
-            </div>
-          </div>
-        </div>
+      <PageHeader
+        icon={<Users size={20} />}
+        tone='blue'
+        title='Shared with me'
+        subHeading='Files and folders other people have given you access to.'
+        hideOnMobile={true}
+      />
+      <div className={styles.dataTableMobile}>
+        {sharedItems.map((item) => (
+          <FlexibleTile
+            key={item.id}
+            extension={
+              item.fileId === null ? (
+                <Folder
+                  size={14}
+                  fill='currentColor'
+                  className={styles.folderIcon}
+                />
+              ) : (
+                <FileType kind={getFileExtension(item.fileName)} />
+              )
+            }
+            name={
+              item.fileId === null ? (
+                <span className={styles.fileName}>{item.folderName}</span>
+              ) : (
+                <span className={styles.fileName}>{item.fileName}</span>
+              )
+            }
+            size=''
+            folder={item.folderName}
+            date={formatFileDate(item.sharedDate)}
+            actions={<ShareWithMeActionColumn props={item} />}
+          />
+        ))}
       </div>
-      <div className={styles.dataTable}>
+      <div className={styles.dataTableDesktop}>
         <DataTable
           data={sharedItems}
           columns={columns}

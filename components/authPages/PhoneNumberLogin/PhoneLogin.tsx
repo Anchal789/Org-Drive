@@ -190,6 +190,7 @@ export default function PhoneLogin() {
         loading={isSubmitting}
         loadingText='Sending code...'
         type='submit'
+        className={styles.submitButton}
       >
         Send code on Telegram
       </TelegramButton>

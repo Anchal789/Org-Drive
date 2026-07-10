@@ -24,6 +24,10 @@
   background: v(secondary);
   border-radius: v(radius-full);
   font-size: 14px;
+
+  @media (max-width: 1024px) {
+    flex: auto;
+  }
 }
 
 .searchPlaceholder {
@@ -33,6 +37,10 @@
 
 .spacer {
   flex: 1;
+
+  @media (max-width: 448px) {
+    display: none;
+  }
 }
 
 .icon {
@@ -184,7 +192,7 @@
   margin: 0;
   flex: 0;
 
-  .icon {
+  .listButtonIcon {
     width: 20px;
     height: 20px;
   }

@@ -24,6 +24,9 @@ export default async function FolderPage({
     );
 
   const permissions = sharedFolder.map((folder) => folder.permission);
+  const folderDetails = await uploadedFoldersRepository.getFolderById(
+    Number(decryptedId),
+  );
 
   return (
     <DashFolder
@@ -32,6 +35,7 @@ export default async function FolderPage({
       folderId={Number(decryptedId)}
       membersCount={sharedFolder.length}
       permissions={permissions}
+      folderDetails={folderDetails}
     />
   );
 }

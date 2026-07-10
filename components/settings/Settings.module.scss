@@ -1,48 +1,11 @@
 @use "@/styles/functions" as *;
 @use "../../styles/mixins" as *;
 
-.header {
+.stickyHeader {
   position: sticky;
   top: 0;
-  padding: 18px 24px 6px;
+  z-index: 10;
   background: v(background);
-}
-
-.headingsContainer {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-}
-
-.headings {
-  display: flex;
-  align-items: center;
-  gap: 14px;
-}
-
-.title {
-  font-size: 22px;
-  font-weight: 600;
-  letter-spacing: -0.02em;
-  line-height: 1.1;
-}
-
-.iconBox {
-  width: 38px;
-  height: 38px;
-  border-radius: v(radius-md);
-  background: v(tint-slate-bg);
-  color: v(tint-slate-tx);
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  flex-shrink: 0;
-}
-
-.subHeading {
-  font-size: 12.5px;
-  color: v(muted-foreground);
-  margin-top: 3px;
 }
 
 .pageContent {
@@ -51,6 +14,11 @@
     overflow: auto;
     padding: 14px 24px 32px;
     max-width: 860px;
+    width: 100%;
+
+    @media (max-width: 768px) {
+      padding: 14px 16px 24px;
+    }
 
     .contentSection {
       margin-bottom: 22px;
@@ -77,6 +45,12 @@
           gap: 16px;
           padding: 14px 16px;
           border-bottom: 1px solid v(border);
+          flex-wrap: wrap;
+
+          @media (max-width: 500px) {
+            gap: 12px;
+            padding: 12px;
+          }
 
           &:last-child {
             border-bottom: none;
@@ -93,7 +67,7 @@
           }
 
           .contentRowLabel {
-            flex: 1 1 0%;
+            flex: 1 1 200px;
             min-width: 0px;
 
             .tgUsername {
@@ -103,20 +77,15 @@
             .contentRowTitle {
               font-size: 13px;
               font-weight: 500;
+              line-height: 1.3;
             }
+
             .contentRowDescription {
               font-size: 12px;
               color: v(muted-foreground);
               margin-top: 2px;
-              line-height: 1.5;
+              line-height: 1.4;
             }
-          }
-          .organizationNameEditable {
-            display: inline-flex;
-            align-items: center;
-            gap: 6px;
-            height: 32px;
-            padding: 0px 12px;
           }
 
           .connectionStatus {
@@ -132,6 +101,7 @@
             color: v(tint-green-tx);
             border: 1px solid transparent;
             white-space: nowrap;
+            flex-shrink: 0;
 
             .dot {
               width: 6px;
@@ -143,6 +113,22 @@
 
           .contentRowAction {
             flex-shrink: 0;
+            display: flex;
+            align-items: center;
+
+            @media (max-width: 500px) {
+              width: 100%;
+              justify-content: flex-end;
+              margin-top: 4px;
+            }
+
+            .organizationNameEditable {
+              display: inline-flex;
+              align-items: center;
+              gap: 6px;
+              height: 32px;
+              padding: 0px 12px;
+            }
 
             .viewOption {
               display: inline-flex;
@@ -158,6 +144,15 @@
 
         .telegramConnectionRow {
           background: v(tg-blue-bg);
+
+          @media (max-width: 500px) {
+            .connectionStatus {
+              width: 100%;
+              justify-content: flex-end;
+              background: transparent;
+              padding: 0;
+            }
+          }
         }
       }
     }

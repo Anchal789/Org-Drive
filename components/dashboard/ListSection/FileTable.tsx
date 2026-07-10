@@ -12,7 +12,7 @@ import {
 import dynamic from 'next/dynamic';
 import { useRouter } from 'next/navigation';
 import type { FunctionComponent } from 'react';
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import AlertModal from '@/components/ui/alert-modal';
 import { Button } from '@/components/ui/button';
 import DataTable from '@/components/ui/datatable';
@@ -22,21 +22,32 @@ import { Separator } from '@/components/ui/separator';
 import UserAvatar from '@/components/ui/user-avatar';
 import { TINTS } from '@/constants/common-constants';
 import { handleBookmarMultiple, handleDeleteMultiple } from '@/helpers/file-fn';
+import { useIsDesktop } from '@/hooks/use-mobile';
 import { formatFileDate, getAvatarColor, getFileExtension } from '@/lib/utils';
 import { downloadMultiple } from '@/services/file-service';
-import { formatBytes, useShareDialogStore } from '@/store/store';
+import {
+  formatBytes,
+  useSelectedFilesStore,
+  useShareDialogStore,
+} from '@/store/store';
 import type { ColumnDef } from '@/types/component-types';
-import type { UploadedFile } from '@/types/files';
+import type { UploadedFile, UploadedFolder } from '@/types/files';
 import FileMenu from '../FileSection/FileMenu';
+import FileSelectionBar from '../FileSection/FileSelectionBar';
 import styles from './FileTable.module.scss';
+import FileTile from './mobile/FileTile';
 
 const MoveModal = dynamic(() => import('./MoveModal'));
 
 const FileTable: FunctionComponent<{
   files: Array<UploadedFile & { shareId?: number }>;
-}> = ({ files }) => {
+  folders?: Array<UploadedFolder>;
+}> = ({ files, folders }) => {
   const { setOpen, setFiles, setFile } = useShareDialogStore();
-  const [selectedFiles, setSelectedFiles] = useState<(string | number)[]>([]);
+  const isDesktop = useIsDesktop();
+  const { selectedFiles, setSelectedFiles, setFileCount } =
+    useSelectedFilesStore();
+  const [selectIds, setSelectIds] = useState<(string | number)[]>([]);
   const [modalState, setModalState] = useState<{
     open: boolean;
     file: Array<UploadedFile> | null;
@@ -117,11 +128,10 @@ const FileTable: FunctionComponent<{
   ];
 
   const selectedFileObjects = useMemo(() => {
-    if (selectedFiles.length === 0) return [];
-
-    const idSet = new Set(selectedFiles);
+    if (selectIds.length === 0) return [];
+    const idSet = new Set(selectIds);
     return files.filter((file) => idSet.has(file.id));
-  }, [files, selectedFiles]);
+  }, [files, selectIds]);
 
   const closeModal = () => {
     setModalState({ open: false, file: null, action: null });
@@ -131,6 +141,24 @@ const FileTable: FunctionComponent<{
     setOpenDeleteDialog(false);
     setSelectedFiles([]);
   };
+
+  const handleToggleSelect = (file: UploadedFile) => {
+    const isSelected = selectedIds.includes(file.id);
+    const updatedSelectedFiles = isSelected
+      ? selectedFiles.filter((f) => f.id !== file.id)
+      : [...selectedFiles, file];
+
+    setSelectedFiles(updatedSelectedFiles);
+  };
+
+  const selectedIds = useMemo(() => {
+    return selectedFiles.map((f) => f.id);
+  }, [selectedFiles]);
+
+  useEffect(() => {
+    setFileCount(files.length);
+  }, [files, setFileCount]);
+
   return (
     <>
       <Dialog
@@ -146,6 +174,7 @@ const FileTable: FunctionComponent<{
           <MoveModal files={modalState.file || []} closeModal={closeModal} />
         )}
       </Dialog>
+
       <AlertModal
         open={openDeleteDialog}
         onOpenChange={setOpenDeleteDialog}
@@ -163,81 +192,125 @@ const FileTable: FunctionComponent<{
         }
         onCancel={() => setOpenDeleteDialog(false)}
       />
-      <DataTable
-        data={files}
-        columns={columns}
-        getRowId={(file) => file.id}
-        enableSelection
-        selectedIds={selectedFiles}
-        onSelectionChange={setSelectedFiles}
-        renderSelectionActions={(_selectedIds, clearSelection) => (
-          <>
-            <Button
-              className={styles.actionButton}
-              onClick={() => {
-                downloadMultiple(selectedFileObjects);
-              }}
-            >
-              <Download size={14} /> Download
-            </Button>
+      <FileSelectionBar files={files} folders={folders} />
 
-            <Button
-              className={styles.actionButton}
-              variant={'ghost'}
-              onClick={() => {
-                selectedFileObjects.length > 1
-                  ? setFiles(selectedFileObjects)
-                  : setFile(selectedFileObjects[0]);
-                useShareDialogStore.setState({ onSuccess: clearSelection });
-                setOpen(true);
-              }}
-            >
-              <Share size={14} /> Share
-            </Button>
-            <Button
-              className={styles.actionButton}
-              onClick={() =>
-                setModalState({
-                  open: true,
-                  file: selectedFileObjects,
-                  action: 'move',
-                })
-              }
-            >
-              <Folder size={14} /> Move
-            </Button>
-            <Button
-              className={styles.actionButton}
-              onClick={() => {
-                handleBookmarMultiple({
-                  selectedFileObjects,
-                  router,
-                  clearSelection,
-                });
-              }}
-            >
-              <Tag size={14} /> Bookmark
-            </Button>
-            <Separator orientation='vertical' />
-            <Button className={styles.actionButton}>
-              <Sparkle size={14} /> Ask AI
-            </Button>
+      {isDesktop ? (
+        <div className={styles.filesGridContainer}>
+          <span className={styles.filesGridTitle}>Files · {files.length}</span>
+          <div className={styles.filesGrid}>
+            {files.length > 0 &&
+              files.map((file) => {
+                return (
+                  <div key={file.id} className={styles.cardWrapper}>
+                    <Button
+                      type='button'
+                      tabIndex={0}
+                      data-slot='file-card'
+                      className={styles.clickOverlay}
+                      onClick={(e) => {
+                        const target = e.target as HTMLElement;
+                        if (
+                          target.closest('[aria-haspopup="menu"]') ||
+                          target.closest('[role="dialog"]') ||
+                          target.closest('[data-menu="true"]')
+                        ) {
+                          return;
+                        }
+                        handleToggleSelect(file);
+                      }}
+                      onKeyDown={(e) => {
+                        if (e.key === 'Enter' || e.key === ' ') {
+                          e.preventDefault();
+                          handleToggleSelect(file);
+                        }
+                      }}
+                    />
+                    <FileTile
+                      file={file}
+                      isSelected={selectedIds.includes(file.id)}
+                    />
+                  </div>
+                );
+              })}
+          </div>
+        </div>
+      ) : (
+        <DataTable
+          data={files}
+          columns={columns}
+          getRowId={(file) => file.id}
+          enableSelection
+          selectedIds={selectIds}
+          onSelectionChange={setSelectIds}
+          renderSelectionActions={(_selectedIds, clearSelection) => (
+            <>
+              <Button
+                className={styles.actionButton}
+                onClick={() => {
+                  downloadMultiple(selectedFileObjects);
+                }}
+              >
+                <Download size={14} /> Download
+              </Button>
 
-            <Separator orientation='vertical' />
-            <Button
-              className={`${styles.actionButton} ${styles['actionButton-destructive']}`}
-              onClick={() => {
-                setOpenDeleteDialog(true);
-              }}
-            >
-              <Trash2 size={14} /> Delete
-            </Button>
-          </>
-        )}
-        classes={{
-          table: styles.table,
-        }}
-      />
+              <Button
+                className={styles.actionButton}
+                variant={'ghost'}
+                onClick={() => {
+                  selectedFileObjects.length > 1
+                    ? setFiles(selectedFileObjects)
+                    : setFile(selectedFileObjects[0]);
+                  useShareDialogStore.setState({ onSuccess: clearSelection });
+                  setOpen(true);
+                }}
+              >
+                <Share size={14} /> Share
+              </Button>
+              <Button
+                className={styles.actionButton}
+                onClick={() =>
+                  setModalState({
+                    open: true,
+                    file: selectedFileObjects,
+                    action: 'move',
+                  })
+                }
+              >
+                <Folder size={14} /> Move
+              </Button>
+              <Button
+                className={styles.actionButton}
+                onClick={() => {
+                  handleBookmarMultiple({
+                    selectedFileObjects,
+                    router,
+                    clearSelection,
+                  });
+                }}
+              >
+                <Tag size={14} /> Bookmark
+              </Button>
+              <Separator orientation='vertical' />
+              <Button className={styles.actionButton}>
+                <Sparkle size={14} /> Ask AI
+              </Button>
+
+              <Separator orientation='vertical' />
+              <Button
+                className={`${styles.actionButton} ${styles['actionButton-destructive']}`}
+                onClick={() => {
+                  setOpenDeleteDialog(true);
+                }}
+              >
+                <Trash2 size={14} /> Delete
+              </Button>
+            </>
+          )}
+          classes={{
+            table: styles.table,
+          }}
+        />
+      )}
     </>
   );
 };

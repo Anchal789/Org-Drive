@@ -4,13 +4,45 @@ import { isTelegramSessionValid } from '@/lib/session';
 import { encrypt } from '@/lib/utils';
 import type { UploadedFile } from '@/types/files';
 
-const triggerHiddenDownload = (url: string) => {
-  const a = document.createElement('a');
-  a.href = url;
-  a.style.display = 'none';
-  document.body.appendChild(a);
-  a.click();
-  document.body.removeChild(a);
+const triggerHiddenDownload = async (
+  url: string,
+  filename?: string,
+  toastId?: string | number,
+) => {
+  const id = toastId ?? toast.loading('Preparing download...');
+
+  try {
+    const response = await fetch(url);
+
+    if (!response.ok) {
+      throw new Error('Download failed.');
+    }
+
+    const blob = await response.blob();
+
+    const downloadUrl = URL.createObjectURL(blob);
+
+    const a = document.createElement('a');
+    a.href = downloadUrl;
+
+    if (filename) {
+      a.download = filename;
+    }
+
+    a.style.display = 'none';
+
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+
+    URL.revokeObjectURL(downloadUrl);
+
+    toast.success('Download started.', { id });
+  } catch (error) {
+    toast.error(error instanceof Error ? error.message : 'Download failed.', {
+      id,
+    });
+  }
 };
 
 export const downloadFile = async (fileId: number, userId?: number) => {
@@ -129,7 +161,7 @@ export const deleteMultiple = async (
 };
 
 export const downloadMultiple = (selectedFiles: UploadedFile[]) => {
-  const filesToDownload = selectedFiles.filter((f) => !f.folderId);
+  const filesToDownload = selectedFiles;
 
   if (filesToDownload.length === 0) {
     toast.error('No downloadable files selected.');
@@ -141,7 +173,7 @@ export const downloadMultiple = (selectedFiles: UploadedFile[]) => {
     triggerHiddenDownload(
       `/api/file/download/file?token=${encodeURIComponent(encryptedFileId)}`,
     );
-    toast.success(`Downloading ${filesToDownload[0].name}...`);
+    toast.success(`Downloading "${filesToDownload[0].name}"...`);
     return;
   }
 

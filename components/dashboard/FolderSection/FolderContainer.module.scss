@@ -5,6 +5,7 @@
   height: 100%;
   padding: 0;
   cursor: pointer;
+  position: relative;
 }
 
 // ─── Folders row ──────────────────────────────────────────────────────────
@@ -27,10 +28,32 @@
   gap: 8px;
 }
 
+.clickOverlay {
+  position: absolute;
+  inset: 0;
+  width: 90%;
+  height: 100%;
+  border: none;
+  background: transparent;
+  cursor: pointer;
+  z-index: 1;
+}
+
 .folderActions {
   display: flex;
   align-items: center;
   gap: 4px;
+
+  @media (max-width: 768px) {
+    justify-content: space-between;
+    align-items: normal;
+
+    .folderMenu {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+    }
+  }
 }
 
 .folderName {
@@ -40,6 +63,11 @@
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
+
+  @media (max-width: 768px) {
+    font-size: 13px;
+    margin-top: 8px;
+  }
 }
 
 .starIcon {
@@ -132,4 +160,23 @@
   .icon {
     color: v(destructive);
   }
+}
+
+.folderCard {
+  padding: 12px;
+  border: 1px solid v(border);
+  border-radius: v(radius-lg);
+  background: v(card);
+  position: relative;
+
+  .folderHeaderSm {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+}
+
+.folderCount {
+  font-size: 10px;
+  color: v(muted-foreground);
 }

@@ -26,6 +26,10 @@
   flex: 1;
   overflow: auto;
   padding: 0 24px 24px;
+
+  @media (max-width: 768px) {
+    padding: 0 16px 16px;
+  }
 }
 
 .sectionLabel {
@@ -53,6 +57,11 @@
   .sectionLabel {
     margin: 0;
   }
+
+  @media (max-width: 768px) {
+    margin-top: 8px;
+    margin-bottom: 8px;
+  }
 }
 
 .sectionMeta {
@@ -75,28 +84,32 @@
   @media (max-width: 1024px) {
     grid-template-columns: repeat(2, 1fr);
   }
-  @media (max-width: 768px) {
+  @media (max-width: 448px) {
+    grid-template-columns: repeat(1, 1fr);
+  }
+}
+
+.gridFolder4 {
+  grid-template-columns: repeat(4, 1fr);
+  gap: 10px;
+
+  @media (max-width: 1280px) {
+    grid-template-columns: repeat(3, 1fr);
+  }
+  @media (max-width: 1024px) {
     grid-template-columns: repeat(2, 1fr);
   }
   @media (max-width: 448px) {
     grid-template-columns: repeat(1, 1fr);
   }
 }
-.gridFolder4 {
-  grid-template-columns: repeat(4, 1fr);
-  gap: 10px;
 
-  @media (max-width: 1280px) {
-    grid-template-columns: repeat(2, 1fr);
-  }
+.header {
   @media (max-width: 768px) {
-    grid-template-columns: repeat(2, 1fr);
-  }
-  @media (max-width: 624px) {
-    grid-template-columns: repeat(2, 1fr);
-  }
-  @media (max-width: 448px) {
-    grid-template-columns: repeat(1, 1fr);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 10px 16px;
   }
 }
 

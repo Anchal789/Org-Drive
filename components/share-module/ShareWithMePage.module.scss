@@ -1,39 +1,5 @@
 @use "../../styles/functions" as *;
 
-.header {
-  padding: 16px 24px 0;
-}
-
-.headingsContainer {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-}
-
-.headings {
-  display: flex;
-  align-items: center;
-  gap: 14px;
-}
-
-.iconBox {
-  width: 38px;
-  height: 38px;
-  border-radius: v(radius-md);
-  background: v(tint-blue-bg);
-  color: v(tint-blue-tx);
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  flex-shrink: 0;
-}
-
-.subHeading {
-  font-size: 12.5px;
-  color: v(muted-foreground);
-  margin-top: 3px;
-}
-
 .subHeader {
   position: relative;
   padding: 16px 24px 8px;
@@ -87,8 +53,25 @@
   color: v(destructive);
 }
 
-.dataTable {
+.dataTableDesktop,
+.dataTableMobile {
   padding: 14px 24px 24px;
+
+  @media (max-width: 768px) {
+    padding: 14px 16px 24px;
+  }
+}
+
+.dataTableDesktop {
+  @media (max-width: 768px) {
+    display: none;
+  }
+}
+
+.dataTableMobile {
+  @media (min-width: 768px) {
+    display: none;
+  }
 }
 
 .owner {

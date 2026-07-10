@@ -1,6 +1,6 @@
 import { redirect } from 'next/navigation';
-import DriveTopbar from '@/components/Header/DriveTopbar';
-import TopbarWrapper from '@/components/Header/TopbarWrapper';
+import DriveTopbar from '@/components/header/DriveTopbar';
+import TopbarWrapper from '@/components/header/TopbarWrapper';
 import ShareDialog from '@/components/share-module/ShareDialog/ShareDialog';
 import DriveSidebar from '@/components/sidebar/DriveSidebar';
 import { SidebarProvider } from '@/components/ui/sidebar';

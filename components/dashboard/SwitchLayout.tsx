@@ -1,6 +1,7 @@
 'use client';
 
 import { type FunctionComponent, useMemo } from 'react';
+import { useIsTab } from '@/hooks/use-mobile';
 import { useFileLayout, useSortByStore } from '@/store/store';
 import type { UploadedFile, UploadedFolder } from '@/types/files';
 import DashGrid from './GridSection/DashGrid';
@@ -13,6 +14,7 @@ const SwitchLayout: FunctionComponent<{
 }> = ({ files, folders }) => {
   const { fileLayout, hasHydrated } = useFileLayout();
   const { sortBy } = useSortByStore();
+  const isMobile = useIsTab();
 
   const sortedData = useMemo(() => {
     const getModTime = (item: UploadedFile | UploadedFolder) => {
@@ -65,7 +67,11 @@ const SwitchLayout: FunctionComponent<{
   return fileLayout === 'list' ? (
     <DashList files={sortedData.files} folders={sortedData.folders} />
   ) : (
-    <DashGrid files={sortedData.files} folders={sortedData.folders} />
+    <DashGrid
+      files={sortedData.files}
+      folders={sortedData.folders}
+      isMobile={isMobile}
+    />
   );
 };
 

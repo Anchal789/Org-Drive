@@ -1,4 +1,4 @@
-@use "../functions" as *;
+@use "@/styles/functions" as *;
 
 .overlay {
   position: absolute;
@@ -19,11 +19,34 @@
   &:has(input:hover) {
     background: v(tint-peach-bg);
   }
+
+  @media (max-width: 768px) {
+    height: 50%;
+    top: 50%;
+    transform: translateY(-50%);
+  }
 }
 
 .inner {
   text-align: center;
   color: v(primary);
+}
+
+.closeOverlay {
+  display: none;
+
+  @media (max-width: 768px) {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    position: absolute;
+    top: 20%;
+    right: 12px;
+    cursor: pointer;
+    z-index: 100;
+    height: fit-content;
+    width: fit-content;
+  }
 }
 
 .iconBox {

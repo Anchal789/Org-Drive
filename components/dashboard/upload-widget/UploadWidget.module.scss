@@ -10,7 +10,13 @@
   border-radius: v(radius-xl);
   box-shadow: v(shadow-xl);
   overflow: hidden;
-  z-index: 4;
+  z-index: 10;
+
+  @media (max-width: 448px) {
+    width: calc(100% - 2rem);
+    right: 1rem;
+    left: 1rem;
+  }
 }
 
 .head {
@@ -134,4 +140,8 @@
   display: flex;
   align-items: center;
   gap: 6px;
+
+  @media (max-width: 768px) {
+    display: none;
+  }
 }

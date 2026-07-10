@@ -90,6 +90,7 @@ export default function QrCode() {
     if (state.status !== 'waiting' || !currentLoginId) return;
 
     let cancelled = false;
+    let timeoutId: NodeJS.Timeout;
 
     async function poll() {
       if (cancelled) return;
@@ -131,13 +132,18 @@ export default function QrCode() {
         const errMsg = err instanceof Error ? err.message : String(err);
         if (!cancelled)
           setState({ status: 'error', message: errMsg ?? 'Poll error' });
+      } finally {
+        if (!cancelled) {
+          timeoutId = setTimeout(poll, POLL_INTERVAL_MS);
+        }
       }
     }
 
-    const id = setInterval(poll, POLL_INTERVAL_MS);
+    poll();
+
     return () => {
       cancelled = true;
-      clearInterval(id);
+      clearTimeout(timeoutId);
     };
   }, [state.status, currentLoginId, navigateToMyDrive]);
 

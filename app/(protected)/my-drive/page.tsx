@@ -2,6 +2,7 @@ import DriveDropOverlay from '@/components/dashboard/DriveDropOverlay';
 import DashGridWrapper from '@/components/dashboard/GridSection/DashGridWrapper';
 import SwitchLayout from '@/components/dashboard/SwitchLayout';
 import UploadWidget from '@/components/dashboard/upload-widget/UploadWidget';
+import NewItemButton from '@/components/sidebar/NewItemButton';
 import { getSessionUser } from '@/lib/session';
 import { sharedWithMeRepository } from '@/repositories/shared-with-me.repository';
 import { uploadedFilesRepository } from '@/repositories/uploaded-files.respository';
@@ -68,6 +69,7 @@ export default async function Page() {
         <SwitchLayout files={allFiles} folders={allFolders} />
       </DashGridWrapper>
       <UploadWidget />
+      <NewItemButton fromLayout={true} />
     </>
   );
 }

@@ -119,7 +119,8 @@ export default function FileSelectionBar({
               downloadMultiple(selectedFiles);
             }}
           >
-            <Download size={14} /> Download
+            <Download size={14} />{' '}
+            <span className={styles.btnText}>Download</span>
           </Button>
 
           <Button
@@ -132,7 +133,7 @@ export default function FileSelectionBar({
               setOpen(true);
             }}
           >
-            <Share size={14} /> Share
+            <Share size={14} /> <span className={styles.btnText}>Share</span>
           </Button>
           <Button
             className={styles.actionButton}
@@ -145,7 +146,7 @@ export default function FileSelectionBar({
             }
             disabled={folders?.length === 0}
           >
-            <Folder size={14} /> Move
+            <Folder size={14} /> <span className={styles.btnText}>Move</span>
           </Button>
           <Button
             className={styles.actionButton}
@@ -157,14 +158,16 @@ export default function FileSelectionBar({
               });
             }}
           >
-            <Tag size={14} /> Bookmark
+            <Tag size={14} /> <span className={styles.btnText}>Bookmark</span>
           </Button>
-          <Separator orientation='vertical' />
+          <Separator orientation='vertical' className={styles.divider} />
+
           <Button className={styles.actionButton}>
-            <Sparkle size={14} /> Ask AI
+            <Sparkle size={14} /> <span className={styles.btnText}>Ask AI</span>
           </Button>
 
-          <Separator orientation='vertical' />
+          <Separator orientation='vertical' className={styles.divider} />
+
           <Button
             className={`${styles.actionButton} ${styles['actionButton-destructive']}`}
             variant={'destructive'}
@@ -172,7 +175,7 @@ export default function FileSelectionBar({
               setOpenDeleteDialog(true);
             }}
           >
-            <Trash2 size={14} /> Delete
+            <Trash2 size={14} /> <span className={styles.btnText}>Delete</span>
           </Button>
         </div>
       </div>

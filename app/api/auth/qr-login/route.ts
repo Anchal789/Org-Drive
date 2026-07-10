@@ -13,6 +13,8 @@ import { userRepository } from '@/repositories/user.repository';
 const API_ID = Number(process.env.TELEGRAM_APP_API_ID);
 const API_HASH = String(process.env.TELEGRAM_APP_API_HASH);
 
+const activeRequests = new Set<string>();
+
 export async function GET(request: NextRequest) {
   const loginId = request.nextUrl.searchParams.get('loginId');
   if (!loginId) {
@@ -76,6 +78,15 @@ export async function GET(request: NextRequest) {
     return sendError(error || 'QR Login failed', 400, { status: 'error' });
   }
 
+  if (activeRequests.has(loginId)) {
+    return sendSuccess(
+      { step: 'waiting' },
+      'Waiting for QR scan (Server busy)',
+    );
+  }
+
+  activeRequests.add(loginId);
+
   try {
     if (!entry.client.connected) {
       await entry.client.connect();
@@ -107,16 +118,18 @@ export async function GET(request: NextRequest) {
     }
 
     return sendSuccess({ step: 'waiting' }, 'Waiting for QR scan');
-  } catch {
+  } catch (_error) {
     try {
       await entry.client.disconnect();
     } catch {
-      void 0;
+      // Ignore disconnect errors
     }
 
     return sendSuccess(
       { step: 'waiting' },
       'Waiting for QR scan (retrying connection)',
     );
+  } finally {
+    activeRequests.delete(loginId);
   }
 }

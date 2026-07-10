@@ -1,6 +1,6 @@
 'use client';
 
-import { ChevronLeftIcon } from 'lucide-react';
+import { ChevronLeftIcon, Shield } from 'lucide-react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { useReducer } from 'react';
 import { Controller, useForm } from 'react-hook-form';
@@ -105,14 +105,14 @@ export default function VerifyOtpPage() {
   return (
     <div className={styles.pageWrapper}>
       <div className={styles.authCard}>
-        {/* Hide the back button once successfully verified */}
         {!isSuccess && (
           <Button
             type='button'
+            variant='ghost'
             onClick={() => router.push('/login')}
             className={styles.backButton}
           >
-            <ChevronLeftIcon size={13} /> Back
+            <ChevronLeftIcon size={14} strokeWidth={1.6} /> Back
           </Button>
         )}
 
@@ -157,7 +157,9 @@ export default function VerifyOtpPage() {
               )}
             />
 
-            <ResendTimer seconds={RESEND_SECONDS} />
+            <div className={styles.resendWrapper}>
+              <ResendTimer seconds={RESEND_SECONDS} />
+            </div>
 
             {(otpForm.formState.errors.otp || serverError) && (
               <p className={styles.errorText}>
@@ -172,6 +174,7 @@ export default function VerifyOtpPage() {
               }
               loading={otpForm.formState.isSubmitting}
               loadingText='Verifying…'
+              className={styles.submitButton}
             >
               Verify and continue
             </TelegramButton>
@@ -215,6 +218,7 @@ export default function VerifyOtpPage() {
               }
               loading={passwordForm.formState.isSubmitting}
               loadingText='Verifying…'
+              className={styles.submitButton}
             >
               Submit password
             </TelegramButton>
@@ -233,6 +237,11 @@ export default function VerifyOtpPage() {
             </Button>
           </div>
         )}
+      </div>
+
+      <div className={styles.mobileFooter}>
+        <Shield size={11} strokeWidth={1.6} /> Telegram handles the code — we
+        never see it.
       </div>
     </div>
   );

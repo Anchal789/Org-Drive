@@ -5,6 +5,7 @@ import { useSelectedFilesStore } from '@/store/store';
 import type { UploadedFile } from '@/types/files';
 import FileCard from './FileCard';
 import styles from './FileCard.module.scss';
+import { Button } from '@/components/ui/button';
 
 const FilesContainer = ({ files }: { files: Array<UploadedFile> }) => {
   const { selectedFiles, setSelectedFiles, setFileCount } =
@@ -29,22 +30,22 @@ const FilesContainer = ({ files }: { files: Array<UploadedFile> }) => {
   return (
     <>
       {files.map((file) => (
-        <button
-          type='button'
-          tabIndex={0}
-          key={file.id}
-          data-slot='file-card'
-          className={styles.cardWrapper}
-          onClick={() => handleToggleSelect(file)}
-          onKeyDown={(e) => {
-            if (e.key === 'Enter' || e.key === ' ') {
-              e.preventDefault();
-              handleToggleSelect(file);
-            }
-          }}
-        >
+        <div key={file.id} className={styles.cardWrapper}>
+          <Button
+            type='button'
+            tabIndex={0}
+            data-slot='file-card'
+            className={styles.clickOverlay}
+            onClick={() => handleToggleSelect(file)}
+            onKeyDown={(e) => {
+              if (e.key === 'Enter' || e.key === ' ') {
+                e.preventDefault();
+                handleToggleSelect(file);
+              }
+            }}
+          />
           <FileCard file={file} isSelected={selectedIds.includes(file.id)} />
-        </button>
+        </div>
       ))}
     </>
   );

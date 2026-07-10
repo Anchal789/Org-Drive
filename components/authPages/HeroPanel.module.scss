@@ -16,6 +16,10 @@
     color-mix(in srgb, v(tg-blue) 10%, transparent),
     color-mix(in srgb, v(tg-blue) 5%, transparent)
   );
+
+  @media (max-width: 768px) {
+    display: none;
+  }
 }
 
 .headerRow {

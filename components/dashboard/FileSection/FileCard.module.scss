@@ -46,6 +46,17 @@
   gap: 4px;
 }
 
+.clickOverlay {
+  position: absolute;
+  inset: 0;
+  width: 90%;
+  height: 100%;
+  border: none;
+  background: transparent;
+  cursor: pointer;
+  z-index: 1;
+}
+
 .starIcon {
   color: v(tint-amber-bd);
 }

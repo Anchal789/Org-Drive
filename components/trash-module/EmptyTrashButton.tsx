@@ -6,6 +6,7 @@ import { useState } from 'react';
 import { emptyTrash } from '@/services/trash-service';
 import AlertModal from '../ui/alert-modal';
 import { Button } from '../ui/button';
+import styles from './TrashPage.module.scss';
 
 export default function EmptyTrashButton({
   isDisabled,
@@ -43,6 +44,7 @@ export default function EmptyTrashButton({
         variant='outline'
         onClick={() => setIsOpen(true)}
         disabled={isDisabled || isDeleting}
+        className={styles.emptyTrashButton}
       >
         <Trash2 size={14} />
         {isDeleting ? 'Emptying...' : 'Empty trash'}

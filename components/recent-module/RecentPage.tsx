@@ -5,6 +5,7 @@ import { type FunctionComponent, useMemo } from 'react';
 import { getFileExtension } from '@/lib/utils';
 import { formatBytes } from '@/store/store';
 import type { RecentLogsType } from '@/types/recent';
+import PageHeader from '../page-header/PageHeader';
 import { Button } from '../ui/button';
 import FileType from '../ui/fileType';
 import styles from './Recent.module.scss';
@@ -50,17 +51,13 @@ const RecentPage: FunctionComponent<{
 
   return (
     <>
-      <div className={styles.header}>
-        <div className={styles.iconBox}>
-          <Clock size={20} />
-        </div>
-        <div>
-          <div className={styles.title}>Recent</div>
-          <div className={styles.subHeading}>
-            Everything you&apos;ve touched lately, newest first.
-          </div>
-        </div>
-      </div>
+      <PageHeader
+        icon={<Clock size={20} />}
+        tone='violet'
+        title='Recent'
+        subHeading="Everything you've touched lately, newest first."
+        hideOnMobile={true}
+      />
       <div className={styles.wrapper}>
         {Object.entries(groupedLogs).map(([groupName, logs]) => {
           if (logs.length === 0) return null;
@@ -96,17 +93,32 @@ const RecentPage: FunctionComponent<{
                             {actorName} {log.action}
                           </span>
                           <span>·</span>
-                          <Folder
-                            size={11}
-                            className={styles.metaIcon}
-                            fill='currentColor'
-                          />
-                          <span>{log.folderName || 'Drive'}</span>
+                          <span className={styles.folderWrapper}>
+                            <Folder
+                              size={11}
+                              className={styles.metaIcon}
+                              fill='currentColor'
+                            />
+                            <span>{log.folderName || 'Drive'}</span>
+                          </span>
+                          <span className={styles.showOnSmallMobile}>·</span>
+                          <span className={styles.showOnSmallMobile}>
+                            {timeString}
+                          </span>
+
+                          <span className={styles.showOnMobile}>·</span>
+                          <span className={styles.showOnMobile}>
+                            {log.fileSize ? formatBytes(log.fileSize) : '--'}
+                          </span>
                         </div>
                       </div>
 
-                      <span className={styles.timestamp}>{timeString}</span>
-                      <span className={styles.size}>
+                      <span
+                        className={`${styles.timestamp} ${styles.hideOnSmallMobile}`}
+                      >
+                        {timeString}
+                      </span>
+                      <span className={`${styles.size} ${styles.hideOnMobile}`}>
                         {log.fileSize ? formatBytes(log.fileSize) : '--'}
                       </span>
 

@@ -1,12 +1,10 @@
-import { Folder, Share, Shield, Users } from 'lucide-react';
-import type { UploadedFile } from '@/types/files';
-import DriveCrumb from '../DriveCrumb/DriveCrumb';
+import { Folder, Shield, Users } from 'lucide-react';
+import type { UploadedFile, UploadedFolder } from '@/types/files';
 import FileSelectionBar from '../FileSection/FileSelectionBar';
 import UploadWidget from '../upload-widget/UploadWidget';
+import { ActionButtons } from './ActionButtons';
 import styles from './DashFolder.module.scss';
-import { DownloadAllButton } from './DownloadAllButton';
 import LayoutForInsideFolder from './LayoutForInsideFolder';
-import { Button } from '@/components/ui/button';
 
 export default function DashFolder({
   files,
@@ -14,38 +12,44 @@ export default function DashFolder({
   folderId,
   membersCount,
   permissions,
+  folderDetails,
 }: {
   files: Array<UploadedFile>;
   folderName: string;
   folderId: number;
   membersCount: number;
   permissions: string[];
+  folderDetails: UploadedFolder;
 }) {
   const canEdit = permissions.includes('editor');
   const canView = permissions.includes('viewer');
 
   return (
     <>
-      <DriveCrumb inFolder={folderName ?? 'Folder name'} />
-
+      <div className={styles.header}>
+        <Folder size={16} className={styles.folderIcon} fill='currentColor' />
+        <h6 className={styles.title}>{folderName}</h6>
+      </div>
       <div className={styles.subHeader}>
-        <Users size={13} />{' '}
-        {membersCount
-          ? `Shared with ${membersCount} people`
-          : 'Shared with no one'}
+        <span className={styles.subHeaderContent}>
+          <Users size={13} />{' '}
+          {membersCount
+            ? `Shared with ${membersCount} people`
+            : 'Shared with no one'}
+        </span>
         {!!membersCount && (
-          <>
+          <span className={styles.subHeaderContent}>
             <span className={styles.divider} />
             <Shield size={13} /> Members can
             {canEdit && ' edit'} {canEdit && canView && '&'} {canView && 'view'}
-          </>
+          </span>
         )}
         <div className={styles.flex} />
-        <Button variant='ghost'>
-          <Share size={13} />
-          Share
-        </Button>
-        <DownloadAllButton folderId={folderId} folderName={folderName} />
+        <ActionButtons
+          folderId={folderId}
+          folderName={folderName}
+          folderDetails={folderDetails}
+        />
       </div>
 
       <div className={styles.content}>

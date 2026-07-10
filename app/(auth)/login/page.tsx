@@ -1,12 +1,13 @@
 import HeroPanel from '@/components/authPages/HeroPanel';
 import LoginForm from '@/components/authPages/LoginForm';
+import styles from '@/components/authPages/LoginPage.module.scss';
 
 export default function LoginPage() {
   return (
-    <div className='min-h-screen w-full flex flex-col lg:flex-row bg-background text-foreground'>
+    <div className={styles.authPage}>
       <HeroPanel />
 
-      <div className='flex-1 flex items-center justify-center p-6 sm:p-12'>
+      <div className={styles.formSectionWrapper}>
         <LoginForm />
       </div>
     </div>

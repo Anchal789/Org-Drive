@@ -10,6 +10,7 @@ import { db } from '@/db';
 import { recentTable, uploadedFilesTable } from '@/db/schema';
 import { sendError } from '@/lib/api-response';
 import { getSessionUser } from '@/lib/session';
+import { decrypt } from '@/lib/utils';
 import { systemSettingsRepository } from '@/repositories/system-settings.repository';
 
 const API_ID = Number(process.env.TELEGRAM_APP_API_ID);
@@ -21,8 +22,8 @@ export async function GET(request: NextRequest) {
   const session = await getSessionUser();
 
   if (!session?.userId) return sendError('Unauthorized', 401);
-
-  const idsParam = searchParams.get('ids');
+  const idsParam =
+    searchParams.get('ids') || decrypt(searchParams.get('token') || '');
   if (!idsParam) return sendError('No file IDs provided', 400);
 
   const fileIds = idsParam.split(',').map(Number).filter(Boolean);

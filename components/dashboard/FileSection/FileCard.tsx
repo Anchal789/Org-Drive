@@ -29,12 +29,17 @@ export default function FileCard({
       className={`${styles.card} ${isSelected ? styles.selected : ''} ${big ? styles.cardBig : ''}`.trim()}
     >
       <div className={styles.header}>
-        {isSelected ? (
-          <Checkbox checked={isSelected} size='21.39px' />
-        ) : (
-          <FileType kind={fileExtension} />
-        )}
-        <div className={styles.headerActions}>
+        {/* Wrap Checkbox in interactiveZone */}
+        <div className={styles.interactiveZone}>
+          {isSelected ? (
+            <Checkbox checked={isSelected} size='21.39px' />
+          ) : (
+            <FileType kind={fileExtension} />
+          )}
+        </div>
+
+        {/* Wrap actions in interactiveZone */}
+        <div className={`${styles.headerActions} ${styles.interactiveZone}`}>
           {file.bookmark && <Tag size={13} className={styles.starIcon} />}
           <FileMenu file={file} />
         </div>
@@ -45,7 +50,9 @@ export default function FileCard({
       </div>
 
       <div>
-        <div className={styles.name}>{file.name}</div>
+        <div className={styles.name} title={file.name}>
+          {file.name}
+        </div>
         <div className={styles.meta}>
           <div className={styles.metaLeft}>
             <UserAvatar

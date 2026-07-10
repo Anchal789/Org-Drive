@@ -1,7 +1,6 @@
 export const dynamic = 'force-dynamic';
 
 import type { UploadedFile, UploadedFolder } from '@/types/files';
-import DriveCrumb from '../DriveCrumb/DriveCrumb';
 import FolderContainer from '../FolderSection/FolderContainer';
 import styles from './DashList.module.scss';
 import FileTable from './FileTable';
@@ -16,8 +15,6 @@ export default function DashList({
   return (
     <div className={styles.shell}>
       <div className={styles.main}>
-        <DriveCrumb />
-
         <div className={styles.content}>
           {/* Folders row */}
           <div className={styles.sectionLabel}>Folders · {folders?.length}</div>
@@ -31,7 +28,7 @@ export default function DashList({
           </div>
 
           {/* Files table */}
-          <FileTable files={files} />
+          <FileTable files={files} folders={folders} />
         </div>
       </div>
     </div>
