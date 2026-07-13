@@ -2,6 +2,9 @@
 
 .container {
   margin-top: 14px;
+  position: sticky;
+  top: 0;
+  z-index: 10;
 }
 
 .actionBar {
@@ -13,6 +16,16 @@
   border: 1px solid color-mix(in oklch, v(primary) 30%, v(border));
   border-radius: v(radius-lg);
   box-shadow: v(shadow-xs);
+
+  overflow-x: auto;
+  scrollbar-width: none;
+  &::-webkit-scrollbar {
+    display: none;
+  }
+
+  @media (max-width: 448px) {
+    flex-wrap: wrap;
+  }
 }
 
 .selectedCount {
@@ -21,6 +34,7 @@
   margin: 0px 4px 0px 9px;
   white-space: nowrap;
   color: v(foreground);
+  flex-shrink: 0;
 }
 
 .clearBtn {
@@ -44,6 +58,7 @@
 
 .spacer {
   flex: 1 1 0%;
+  min-width: 8px;
 }
 
 .actionButton {
@@ -63,11 +78,22 @@
   font-weight: 500;
   font-family: inherit;
   white-space: nowrap;
-
+  flex-shrink: 0;
   transition: background-color 0.12s ease;
 
   &:hover {
     background: color-mix(in srgb, v(foreground) 6%, transparent);
+  }
+
+  @media (max-width: 768px) {
+    padding: 0px 8px;
+    gap: 0;
+  }
+}
+
+.btnText {
+  @media (max-width: 768px) {
+    display: none;
   }
 }
 

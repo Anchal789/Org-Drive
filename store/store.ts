@@ -1,23 +1,30 @@
-import { toast } from "sonner";
-import { create } from "zustand";
-import type { UploadItem } from "@/types/dashboard";
-import {
+import { toast } from 'sonner';
+import { create } from 'zustand';
+import { persist } from 'zustand/middleware';
+import type { UploadItem } from '@/types/dashboard';
+import type { UploadedFile, UploadedFolder } from '@/types/files';
+import type {
+  AuthStateStore,
+  DragDropStore,
+  FileLayoutStore,
+  QueuedFile,
+  ShareWithMeDialogStore,
   SortByStore,
-  type AuthStateStore,
-  type DragDropStore,
-  type FileLayoutStore,
-  type QueuedFile,
-  type ShareWithMeDialogStore,
-  type UploadStore,
-} from "@/types/store";
-import { UploadedFile, UploadedFolder } from "@/types/files";
-import { persist } from "zustand/middleware";
+  UploadStore,
+} from '@/types/store';
 
-export const useAuthStore = create<AuthStateStore>((set) => ({
-  accessToken: null,
-  setAccessToken: (token) => set({ accessToken: token }),
-  clearAuth: () => set({ accessToken: null }),
-}));
+export const useAuthStore = create<AuthStateStore>()(
+  persist(
+    (set) => ({
+      accessToken: null,
+      setAccessToken: (token: string | null) => set({ accessToken: token }),
+      clearAuth: () => set({ accessToken: null }),
+    }),
+    {
+      name: 'auth-storage',
+    },
+  ),
+);
 
 export const useDragDropStore = create<DragDropStore>((set) => ({
   isDragging: false,
@@ -29,26 +36,34 @@ export const useDragDropStore = create<DragDropStore>((set) => ({
 export const useFileLayout = create<FileLayoutStore>()(
   persist(
     (set) => ({
-      fileLayout: "grid",
+      fileLayout: 'grid',
+      hasHydrated: false,
+
+      setHasHydrated: (state) => set({ hasHydrated: state }),
+
       setFileLayout: (layout) => set({ fileLayout: layout }),
     }),
     {
-      name: "file-layout",
+      name: 'fileLayout',
+
+      onRehydrateStorage: () => (state) => {
+        state?.setHasHydrated(true);
+      },
     },
   ),
 );
 
 export const useSortByStore = create<SortByStore>((set) => ({
-  sortBy: "name",
+  sortBy: 'name',
   setSortBy: (sortBy) => set({ sortBy }),
 }));
 
 export function formatBytes(bytes: number): string {
-  if (bytes === 0) return "0 B";
+  if (bytes === 0) return '0 B';
   const k = 1024;
-  const sizes = ["B", "KB", "MB", "GB"];
+  const sizes = ['B', 'KB', 'MB', 'GB'];
   const i = Math.floor(Math.log(bytes) / Math.log(k));
-  return Number.parseFloat((bytes / k ** i).toFixed(1)) + " " + sizes[i];
+  return `${Number.parseFloat((bytes / k ** i).toFixed(1))} ${sizes[i]}`;
 }
 
 const activeControllers = new Map<string, AbortController>();
@@ -74,7 +89,7 @@ export const useUploadStore = create<UploadStore>((set, get) => ({
         ...state.uploads,
         [uniqueId]: {
           ...state.uploads[uniqueId],
-          state: "aborted",
+          state: 'aborted',
         },
       },
     }));
@@ -83,13 +98,13 @@ export const useUploadStore = create<UploadStore>((set, get) => ({
   startUploads: (files: File[], folderName?: string, fileCount?: number) => {
     const newUploads: Record<string, UploadItem> = {};
     const newQueueItems: QueuedFile[] = [];
-    files.forEach((file) => {
+    for (const file of files) {
       const uniqueId = `${file.name}-${Date.now()}-${Math.random().toString(36).slice(2, 9)}`;
       newUploads[uniqueId] = {
         id: uniqueId,
         name: file.name,
         size: formatBytes(file.size),
-        state: "queued",
+        state: 'queued',
         pct: 0,
         eta: undefined,
         folderName: folderName,
@@ -103,7 +118,7 @@ export const useUploadStore = create<UploadStore>((set, get) => ({
         isFolder: folderName !== undefined,
         uniqueId,
       });
-    });
+    }
 
     set((state) => ({
       isWidgetVisible: true,
@@ -127,16 +142,16 @@ export const useUploadStore = create<UploadStore>((set, get) => ({
     activeControllers.set(file.name, controller);
 
     const formData = new FormData();
-    formData.append("file", file);
+    formData.append('file', file);
 
     if (folderName) {
-      formData.append("folderName", folderName);
-      formData.append("fileCount", String(fileCount || 0));
+      formData.append('folderName', folderName);
+      formData.append('fileCount', String(fileCount || 0));
     }
 
     try {
-      const response = await fetch("/api/file/upload-files", {
-        method: "POST",
+      const response = await fetch('/api/file/upload-files', {
+        method: 'POST',
         body: formData,
         signal: controller.signal,
       });
@@ -144,22 +159,22 @@ export const useUploadStore = create<UploadStore>((set, get) => ({
       if (!response.ok) {
         const errorData = await response.json().catch(() => null);
         const errorMessage =
-          errorData?.message || errorData?.error || "Server connection failed.";
+          errorData?.message || errorData?.error || 'Server connection failed.';
         throw new Error(errorMessage);
       }
-      if (!response.body) throw new Error("No stream available");
+      if (!response.body) throw new Error('No stream available');
 
       const reader = response.body.getReader();
       const decoder = new TextDecoder();
-      let buffer = "";
+      let buffer = '';
 
       while (true) {
         const { done, value } = await reader.read();
         if (done) break;
 
         buffer += decoder.decode(value, { stream: true });
-        const parts = buffer.split("\n");
-        buffer = parts.pop() || "";
+        const parts = buffer.split('\n');
+        buffer = parts.pop() || '';
 
         for (const part of parts) {
           const trimmed = part.trim();
@@ -167,12 +182,12 @@ export const useUploadStore = create<UploadStore>((set, get) => ({
 
           let jsonString = trimmed;
 
-          if (trimmed.startsWith("data:")) {
-            jsonString = trimmed.replace("data:", "").trim();
+          if (trimmed.startsWith('data:')) {
+            jsonString = trimmed.replace('data:', '').trim();
           } else if (
-            trimmed.startsWith("event:") ||
-            trimmed.startsWith("id:") ||
-            trimmed.startsWith("retry:")
+            trimmed.startsWith('event:') ||
+            trimmed.startsWith('id:') ||
+            trimmed.startsWith('retry:')
           ) {
             continue;
           }
@@ -182,19 +197,19 @@ export const useUploadStore = create<UploadStore>((set, get) => ({
           try {
             const event = JSON.parse(jsonString);
 
-            if (event.type === "file_start") {
+            if (event.type === 'file_start') {
               set((s) => ({
                 uploads: {
                   ...s.uploads,
                   [uniqueId]: {
                     ...s.uploads[uniqueId],
-                    state: "uploading",
+                    state: 'uploading',
                     pct: 0,
                     eta: event.eta,
                   },
                 },
               }));
-            } else if (event.type === "progress") {
+            } else if (event.type === 'progress') {
               set((s) => ({
                 uploads: {
                   ...s.uploads,
@@ -205,33 +220,35 @@ export const useUploadStore = create<UploadStore>((set, get) => ({
                   },
                 },
               }));
-            } else if (event.type === "complete") {
+            } else if (event.type === 'complete') {
               set((s) => ({
                 uploads: {
                   ...s.uploads,
                   [uniqueId]: {
                     ...s.uploads[uniqueId],
-                    state: "done",
+                    state: 'done',
                     pct: 100,
                     eta: undefined,
                   },
                 },
               }));
-            } else if (event.type === "error") {
+            } else if (event.type === 'error') {
               streamError = new Error(event.message);
             }
-          } catch (err) {}
+          } catch {
+            void 0;
+          }
           if (streamError) {
             throw streamError;
           }
         }
       }
-    } catch (error: any) {
-      if (error.name !== "AbortError") {
+    } catch (error: unknown) {
+      if (error instanceof Error && error.name !== 'AbortError') {
         set((s) => ({
           uploads: {
             ...s.uploads,
-            [uniqueId]: { ...s.uploads[uniqueId], state: "error" },
+            [uniqueId]: { ...s.uploads[uniqueId], state: 'error' },
           },
         }));
         toast.error(`Upload failed: ${error.message}`);
@@ -256,7 +273,9 @@ export const useShareDialogStore = create<ShareWithMeDialogStore>((set) => ({
   files: [],
   setFiles: (files: UploadedFile[]) => set({ files }),
   setFolder: (folder: UploadedFolder) => set({ folder }),
-  onSuccess: () => {},
+  onSuccess: () => {
+    void 0;
+  },
   onCancel: () => {
     set({ file: null });
     set({ folder: null });

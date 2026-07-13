@@ -1,31 +1,31 @@
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { TINTS } from "@/constants/common-constants";
-import type { UserAvatarProps } from "@/types/component-types";
-import styles from "./Component.module.scss";
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+import { TINTS } from '@/constants/common-constants';
+import type { UserAvatarProps } from '@/types/component-types';
+import styles from './Component.module.scss';
 
 export default function UserAvatar({
   initials,
   src,
-  tone = "slate",
-  size = "default",
+  tone = 'slate',
+  size = 'default',
   ring = false,
-  className = "",
+  className = '',
 }: UserAvatarProps) {
   const t = TINTS[tone as keyof typeof TINTS] ?? TINTS.slate;
 
   const dynamicStyles = {
-    "--avatar-bg": t.bg,
-    "--avatar-tx": t.tx,
-    "--avatar-bd": t.bd,
+    '--avatar-bg': t.bg,
+    '--avatar-tx': t.tx,
+    '--avatar-bd': t.bd,
   } as React.CSSProperties;
 
   return (
     <Avatar
       size={size}
-      className={`${styles.avatar} ${ring ? styles.hasRing : ""} ${className}`.trim()}
+      className={`${styles.avatar} ${ring ? styles.hasRing : ''} ${className}`.trim()}
       style={dynamicStyles}
     >
-      <AvatarImage src={src} alt={initials ?? "User"} />
+      <AvatarImage src={src} alt={initials ?? 'User'} />
       <AvatarFallback className={styles.fallback}>{initials}</AvatarFallback>
     </Avatar>
   );

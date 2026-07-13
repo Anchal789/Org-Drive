@@ -21,7 +21,7 @@ export default function Btn({
 
   return (
     <button
-      data-slot="btn"
+      data-slot='btn'
       data-variant={variant}
       data-size={size}
       className={`${styles.btn} ${styles[variant]} ${styles[`size-${size}`]} ${className}`}

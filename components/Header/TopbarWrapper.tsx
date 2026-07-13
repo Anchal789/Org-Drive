@@ -1,21 +1,25 @@
-"use client";
+'use client';
 
-import { usePathname } from "next/navigation";
-import React from "react";
+import { usePathname } from 'next/navigation';
+import type React from 'react';
+import { useIsTab } from '@/hooks/use-mobile';
 
 export default function TopbarWrapper({
-  children,
+  mobileTopBar,
+  desktopTopBar,
 }: {
-  children: React.ReactNode;
+  mobileTopBar: React.ReactNode;
+  desktopTopBar: React.ReactNode;
 }) {
   const pathname = usePathname();
+  const isMobile = useIsTab();
 
-  const hiddenRoutes = ["/analytics", "/smart-search", "/ai-chat"];
+  const hiddenRoutes = ['/analytics', '/smart-search', '/ai-chat'];
   const shouldHide = hiddenRoutes.includes(pathname);
 
-  if (shouldHide) {
+  if (shouldHide && !isMobile) {
     return null;
   }
 
-  return <>{children}</>;
+  return <>{isMobile ? mobileTopBar : desktopTopBar}</>;
 }

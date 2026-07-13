@@ -1,13 +1,17 @@
-import { sendError, sendSuccess } from "@/lib/api-response";
-import { decrypt } from "@/lib/utils";
-import { bookmarkRepository } from "@/repositories/bookmark.repository";
-import { NextRequest } from "next/server";
+import type { NextRequest } from 'next/server';
+import { sendError, sendSuccess } from '@/lib/api-response';
+import { getApiSession } from '@/lib/session';
+import { decrypt } from '@/lib/utils';
+import { bookmarkRepository } from '@/repositories/bookmark.repository';
 
 export async function POST(request: NextRequest) {
+  const session = await getApiSession(request);
+
+  if (!session?.userId) return sendError('Unauthorized', 401);
   const { id, isFile, bookmark, shared } = await request.json();
 
   if (!id) {
-    return sendError("Missing id", 400);
+    return sendError('Missing id', 400);
   }
   try {
     const response = await bookmarkRepository.bookmarkItem(
@@ -18,12 +22,12 @@ export async function POST(request: NextRequest) {
     );
 
     if (!response) {
-      return sendError("Failed to bookmark item", 500);
+      return sendError('Failed to bookmark item', 500);
     }
 
     return sendSuccess(
       null,
-      `${isFile ? "File" : "Folder"} ${bookmark ? "bookmarked" : "unbookmarked"}`,
+      `${isFile ? 'File' : 'Folder'} ${bookmark ? 'bookmarked' : 'unbookmarked'}`,
       200,
     );
   } catch (error) {

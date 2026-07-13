@@ -1,11 +1,11 @@
-"use client";
+'use client';
 
-import { LogOut } from "lucide-react";
-import { Button } from "../ui/button";
-import styles from "./DriveTopbar.module.scss";
-import { FunctionComponent } from "react";
-import { SessionUser } from "@/types/auth";
-import { logoutUser } from "@/services/logout-service";
+import { LogOut } from 'lucide-react';
+import type { FunctionComponent } from 'react';
+import { logoutUser } from '@/services/logout-service';
+import type { SessionUser } from '@/types/auth';
+import { Button } from '../ui/button';
+import styles from './DriveTopbar.module.scss';
 
 const LogoutBtn: FunctionComponent<{ user: SessionUser }> = ({ user }) => {
   return (

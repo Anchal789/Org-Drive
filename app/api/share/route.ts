@@ -1,16 +1,18 @@
-import { sendError, sendSuccess } from "@/lib/api-response";
-import { shareRepository } from "@/repositories/share.repository";
-import { sharedWithMeRepository } from "@/repositories/shared-with-me.repository";
-import { NextRequest } from "next/server";
-import { getSessionUser } from "@/lib/session";
-import { db } from "@/db";
-import { recentTable } from "@/db/schema";
+import type { NextRequest } from 'next/server';
+import { db } from '@/db';
+import { recentTable } from '@/db/schema';
+import { sendError, sendSuccess } from '@/lib/api-response';
+import { getApiSession } from '@/lib/session';
+import { shareRepository } from '@/repositories/share.repository';
+import { sharedWithMeRepository } from '@/repositories/shared-with-me.repository';
 
 export async function POST(request: NextRequest) {
-  const session = await getSessionUser();
-  const actorId = Number(session?.userId);
+  const session = await getApiSession(request);
 
-  if (!actorId) return sendError("Unauthorized", 401);
+  if (!session?.userId) {
+    return sendError('Access token missing or expired', 401);
+  }
+  const actorId = Number(session?.userId);
 
   const { usersToInvite, usersWithAccess, file, folder, files } =
     await request.json();
@@ -30,7 +32,7 @@ export async function POST(request: NextRequest) {
         userId: number;
         fileId: number;
         folderId: number | null;
-        permission: "viewer" | "editor" | "owner" | "commenter";
+        permission: 'viewer' | 'editor' | 'owner' | 'commenter';
         sharedWithUserId: number;
       }> = [];
       const fileIds = files.map((f) => Number(f.id));
@@ -52,7 +54,7 @@ export async function POST(request: NextRequest) {
               userId: actorId,
               fileId: Number(f.id),
               folderId: f.folderId ? Number(f.folderId) : null,
-              action: "shared",
+              action: 'shared',
               actionBy: actorId,
             });
 
@@ -60,7 +62,7 @@ export async function POST(request: NextRequest) {
               userId: recipientId,
               fileId: Number(f.id),
               folderId: f.folderId ? Number(f.folderId) : null,
-              action: "shared",
+              action: 'shared',
               actionBy: actorId,
             });
           }
@@ -73,7 +75,7 @@ export async function POST(request: NextRequest) {
 
       if (usersWithAccess && usersWithAccess.length > 0) {
         for (const user of usersWithAccess) {
-          if (user.permission === "owner") continue;
+          if (user.permission === 'owner') continue;
 
           await shareRepository.updateSharedItemPermissionsBulk(
             fileIds,
@@ -84,19 +86,22 @@ export async function POST(request: NextRequest) {
       }
 
       if (logs.length > 0) {
-        await db.insert(recentTable).values(logs).catch(console.error);
+        await db
+          .insert(recentTable)
+          .values(logs)
+          .catch(() => {
+            void 0;
+          });
       }
 
-      return sendSuccess(null, "Multiple files shared successfully", 200);
-    } catch (error: unknown) {
-      const errMsg = error instanceof Error ? error.message : String(error);
-      console.error("Bulk Share API Error:", errMsg);
-      return sendError("Failed to process bulk sharing", 500);
+      return sendSuccess(null, 'Multiple files shared successfully', 200);
+    } catch {
+      return sendError('Failed to process bulk sharing', 500);
     }
   }
 
   if (!file && !folder) {
-    return sendError("Missing Item to share", 400);
+    return sendError('Missing Item to share', 400);
   }
 
   const actualFileId = file?.fileId || file?.id || null;
@@ -114,7 +119,7 @@ export async function POST(request: NextRequest) {
   const recordsToUpdate = usersWithAccess.filter(
     (frontendUser: {
       id: number;
-      permission: "viewer" | "editor" | "owner" | "commenter";
+      permission: 'viewer' | 'editor' | 'owner' | 'commenter';
     }) => {
       const dbUser = currentDbState.find((user) => user.id === frontendUser.id);
       return dbUser && dbUser.permission !== frontendUser.permission;
@@ -122,7 +127,7 @@ export async function POST(request: NextRequest) {
   );
 
   if (usersToInvite.length === 0 && recordsToUpdate.length === 0) {
-    return sendError("No changes detected", 400);
+    return sendError('No changes detected', 400);
   }
 
   try {
@@ -133,7 +138,7 @@ export async function POST(request: NextRequest) {
         userId: actorId,
         fileId: actualFileId || undefined,
         folderId: actualFolderId ? actualFolderId : null,
-        action: "shared",
+        action: 'shared',
         actionBy: actorId,
       });
 
@@ -150,7 +155,7 @@ export async function POST(request: NextRequest) {
           userId: user.userId,
           fileId: actualFileId || undefined,
           folderId: actualFolderId || undefined,
-          action: "shared",
+          action: 'shared',
           actionBy: actorId,
         });
       }
@@ -168,17 +173,20 @@ export async function POST(request: NextRequest) {
     }
 
     if (logs.length > 0) {
-      await db.insert(recentTable).values(logs).catch(console.error);
+      await db
+        .insert(recentTable)
+        .values(logs)
+        .catch(() => {
+          void 0;
+        });
     }
 
     return sendSuccess(
       null,
-      `${file ? "File" : "Folder"} shared successfully`,
+      `${file ? 'File' : 'Folder'} shared successfully`,
       200,
     );
-  } catch (error: unknown) {
-    const errMsg = error instanceof Error ? error.message : String(error);
-    console.error("Share API Error:", errMsg);
-    return sendError("Failed to process sharing", 500);
+  } catch {
+    return sendError('Failed to process sharing', 500);
   }
 }

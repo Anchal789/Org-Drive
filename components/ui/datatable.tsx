@@ -1,5 +1,5 @@
-import { Checkbox } from "@/components/ui/checkbox";
-import { DataTableProps } from "@/types/component-types";
+import { X } from 'lucide-react';
+import { Checkbox } from '@/components/ui/checkbox';
 import {
   Table,
   TableBody,
@@ -7,9 +7,11 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from "@/components/ui/table";
-import styles from "./Component.module.scss";
-import { X } from "lucide-react";
+} from '@/components/ui/table';
+import type { DataTableProps } from '@/types/component-types';
+import styles from './Component.module.scss';
+
+const EMPTY_SELECTED_IDS: Array<string | number> = [];
 
 type ExtendedDataTableProps<T> = DataTableProps<T> & {
   renderSelectionActions?: (
@@ -24,7 +26,7 @@ export default function DataTable<T>({
   getRowId,
   classes,
   enableSelection = false,
-  selectedIds = [],
+  selectedIds = EMPTY_SELECTED_IDS,
   onSelectionChange,
   renderSelectionActions,
 }: ExtendedDataTableProps<T>) {
@@ -55,7 +57,7 @@ export default function DataTable<T>({
   const showSelectionBar = hasSelection && !!renderSelectionActions;
 
   return (
-    <div className={`${styles.table} ${classes?.table || ""}`}>
+    <div className={`${styles.table} ${classes?.table || ''}`}>
       <Table>
         <TableHeader className={classes?.header}>
           <TableRow notApplyBackground className={classes?.header}>
@@ -79,9 +81,9 @@ export default function DataTable<T>({
                   </span>
 
                   <button
-                    type="button"
+                    type='button'
                     onClick={clearSelection}
-                    aria-label="Clear selection"
+                    aria-label='Clear selection'
                     className={styles.clearButton}
                   >
                     <X size={14} strokeWidth={1.6} />
@@ -90,7 +92,7 @@ export default function DataTable<T>({
                   <div className={styles.actionsGap} />
 
                   <div className={styles.actionsGroup}>
-                    {renderSelectionActions!(selectedIds, clearSelection)}
+                    {renderSelectionActions?.(selectedIds, clearSelection)}
                   </div>
                 </div>
               </TableHead>
@@ -136,8 +138,8 @@ export default function DataTable<T>({
               return (
                 <TableRow
                   key={rowId}
-                  className={`${classes?.row || ""} ${
-                    isSelected ? styles.selectedRow : ""
+                  className={`${classes?.row || ''} ${
+                    isSelected ? styles.selectedRow : ''
                   }`}
                 >
                   {enableSelection && (
@@ -151,14 +153,20 @@ export default function DataTable<T>({
                     </TableCell>
                   )}
 
-                  {columns.map((col) => (
-                    <TableCell
-                      key={`${rowId}-${col.id}`}
-                      className={col.className}
-                    >
-                      {col.cell(row, rowIndex)}
-                    </TableCell>
-                  ))}
+                  {columns.map((col) => {
+                    const headerText =
+                      typeof col.header === 'string' ? col.header : '';
+
+                    return (
+                      <TableCell
+                        key={`${rowId}-${col.id}`}
+                        className={col.className}
+                        data-label={headerText}
+                      >
+                        {col.cell(row, rowIndex)}
+                      </TableCell>
+                    );
+                  })}
                 </TableRow>
               );
             })

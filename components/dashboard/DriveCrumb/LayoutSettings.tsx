@@ -1,54 +1,52 @@
-"use client";
+'use client';
 
-import { Button } from "@/components/ui/button";
-import Icon from "@/components/ui/icon";
+import { Settings, Users } from 'lucide-react';
+import { Button } from '@/components/ui/button';
 import {
   Popover,
   PopoverContent,
   PopoverTrigger,
-} from "@/components/ui/popover";
-import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { iconsWithPaths } from "@/constants/common-constants";
-import styles from "./LayoutSettings.module.scss";
-import { Switch } from "@/components/ui/switch";
-import { useFileLayout, useSortByStore } from "@/store/store";
+} from '@/components/ui/popover';
+import { Switch } from '@/components/ui/switch';
+import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { useFileLayout, useSortByStore } from '@/store/store';
+import styles from './LayoutSettings.module.scss';
 
 const LayoutSettings = () => {
   const { fileLayout, setFileLayout } = useFileLayout();
   const { sortBy, setSortBy } = useSortByStore();
 
-  const handleChangeDriveLayout = (layout: "list" | "grid") => {
+  const handleChangeDriveLayout = (layout: 'list' | 'grid') => {
     setFileLayout(layout);
-    localStorage.setItem("fileLayout", layout);
   };
   return (
     <Popover>
       <PopoverTrigger asChild>
-        <Button variant="ghost" size="icon" className={styles.triggerBtn}>
-          <Icon d={iconsWithPaths.settings} size={16} />
+        <Button variant='ghost' size='icon' className={styles.triggerBtn}>
+          <Settings size={16} />
         </Button>
       </PopoverTrigger>
 
       <PopoverContent
         className={styles.popoverContent}
-        align="end"
+        align='end'
         sideOffset={6}
       >
         {/* 1. Sort By Section */}
         <div className={styles.section}>
           <div className={styles.label}>Sort by</div>
           <Tabs
-            defaultValue="name"
+            defaultValue='name'
             value={sortBy}
             onValueChange={(value) =>
-              setSortBy(value as "name" | "modified" | "size" | "type")
+              setSortBy(value as 'name' | 'modified' | 'size' | 'type')
             }
           >
             <TabsList fullwidth>
-              <TabsTrigger value="name">Name</TabsTrigger>
-              <TabsTrigger value="modified">Modified</TabsTrigger>
-              <TabsTrigger value="size">Size</TabsTrigger>
-              <TabsTrigger value="type">Type</TabsTrigger>
+              <TabsTrigger value='name'>Name</TabsTrigger>
+              <TabsTrigger value='modified'>Modified</TabsTrigger>
+              <TabsTrigger value='size'>Size</TabsTrigger>
+              <TabsTrigger value='type'>Type</TabsTrigger>
             </TabsList>
           </Tabs>
         </div>
@@ -56,10 +54,10 @@ const LayoutSettings = () => {
         {/* 2. Density Section */}
         <div className={styles.section}>
           <div className={styles.label}>Density</div>
-          <Tabs defaultValue="comfortable">
+          <Tabs defaultValue='comfortable'>
             <TabsList>
-              <TabsTrigger value="comfortable">Comfortable</TabsTrigger>
-              <TabsTrigger value="compact">Compact</TabsTrigger>
+              <TabsTrigger value='comfortable'>Comfortable</TabsTrigger>
+              <TabsTrigger value='compact'>Compact</TabsTrigger>
             </TabsList>
           </Tabs>
         </div>
@@ -68,15 +66,15 @@ const LayoutSettings = () => {
         <div className={styles.section}>
           <div className={styles.label}>Default view</div>
           <Tabs
-            defaultValue="grid"
+            defaultValue='grid'
             value={fileLayout}
             onValueChange={(value: string) =>
-              handleChangeDriveLayout(value as "grid" | "list")
+              handleChangeDriveLayout(value as 'grid' | 'list')
             }
           >
             <TabsList>
-              <TabsTrigger value="grid">Grid</TabsTrigger>
-              <TabsTrigger value="list">List</TabsTrigger>
+              <TabsTrigger value='grid'>Grid</TabsTrigger>
+              <TabsTrigger value='list'>List</TabsTrigger>
             </TabsList>
           </Tabs>
         </div>
@@ -97,11 +95,7 @@ const LayoutSettings = () => {
 
         {/* 5. Action Button */}
         <Button className={styles.actionButton}>
-          <Icon
-            d={iconsWithPaths.users}
-            size={15}
-            className={styles.actionIcon}
-          />
+          <Users size={15} className={styles.actionIcon} />
           <span>Manage access</span>
         </Button>
       </PopoverContent>

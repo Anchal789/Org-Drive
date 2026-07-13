@@ -1,28 +1,29 @@
-"use server";
-import { cookies } from "next/headers";
-import { TelegramClient } from "telegram";
-import { StringSession } from "telegram/sessions";
-import { userRepository } from "@/repositories/user.repository";
-import type { TelegramUser } from "@/types/auth";
-import { generateRefreshToken, verifyToken } from "./jwt";
+'use server';
+import { cookies } from 'next/headers';
+import type { NextRequest } from 'next/server';
+import { TelegramClient } from 'telegram';
+import { StringSession } from 'telegram/sessions';
+import { userRepository } from '@/repositories/user.repository';
+import type { TelegramUser } from '@/types/auth';
+import { generateRefreshToken, verifyToken } from './jwt';
 
 const API_ID = Number(process.env.TELEGRAM_APP_API_ID);
 const API_HASH = String(process.env.TELEGRAM_APP_API_HASH);
-const REFRESH_TOKEN = "refresh_token";
+const REFRESH_TOKEN = 'refresh_token';
 const SESSION_DURATION_MS = 7 * 24 * 60 * 60 * 1000; // 7 days
 
 function isSessionPayload(
   payload: unknown,
 ): payload is TelegramUser & { userId: string } {
   return (
-    typeof payload === "object" &&
+    typeof payload === 'object' &&
     payload !== null &&
-    "userId" in payload &&
-    "telegramId" in payload &&
-    "firstName" in payload &&
-    "lastName" in payload &&
-    "username" in payload &&
-    "photoUrl" in payload
+    'userId' in payload &&
+    'telegramId' in payload &&
+    'firstName' in payload &&
+    'lastName' in payload &&
+    'username' in payload &&
+    'photoUrl' in payload
   );
 }
 
@@ -41,10 +42,10 @@ export async function createSession(props: TelegramUser & { userId: string }) {
 
   cookieStore.set(REFRESH_TOKEN, token, {
     httpOnly: true,
-    secure: process.env.NODE_ENV === "production",
+    secure: process.env.NODE_ENV === 'production',
     expires: expiresAt,
-    sameSite: "lax",
-    path: "/",
+    sameSite: 'lax',
+    path: '/',
   });
 }
 
@@ -52,7 +53,7 @@ export async function getSessionUser(): Promise<
   (TelegramUser & { userId: string }) | null
 > {
   const cookieStore = await cookies();
-  const refreshToken = cookieStore.get("refresh_token")?.value;
+  const refreshToken = cookieStore.get('refresh_token')?.value;
 
   if (!refreshToken) return null;
 
@@ -63,10 +64,25 @@ export async function getSessionUser(): Promise<
   return payload;
 }
 
+export async function getApiSession(
+  request: NextRequest,
+): Promise<(TelegramUser & { userId: string }) | null> {
+  const authHeader = request.headers.get('authorization');
+  if (!authHeader?.startsWith('Bearer ')) {
+    return null;
+  }
+  const token = authHeader.split(' ')[1];
+  const payload = await verifyToken(token);
+  if (!payload || !isSessionPayload(payload)) {
+    return null;
+  }
+  return payload;
+}
+
 export async function destroySession() {
   const cookieStore = await cookies();
   cookieStore.delete(REFRESH_TOKEN);
-  cookieStore.delete("sidebar_state");
+  cookieStore.delete('sidebar_state');
 }
 
 export async function isTelegramSessionValid(): Promise<{
@@ -88,19 +104,22 @@ export async function isTelegramSessionValid(): Promise<{
   try {
     await client.connect();
     await client.getDialogs({ limit: 20 });
-    return { valid: true, message: "Session valid" };
+    return { valid: true, message: 'Session valid' };
   } catch (err: unknown) {
     const errMsg = err instanceof Error ? err.message : String(err);
-    if (client) await client.disconnect().catch(() => {});
-    if (errMsg?.includes("AUTH_KEY_UNREGISTERED")) {
+    if (client)
+      await client.disconnect().catch(() => {
+        void 0;
+      });
+    if (errMsg?.includes('AUTH_KEY_UNREGISTERED')) {
       return {
         valid: false,
-        message: "Telegram session expired. Please log in again.",
+        message: 'Telegram session expired. Please log in again.',
       };
     }
     return {
       valid: false,
-      message: "Failed to connect to Telegram infrastructure",
+      message: 'Failed to connect to Telegram infrastructure',
     };
   }
 }

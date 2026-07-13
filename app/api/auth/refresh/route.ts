@@ -14,7 +14,7 @@ export async function POST() {
   // 2. Verify the refresh token is still valid (within the 7 days)
   const payload = await verifyToken(refreshToken);
 
-  if (!payload || !payload.userId) {
+  if (!payload?.userId) {
     return sendError('Invalid or expired refresh token', 403);
   }
 

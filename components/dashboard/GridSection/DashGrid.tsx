@@ -1,33 +1,45 @@
-export const dynamic = "force-dynamic";
+export const dynamic = 'force-dynamic';
 
-import type { UploadedFile, UploadedFolder } from "@/types/files";
-import DriveCrumb from "../DriveCrumb/DriveCrumb";
-import FileCard from "../FileSection/FileCard";
-import FolderContainer from "../FolderSection/FolderContainer";
-import styles from "./DashGrid.module.scss";
-import Image from "next/image";
-import NoDataImage from "@/public/assets/No-Data.svg";
-import FilesContainer from "../FileSection/FilesContainer";
-import FileSelectionBar from "../FileSection/FileSelectionBar";
+import Image from 'next/image';
+import NoDataImage from '@/public/assets/No-Data.svg';
+import type { UploadedFile, UploadedFolder } from '@/types/files';
+import FileCard from '../FileSection/FileCard';
+import FileSelectionBar from '../FileSection/FileSelectionBar';
+import FilesContainer from '../FileSection/FilesContainer';
+import FolderContainer from '../FolderSection/FolderContainer';
+import styles from './DashGrid.module.scss';
+import LoadMore from './LoadMore';
+
+type Props = {
+  files: Array<UploadedFile>;
+  folders: Array<UploadedFolder>;
+  isMobile: boolean;
+  loadMoreFiles: () => Promise<void>;
+  showLessFiles: () => void;
+  loadMoreFolders: () => Promise<void>;
+  showLessFolders: () => void;
+  loadingFolders: boolean;
+  hasMoreFolders: boolean;
+  loadingFiles: boolean;
+  hasMoreFiles: boolean;
+};
 
 export default function DashGrid({
   files,
   folders,
-}: {
-  files: Array<UploadedFile>;
-  folders: Array<UploadedFolder>;
-}) {
+  isMobile,
+  ...props
+}: Props) {
   return (
     <>
-      <DriveCrumb inFolder="" />
       {files.length === 0 && folders.length === 0 && (
         <div className={styles.emptyHint}>
           <Image
             src={NoDataImage}
             width={350}
             height={350}
-            alt="No data"
-            loading="eager"
+            alt='No data'
+            loading='eager'
             className={styles.emptyHintImage}
           />
           Drag your files and folders here or use the &apos;New&apos; button to
@@ -35,8 +47,8 @@ export default function DashGrid({
         </div>
       )}
       <div className={styles.content}>
-        <FileSelectionBar files={files} />
-        {files.length > 0 && (
+        <FileSelectionBar files={files} folders={folders} />
+        {!isMobile && files.length > 0 && (
           <>
             <div className={styles.sectionLabel}>Suggested</div>
             <div className={`${styles.grid} ${styles.grid4}`}>
@@ -51,16 +63,18 @@ export default function DashGrid({
           <>
             <div className={styles.sectionHeader}>
               <div className={styles.sectionLabel}>Folders</div>
-              <span className={styles.sectionMeta}>
-                Top-level only · no nesting
-              </span>
+              {!isMobile && (
+                <span className={styles.sectionMeta}>
+                  Top-level only · no nesting
+                </span>
+              )}
             </div>
-            <div className={`${styles.grid} ${styles.grid4}`}>
+            <div className={`${styles.grid} ${styles.gridFolder4}`}>
               {folders.map((folder) => (
                 <FolderContainer
                   key={folder.id}
                   folder={folder}
-                  layout="grid"
+                  layout='grid'
                 />
               ))}
             </div>
@@ -75,6 +89,19 @@ export default function DashGrid({
             <div className={`${styles.grid} ${styles.grid4}`}>
               <FilesContainer files={files} />
             </div>
+
+            <LoadMore
+              hasMoreFiles={props.hasMoreFiles}
+              hasMoreFolders={props.hasMoreFolders}
+              loadMoreFiles={props.loadMoreFiles}
+              loadMoreFolders={props.loadMoreFolders}
+              loadingFiles={props.loadingFiles}
+              loadingFolders={props.loadingFolders}
+              showLessFiles={props.showLessFiles}
+              showLessFolders={props.showLessFolders}
+              localFiles={files.length}
+              localFolders={folders.length}
+            />
           </>
         )}
       </div>

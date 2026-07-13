@@ -1,27 +1,34 @@
-"use client";
+'use client';
 
-import { useRouter } from "next/navigation";
-import { useState } from "react";
-import AlertModal from "@/components/ui/alert-modal";
-import { Button } from "@/components/ui/button";
+import {
+  Download,
+  MoreHorizontal,
+  PencilLine,
+  Share,
+  Tag,
+  Trash2,
+  UserMinus,
+} from 'lucide-react';
+import { useRouter } from 'next/navigation';
+import { useState } from 'react';
+import RenameItem from '@/components/rename/RenameIterm';
+import AlertModal from '@/components/ui/alert-modal';
+import { Button } from '@/components/ui/button';
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuGroup,
   DropdownMenuItem,
   DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
-import Icon from "@/components/ui/icon";
-import { iconsWithPaths } from "@/constants/common-constants";
-import styles from "../FolderContainer.module.scss";
-import { useShareDialogStore } from "@/store/store";
-import { UploadedFolder } from "@/types/files";
-import { Separator } from "@/components/ui/separator";
-import { bookmarkItem, downloadAllFolderFiles } from "@/services/file-service";
-import { encrypt } from "@/lib/utils";
-import RenameItem from "@/components/rename/RenameIterm";
-import { bookmarkSharedItem } from "@/services/shared-with-me-service";
-import { trashFolder } from "@/services/folder-service";
+} from '@/components/ui/dropdown-menu';
+import { Separator } from '@/components/ui/separator';
+import { encrypt } from '@/lib/utils';
+import { bookmarkItem, downloadAllFolderFiles } from '@/services/file-service';
+import { trashFolder } from '@/services/folder-service';
+import { bookmarkSharedItem } from '@/services/shared-with-me-service';
+import { useShareDialogStore } from '@/store/store';
+import type { UploadedFolder } from '@/types/files';
+import styles from '../FolderContainer.module.scss';
 
 const FolderMenu = ({
   folder,
@@ -54,11 +61,11 @@ const FolderMenu = ({
       <AlertModal
         open={openDeleteDialog}
         onOpenChange={setOpenDeleteDialog}
-        title="Delete folder?"
+        title='Delete folder?'
         description={`Are you sure you want to delete "${folder.name}"?`}
-        confirmText="Delete"
-        confirmVariant="destructive"
-        cancelText="Cancel"
+        confirmText='Delete'
+        confirmVariant='destructive'
+        cancelText='Cancel'
         onConfirm={handleDelete}
         onCancel={() => setOpenDeleteDialog(false)}
       />
@@ -71,18 +78,14 @@ const FolderMenu = ({
       <DropdownMenu>
         <DropdownMenuTrigger asChild>
           <Button
-            type="button"
+            type='button'
             className={styles.moreBtn}
             onClick={(e) => e.stopPropagation()}
           >
-            <Icon
-              d={iconsWithPaths.more}
-              size={14}
-              className={styles.moreIcon}
-            />
+            <MoreHorizontal size={14} className={styles.moreIcon} />
           </Button>
         </DropdownMenuTrigger>
-        <DropdownMenuContent className={styles.menuContent} align="start">
+        <DropdownMenuContent className={styles.menuContent} align='start'>
           <DropdownMenuGroup>
             <DropdownMenuItem
               onClick={(e) => {
@@ -91,11 +94,7 @@ const FolderMenu = ({
               }}
               className={styles.menuItem}
             >
-              <Icon
-                d={iconsWithPaths.pencil}
-                size={14}
-                className={styles.icon}
-              />
+              <PencilLine size={14} className={styles.icon} />
               Rename
             </DropdownMenuItem>
             <DropdownMenuItem
@@ -106,11 +105,7 @@ const FolderMenu = ({
               }}
               className={styles.menuItem}
             >
-              <Icon
-                d={iconsWithPaths.download}
-                size={14}
-                className={styles.icon}
-              />
+              <Download size={14} className={styles.icon} />
               Download
             </DropdownMenuItem>
             <DropdownMenuItem
@@ -121,11 +116,7 @@ const FolderMenu = ({
               }}
               className={styles.menuItem}
             >
-              <Icon
-                d={iconsWithPaths.share}
-                size={14}
-                className={styles.icon}
-              />
+              <Share size={14} className={styles.icon} />
               Share
             </DropdownMenuItem>
             <DropdownMenuItem
@@ -135,11 +126,7 @@ const FolderMenu = ({
               }}
               className={styles.menuItem}
             >
-              <Icon
-                d={iconsWithPaths.bookmark}
-                size={14}
-                className={styles.icon}
-              />
+              <Tag size={14} className={styles.icon} />
               Bookmark
             </DropdownMenuItem>
             <Separator className={styles.separator} />
@@ -150,16 +137,12 @@ const FolderMenu = ({
               }}
               className={`${styles.menuItem} ${styles.deleteItem}`}
             >
-              <Icon
-                d={
-                  folder.shareId
-                    ? iconsWithPaths.userRemove
-                    : iconsWithPaths.trash
-                }
-                size={14}
-                className={styles.icon}
-              />
-              {folder.shareId ? "Remove for me" : "Delete"}
+              {folder.shareId ? (
+                <UserMinus size={14} className={styles.icon} />
+              ) : (
+                <Trash2 size={14} className={styles.icon} />
+              )}
+              {folder.shareId ? 'Remove for me' : 'Delete'}
             </DropdownMenuItem>
           </DropdownMenuGroup>
         </DropdownMenuContent>

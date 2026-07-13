@@ -1,25 +1,26 @@
-import { iconsWithPaths } from "@/constants/common-constants";
-import Icon from "../ui/icon";
-import styles from "./TrashPage.module.scss";
-import { ColumnDef } from "@/types/component-types";
-import { TrashInterface } from "@/types/trash";
-import FileType from "../ui/fileType";
-import { formatBytes } from "@/store/store";
-import { formatFileDate, getFileExtension } from "@/lib/utils";
-import { FunctionComponent } from "react";
-import DataTable from "../ui/datatable";
-import TrashTableActionColumn from "./TrashTableActionColumn";
-import EmptyTrashButton from "./EmptyTrashButton";
+import { ChevronDown, Folder, Shield, Trash2 } from 'lucide-react';
+import type { FunctionComponent } from 'react';
+import { formatFileDate, getFileExtension } from '@/lib/utils';
+import { formatBytes } from '@/store/store';
+import type { ColumnDef } from '@/types/component-types';
+import type { TrashInterface } from '@/types/trash';
+import PageHeader from '../page-header/PageHeader';
+import FlexibleTile from '../responsive-list/FlexibleTile';
+import DataTable from '../ui/datatable';
+import FileType from '../ui/fileType';
+import EmptyTrashButton from './EmptyTrashButton';
+import styles from './TrashPage.module.scss';
+import TrashTableActionColumn from './TrashTableActionColumn';
 
 const TrashPage: FunctionComponent<{
   trashedItems: Array<TrashInterface>;
 }> = async ({ trashedItems }) => {
   const columns: ColumnDef<TrashInterface>[] = [
     {
-      id: "name",
+      id: 'name',
       header: (
         <span className={styles.sortable}>
-          Name <Icon d={iconsWithPaths.chevDown} size={10} />
+          Name <ChevronDown size={10} />
         </span>
       ),
       className: styles.fileCell,
@@ -27,10 +28,9 @@ const TrashPage: FunctionComponent<{
         <>
           {item.folderId && item.fileId === null ? (
             <>
-              <Icon
-                d={iconsWithPaths.folder}
+              <Folder
                 size={14}
-                fill="currentColor"
+                fill='currentColor'
                 className={styles.folderIcon}
               />
               <span className={styles.fileName}>{item.folderName}</span>
@@ -45,23 +45,23 @@ const TrashPage: FunctionComponent<{
       ),
     },
     {
-      id: "size",
-      width: "120px",
-      header: "Size",
+      id: 'size',
+      width: '120px',
+      header: 'Size',
       className: styles.metaCell,
       cell: (file) => <span>{formatBytes(file?.size)}</span>,
     },
     {
-      id: "deleted",
-      width: "130px",
-      header: "Deleted",
+      id: 'deleted',
+      width: '130px',
+      header: 'Deleted',
       className: styles.metaCell,
       cell: (file) => <span>{formatFileDate(file.createdAt)}</span>,
     },
     {
-      id: "autodelete",
-      width: "110px",
-      header: "Auto-delete",
+      id: 'autodelete',
+      width: '110px',
+      header: 'Auto-delete',
       className: styles.metaCell,
       cell: (file) => {
         const autoDeleteAt =
@@ -72,57 +72,99 @@ const TrashPage: FunctionComponent<{
         );
 
         return (
-          <span className={daysLeft < 10 ? styles.autoDeleteIn10Days : ""}>
-            {daysLeft > 0 ? `in ${daysLeft} days` : "Expired"}
+          <span className={daysLeft < 10 ? styles.autoDeleteIn10Days : ''}>
+            {daysLeft > 0 ? `in ${daysLeft} days` : 'Expired'}
           </span>
         );
       },
     },
     {
-      id: "actions",
-      width: "64px",
-      header: "",
+      id: 'actions',
+      width: '64px',
+      header: '',
       className: styles.actions,
       cell: (item) => <TrashTableActionColumn trashed={item} />,
     },
   ];
 
+  const flatHintContent = (
+    <div className={styles.flatHint}>
+      <Shield size={14} className={styles.flatHintIcon} />
+      <span className={styles.flatHintText}>
+        Files in Trash still count toward your channel storage until they're
+        permanently deleted.
+      </span>
+    </div>
+  );
+
   return (
     <>
-      <div className={styles.header}>
-        <div className={styles.headingsContainer}>
-          <div className={styles.headings}>
-            <div className={styles.iconBox}>
-              <Icon d={iconsWithPaths.trash} size={20} />
-            </div>
-            <div>
-              <div className={styles.title}>
-                <span>Trash</span>
-              </div>
-              <div className={styles.subHeading}>
-                Items are permanently removed from your Telegram channel after
-                30 days.
-              </div>
-            </div>
-          </div>
+      <PageHeader
+        icon={<Trash2 size={20} />}
+        tone='red'
+        title='Trash'
+        subHeading='Items are permanently removed from your Telegram channel after 30 days.'
+        action={<EmptyTrashButton isDisabled={trashedItems.length === 0} />}
+        hideOnMobile
+      >
+        {flatHintContent}
+      </PageHeader>
+      <div className={styles.flatHintContainerForMobile}>{flatHintContent}</div>
+      <div className={styles.dataTableMobile}>
+        <span className={styles.deleteHint}>
+          <h6 className={styles.deleteHintText}>
+            Item will be permanently deleted after 30 days.
+          </h6>
           <EmptyTrashButton isDisabled={trashedItems.length === 0} />
-        </div>
-        <div className={styles.content}>
-          {/* Flat folder hint */}
-          <div className={styles.flatHint}>
-            <Icon
-              d={iconsWithPaths.shield}
-              size={14}
-              className={styles.flatHintIcon}
+        </span>
+        {trashedItems.map((item) => {
+          const autoDeleteAt =
+            new Date(item.createdAt).getTime() + 30 * 24 * 60 * 60 * 1000;
+
+          const daysLeft = Math.ceil(
+            (autoDeleteAt - Date.now()) / (1000 * 60 * 60 * 24),
+          );
+          return (
+            <FlexibleTile
+              key={item.id}
+              extension={
+                item.folderId && item.fileId === null ? (
+                  <Folder
+                    size={14}
+                    fill='currentColor'
+                    className={styles.folderIcon}
+                  />
+                ) : (
+                  <FileType kind={getFileExtension(item.fileName)} />
+                )
+              }
+              name={
+                item.folderId && item.fileId === null ? (
+                  <span className={styles.fileName}>{item.folderName}</span>
+                ) : (
+                  <span className={styles.fileName}>{item.fileName}</span>
+                )
+              }
+              description={
+                <span
+                  className={
+                    daysLeft < 10
+                      ? styles.autoDeleteIn10Days
+                      : styles.autoDeleteIn30Days
+                  }
+                >
+                  {daysLeft > 0 ? `Auto-delete in ${daysLeft} days` : 'Expired'}
+                </span>
+              }
+              size={formatBytes(item?.size) || ''}
+              folder={item.folderName}
+              date={formatFileDate(item.createdAt)}
+              actions={<TrashTableActionColumn trashed={item} />}
             />
-            <span className={styles.flatHintText}>
-              Files in Trash still count toward your channel storage until
-              they&apos;re permanently deleted.
-            </span>
-          </div>
-        </div>
+          );
+        })}
       </div>
-      <div className={styles.dataTable}>
+      <div className={styles.dataTableDesktop}>
         <DataTable
           data={trashedItems}
           columns={columns}

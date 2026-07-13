@@ -1,9 +1,9 @@
-"use client";
+'use client';
 
-import { useState } from "react";
-import { Button } from "@/components/ui/button";
-import { DownloadCloud, Loader2 } from "lucide-react";
-import { toast } from "sonner";
+import { DownloadCloud, Loader2 } from 'lucide-react';
+import { useState } from 'react';
+import { toast } from 'sonner';
+import { Button } from '@/components/ui/button';
 
 export default function ShareDownloadClient({
   ids,
@@ -18,17 +18,17 @@ export default function ShareDownloadClient({
 
   const handleDownload = () => {
     setIsDownloading(true);
-    toast.success("Starting download...");
-    let apiPath = "";
-    if (type === "multi")
+    toast.success('Starting download...');
+    let apiPath = '';
+    if (type === 'multi')
       apiPath = `/api/file/download/multiple?ids=${ids}&userId=${userId}`;
-    else if (type === "folder")
+    else if (type === 'folder')
       apiPath = `/api/file/download/folder?ids=${ids}&userId=${userId}`;
     else apiPath = `/api/file/download/file?fileId=${ids}&userId=${userId}`;
 
-    const a = document.createElement("a");
+    const a = document.createElement('a');
     a.href = apiPath;
-    a.style.display = "none";
+    a.style.display = 'none';
     document.body.appendChild(a);
     a.click();
     document.body.removeChild(a);
@@ -41,16 +41,16 @@ export default function ShareDownloadClient({
     <Button
       onClick={handleDownload}
       disabled={isDownloading}
-      className="w-full py-6 text-base"
+      className='w-full py-6 text-base'
     >
       {isDownloading ? (
         <>
-          <Loader2 className="mr-2 h-5 w-5 animate-spin" />
+          <Loader2 className='mr-2 h-5 w-5 animate-spin' />
           Preparing Download...
         </>
       ) : (
         <>
-          <DownloadCloud className="mr-2 h-5 w-5" />
+          <DownloadCloud className='mr-2 h-5 w-5' />
           Download Now
         </>
       )}

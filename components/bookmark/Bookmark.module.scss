@@ -1,50 +1,13 @@
 @use "../../styles/functions" as *;
 
-.header {
-  padding: 18px 24px 6px;
-}
-
-.headingsContainer {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-}
-
-.headings {
-  display: flex;
-  align-items: center;
-  gap: 14px;
-}
-
-.title {
-  font-size: 22px;
-  font-weight: 600;
-  letter-spacing: -0.02em;
-  line-height: 1.1;
-}
-
-.iconBox {
-  width: 38px;
-  height: 38px;
-  border-radius: v(radius-md);
-  background: v(tint-amber-bg);
-  color: v(tint-amber-tx);
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  flex-shrink: 0;
-}
-
-.subHeading {
-  font-size: 12.5px;
-  color: v(muted-foreground);
-  margin-top: 3px;
-}
-
 .content {
   flex: 1 1 0%;
   overflow: auto;
   padding: 12px 24px 24px;
+
+  @media (max-width: 768px) {
+    padding: 12px 16px 16px;
+  }
 }
 
 .sectionLabel {
@@ -72,6 +35,16 @@
 .grid4 {
   grid-template-columns: repeat(4, 1fr);
   gap: 10px;
+
+  @media (max-width: 1280px) {
+    grid-template-columns: repeat(3, 1fr);
+  }
+  @media (max-width: 1024px) {
+    grid-template-columns: repeat(2, 1fr);
+  }
+  @media (max-width: 448px) {
+    grid-template-columns: repeat(1, 1fr);
+  }
 }
 
 .emptyHint {

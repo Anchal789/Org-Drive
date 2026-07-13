@@ -1,37 +1,53 @@
-"use client";
+'use client';
 
-import { AnalyticsOverviewData, Timeframe } from "@/types/analytics";
-import { TINTS } from "@/constants/common-constants";
-import styles from "./Analytics.module.scss";
-import StatTile from "./StatTile";
-import ActivityFeed from "./ActivityFeed";
-
+import dynamic from 'next/dynamic';
 import {
-  Bar,
-  BarChart,
-  CartesianGrid,
-  Cell,
-  Label,
-  Pie,
-  PieChart,
-  XAxis,
-} from "recharts";
-import {
-  ChartConfig,
+  type ChartConfig,
   ChartContainer,
   ChartLegend,
   ChartLegendContent,
   ChartTooltip,
   ChartTooltipContent,
-} from "@/components/ui/chart";
+} from '@/components/ui/chart';
+import { TINTS } from '@/constants/common-constants';
+import type { AnalyticsOverviewData, Timeframe } from '@/types/analytics';
+import ActivityFeed from './ActivityFeed';
+import styles from './Analytics.module.scss';
+import StatTile from './StatTile';
+
+const Bar = dynamic(() => import('recharts').then((mod) => mod.Bar), {
+  ssr: false,
+});
+const BarChart = dynamic(() => import('recharts').then((mod) => mod.BarChart), {
+  ssr: false,
+});
+const CartesianGrid = dynamic(
+  () => import('recharts').then((mod) => mod.CartesianGrid),
+  { ssr: false },
+);
+const Cell = dynamic(() => import('recharts').then((mod) => mod.Cell), {
+  ssr: false,
+});
+const Label = dynamic(() => import('recharts').then((mod) => mod.Label), {
+  ssr: false,
+});
+const Pie = dynamic(() => import('recharts').then((mod) => mod.Pie), {
+  ssr: false,
+});
+const PieChart = dynamic(() => import('recharts').then((mod) => mod.PieChart), {
+  ssr: false,
+});
+const XAxis = dynamic(() => import('recharts').then((mod) => mod.XAxis), {
+  ssr: false,
+});
 
 const chartConfig = {
   uploads: {
-    label: "Uploads",
-    color: "var(--primary)",
+    label: 'Uploads',
+    color: 'var(--primary)',
   },
   indexed: {
-    label: "Indexed",
+    label: 'Indexed',
     color: TINTS.violet.bd,
   },
 } satisfies ChartConfig;
@@ -75,11 +91,11 @@ export default function OverviewDashboard({
             <BarChart accessibilityLayer data={data.uploadActivity}>
               <CartesianGrid
                 vertical={false}
-                strokeDasharray="3 3"
-                stroke="var(--border)"
+                strokeDasharray='3 3'
+                stroke='var(--border)'
               />
               <XAxis
-                dataKey="label"
+                dataKey='label'
                 tickLine={false}
                 tickMargin={10}
                 axisLine={false}
@@ -87,8 +103,8 @@ export default function OverviewDashboard({
               <ChartTooltip content={<ChartTooltipContent />} />
               <ChartLegend content={<ChartLegendContent />} />
               <Bar
-                dataKey="uploads"
-                fill="var(--color-uploads)"
+                dataKey='uploads'
+                fill='var(--color-uploads)'
                 radius={[4, 4, 0, 0]}
               />
             </BarChart>
@@ -104,7 +120,7 @@ export default function OverviewDashboard({
             <ChartContainer
               config={{
                 sizeBytes: {
-                  label: "Storage Used",
+                  label: 'Storage Used',
                 },
               }}
               className={styles.donutChart}
@@ -116,39 +132,39 @@ export default function OverviewDashboard({
                 />
                 <Pie
                   data={data.storageByType}
-                  dataKey="sizeBytes"
-                  nameKey="name"
+                  dataKey='sizeBytes'
+                  nameKey='name'
                   innerRadius={44}
                   outerRadius={60}
                   strokeWidth={0}
                 >
-                  {data.storageByType.map((entry, index) => (
-                    <Cell key={`cell-${index}`} fill={TINTS[entry.tone].bd} />
+                  {data.storageByType.map((entry) => (
+                    <Cell key={entry.sizeBytes} fill={TINTS[entry.tone].bd} />
                   ))}
 
                   <Label
                     content={({ viewBox }) => {
-                      if (viewBox && "cx" in viewBox && "cy" in viewBox) {
+                      if (viewBox && 'cx' in viewBox && 'cy' in viewBox) {
                         return (
                           <text
                             x={viewBox.cx}
                             y={viewBox.cy}
-                            textAnchor="middle"
-                            dominantBaseline="middle"
+                            textAnchor='middle'
+                            dominantBaseline='middle'
                           >
                             <tspan
                               x={viewBox.cx}
                               y={viewBox.cy - 4}
-                              className="fill-foreground text-[22px] font-bold"
+                              className='fill-foreground text-[22px] font-bold'
                             >
-                              {data.storageUsed.value.split(" ")[0]}
+                              {data.storageUsed.value.split(' ')[0]}
                             </tspan>
                             <tspan
                               x={viewBox.cx}
                               y={viewBox.cy + 16}
-                              className="fill-muted-foreground text-[10px]"
+                              className='fill-muted-foreground text-[10px]'
                             >
-                              {data.storageUsed.value.split(" ")[1]} used
+                              {data.storageUsed.value.split(' ')[1]} used
                             </tspan>
                           </text>
                         );

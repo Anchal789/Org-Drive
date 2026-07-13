@@ -2,7 +2,7 @@ export interface ShareWithMePerson {
   id: number;
   firstName: string;
   lastName: string;
-  permission: "owner" | "editor" | "viewer" | "commenter";
+  permission: 'owner' | 'editor' | 'viewer' | 'commenter';
   username: string;
   shareId: number;
 }
@@ -16,7 +16,7 @@ export interface SharedWithMeItemsType {
   folderName: string;
   bookmark: boolean;
   sharedWithUserId: number;
-  permission: "viewer" | "editor" | "owner" | "commenter";
+  permission: 'viewer' | 'editor' | 'owner' | 'commenter';
   createdAt: Date;
   ownerFirstName?: string;
   ownerLastName?: string;

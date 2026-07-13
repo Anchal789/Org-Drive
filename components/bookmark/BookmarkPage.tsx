@@ -1,13 +1,12 @@
-export const dynamic = "force-dynamic";
-
-import styles from "./Bookmark.module.scss";
-import { FunctionComponent } from "react";
-import { UploadedFile, UploadedFolder } from "@/types/files";
-import FileCard from "../dashboard/FileSection/FileCard";
-import FolderContainer from "../dashboard/FolderSection/FolderContainer";
-import Image from "next/image";
-import NoDataImage from "@/public/assets/No-Data.svg";
-import { Tag } from "lucide-react";
+import { Tag } from 'lucide-react';
+import Image from 'next/image';
+import type { FunctionComponent } from 'react';
+import NoDataImage from '@/public/assets/No-Data.svg';
+import type { UploadedFile, UploadedFolder } from '@/types/files';
+import FileCard from '../dashboard/FileSection/FileCard';
+import FolderContainer from '../dashboard/FolderSection/FolderContainer';
+import PageHeader from '../page-header/PageHeader';
+import styles from './Bookmark.module.scss';
 
 const BookmarkPage: FunctionComponent<{
   bookmarkedFolders: UploadedFolder[];
@@ -15,29 +14,21 @@ const BookmarkPage: FunctionComponent<{
 }> = ({ bookmarkedFiles, bookmarkedFolders }) => {
   return (
     <>
-      <div className={styles.header}>
-        <div className={styles.headings}>
-          <div className={styles.iconBox}>
-            <Tag size={20} />
-          </div>
-          <div>
-            <div className={styles.title}>
-              <span>Bookmark</span>
-            </div>
-            <div className={styles.subHeading}>
-              Quick access to the files and folders you&apos;ve bookmarked.
-            </div>
-          </div>
-        </div>
-      </div>
+      <PageHeader
+        icon={<Tag size={20} />}
+        tone='amber'
+        title='Bookmark'
+        subHeading="Quick access to the files and folders you've bookmarked."
+        hideOnMobile
+      />
       {bookmarkedFolders.length === 0 && bookmarkedFiles.length === 0 ? (
         <div className={styles.emptyHint}>
           <Image
             src={NoDataImage}
             width={350}
             height={350}
-            alt="No data"
-            loading="eager"
+            alt='No data'
+            loading='eager'
             className={styles.emptyHintImage}
           />
           Drag your files and folders here or use the &apos;New&apos; button to
@@ -55,7 +46,7 @@ const BookmarkPage: FunctionComponent<{
                   <FolderContainer
                     key={folder.id}
                     folder={folder}
-                    layout="grid"
+                    layout='grid'
                   />
                 ))}
               </div>

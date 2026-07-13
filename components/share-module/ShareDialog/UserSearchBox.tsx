@@ -1,9 +1,4 @@
-import Icon from "@/components/ui/icon";
-import UserAvatar from "@/components/ui/user-avatar";
-import { iconsWithPaths } from "@/constants/common-constants";
-import { getAvatarColor } from "@/lib/utils";
-import { User } from "@/types/auth";
-import { InputGroupAddon } from "@/components/ui/input-group";
+import { Users } from 'lucide-react';
 import {
   Combobox,
   ComboboxContent,
@@ -11,8 +6,12 @@ import {
   ComboboxInput,
   ComboboxItem,
   ComboboxList,
-} from "@/components/ui/combobox";
-import styles from "./ShareDialog.module.scss";
+} from '@/components/ui/combobox';
+import { InputGroupAddon } from '@/components/ui/input-group';
+import UserAvatar from '@/components/ui/user-avatar';
+import { getAvatarColor } from '@/lib/utils';
+import type { User } from '@/types/auth';
+import styles from './ShareDialog.module.scss';
 
 interface UserSearchBoxProps {
   filteredUsers: User[];
@@ -20,6 +19,13 @@ interface UserSearchBoxProps {
   setSearchTerm: (term: string) => void;
   onSelectUsers: (users: User[]) => void;
 }
+const getInitials = (first?: string, last?: string) =>
+  `${first?.charAt(0) ?? ''}${last?.charAt(0) ?? ''}`;
+
+const userToStringLabel = (u: User) =>
+  `${u.firstName || ''} ${u.lastName || ''}`;
+
+const userToStringValue = (u: User) => String(u.id);
 
 export default function UserSearchBox({
   filteredUsers,
@@ -27,16 +33,11 @@ export default function UserSearchBox({
   setSearchTerm,
   onSelectUsers,
 }: UserSearchBoxProps) {
-  const initials = (first?: string, last?: string) =>
-    `${first?.charAt(0) ?? ""}${last?.charAt(0) ?? ""}`;
-
   return (
     <Combobox
       items={filteredUsers}
-      itemToStringLabel={(u: User) =>
-        `${u.firstName || ""} ${u.lastName || ""}`
-      }
-      itemToStringValue={(u: User) => String(u.id)}
+      itemToStringLabel={userToStringLabel}
+      itemToStringValue={userToStringValue}
       onValueChange={(value: User | User[]) => {
         const selectedUsers = Array.isArray(value) ? value : [value];
         onSelectUsers(selectedUsers);
@@ -44,14 +45,14 @@ export default function UserSearchBox({
       multiple
     >
       <ComboboxInput
-        placeholder="Search people by name or @telegram-handle"
+        placeholder='Search people by name or @telegram-handle'
         showTrigger={false}
         className={styles.invite}
         value={searchTerm}
         onChange={(e) => setSearchTerm(e.target.value)}
       >
         <InputGroupAddon>
-          <Icon d={iconsWithPaths.users} size={14} />
+          <Users size={14} />
         </InputGroupAddon>
       </ComboboxInput>
       <ComboboxContent className={styles.comboboxContent}>
@@ -66,10 +67,13 @@ export default function UserSearchBox({
               className={styles.comboboxUserRow}
             >
               <UserAvatar
-                initials={initials(user.firstName ?? "", user.lastName ?? "")}
+                initials={getInitials(
+                  user.firstName ?? '',
+                  user.lastName ?? '',
+                )}
                 src={user.photoUrl ?? undefined}
                 tone={getAvatarColor(String(user.id))}
-                size="sm"
+                size='sm'
               />
               <div className={styles.comboboxUserDetails}>
                 <span className={styles.comboboxUserName}>

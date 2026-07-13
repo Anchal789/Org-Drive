@@ -1,6 +1,6 @@
 import { redirect } from 'next/navigation';
-import DriveTopbar from '@/components/Header/DriveTopbar';
-import TopbarWrapper from '@/components/Header/TopbarWrapper';
+import DriveTopbar from '@/components/header/DriveTopbar';
+import TopbarWrapper from '@/components/header/TopbarWrapper';
 import ShareDialog from '@/components/share-module/ShareDialog/ShareDialog';
 import DriveSidebar from '@/components/sidebar/DriveSidebar';
 import { SidebarProvider } from '@/components/ui/sidebar';
@@ -22,15 +22,13 @@ export default async function ProtectedLayout({
     redirect('/login');
   }
 
-  const allUsers = await userRepository.getUsers();
-  const fileFolderCount = await uploadedFilesRepository.fileFolderCount(
-    Number(user.userId),
-  );
-  const sharedWithMeFileCount =
-    await sharedWithMeRepository.getSharedWithMeFileCount(Number(user.userId));
-  const bookmarksCount = await bookmarkRepository.getBookmarksCount(
-    Number(user.userId),
-  );
+  const [allUsers, fileFolderCount, sharedWithMeFileCount, bookmarksCount] =
+    await Promise.all([
+      userRepository.getUsers(),
+      uploadedFilesRepository.fileFolderCount(Number(user.userId)),
+      sharedWithMeRepository.getSharedWithMeFileCount(Number(user.userId)),
+      bookmarkRepository.getBookmarksCount(Number(user.userId)),
+    ]);
 
   return (
     <TooltipProvider>
@@ -43,9 +41,10 @@ export default async function ProtectedLayout({
           />
           <div className={styles.shell}>
             <div className={styles.main}>
-              <TopbarWrapper>
-                <DriveTopbar user={user} />
-              </TopbarWrapper>
+              <TopbarWrapper
+                mobileTopBar={<DriveTopbar isMobile={true} user={user} />}
+                desktopTopBar={<DriveTopbar isMobile={false} user={user} />}
+              />
               <div className={styles.mainContent}>{children}</div>
             </div>
           </div>

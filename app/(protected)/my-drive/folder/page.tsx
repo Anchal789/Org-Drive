@@ -1,8 +1,10 @@
-import DashFolder from "@/components/dashboard/FolderSection/DashFolder";
-import { decrypt } from "@/lib/utils";
-import { uploadedFilesRepository } from "@/repositories/uploaded-files.respository";
-import { uploadedFoldersRepository } from "@/repositories/uploaded-folders.respository";
-import type { UploadedFile } from "@/types/files";
+export const dynamic = 'force-dynamic';
+
+import DashFolder from '@/components/dashboard/FolderSection/DashFolder';
+import { decrypt } from '@/lib/utils';
+import { uploadedFilesRepository } from '@/repositories/uploaded-files.respository';
+import { uploadedFoldersRepository } from '@/repositories/uploaded-folders.respository';
+import type { UploadedFile } from '@/types/files';
 
 export default async function FolderPage({
   searchParams,
@@ -22,6 +24,9 @@ export default async function FolderPage({
     );
 
   const permissions = sharedFolder.map((folder) => folder.permission);
+  const folderDetails = await uploadedFoldersRepository.getFolderById(
+    Number(decryptedId),
+  );
 
   return (
     <DashFolder
@@ -30,6 +35,7 @@ export default async function FolderPage({
       folderId={Number(decryptedId)}
       membersCount={sharedFolder.length}
       permissions={permissions}
+      folderDetails={folderDetails}
     />
   );
 }

@@ -1,12 +1,12 @@
-import { getSessionUser } from "@/lib/session";
-import { redirect } from "next/navigation";
-import { analyticsRepository } from "@/repositories/analytics.repository";
-import { AnalyticsDataPayload } from "@/types/analytics";
-import AnalyticsPage from "@/components/analytics/AnalyticsPage";
+import { redirect } from 'next/navigation';
+import AnalyticsPage from '@/components/analytics/AnalyticsPage';
+import { getSessionUser } from '@/lib/session';
+import { analyticsRepository } from '@/repositories/analytics.repository';
+import type { AnalyticsDataPayload } from '@/types/analytics';
 
 export default async function Analytics() {
   const session = await getSessionUser();
-  if (!session?.userId) redirect("/login");
+  if (!session?.userId) redirect('/login');
   const userId = Number(session.userId);
 
   const [
@@ -36,7 +36,7 @@ export default async function Analytics() {
     },
     insights: {
       totalStorageGB: totalBytes / (1024 * 1024 * 1024),
-      growthRate: "+8.4 GB / week",
+      growthRate: '+8.4 GB / week',
       folders,
     },
     uploadsLast90Days,

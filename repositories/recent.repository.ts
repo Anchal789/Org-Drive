@@ -1,11 +1,11 @@
-import { db } from "@/db";
+import { desc, eq } from 'drizzle-orm';
+import { db } from '@/db';
 import {
   recentTable,
   uploadedFilesTable,
   uploadFoldersTable,
   userTable,
-} from "@/db/schema";
-import { desc, eq } from "drizzle-orm";
+} from '@/db/schema';
 
 export const recentRepository = {
   async getRecentFiles(userId: number) {

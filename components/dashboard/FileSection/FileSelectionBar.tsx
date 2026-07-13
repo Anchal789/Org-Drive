@@ -1,24 +1,26 @@
-"use client";
+'use client';
 
-import { Checkbox } from "@/components/ui/checkbox";
-import { X, Download, Share, Folder, Trash2, Tag, Sparkle } from "lucide-react";
-import styles from "./FileSelectionBar.module.scss";
-import { Separator } from "@/components/ui/separator";
-import { useSelectedFilesStore, useShareDialogStore } from "@/store/store";
-import { UploadedFile } from "@/types/files";
-import { Button } from "@/components/ui/button";
-import { downloadMultiple } from "@/services/file-service";
-import { useState } from "react";
-import { useRouter } from "next/navigation";
-import { handleBookmarMultiple, handleDeleteMultiple } from "@/helpers/file-fn";
-import { Dialog } from "@/components/ui/dialog";
-import MoveModal from "../ListSection/MoveModal";
-import AlertModal from "@/components/ui/alert-modal";
+import { Download, Folder, Share, Sparkle, Tag, Trash2, X } from 'lucide-react';
+import { useRouter } from 'next/navigation';
+import { useState } from 'react';
+import AlertModal from '@/components/ui/alert-modal';
+import { Button } from '@/components/ui/button';
+import { Checkbox } from '@/components/ui/checkbox';
+import { Dialog } from '@/components/ui/dialog';
+import { Separator } from '@/components/ui/separator';
+import { handleBookmarMultiple, handleDeleteMultiple } from '@/helpers/file-fn';
+import { downloadMultiple } from '@/services/file-service';
+import { useSelectedFilesStore, useShareDialogStore } from '@/store/store';
+import type { UploadedFile, UploadedFolder } from '@/types/files';
+import MoveModal from '../ListSection/MoveModal';
+import styles from './FileSelectionBar.module.scss';
 
 export default function FileSelectionBar({
   files,
+  folders,
 }: {
   files: Array<UploadedFile>;
+  folders?: Array<UploadedFolder>;
 }) {
   const { selectedFiles, setSelectedFiles, clearSelection, fileCount } =
     useSelectedFilesStore();
@@ -27,7 +29,7 @@ export default function FileSelectionBar({
   const [modalState, setModalState] = useState<{
     open: boolean;
     file: Array<UploadedFile> | null;
-    action: "share" | "move" | "bookmark" | "delete" | null;
+    action: 'share' | 'move' | 'bookmark' | 'delete' | null;
   }>({
     open: false,
     file: null,
@@ -55,7 +57,7 @@ export default function FileSelectionBar({
   return (
     <>
       <Dialog
-        open={modalState.open && modalState.action === "move"}
+        open={modalState.open && modalState.action === 'move'}
         onOpenChange={(open) => {
           if (!open) {
             setModalState({ open: false, file: null, action: null });
@@ -63,18 +65,18 @@ export default function FileSelectionBar({
         }}
         modal
       >
-        {modalState.open && modalState.action === "move" && (
+        {modalState.open && modalState.action === 'move' && (
           <MoveModal files={modalState.file || []} closeModal={closeModal} />
         )}
       </Dialog>
       <AlertModal
         open={openDeleteDialog}
         onOpenChange={setOpenDeleteDialog}
-        title="Delete file?"
+        title='Delete file?'
         description={`Are you sure you want to delete ${selectedFiles.length} items?`}
-        confirmText="Delete"
-        confirmVariant="destructive"
-        cancelText="Cancel"
+        confirmText='Delete'
+        confirmVariant='destructive'
+        cancelText='Cancel'
         onConfirm={() =>
           handleDeleteMultiple({
             selectedFileObjects: selectedFiles,
@@ -101,7 +103,8 @@ export default function FileSelectionBar({
           <span className={styles.selectedCount}>{selectedCount} selected</span>
 
           <button
-            title="Clear selection"
+            type='button'
+            title='Clear selection'
             onClick={clearSelection}
             className={styles.clearBtn}
           >
@@ -116,7 +119,8 @@ export default function FileSelectionBar({
               downloadMultiple(selectedFiles);
             }}
           >
-            <Download size={14} /> Download
+            <Download size={14} />{' '}
+            <span className={styles.btnText}>Download</span>
           </Button>
 
           <Button
@@ -129,7 +133,7 @@ export default function FileSelectionBar({
               setOpen(true);
             }}
           >
-            <Share size={14} /> Share
+            <Share size={14} /> <span className={styles.btnText}>Share</span>
           </Button>
           <Button
             className={styles.actionButton}
@@ -137,11 +141,12 @@ export default function FileSelectionBar({
               setModalState({
                 open: true,
                 file: selectedFiles,
-                action: "move",
+                action: 'move',
               })
             }
+            disabled={folders?.length === 0}
           >
-            <Folder size={14} /> Move
+            <Folder size={14} /> <span className={styles.btnText}>Move</span>
           </Button>
           <Button
             className={styles.actionButton}
@@ -153,22 +158,24 @@ export default function FileSelectionBar({
               });
             }}
           >
-            <Tag size={14} /> Bookmark
+            <Tag size={14} /> <span className={styles.btnText}>Bookmark</span>
           </Button>
-          <Separator orientation="vertical" />
+          <Separator orientation='vertical' className={styles.divider} />
+
           <Button className={styles.actionButton}>
-            <Sparkle size={14} /> Ask AI
+            <Sparkle size={14} /> <span className={styles.btnText}>Ask AI</span>
           </Button>
 
-          <Separator orientation="vertical" />
+          <Separator orientation='vertical' className={styles.divider} />
+
           <Button
-            className={`${styles.actionButton} ${styles["actionButton-destructive"]}`}
-            variant={"destructive"}
+            className={`${styles.actionButton} ${styles['actionButton-destructive']}`}
+            variant={'destructive'}
             onClick={() => {
               setOpenDeleteDialog(true);
             }}
           >
-            <Trash2 size={14} /> Delete
+            <Trash2 size={14} /> <span className={styles.btnText}>Delete</span>
           </Button>
         </div>
       </div>

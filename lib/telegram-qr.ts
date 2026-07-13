@@ -1,4 +1,4 @@
-import { randomBytes } from 'crypto';
+import { randomBytes } from 'node:crypto';
 import { Api, type TelegramClient } from 'telegram';
 import { qrStore } from '@/lib/telegram-qr-store';
 import type { TelegramUser } from '@/types/auth';
@@ -40,13 +40,13 @@ export async function finalizeLogin(loginId: string, client: TelegramClient) {
       ).toString('base64')}`;
     }
   } catch (err) {
-    console.error('Failed to fetch profile photo', err);
+    void err;
   }
 
   try {
     await client.invoke(new Api.auth.LogOut());
   } catch (err) {
-    console.error('Failed to log out', err);
+    void err;
   }
 
   qrStore.markSuccess(loginId, user);

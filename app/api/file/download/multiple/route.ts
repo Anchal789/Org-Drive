@@ -1,16 +1,17 @@
-export const dynamic = "force-dynamic";
+export const dynamic = 'force-dynamic';
 
-import type { NextRequest } from "next/server";
-import { type Api, TelegramClient } from "telegram";
-import { StringSession } from "telegram/sessions";
-import { sendError } from "@/lib/api-response";
-import { getSessionUser } from "@/lib/session";
-import { systemSettingsRepository } from "@/repositories/system-settings.repository";
-import { db } from "@/db";
-import { recentTable, uploadedFilesTable } from "@/db/schema";
-import { inArray } from "drizzle-orm";
-import { ZipArchive as Archiver } from "archiver";
-import { PassThrough, Readable } from "stream";
+import { PassThrough, Readable } from 'node:stream';
+import { ZipArchive as Archiver } from 'archiver';
+import { inArray } from 'drizzle-orm';
+import type { NextRequest } from 'next/server';
+import { type Api, TelegramClient } from 'telegram';
+import { StringSession } from 'telegram/sessions';
+import { db } from '@/db';
+import { recentTable, uploadedFilesTable } from '@/db/schema';
+import { sendError } from '@/lib/api-response';
+import { getSessionUser } from '@/lib/session';
+import { decrypt } from '@/lib/utils';
+import { systemSettingsRepository } from '@/repositories/system-settings.repository';
 
 const API_ID = Number(process.env.TELEGRAM_APP_API_ID);
 const API_HASH = String(process.env.TELEGRAM_APP_API_HASH);
@@ -20,13 +21,12 @@ export async function GET(request: NextRequest) {
   const { searchParams } = new URL(request.url);
   const session = await getSessionUser();
 
-  if (!session?.userId || !searchParams.get("userId"))
-    return sendError("Unauthorized", 401);
+  if (!session?.userId) return sendError('Unauthorized', 401);
+  const idsParam =
+    searchParams.get('ids') || decrypt(searchParams.get('token') || '');
+  if (!idsParam) return sendError('No file IDs provided', 400);
 
-  const idsParam = searchParams.get("ids");
-  if (!idsParam) return sendError("No file IDs provided", 400);
-
-  const fileIds = idsParam.split(",").map(Number).filter(Boolean);
+  const fileIds = idsParam.split(',').map(Number).filter(Boolean);
 
   // Fetch all requested files from DB
   const filesInfo = await db
@@ -34,9 +34,9 @@ export async function GET(request: NextRequest) {
     .from(uploadedFilesTable)
     .where(inArray(uploadedFilesTable.id, fileIds));
 
-  if (filesInfo.length === 0) return sendError("No files found", 404);
+  if (filesInfo.length === 0) return sendError('No files found', 404);
 
-  const actorId = Number(session.userId || searchParams.get("userId"));
+  const actorId = Number(session.userId || searchParams.get('userId'));
   const logs: Array<{
     userId: number;
     fileId: number;
@@ -53,7 +53,7 @@ export async function GET(request: NextRequest) {
       userId: actorId,
       fileId: Number(file.id),
       folderId: Number(file.folderId),
-      action: "downloaded",
+      action: 'downloaded',
       actionBy: actorId,
     });
 
@@ -62,7 +62,7 @@ export async function GET(request: NextRequest) {
         userId: Number(file.userId),
         fileId: Number(file.id),
         folderId: Number(file.folderId),
-        action: "downloaded",
+        action: 'downloaded',
         actionBy: actorId,
       });
     }
@@ -70,10 +70,10 @@ export async function GET(request: NextRequest) {
 
   const botSessionString = await systemSettingsRepository.getBotSessionString();
   if (!botSessionString) {
-    return sendError("System error: Bot session is not configured.", 500);
+    return sendError('System error: Bot session is not configured.', 500);
   }
 
-  let client: TelegramClient | null = new TelegramClient(
+  const client: TelegramClient | null = new TelegramClient(
     new StringSession(botSessionString),
     API_ID,
     API_HASH,
@@ -86,15 +86,18 @@ export async function GET(request: NextRequest) {
     await client.connect();
     let formattedChannelId = STORAGE_CHANNEL.trim();
     if (
-      !formattedChannelId.startsWith("@") &&
-      !formattedChannelId.startsWith("-100")
+      !formattedChannelId.startsWith('@') &&
+      !formattedChannelId.startsWith('-100')
     ) {
       formattedChannelId = `-100${formattedChannelId}`;
     }
     targetEntity = await client.getEntity(formattedChannelId);
   } catch (err: unknown) {
     const errMsg = err instanceof Error ? err.message : String(err);
-    if (client) await client.disconnect().catch(() => {});
+    if (client)
+      await client.disconnect().catch(() => {
+        void 0;
+      });
     return sendError(`Bot connection failed: ${errMsg}`, 500);
   }
 
@@ -115,19 +118,20 @@ export async function GET(request: NextRequest) {
           const msg = messages.find(
             (m) => m.id === Number(fileInfo.telegramMessageId),
           );
-          if (!msg || !msg.media || !("document" in msg.media)) continue;
+          if (!msg?.media || !('document' in msg.media)) continue;
 
-          let fileName = fileInfo.name || "downloaded-file";
+          let fileName = fileInfo.name || 'downloaded-file';
           let counter = 1;
           while (usedNames.has(fileName)) {
-            const parts = fileName.split(".");
-            const ext = parts.length > 1 ? `.${parts.pop()}` : "";
-            fileName = `${parts.join(".")} (${counter})${ext}`;
+            const parts = fileName.split('.');
+            const ext = parts.length > 1 ? `.${parts.pop()}` : '';
+            fileName = `${parts.join('.')} (${counter})${ext}`;
             counter++;
           }
           usedNames.add(fileName);
 
-          const chunkIterator = client!.iterDownload({
+          if (!client) continue;
+          const chunkIterator = client.iterDownload({
             file: msg.media,
             requestSize: 1024 * 1024,
           });
@@ -138,38 +142,49 @@ export async function GET(request: NextRequest) {
         }
         await archive.finalize();
       } catch (err) {
-        console.error("Zipping process failed:", err);
+        void err;
         archive.abort();
       } finally {
-        if (client) await client.disconnect().catch(() => {});
+        if (client)
+          await client.disconnect().catch(() => {
+            void 0;
+          });
       }
     })();
 
     const webStream = new ReadableStream({
       start(controller) {
-        passThrough.on("data", (chunk) => controller.enqueue(chunk));
-        passThrough.on("end", () => controller.close());
-        passThrough.on("error", (err) => controller.error(err));
+        passThrough.on('data', (chunk) => controller.enqueue(chunk));
+        passThrough.on('end', () => controller.close());
+        passThrough.on('error', (err) => controller.error(err));
       },
       cancel() {
         archive.abort();
-        if (client) client.disconnect().catch(() => {});
+        if (client)
+          client.disconnect().catch(() => {
+            void 0;
+          });
       },
     });
 
     db.insert(recentTable)
       .values(logs)
-      .catch((err) => console.error("Log error", err));
+      .catch(() => {
+        void 0;
+      });
 
     return new Response(webStream, {
       headers: {
-        "Content-Type": "application/zip",
-        "Content-Disposition": `attachment; filename="Drive_Downloads.zip"`,
-        "Cache-Control": "no-store, max-age=0",
+        'Content-Type': 'application/zip',
+        'Content-Disposition': `attachment; filename="Drive_Downloads.zip"`,
+        'Cache-Control': 'no-store, max-age=0',
       },
     });
-  } catch (error: unknown) {
-    if (client) await client.disconnect().catch(() => {});
-    return sendError("Failed to initiate zip stream", 500);
+  } catch {
+    if (client)
+      await client.disconnect().catch(() => {
+        void 0;
+      });
+    return sendError('Failed to initiate zip stream', 500);
   }
 }

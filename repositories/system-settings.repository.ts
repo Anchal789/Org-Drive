@@ -1,5 +1,5 @@
-import { db } from "@/db";
-import { systemSettingsTable } from "@/db/schema";
+import { db } from '@/db';
+import { systemSettingsTable } from '@/db/schema';
 
 export const systemSettingsRepository = {
   async getBotSessionString() {

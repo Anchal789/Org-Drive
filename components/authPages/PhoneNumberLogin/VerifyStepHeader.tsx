@@ -1,4 +1,4 @@
-import styles from "./VerifyOtpPage.module.scss";
+import styles from './VerifyOtpPage.module.scss';
 
 type VerifyStepHeaderProps = {
   showPasswordUi: boolean;
@@ -23,7 +23,7 @@ export default function VerifyStepHeader({
           return (
             <span
               key={`otp-${i}`}
-              className={`${styles.progressSegment} ${i <= filledThrough ? styles.active : ""}`}
+              className={`${styles.progressSegment} ${i <= filledThrough ? styles.active : ''}`}
             />
           );
         })}
@@ -31,30 +31,30 @@ export default function VerifyStepHeader({
 
       <div className={styles.stepLabel}>
         {isSuccess
-          ? "Authentication complete"
+          ? 'Authentication complete'
           : showPasswordUi
-            ? "Step 3 of 3 · Two-factor authentication"
-            : "Step 2 of 3 · Verify identity"}
+            ? 'Step 3 of 3 · Two-factor authentication'
+            : 'Step 2 of 3 · Verify identity'}
       </div>
 
       <h2 className={styles.heading}>
         {isSuccess
-          ? "Welcome back!"
+          ? 'Welcome back!'
           : showPasswordUi
-            ? "Enter your Telegram password."
-            : "Check Telegram for a code."}
+            ? 'Enter your Telegram password.'
+            : 'Check Telegram for a code.'}
       </h2>
 
       <p className={styles.description}>
         {isSuccess ? (
-          "Verification successful. Redirecting to your drive..."
+          'Verification successful. Redirecting to your drive...'
         ) : showPasswordUi ? (
           <>
             Two-factor authentication is enabled on your account.
             {passwordHint && (
               <>
-                {" "}
-                Hint:{" "}
+                {' '}
+                Hint:{' '}
                 <strong className={styles.highlightText}>{passwordHint}</strong>
               </>
             )}

@@ -1,9 +1,8 @@
-import { Button } from "@/components/ui/button";
-import FileType from "@/components/ui/fileType";
-import Icon from "@/components/ui/icon";
-import { iconsWithPaths } from "@/constants/common-constants";
-import { FileKind } from "@/types/dashboard";
-import styles from "./ShareDialog.module.scss";
+import { Folder, X } from 'lucide-react';
+import { Button } from '@/components/ui/button';
+import FileType from '@/components/ui/fileType';
+import type { FileKind } from '@/types/dashboard';
+import styles from './ShareDialog.module.scss';
 
 interface ShareHeaderProps {
   activeName?: string;
@@ -28,28 +27,28 @@ export default function ShareHeader({
   isMultiShare,
   multiFileCount,
 }: ShareHeaderProps) {
-  let subtitleText = "Standalone File";
+  let subtitleText = 'Standalone File';
   if (isMultiShare) {
-    subtitleText = "Multiple Items";
+    subtitleText = 'Multiple Items';
   } else if (isSharingFolder) {
-    subtitleText = "Folder";
+    subtitleText = 'Folder';
   } else if (folderId) {
     subtitleText = isLoading
-      ? "Loading folder..."
+      ? 'Loading folder...'
       : `Inside Folder: ${parentFolderName}`;
   }
 
-  const fileExtension = fileName?.split(".")?.pop() as FileKind; // Safely gets extension even with multiple dots
+  const fileExtension = fileName?.split('.')?.pop() as FileKind; // Safely gets extension even with multiple dots
 
   return (
     <div className={styles.header}>
       {isMultiShare ? (
         <div className={styles.folderIcon}>
-          <Icon d={iconsWithPaths.folder} size={20} fill="currentColor" />
+          <Folder size={20} fill='currentColor' />
         </div>
       ) : isSharingFolder ? (
         <div className={styles.folderIcon}>
-          <Icon d={iconsWithPaths.folder} size={20} fill="currentColor" />
+          <Folder size={20} fill='currentColor' />
         </div>
       ) : (
         <FileType kind={fileExtension} />
@@ -62,8 +61,8 @@ export default function ShareHeader({
         </div>
         <div className={styles.headerSubtitle}>{subtitleText}</div>
       </div>
-      <Button variant="ghost" size="sm" onClick={onClose}>
-        <Icon d={iconsWithPaths.x} size={16} />
+      <Button variant='ghost' size='sm' onClick={onClose}>
+        <X size={16} />
       </Button>
     </div>
   );

@@ -18,22 +18,27 @@ export default function Dropzone({
     onDraggingAction?.(value);
   };
 
-  const readDirectory = (directoryEntry: any): Promise<File[]> => {
+  const readDirectory = (
+    directoryEntry: FileSystemDirectoryEntry,
+  ): Promise<File[]> => {
     return new Promise((resolve, reject) => {
       const reader = directoryEntry.createReader();
-      reader.readEntries(async (entries: any[]) => {
-        const files: File[] = [];
-
-        for (const entry of entries) {
-          if (entry.isFile) {
-            const file = await new Promise<File>((res) => entry.file(res));
-            files.push(file);
-          } else if (entry.isDirectory) {
-            reject(new Error('Nested folders are not allowed.'));
-            return;
-          }
+      reader.readEntries(async (entries: FileSystemEntry[]) => {
+        if (entries.some((entry) => entry.isDirectory)) {
+          reject(new Error('Nested folders are not allowed.'));
+          return;
         }
-        resolve(files);
+
+        try {
+          const filePromises = entries
+            .filter((entry): entry is FileSystemFileEntry => entry.isFile)
+            .map((entry) => new Promise<File>((res) => entry.file(res)));
+
+          const files = await Promise.all(filePromises);
+          resolve(files);
+        } catch (error) {
+          reject(error instanceof Error ? error : new Error(String(error)));
+        }
       });
     });
   };
@@ -43,31 +48,40 @@ export default function Dropzone({
     handleDrag(false);
 
     const items = e.dataTransfer.items;
-    let extractedFiles: File[] = [];
     let folderName = '';
 
     try {
-      const promises = Array.from(items).map(async (item) => {
-        const entry = item.webkitGetAsEntry();
-        if (!entry) return;
+      const nestedFiles = await Promise.all(
+        Array.from(items).map(async (item): Promise<File[]> => {
+          const entry = item.webkitGetAsEntry();
+          if (!entry) return [];
 
-        if (entry.isFile) {
-          const file = item.getAsFile();
-          if (file) extractedFiles.push(file);
-        } else if (entry.isDirectory) {
-          folderName = entry.name;
-          const filesInFolder = await readDirectory(entry);
-          extractedFiles = [...extractedFiles, ...filesInFolder];
-        }
-      });
+          if (entry.isFile) {
+            const file = item.getAsFile();
+            return file ? [file] : [];
+          }
 
-      await Promise.all(promises);
+          if (entry.isDirectory) {
+            folderName = entry.name;
+            const directoryEntry = entry as FileSystemDirectoryEntry;
+            const filesInFolder = await readDirectory(directoryEntry);
+            return filesInFolder;
+          }
+
+          return [];
+        }),
+      );
+      const extractedFiles = nestedFiles.flat();
 
       if (extractedFiles.length > 0) {
         startUploads(extractedFiles, folderName, extractedFiles.length);
       }
-    } catch (error: any) {
-      toast.error(error.message || 'Failed to read folder contents.');
+    } catch (error: unknown) {
+      const errorMessage =
+        error instanceof Error
+          ? error.message
+          : 'Failed to read folder contents.';
+      toast.error(errorMessage);
     }
   };
 
@@ -87,7 +101,7 @@ export default function Dropzone({
       return;
     }
 
-    let folderName;
+    let folderName: string | undefined;
     if (fileArray[0].webkitRelativePath) {
       folderName = fileArray[0].webkitRelativePath.split('/')[0];
     }
@@ -97,7 +111,7 @@ export default function Dropzone({
 
   return (
     <Input
-      type="file"
+      type='file'
       multiple
       className={styles.overlayInput}
       onChange={handleChange}

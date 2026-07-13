@@ -1,10 +1,10 @@
-import { sharedItemsTable, trashedTable } from "./../db/schema";
-import { and, eq, inArray } from "drizzle-orm";
-import { db } from "@/db";
-import { uploadedFilesTable, uploadFoldersTable, userTable } from "@/db/schema";
+import { and, eq, inArray, or, sql } from 'drizzle-orm';
+import { db } from '@/db';
+import { uploadedFilesTable, uploadFoldersTable, userTable } from '@/db/schema';
+import { sharedItemsTable, trashedTable } from './../db/schema';
 
 export const uploadedFoldersRepository = {
-  async getFolders(userId: number) {
+  async getFolders(userId: number, limit = 5, offset = 0) {
     const folders = await db
       .select({
         id: uploadFoldersTable.id,
@@ -25,8 +25,47 @@ export const uploadedFoldersRepository = {
           eq(uploadFoldersTable.userId, userId),
           eq(uploadFoldersTable.isDeleted, false),
         ),
-      );
+      )
+      .limit(limit)
+      .offset(offset);
     return folders;
+  },
+  async getCombinedFolders(userId: number, limit = 30, offset = 0) {
+    return await db
+      .select({
+        id: uploadFoldersTable.id,
+        userId: uploadFoldersTable.userId,
+        name: uploadFoldersTable.name,
+        fileCount: uploadFoldersTable.fileCount,
+        isDeleted: uploadFoldersTable.isDeleted,
+        createdAt: uploadFoldersTable.createdAt,
+        updatedAt: uploadFoldersTable.updatedAt,
+        bookmark: sql<boolean>`COALESCE(${sharedItemsTable.bookmark}, ${uploadFoldersTable.bookmark})`,
+        ownerFirstName: userTable.firstName,
+        ownerLastName: userTable.lastName,
+        shareId: sharedItemsTable.id,
+      })
+      .from(uploadFoldersTable)
+      .leftJoin(userTable, eq(uploadFoldersTable.userId, userTable.id))
+      .leftJoin(
+        sharedItemsTable,
+        and(
+          eq(sharedItemsTable.folderId, uploadFoldersTable.id),
+          eq(sharedItemsTable.sharedWithUserId, userId),
+        ),
+      )
+      .where(
+        and(
+          eq(uploadFoldersTable.isDeleted, false),
+          or(
+            eq(uploadFoldersTable.userId, userId),
+            eq(sharedItemsTable.sharedWithUserId, userId),
+          ),
+        ),
+      )
+      .orderBy(uploadFoldersTable.id)
+      .limit(limit)
+      .offset(offset);
   },
   async deleteFolder(id: number, shareId: number) {
     if (shareId) {
@@ -132,6 +171,13 @@ export const uploadedFoldersRepository = {
 
     return folders;
   },
+  async getFolderById(id: number) {
+    const [folder] = await db
+      .select()
+      .from(uploadFoldersTable)
+      .where(eq(uploadFoldersTable.id, id));
+    return folder;
+  },
   async getFoldersName(ids: number[]) {
     const folders = await db
       .select({
@@ -147,14 +193,19 @@ export const uploadedFoldersRepository = {
       );
     return folders;
   },
-  async getAllFoldersWithIdName() {
+  async getAllFoldersWithIdName(userId: number) {
     const folders = await db
       .select({
         id: uploadFoldersTable.id,
         name: uploadFoldersTable.name,
       })
       .from(uploadFoldersTable)
-      .where(eq(uploadFoldersTable.isDeleted, false));
+      .where(
+        and(
+          eq(uploadFoldersTable.userId, userId),
+          eq(uploadFoldersTable.isDeleted, false),
+        ),
+      );
     return folders;
   },
   async renameFolder(id: number, newName: string) {

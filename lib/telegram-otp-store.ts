@@ -1,5 +1,5 @@
-import type { TelegramClient } from "telegram";
-import type { OTPLoginEntry, TelegramUser, User } from "@/types/auth";
+import type { TelegramClient } from 'telegram';
+import type { OTPLoginEntry, TelegramUser, User } from '@/types/auth';
 
 const store = new Map<string, OTPLoginEntry>();
 const TTL_MS = 5 * 60 * 1000;
@@ -10,7 +10,9 @@ async function cleanup() {
     if (now - entry.createdAt > TTL_MS) {
       try {
         await entry.client.disconnect();
-      } catch {}
+      } catch (err) {
+        void err;
+      }
       store.delete(key);
     }
   }
@@ -29,7 +31,7 @@ export const otpStore = {
       phoneNumber,
       phoneCodeHash,
       createdAt: Date.now(),
-      status: "waiting",
+      status: 'waiting',
       user: null,
       error: null,
       passwordHint: null,
@@ -43,7 +45,7 @@ export const otpStore = {
   markNeedsPassword(loginId: string, hint: string | null) {
     const entry = store.get(loginId);
     if (entry) {
-      entry.status = "needs_password";
+      entry.status = 'needs_password';
       entry.passwordHint = hint;
     }
   },
@@ -51,7 +53,7 @@ export const otpStore = {
   markSuccess(loginId: string, user: TelegramUser) {
     const entry = store.get(loginId);
     if (entry) {
-      entry.status = "success";
+      entry.status = 'success';
       entry.user = user as User;
     }
   },
@@ -59,7 +61,7 @@ export const otpStore = {
   markError(loginId: string, error: string) {
     const entry = store.get(loginId);
     if (entry) {
-      entry.status = "error";
+      entry.status = 'error';
       entry.error = error;
     }
   },
@@ -69,7 +71,9 @@ export const otpStore = {
     if (entry) {
       try {
         await entry.client.disconnect();
-      } catch {}
+      } catch (err) {
+        void err;
+      }
       store.delete(loginId);
     }
   },

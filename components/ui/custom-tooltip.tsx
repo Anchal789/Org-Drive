@@ -1,5 +1,5 @@
-import { FunctionComponent } from "react";
-import { Tooltip, TooltipContent, TooltipTrigger } from "./tooltip";
+import type { FunctionComponent } from 'react';
+import { Tooltip, TooltipContent, TooltipTrigger } from './tooltip';
 
 const CustomTooltip: FunctionComponent<{
   title: string;

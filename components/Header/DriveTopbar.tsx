@@ -1,28 +1,34 @@
-import Badge from "@/components/ui/badge";
-import Icon from "@/components/ui/icon";
-import UserAvatar from "@/components/ui/user-avatar";
-import { iconsWithPaths } from "@/constants/common-constants";
-import type { SessionUser } from "@/types/auth";
-import styles from "./DriveTopbar.module.scss";
-import { Popover, PopoverContent, PopoverTrigger } from "../ui/popover";
 import {
+  Bell,
   CircleQuestionMark,
   Cloud,
   Settings,
   Shield,
   User,
-} from "lucide-react";
-import { Separator } from "../ui/separator";
-import { uploadedFilesRepository } from "@/repositories/uploaded-files.respository";
-import { formatBytes } from "@/store/store";
-import { Button } from "../ui/button";
-import DarkModeBtn from "./DarkModeBtn";
-import LogoutBtn from "./LogoutBtn";
+} from 'lucide-react';
+import UserAvatar from '@/components/ui/user-avatar';
+import { uploadedFilesRepository } from '@/repositories/uploaded-files.respository';
+import { formatBytes } from '@/store/store';
+import type { SessionUser } from '@/types/auth';
+import SearchBar from '../dashboard/DriveCrumb/SearchBar';
+import { Button } from '../ui/button';
+import { Popover, PopoverContent, PopoverTrigger } from '../ui/popover';
+import { Separator } from '../ui/separator';
+import DarkModeBtn from './DarkModeBtn';
+import DriveTopbarMobile from './DriveTopBarMobile';
+import styles from './DriveTopbar.module.scss';
+import LogoutBtn from './LogoutBtn';
 
-export default async function DriveTopbar({ user }: { user: SessionUser }) {
+export default async function DriveTopbar({
+  user,
+  isMobile,
+}: {
+  user: SessionUser;
+  isMobile: boolean;
+}) {
   const userInitials = user
-    ? `${user.firstName?.charAt(0) ?? ""}${user.lastName?.charAt(0) ?? ""}`
-    : "";
+    ? `${user.firstName?.charAt(0) ?? ''}${user.lastName?.charAt(0) ?? ''}`
+    : '';
 
   const filesize = await uploadedFilesRepository.totalStorage(
     Number(user?.userId),
@@ -30,22 +36,15 @@ export default async function DriveTopbar({ user }: { user: SessionUser }) {
   const totalSize = filesize.reduce((a, b) => a + b.size, 0);
   return (
     <div className={styles.topbar}>
-      <div className={styles.searchBox}>
-        <Icon d={iconsWithPaths.search} size={16} className={styles.icon} />
-        <span className={styles.searchPlaceholder}>Search in Org Drive</span>
-        <Badge tone="violet" className={styles.badge}>
-          <Icon d={iconsWithPaths.sparkle} size={9} /> Smart
-        </Badge>
-        <Icon d={iconsWithPaths.settings} size={14} className={styles.icon} />
-      </div>
+      {!isMobile ? <SearchBar variant='desktop' /> : <DriveTopbarMobile />}
       <div className={styles.spacer} />
-      <Icon d={iconsWithPaths.bell} size={18} className={styles.icon} />
+      {!isMobile && <Bell size={18} className={styles.icon} />}
       <Popover>
         <PopoverTrigger asChild>
           <UserAvatar
             initials={userInitials}
-            tone="violet"
-            size="default"
+            tone='violet'
+            size='default'
             className={styles.avatar}
             ring
           />
@@ -53,14 +52,14 @@ export default async function DriveTopbar({ user }: { user: SessionUser }) {
 
         <PopoverContent
           className={styles.popoverContent}
-          align="end"
+          align='end'
           sideOffset={6}
         >
           <div className={styles.userHandle}>
             <UserAvatar
               initials={userInitials}
-              tone="violet"
-              size="default"
+              tone='violet'
+              size='default'
               ring
             />
             <div className={styles.userDetails}>
@@ -68,7 +67,7 @@ export default async function DriveTopbar({ user }: { user: SessionUser }) {
                 {user?.firstName} {user?.lastName}
               </span>
               <span className={styles.username}>
-                {user?.username ? `@${user?.username}` : ""}
+                {user?.username ? `@${user?.username}` : ''}
               </span>
             </div>
           </div>

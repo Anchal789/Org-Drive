@@ -1,11 +1,12 @@
-import { Api, TelegramClient } from "telegram";
-import { computeCheck } from "telegram/Password";
-import { StringSession } from "telegram/sessions";
-import { sendError, sendSuccess } from "@/lib/api-response";
-import { createSession } from "@/lib/session";
-import { pendingLoginRepository } from "@/repositories/pending-login.repository";
-import { userRepository } from "@/repositories/user.repository";
-import type { UpsertUserInput } from "@/types/auth";
+import { Api, TelegramClient } from 'telegram';
+import { computeCheck } from 'telegram/Password';
+import { StringSession } from 'telegram/sessions';
+import { sendError, sendSuccess } from '@/lib/api-response';
+import { generateAccessToken } from '@/lib/jwt';
+import { createSession } from '@/lib/session';
+import { pendingLoginRepository } from '@/repositories/pending-login.repository';
+import { userRepository } from '@/repositories/user.repository';
+import type { UpsertUserInput } from '@/types/auth';
 
 const API_ID = Number(process.env.TELEGRAM_APP_API_ID);
 const API_HASH = String(process.env.TELEGRAM_APP_API_HASH);
@@ -27,10 +28,10 @@ async function fetchTelegramUser(client: TelegramClient) {
     if (photoBuffer && photoBuffer.length > 0) {
       user.photoUrl = `data:image/jpeg;base64,${(
         photoBuffer as Buffer
-      ).toString("base64")}`;
+      ).toString('base64')}`;
     }
   } catch (err) {
-    console.error("Failed to fetch profile photo", err);
+    void err;
   }
 
   return user;
@@ -40,12 +41,12 @@ export async function POST(request: Request) {
   const { phoneNumber, password } = await request.json();
 
   if (!phoneNumber || !password) {
-    return sendError("Missing phoneNumber or password", 400);
+    return sendError('Missing phoneNumber or password', 400);
   }
 
   const savedData = await pendingLoginRepository.findByPhone(phoneNumber);
   if (!savedData) {
-    return sendError("No pending login for this number", 404);
+    return sendError('No pending login for this number', 404);
   }
 
   const client = new TelegramClient(
@@ -75,8 +76,8 @@ export async function POST(request: Request) {
           ? ((err as { errorMessage?: string }).errorMessage ?? err.message)
           : String(err);
       await client.disconnect();
-      if (errMsg === "PASSWORD_HASH_INVALID") {
-        return sendError("Incorrect password", 401);
+      if (errMsg === 'PASSWORD_HASH_INVALID') {
+        return sendError('Incorrect password', 401);
       }
       throw err;
     }
@@ -102,14 +103,26 @@ export async function POST(request: Request) {
       userId: String(dbUser.id),
     });
 
-    return sendSuccess({ step: "success", user: dbUser });
+    const accessToken = await generateAccessToken(
+      String(dbUser.id),
+      String(dbUser.telegramId),
+      String(dbUser.firstName),
+      String(dbUser.lastName),
+      String(dbUser.username),
+      String(dbUser.photoUrl),
+    );
+
+    return sendSuccess({ step: 'success', user: dbUser, accessToken });
   } catch (err: unknown) {
     const errMsg = err instanceof Error ? err.message : String(err);
 
-    await client.disconnect().catch(() => {});
-    console.error("Password verify failed:", errMsg ?? err);
-    return sendError(errMsg ?? "Password verification failed", 500);
+    await client.disconnect().catch(() => {
+      void 0;
+    });
+    return sendError(errMsg ?? 'Password verification failed', 500);
   } finally {
-    await client.disconnect().catch(() => {});
+    await client.disconnect().catch(() => {
+      void 0;
+    });
   }
 }

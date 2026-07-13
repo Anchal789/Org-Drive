@@ -3,16 +3,16 @@
     "editor.defaultFormatter": "biomejs.biome"
   },
   "[typescript]": {
-    "editor.defaultFormatter": "esbenp.prettier-vscode"
+    "editor.defaultFormatter": "biomejs.biome"
   },
   "[javascriptreact]": {
     "editor.defaultFormatter": "biomejs.biome"
   },
   "[typescriptreact]": {
-    "editor.defaultFormatter": "esbenp.prettier-vscode"
+    "editor.defaultFormatter": "biomejs.biome"
   },
   "[json]": {
-    "editor.defaultFormatter": "esbenp.prettier-vscode"
+    "editor.defaultFormatter": "biomejs.biome"
   },
   "[html]": {
     "editor.defaultFormatter": "biomejs.biome"
@@ -30,7 +30,8 @@
   "diffEditor.ignoreTrimWhitespace": false,
   "editor.bracketPairColorization.enabled": true,
   "editor.codeActionsOnSave": {
-    "source.fixAll.biome": "explicit"
+    "source.fixAll.biome": "explicit",
+    "source.organizeImports.biome": "explicit"
   },
   "editor.detectIndentation": false,
   "editor.formatOnSave": true,
@@ -43,7 +44,7 @@
   "editor.wordWrap": "on",
   "extensions.ignoreRecommendations": false,
   "files.eol": "\n",
-  "js/ts.preferences.quoteStyle": "double",
+  "js/ts.preferences.quoteStyle": "single",
   "js/ts.updateImportsOnFileMove.enabled": "always",
   "less.lint.duplicateProperties": "warning",
   "less.lint.emptyRules": "warning",

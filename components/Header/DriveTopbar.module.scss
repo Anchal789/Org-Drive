@@ -7,6 +7,10 @@
   align-items: center;
   gap: 16px;
   background: v(background);
+
+  @media (max-width: 768px) {
+    padding: 10px 16px;
+  }
 }
 
 .searchBox {
@@ -20,6 +24,10 @@
   background: v(secondary);
   border-radius: v(radius-full);
   font-size: 14px;
+
+  @media (max-width: 1024px) {
+    flex: auto;
+  }
 }
 
 .searchPlaceholder {
@@ -29,6 +37,10 @@
 
 .spacer {
   flex: 1;
+
+  @media (max-width: 448px) {
+    display: none;
+  }
 }
 
 .icon {
@@ -167,4 +179,21 @@
 .logoutButton,
 .logoutIcon {
   color: v(--tint-red-tx);
+}
+
+.activePage {
+  flex: 1 1 0%;
+  font-size: 15px;
+  font-weight: 600;
+}
+
+.listButton {
+  padding: 0;
+  margin: 0;
+  flex: 0;
+
+  .listButtonIcon {
+    width: 20px;
+    height: 20px;
+  }
 }

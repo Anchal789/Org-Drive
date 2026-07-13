@@ -1,19 +1,20 @@
-"use client";
+'use client';
 
-import { useRouter, useSearchParams } from "next/navigation";
-import { useReducer } from "react";
-import { Controller, useForm } from "react-hook-form";
-import TelegramButton from "@/components/ui/telegram-button";
-import { decrypt } from "@/lib/utils";
-import { verifyOtp, verifyOtpPassword } from "@/services/auth-service";
-import OtpInputGroup from "./OtpInputGroup";
-import ResendTimer from "./ResendTimer";
-import VerifyStepHeader from "./VerifyStepHeader";
-import { initialVerifyState, verifyReducer } from "./verify-otp-reducer";
-import styles from "./VerifyOtpPage.module.scss";
-import { Input } from "@/components/ui/input";
-import { Button } from "@/components/ui/button";
-import { ChevronLeftIcon } from "lucide-react";
+import { ChevronLeftIcon, Shield } from 'lucide-react';
+import { useRouter, useSearchParams } from 'next/navigation';
+import { useReducer } from 'react';
+import { Controller, useForm } from 'react-hook-form';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import TelegramButton from '@/components/ui/telegram-button';
+import { decrypt } from '@/lib/utils';
+import { verifyOtp, verifyOtpPassword } from '@/services/auth-service';
+import { useAuthStore } from '@/store/store';
+import OtpInputGroup from './OtpInputGroup';
+import ResendTimer from './ResendTimer';
+import styles from './VerifyOtpPage.module.scss';
+import VerifyStepHeader from './VerifyStepHeader';
+import { initialVerifyState, verifyReducer } from './verify-otp-reducer';
 
 const OTP_LENGTH = 5;
 const RESEND_SECONDS = 60;
@@ -21,54 +22,57 @@ const RESEND_SECONDS = 60;
 export default function VerifyOtpPage() {
   const router = useRouter();
   const searchParams = useSearchParams();
-  const phoneNumber = decrypt(searchParams.get("phone") ?? "");
+  const phoneNumber = decrypt(searchParams.get('phone') ?? '');
 
   const [state, dispatch] = useReducer(verifyReducer, initialVerifyState);
   const { status, serverError, passwordHint } = state;
 
   const otpForm = useForm<{ otp: string }>({
-    defaultValues: { otp: "" },
-    mode: "onChange",
+    defaultValues: { otp: '' },
+    mode: 'onChange',
   });
 
   const passwordForm = useForm<{ password: string }>({
-    defaultValues: { password: "" },
-    mode: "onChange",
+    defaultValues: { password: '' },
+    mode: 'onChange',
   });
 
   if (!phoneNumber) {
-    router.replace("/login");
+    router.replace('/login');
   }
 
   async function submitOtp(values: { otp: string }) {
-    dispatch({ type: "submit_start" });
+    dispatch({ type: 'submit_start' });
     try {
       const response = await verifyOtp(String(phoneNumber), values.otp);
       const data = response?.data;
 
-      if (response.success && data.step === "success") {
-        dispatch({ type: "success" });
-        setTimeout(() => router.replace("/my-drive"), 1000);
-      } else if (response.success && data?.step === "needs_password") {
+      if (response.success && data.step === 'success') {
+        if (data.accessToken) {
+          useAuthStore.getState().setAccessToken(data.accessToken);
+        }
+        dispatch({ type: 'success' });
+        setTimeout(() => router.replace('/my-drive'), 1000);
+      } else if (response.success && data?.step === 'needs_password') {
         dispatch({
-          type: "needs_password",
+          type: 'needs_password',
           passwordHint: data.passwordHint ?? null,
         });
       } else {
         dispatch({
-          type: "error",
-          message: response.message || "Invalid code",
+          type: 'error',
+          message: response.message || 'Invalid code',
         });
-        otpForm.setValue("otp", "");
+        otpForm.setValue('otp', '');
       }
     } catch (err: unknown) {
       const errMsg = err instanceof Error ? err.message : String(err);
-      dispatch({ type: "error", message: errMsg ?? "Network error" });
+      dispatch({ type: 'error', message: errMsg ?? 'Network error' });
     }
   }
 
   async function submitPassword(values: { password: string }) {
-    dispatch({ type: "submit_start" });
+    dispatch({ type: 'submit_start' });
     try {
       const response = await verifyOtpPassword(
         String(phoneNumber),
@@ -76,36 +80,39 @@ export default function VerifyOtpPage() {
       );
       const data = response?.data;
 
-      if (response.success && data?.step === "success") {
-        dispatch({ type: "success" });
-        setTimeout(() => router.replace("/my-drive"), 1000);
+      if (response.success && data?.step === 'success') {
+        if (data.accessToken) {
+          useAuthStore.getState().setAccessToken(data.accessToken);
+        }
+        dispatch({ type: 'success' });
+        setTimeout(() => router.replace('/my-drive'), 1000);
       } else {
         dispatch({
-          type: "error",
-          message: response.message ?? "Incorrect password",
+          type: 'error',
+          message: response.message ?? 'Incorrect password',
         });
       }
     } catch (err: unknown) {
       const errMsg = err instanceof Error ? err.message : String(err);
-      dispatch({ type: "error", message: errMsg ?? "Network error" });
+      dispatch({ type: 'error', message: errMsg ?? 'Network error' });
     }
   }
 
-  const showOtpUi = status === "entering_otp";
-  const showPasswordUi = status === "needs_password";
-  const isSuccess = status === "success";
+  const showOtpUi = status === 'entering_otp';
+  const showPasswordUi = status === 'needs_password';
+  const isSuccess = status === 'success';
 
   return (
     <div className={styles.pageWrapper}>
       <div className={styles.authCard}>
-        {/* Hide the back button once successfully verified */}
         {!isSuccess && (
           <Button
-            type="button"
-            onClick={() => router.push("/login")}
+            type='button'
+            variant='ghost'
+            onClick={() => router.push('/login')}
             className={styles.backButton}
           >
-            <ChevronLeftIcon size={13} /> Back
+            <ChevronLeftIcon size={14} strokeWidth={1.6} /> Back
           </Button>
         )}
 
@@ -124,9 +131,9 @@ export default function VerifyOtpPage() {
           >
             <Controller
               control={otpForm.control}
-              name="otp"
+              name='otp'
               rules={{
-                required: "OTP is required",
+                required: 'OTP is required',
                 minLength: {
                   value: OTP_LENGTH,
                   message: `OTP must be ${OTP_LENGTH} digits`,
@@ -135,7 +142,7 @@ export default function VerifyOtpPage() {
                   value: OTP_LENGTH,
                   message: `OTP must be ${OTP_LENGTH} digits`,
                 },
-                pattern: { value: /^\d+$/, message: "OTP must be digits only" },
+                pattern: { value: /^\d+$/, message: 'OTP must be digits only' },
               }}
               render={({ field }) => (
                 <OtpInputGroup
@@ -143,14 +150,16 @@ export default function VerifyOtpPage() {
                   value={field.value}
                   disabled={otpForm.formState.isSubmitting}
                   onChangeAction={(otp: string) =>
-                    otpForm.setValue("otp", otp, { shouldValidate: true })
+                    otpForm.setValue('otp', otp, { shouldValidate: true })
                   }
                   onCompleteAction={() => otpForm.handleSubmit(submitOtp)()}
                 />
               )}
             />
 
-            <ResendTimer seconds={RESEND_SECONDS} />
+            <div className={styles.resendWrapper}>
+              <ResendTimer seconds={RESEND_SECONDS} />
+            </div>
 
             {(otpForm.formState.errors.otp || serverError) && (
               <p className={styles.errorText}>
@@ -159,12 +168,13 @@ export default function VerifyOtpPage() {
             )}
 
             <TelegramButton
-              type="submit"
+              type='submit'
               disabled={
                 otpForm.formState.isSubmitting || !otpForm.formState.isValid
               }
               loading={otpForm.formState.isSubmitting}
-              loadingText="Verifying…"
+              loadingText='Verifying…'
+              className={styles.submitButton}
             >
               Verify and continue
             </TelegramButton>
@@ -178,18 +188,18 @@ export default function VerifyOtpPage() {
           >
             <Controller
               control={passwordForm.control}
-              name="password"
+              name='password'
               rules={{
-                required: "Password is required",
-                minLength: { value: 1, message: "Password is required" },
+                required: 'Password is required',
+                minLength: { value: 1, message: 'Password is required' },
               }}
               render={({ field }) => (
                 <Input
                   {...field}
-                  type="password"
-                  placeholder="Your Telegram password"
+                  type='password'
+                  placeholder='Your Telegram password'
                   disabled={passwordForm.formState.isSubmitting}
-                  className={`${styles.passwordInput} ${passwordForm.formState.errors.password ? styles.error : ""}`}
+                  className={`${styles.passwordInput} ${passwordForm.formState.errors.password ? styles.error : ''}`}
                 />
               )}
             />
@@ -201,13 +211,14 @@ export default function VerifyOtpPage() {
             )}
 
             <TelegramButton
-              type="submit"
+              type='submit'
               disabled={
                 passwordForm.formState.isSubmitting ||
                 !passwordForm.formState.isValid
               }
               loading={passwordForm.formState.isSubmitting}
-              loadingText="Verifying…"
+              loadingText='Verifying…'
+              className={styles.submitButton}
             >
               Submit password
             </TelegramButton>
@@ -216,16 +227,21 @@ export default function VerifyOtpPage() {
 
         {showOtpUi && (
           <div className={styles.helpContainer}>
-            Trouble receiving codes?{" "}
+            Trouble receiving codes?{' '}
             <Button
-              type="button"
-              onClick={() => router.push("/qr-login")}
+              type='button'
+              onClick={() => router.push('/qr-login')}
               className={styles.linkButton}
             >
               Use QR code instead →
             </Button>
           </div>
         )}
+      </div>
+
+      <div className={styles.mobileFooter}>
+        <Shield size={11} strokeWidth={1.6} /> Telegram handles the code — we
+        never see it.
       </div>
     </div>
   );

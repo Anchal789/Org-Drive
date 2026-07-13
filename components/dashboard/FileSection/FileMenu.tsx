@@ -1,25 +1,32 @@
-"use client";
+'use client';
 
-import { useRouter } from "next/navigation";
-import { type FunctionComponent, useState } from "react";
-import AlertModal from "@/components/ui/alert-modal";
-import { Button } from "@/components/ui/button";
+import {
+  Download,
+  MoreHorizontal,
+  PencilLine,
+  Share,
+  Tag,
+  Trash2,
+  UserMinus,
+} from 'lucide-react';
+import { useRouter } from 'next/navigation';
+import { type FunctionComponent, useState } from 'react';
+import RenameItem from '@/components/rename/RenameIterm';
+import AlertModal from '@/components/ui/alert-modal';
+import { Button } from '@/components/ui/button';
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuGroup,
   DropdownMenuItem,
   DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
-import Icon from "@/components/ui/icon";
-import { iconsWithPaths } from "@/constants/common-constants";
-import { bookmarkItem, downloadFile, trashFile } from "@/services/file-service";
-import type { UploadedFile } from "@/types/files";
-import styles from "./FileCard.module.scss";
-import { useShareDialogStore } from "@/store/store";
-import { Separator } from "@/components/ui/separator";
-import RenameItem from "@/components/rename/RenameIterm";
-import { bookmarkSharedItem } from "@/services/shared-with-me-service";
+} from '@/components/ui/dropdown-menu';
+import { Separator } from '@/components/ui/separator';
+import { bookmarkItem, downloadFile, trashFile } from '@/services/file-service';
+import { bookmarkSharedItem } from '@/services/shared-with-me-service';
+import { useShareDialogStore } from '@/store/store';
+import type { UploadedFile } from '@/types/files';
+import styles from './FileCard.module.scss';
 
 const FileMenu: FunctionComponent<{
   file: UploadedFile & { shareId?: number; permission?: string };
@@ -46,17 +53,17 @@ const FileMenu: FunctionComponent<{
     }
   };
 
-  const canEdit = file?.permission === "editor" || !file?.permission;
+  const canEdit = file?.permission === 'editor' || !file?.permission;
   return (
     <>
       <AlertModal
         open={openDeleteDialog}
         onOpenChange={setOpenDeleteDialog}
-        title="Delete file?"
+        title='Delete file?'
         description={`Are you sure you want to delete "${file.name}"?`}
-        confirmText="Delete"
-        confirmVariant="destructive"
-        cancelText="Cancel"
+        confirmText='Delete'
+        confirmVariant='destructive'
+        cancelText='Cancel'
         onConfirm={handleDelete}
         onCancel={() => setOpenDeleteDialog(false)}
       />
@@ -68,26 +75,18 @@ const FileMenu: FunctionComponent<{
       />
       <DropdownMenu>
         <DropdownMenuTrigger asChild className={styles.dropdownTrigger}>
-          <Button type="button" className={styles.moreBtn}>
-            <Icon
-              d={iconsWithPaths.more}
-              size={14}
-              className={styles.moreIcon}
-            />
+          <Button type='button' className={styles.moreBtn}>
+            <MoreHorizontal size={14} className={styles.moreIcon} />
           </Button>
         </DropdownMenuTrigger>
-        <DropdownMenuContent className={styles.menuContent} align="start">
+        <DropdownMenuContent className={styles.menuContent} align='start'>
           <DropdownMenuGroup>
             {canEdit && (
               <DropdownMenuItem
                 onClick={() => setRenameOpen(true)}
                 className={styles.menuItem}
               >
-                <Icon
-                  d={iconsWithPaths.pencil}
-                  size={14}
-                  className={styles.icon}
-                />
+                <PencilLine size={14} className={styles.icon} />
                 Rename
               </DropdownMenuItem>
             )}
@@ -95,11 +94,7 @@ const FileMenu: FunctionComponent<{
               onClick={() => downloadFile(file.id)}
               className={styles.menuItem}
             >
-              <Icon
-                d={iconsWithPaths.download}
-                size={14}
-                className={styles.icon}
-              />
+              <Download size={14} className={styles.icon} />
               Download
             </DropdownMenuItem>
             <DropdownMenuItem
@@ -109,11 +104,7 @@ const FileMenu: FunctionComponent<{
               }}
               className={styles.menuItem}
             >
-              <Icon
-                d={iconsWithPaths.share}
-                size={14}
-                className={styles.icon}
-              />
+              <Share size={14} className={styles.icon} />
               Share
             </DropdownMenuItem>
             <DropdownMenuItem
@@ -122,28 +113,20 @@ const FileMenu: FunctionComponent<{
               }}
               className={styles.menuItem}
             >
-              <Icon
-                d={iconsWithPaths.bookmark}
-                size={14}
-                className={styles.icon}
-              />
-              {file.bookmark ? "Unbookmark" : "Bookmark"}
+              <Tag size={14} className={styles.icon} />
+              {file.bookmark ? 'Unbookmark' : 'Bookmark'}
             </DropdownMenuItem>
             <Separator className={styles.separator} />
             <DropdownMenuItem
               onClick={() => setOpenDeleteDialog(true)}
               className={`${styles.menuItem} ${styles.deleteItem}`}
             >
-              <Icon
-                d={
-                  file.shareId
-                    ? iconsWithPaths.userRemove
-                    : iconsWithPaths.trash
-                }
-                size={14}
-                className={styles.icon}
-              />
-              {file.shareId ? "Remove for me" : "Delete"}
+              {file.shareId ? (
+                <UserMinus size={14} className={styles.icon} />
+              ) : (
+                <Trash2 size={14} className={styles.icon} />
+              )}
+              {file.shareId ? 'Remove for me' : 'Delete'}
             </DropdownMenuItem>
           </DropdownMenuGroup>
         </DropdownMenuContent>

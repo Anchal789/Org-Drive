@@ -4,6 +4,7 @@ import type { NextRequest } from 'next/server';
 import { Api } from 'telegram';
 import { computeCheck } from 'telegram/Password';
 import { sendError, sendSuccess } from '@/lib/api-response';
+import { generateAccessToken } from '@/lib/jwt';
 import { createSession } from '@/lib/session';
 import { finalizeLogin } from '@/lib/telegram-qr';
 import { qrStore } from '@/lib/telegram-qr-store';
@@ -69,10 +70,20 @@ export async function POST(request: NextRequest) {
         userId: String(dbUser.id),
       });
 
+      const accessToken = await generateAccessToken(
+        String(dbUser.id),
+        String(dbUser.telegramId),
+        String(dbUser.firstName),
+        String(dbUser.lastName),
+        String(dbUser.username),
+        String(dbUser.photoUrl),
+      );
+
       return sendSuccess(
         {
           step: 'success',
           user: dbUser,
+          accessToken,
         },
         'Login successful',
       );
@@ -81,7 +92,6 @@ export async function POST(request: NextRequest) {
     return sendError('Login finalized in unexpected state', 500);
   } catch (err: unknown) {
     const errMsg = err instanceof Error ? err.message : String(err);
-    console.error('Password submit failed:', errMsg ?? err);
     return sendError(errMsg ?? 'Password submit failed', 500);
   }
 }

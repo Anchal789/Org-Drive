@@ -75,6 +75,10 @@
   color: v(destructive);
   font-size: 13px;
   margin: 0;
+  text-overflow: ellipsis;
+  overflow: hidden;
+  max-width: 200px;
+  word-wrap: break-word;
 }
 
 .successTitle {

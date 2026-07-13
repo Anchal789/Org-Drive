@@ -8,7 +8,7 @@
 
 .label {
   font-size: 11px;
-  font-weight: v(weight-medium);
+  font-weight: 500; // v(weight-medium)
   color: v(foreground);
   margin-bottom: 6px;
   display: block;
@@ -16,17 +16,16 @@
 
 .inputGroup {
   @include flex(row, center, flex-start);
-  border-radius: 6px;
+  border-radius: v(radius-md); // Overrides to default radius-md from Figma HTML
   overflow: hidden;
-  border: 1px solid transparent;
-  outline-color: v(tg-blue);
+  border: 1.5px solid v(border); // Thicker 1.5px border
+  background: v(background);
   @include transition(all, 150ms);
 
-  box-shadow: oklch(0.708 0 0 / 0.25) 0px 0px 0px 3px;
-
   &:focus-within {
-    outline: 2px solid v(tg-blue);
-    outline-offset: 1px;
+    border-color: v(tg-blue); // Telegram Blue
+    box-shadow: rgba(34, 158, 217, 0.133) 0px 0px 0px 3px; // Native Figma Focus Ring
+    outline: none;
   }
 }
 
@@ -40,6 +39,12 @@
   padding: 0 10px;
   font-size: 13px;
   font-weight: v(weight-medium);
+
+  /* Increase hit area specifically for Mobile */
+  @media (max-width: 768px) {
+    height: 48px;
+    font-size: 14px;
+  }
 }
 
 .flagWrapper {
@@ -78,8 +83,17 @@
 .phoneInput {
   border: none;
   box-shadow: none;
-  margin-left: 10px;
+  padding: 0 12px;
   flex: 1;
+  height: 42px;
+  font-size: 14px;
+
+  /* Matches Figma Tabular Nums */
+  @media (max-width: 768px) {
+    height: 48px;
+    font-size: 15px;
+    font-variant-numeric: tabular-nums;
+  }
 
   &:focus-visible {
     outline: none;
@@ -98,4 +112,19 @@
   color: v(muted-foreground);
   margin-top: 6px;
   @include flex(row, center, flex-start, 6px);
+}
+
+/* ─── BUTTON STYLES ─── */
+.submitButton {
+  width: 100%;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+
+  @media (max-width: 768px) {
+    height: 44px; // Exact match to Figma HTML snippet
+    font-size: 14px;
+    font-weight: 600;
+  }
 }

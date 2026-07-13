@@ -1,34 +1,28 @@
-import { RefreshCw, Send, Settings, SquarePen, Trash2 } from "lucide-react";
-import styles from "./Settings.module.scss";
-import LayoutSettings from "./LayoutSettings";
+import { RefreshCw, Send, Settings, SquarePen, Trash2 } from 'lucide-react';
+import PageHeader from '../page-header/PageHeader';
+import Badge from '../ui/badge';
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "../ui/select";
-import { Switch } from "../ui/switch";
-import Badge from "../ui/badge";
+} from '../ui/select';
+import { Switch } from '../ui/switch';
+import LayoutSettings from './LayoutSettings';
+import styles from './Settings.module.scss';
 
 const SettingsPage = async () => {
   return (
     <>
-      <div className={styles.header}>
-        <div className={styles.headings}>
-          <div className={styles.iconBox}>
-            <Settings size={20} />
-          </div>
-          <div>
-            <div className={styles.title}>
-              <span>Settings</span>
-            </div>
-            <div className={styles.subHeading}>
-              Workspace, Telegram connection, and AI preferences.
-            </div>
-          </div>
-        </div>
-      </div>
+      <PageHeader
+        icon={<Settings size={20} />}
+        tone='slate'
+        title='Settings'
+        subHeading='Workspace, Telegram connection, and AI preferences.'
+        className={styles.stickyHeader}
+        hideOnMobile
+      />
       <div className={styles.pageContent}>
         <div className={styles.content}>
           <div className={styles.contentSection}>
@@ -41,17 +35,19 @@ const SettingsPage = async () => {
                     Shown across the workspace and on share links.
                   </p>
                 </div>
-                <Badge
-                  outline
-                  customTone={{
-                    color: "var(--foreground)",
-                    border: "var(--border)",
-                  }}
-                  className={styles.organizationNameEditable}
-                >
-                  Zuru Tech
-                  <SquarePen size={12} color="var(--muted-foreground)" />
-                </Badge>
+                <div className={styles.contentRowAction}>
+                  <Badge
+                    outline
+                    customTone={{
+                      color: 'var(--foreground)',
+                      border: 'var(--border)',
+                    }}
+                    className={styles.organizationNameEditable}
+                  >
+                    Zuru Tech
+                    <SquarePen size={12} color='var(--muted-foreground)' />
+                  </Badge>
+                </div>
               </div>
               <div className={styles.contentRow}>
                 <div className={styles.contentRowLabel}>
@@ -72,18 +68,18 @@ const SettingsPage = async () => {
                   </p>
                 </div>
                 <div className={styles.contentRowAction}>
-                  <Select defaultValue="en">
+                  <Select defaultValue='en'>
                     <SelectTrigger>
                       <SelectValue
-                        placeholder="English (US)"
-                        defaultValue="en"
+                        placeholder='English (US)'
+                        defaultValue='en'
                       />
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="en">English (US)</SelectItem>
-                      <SelectItem value="es">Spanish</SelectItem>
-                      <SelectItem value="fr">French</SelectItem>
-                      <SelectItem value="de">German</SelectItem>
+                      <SelectItem value='en'>English (US)</SelectItem>
+                      <SelectItem value='es'>Spanish</SelectItem>
+                      <SelectItem value='fr'>French</SelectItem>
+                      <SelectItem value='de'>German</SelectItem>
                     </SelectContent>
                   </Select>
                 </div>
@@ -110,7 +106,7 @@ const SettingsPage = async () => {
                   </p>
                 </div>
                 <div className={styles.connectionStatus}>
-                  <div className={styles.dot}></div> Healthy
+                  <div className={styles.dot} /> Healthy
                 </div>
               </div>
               <div className={styles.contentRow}>
@@ -131,16 +127,18 @@ const SettingsPage = async () => {
                     Re-authrize the Org Drive bot if uploads for redundancy.
                   </p>
                 </div>
-                <Badge
-                  outline
-                  customTone={{
-                    color: "var(--foreground)",
-                    border: "var(--border)",
-                  }}
-                  className={styles.organizationNameEditable}
-                >
-                  <RefreshCw size={14} /> Reconnect
-                </Badge>
+                <div className={styles.contentRowAction}>
+                  <Badge
+                    outline
+                    customTone={{
+                      color: 'var(--foreground)',
+                      border: 'var(--border)',
+                    }}
+                    className={styles.organizationNameEditable}
+                  >
+                    <RefreshCw size={14} /> Reconnect
+                  </Badge>
+                </div>
               </div>
             </div>
           </div>
@@ -196,17 +194,19 @@ const SettingsPage = async () => {
                     files are left untouched.
                   </p>
                 </div>
-                <Badge
-                  outline
-                  customTone={{
-                    color: "var(--destructive)",
-                    border:
-                      "color-mix(in oklch, var(--destructive) 40%, var(--border))",
-                  }}
-                  className={styles.organizationNameEditable}
-                >
-                  <Trash2 size={14} /> Delete
-                </Badge>
+                <div className={styles.contentRowAction}>
+                  <Badge
+                    outline
+                    customTone={{
+                      color: 'var(--destructive)',
+                      border:
+                        'color-mix(in oklch, var(--destructive) 40%, var(--border))',
+                    }}
+                    className={styles.organizationNameEditable}
+                  >
+                    <Trash2 size={14} /> Delete
+                  </Badge>
+                </div>
               </div>
             </div>
           </div>

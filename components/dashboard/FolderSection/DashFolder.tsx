@@ -1,15 +1,10 @@
-export const dynamic = "force-dynamic";
-
-import Btn from "@/components/ui/btn";
-import Icon from "@/components/ui/icon";
-import { iconsWithPaths } from "@/constants/common-constants";
-import type { UploadedFile } from "@/types/files";
-import DriveCrumb from "../DriveCrumb/DriveCrumb";
-import UploadWidget from "../upload-widget/UploadWidget";
-import styles from "./DashFolder.module.scss";
-import { DownloadAllButton } from "./DownloadAllButton";
-import LayoutForInsideFolder from "./LayoutForInsideFolder";
-import FileSelectionBar from "../FileSection/FileSelectionBar";
+import { Folder, Shield, Users } from 'lucide-react';
+import type { UploadedFile, UploadedFolder } from '@/types/files';
+import FileSelectionBar from '../FileSection/FileSelectionBar';
+import UploadWidget from '../upload-widget/UploadWidget';
+import { ActionButtons } from './ActionButtons';
+import styles from './DashFolder.module.scss';
+import LayoutForInsideFolder from './LayoutForInsideFolder';
 
 export default function DashFolder({
   files,
@@ -17,47 +12,50 @@ export default function DashFolder({
   folderId,
   membersCount,
   permissions,
+  folderDetails,
 }: {
   files: Array<UploadedFile>;
   folderName: string;
   folderId: number;
   membersCount: number;
   permissions: string[];
+  folderDetails: UploadedFolder;
 }) {
-  const canEdit = permissions.includes("editor");
-  const canView = permissions.includes("viewer");
+  const canEdit = permissions.includes('editor');
+  const canView = permissions.includes('viewer');
 
   return (
     <>
-      <DriveCrumb inFolder={folderName ?? "Folder name"} />
-
+      <div className={styles.header}>
+        <Folder size={16} className={styles.folderIcon} fill='currentColor' />
+        <h6 className={styles.title}>{folderName}</h6>
+      </div>
       <div className={styles.subHeader}>
-        <Icon d={iconsWithPaths.users} size={13} />{" "}
-        {membersCount
-          ? `Shared with ${membersCount} people`
-          : "Shared with no one"}
+        <span className={styles.subHeaderContent}>
+          <Users size={13} />{' '}
+          {membersCount
+            ? `Shared with ${membersCount} people`
+            : 'Shared with no one'}
+        </span>
         {!!membersCount && (
-          <>
+          <span className={styles.subHeaderContent}>
             <span className={styles.divider} />
-            <Icon d={iconsWithPaths.shield} size={13} /> Members can
-            {canEdit && " edit"} {canEdit && canView && "&"} {canView && "view"}
-          </>
+            <Shield size={13} /> Members can
+            {canEdit && ' edit'} {canEdit && canView && '&'} {canView && 'view'}
+          </span>
         )}
         <div className={styles.flex} />
-        <Btn variant="ghost" size="sm" icon={iconsWithPaths.share}>
-          Share
-        </Btn>
-        <DownloadAllButton folderId={folderId} folderName={folderName} />
+        <ActionButtons
+          folderId={folderId}
+          folderName={folderName}
+          folderDetails={folderDetails}
+        />
       </div>
 
       <div className={styles.content}>
         {/* Flat folder hint */}
         <div className={styles.flatHint}>
-          <Icon
-            d={iconsWithPaths.folder}
-            size={14}
-            className={styles.flatHintIcon}
-          />
+          <Folder size={14} className={styles.flatHintIcon} />
           <span className={styles.flatHintText}>
             <strong>Flat folder.</strong> Org Drive keeps things simple: folders
             contain files, not other folders. Use tags for finer organization.

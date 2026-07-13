@@ -1,0 +1,91 @@
+@use "../../../../styles/functions" as *;
+
+.tile {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 12px;
+  border: 1px solid v(border);
+  border-radius: v(radius-lg);
+  background: v(card);
+  position: relative;
+  width: 100%;
+  transition: all 0.2s ease;
+
+  @media (max-width: 1024px) {
+    gap: 10px;
+  }
+
+  @media (max-width: 768px) {
+    padding: 10px 12px;
+  }
+
+  @media (max-width: 448px) {
+    gap: 8px;
+    padding: 8px 10px;
+  }
+
+  @media (max-width: 360px) {
+    gap: 6px;
+    padding: 6px 8px;
+  }
+}
+
+.selected {
+  border-color: v(primary);
+  background: color-mix(in oklch, v(primary) 6%, v(card));
+  box-shadow: 0 0 0 1px v(primary);
+}
+
+.interactiveZone {
+  position: relative;
+  z-index: 10;
+  display: flex;
+  align-items: center;
+  flex-shrink: 0;
+}
+
+.info {
+  flex: 1 1 0%;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.name {
+  font-size: 12px;
+  font-weight: 500;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  color: v(foreground);
+}
+
+.meta {
+  font-size: 10px;
+  color: v(muted-foreground);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-shrink: 0;
+  position: relative;
+  z-index: 10;
+  @media (max-width: 448px) {
+    gap: 6px;
+  }
+  @media (max-width: 360px) {
+    gap: 4px;
+  }
+}
+
+.starIcon {
+  color: v(tint-amber-bd);
+  flex-shrink: 0;
+}

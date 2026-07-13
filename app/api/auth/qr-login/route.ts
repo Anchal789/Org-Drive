@@ -4,6 +4,7 @@ import type { NextRequest } from 'next/server';
 import QRCode from 'qrcode';
 import { Api } from 'telegram';
 import { sendError, sendSuccess } from '@/lib/api-response';
+import { generateAccessToken } from '@/lib/jwt';
 import { createSession } from '@/lib/session';
 import { buildTelegramQRUrl } from '@/lib/telegram-qr';
 import { qrStore } from '@/lib/telegram-qr-store';
@@ -11,6 +12,8 @@ import { userRepository } from '@/repositories/user.repository';
 
 const API_ID = Number(process.env.TELEGRAM_APP_API_ID);
 const API_HASH = String(process.env.TELEGRAM_APP_API_HASH);
+
+const activeRequests = new Set<string>();
 
 export async function GET(request: NextRequest) {
   const loginId = request.nextUrl.searchParams.get('loginId');
@@ -54,8 +57,17 @@ export async function GET(request: NextRequest) {
       userId: String(dbUser.id),
     });
 
+    const accessToken = await generateAccessToken(
+      String(dbUser.id),
+      String(dbUser.telegramId),
+      String(dbUser.firstName),
+      String(dbUser.lastName),
+      String(dbUser.username),
+      String(dbUser.photoUrl),
+    );
+
     return sendSuccess(
-      { step: 'success', user: dbUser },
+      { step: 'success', user: dbUser, accessToken },
       'Login completed successfully',
     );
   }
@@ -65,6 +77,15 @@ export async function GET(request: NextRequest) {
     await qrStore.delete(loginId);
     return sendError(error || 'QR Login failed', 400, { status: 'error' });
   }
+
+  if (activeRequests.has(loginId)) {
+    return sendSuccess(
+      { step: 'waiting' },
+      'Waiting for QR scan (Server busy)',
+    );
+  }
+
+  activeRequests.add(loginId);
 
   try {
     if (!entry.client.connected) {
@@ -97,18 +118,18 @@ export async function GET(request: NextRequest) {
     }
 
     return sendSuccess({ step: 'waiting' }, 'Waiting for QR scan');
-  } catch (error: unknown) {
-    const errMsg = error instanceof Error ? error?.message : String(error);
-    console.error('Poll error:', errMsg ?? error);
+  } catch (_error) {
     try {
       await entry.client.disconnect();
-    } catch (disconnectError) {
-      console.error('Disconnect error:', disconnectError);
+    } catch {
+      // Ignore disconnect errors
     }
 
     return sendSuccess(
       { step: 'waiting' },
       'Waiting for QR scan (retrying connection)',
     );
+  } finally {
+    activeRequests.delete(loginId);
   }
 }

@@ -1,10 +1,10 @@
-import { db } from "@/db";
+import { and, eq, ilike } from 'drizzle-orm';
+import { db } from '@/db';
 import {
+  sharedItemsTable,
   uploadedFilesTable,
   uploadFoldersTable,
-  sharedItemsTable,
-} from "@/db/schema";
-import { eq, and, ilike } from "drizzle-orm";
+} from '@/db/schema';
 
 export const searchRepository = {
   async searchFilesAndFolders(userId: number, searchQuery: string) {

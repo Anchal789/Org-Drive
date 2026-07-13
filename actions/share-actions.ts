@@ -1,7 +1,7 @@
-"use server";
+'use server';
 
-import { sharedWithMeRepository } from "@/repositories/shared-with-me.repository";
-import { ShareWithMePerson } from "@/types/share-with-me";
+import { sharedWithMeRepository } from '@/repositories/shared-with-me.repository';
+import type { ShareWithMePerson } from '@/types/share-with-me';
 
 export async function getUsersWithAccessAction(
   id: number,

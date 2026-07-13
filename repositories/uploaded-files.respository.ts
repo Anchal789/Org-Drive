@@ -1,5 +1,5 @@
-import { and, count, eq, inArray, isNull, sql } from "drizzle-orm";
-import { db } from "@/db";
+import { and, count, eq, inArray, isNull, or, sql } from 'drizzle-orm';
+import { db } from '@/db';
 import {
   recentTable,
   sharedItemsTable,
@@ -7,8 +7,8 @@ import {
   uploadedFilesTable,
   uploadFoldersTable,
   userTable,
-} from "@/db/schema";
-import type { UploadFilesResponse } from "@/types/files";
+} from '@/db/schema';
+import type { UploadFilesResponse } from '@/types/files';
 
 export const uploadedFilesRepository = {
   async uploadFiles(files: Array<UploadFilesResponse & { userId: number }>) {
@@ -20,15 +20,20 @@ export const uploadedFilesRepository = {
       userId: file.userId,
       fileId: file.id,
       folderId: file.folderId || undefined,
-      action: "uploaded",
+      action: 'uploaded',
       actionBy: file.userId,
     }));
     if (logs.length > 0) {
-      await db.insert(recentTable).values(logs).catch(console.error);
+      await db
+        .insert(recentTable)
+        .values(logs)
+        .catch((err) => {
+          void err;
+        });
     }
     return uploadedFiles;
   },
-  async getFiles(userId: number) {
+  async getFiles(userId: number, limit = 30, offset = 0) {
     const files = await db
       .select({
         id: uploadedFilesTable.id,
@@ -55,10 +60,56 @@ export const uploadedFilesRepository = {
           isNull(uploadedFilesTable.folderId),
           eq(uploadedFilesTable.isDeleted, false),
         ),
-      );
+      )
+      .limit(limit)
+      .offset(offset);
     return files;
   },
-
+  async getCombinedFiles(userId: number, limit = 30, offset = 0) {
+    return await db
+      .select({
+        id: uploadedFilesTable.id,
+        userId: uploadedFilesTable.userId,
+        telegramMessageId: uploadedFilesTable.telegramMessageId,
+        documentId: uploadedFilesTable.documentId,
+        accessHash: uploadedFilesTable.accessHash,
+        name: uploadedFilesTable.name,
+        size: uploadedFilesTable.size,
+        mimeType: uploadedFilesTable.mimeType,
+        createdAt: uploadedFilesTable.createdAt,
+        updatedAt: uploadedFilesTable.updatedAt,
+        isDeleted: uploadedFilesTable.isDeleted,
+        bookmark: sql<boolean>`COALESCE(${sharedItemsTable.bookmark}, ${uploadedFilesTable.bookmark})`,
+        folderId: uploadedFilesTable.folderId,
+        ownerFirstName: userTable.firstName,
+        ownerLastName: userTable.lastName,
+        shareId: sharedItemsTable.id,
+      })
+      .from(uploadedFilesTable)
+      .leftJoin(userTable, eq(uploadedFilesTable.userId, userTable.id))
+      .leftJoin(
+        sharedItemsTable,
+        and(
+          eq(sharedItemsTable.fileId, uploadedFilesTable.id),
+          eq(sharedItemsTable.sharedWithUserId, userId),
+        ),
+      )
+      .where(
+        and(
+          eq(uploadedFilesTable.isDeleted, false),
+          or(
+            and(
+              eq(uploadedFilesTable.userId, userId),
+              isNull(uploadedFilesTable.folderId),
+            ),
+            eq(sharedItemsTable.sharedWithUserId, userId),
+          ),
+        ),
+      )
+      .orderBy(uploadedFilesTable.id)
+      .limit(limit)
+      .offset(offset);
+  },
   async getFilesInFolder(folderId: number) {
     return db
       .select({
@@ -106,13 +157,13 @@ export const uploadedFilesRepository = {
         .set({ fileCount: sql`${uploadFoldersTable.fileCount} - 1` })
         .where(eq(uploadFoldersTable.id, deletedFile.folderId));
     }
-    let folderName = "";
+    let folderName = '';
     if (deletedFile.folderId) {
       const [folder] = await db
         .select({ name: uploadFoldersTable.name })
         .from(uploadFoldersTable)
         .where(eq(uploadFoldersTable.id, deletedFile.folderId));
-      folderName = folder?.name || "";
+      folderName = folder?.name || '';
     }
 
     await db.insert(trashedTable).values({
@@ -243,17 +294,17 @@ export const uploadedFilesRepository = {
     dashboardOwners.add(actorId);
     dashboardOwners.add(file.ownerId);
 
-    sharedRecords.forEach((record) => {
+    for (const record of sharedRecords) {
       if (record.sharedWithUserId) {
         dashboardOwners.add(record.sharedWithUserId);
       }
-    });
+    }
 
     const logs = Array.from(dashboardOwners).map((dashboardUserId) => ({
       userId: dashboardUserId,
       fileId: id,
       folderId: file.folderId || undefined,
-      action: "edited",
+      action: 'edited',
       actionBy: actorId,
     }));
 

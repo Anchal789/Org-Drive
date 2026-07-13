@@ -1,8 +1,8 @@
-import { ActivityEvent } from "@/types/analytics";
-import { TINTS } from "@/constants/common-constants";
-import styles from "./Analytics.module.scss";
-import { Avatar, AvatarFallback } from "@/components/ui/avatar";
-import Badge from "../ui/badge";
+import { Avatar, AvatarFallback } from '@/components/ui/avatar';
+import { TINTS } from '@/constants/common-constants';
+import type { ActivityEvent } from '@/types/analytics';
+import Badge from '../ui/badge';
+import styles from './Analytics.module.scss';
 
 export default function ActivityFeed({ events }: { events: ActivityEvent[] }) {
   return (
@@ -12,25 +12,25 @@ export default function ActivityFeed({ events }: { events: ActivityEvent[] }) {
         <span className={styles.cardSub}>Live · last 24h</span>
       </div>
       <div className={styles.activityList}>
-        {events.map((a, i) => (
-          <div key={i} className={styles.activityRow}>
+        {events.map((a) => (
+          <div key={a.id} className={styles.activityRow}>
             <Avatar
-              className="h-7 w-7 border"
+              className='h-7 w-7 border'
               style={{ borderColor: TINTS[a.tone].bd }}
             >
               <AvatarFallback
                 style={{
                   background: TINTS[a.tone].bg,
                   color: TINTS[a.tone].bd,
-                  fontSize: 10,
+                  fontSize: 12,
                 }}
               >
                 {a.userInitials}
               </AvatarFallback>
             </Avatar>
             <div className={styles.activityInfo}>
-              <span className={styles.activityName}>{a.userName}</span>{" "}
-              <span className={styles.activityAction}>{a.action}</span>{" "}
+              <span className={styles.activityName}>{a.userName}</span>{' '}
+              <span className={styles.activityAction}>{a.action}</span>{' '}
               <span className={styles.activityItem}>{a.itemName}</span>
             </div>
             <Badge

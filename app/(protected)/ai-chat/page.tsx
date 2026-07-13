@@ -1,4 +1,4 @@
-import AiChatsPage from "@/components/ai-chats/AiChatsPage";
+import AiChatsPage from '@/components/ai-chats/AiChatsPage';
 
 const AiChats = async () => {
   return <AiChatsPage />;

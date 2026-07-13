@@ -1,5 +1,5 @@
-import VerifyOtpPage from "@/components/authPages/PhoneNumberLogin/VerifyOtpPage";
-import { Suspense } from "react";
+import { Suspense } from 'react';
+import VerifyOtpPage from '@/components/authPages/PhoneNumberLogin/VerifyOtpPage';
 
 export default async function () {
   return (

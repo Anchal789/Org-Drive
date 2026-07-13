@@ -1,7 +1,7 @@
-import { Contributor } from "@/types/analytics";
-import { TINTS } from "@/constants/common-constants";
-import styles from "./Analytics.module.scss";
-import { Avatar, AvatarFallback } from "@/components/ui/avatar";
+import { Avatar, AvatarFallback } from '@/components/ui/avatar';
+import { TINTS } from '@/constants/common-constants';
+import type { Contributor } from '@/types/analytics';
+import styles from './Analytics.module.scss';
 
 export default function TopContributors({
   contributors,
@@ -18,14 +18,14 @@ export default function TopContributors({
         {contributors.map((p) => (
           <div key={p.id} className={styles.contributorRow}>
             <Avatar
-              className="h-7 w-7 border"
+              className='h-7 w-7 border'
               style={{ borderColor: TINTS[p.tone].bd }}
             >
               <AvatarFallback
                 style={{
                   background: TINTS[p.tone].bg,
                   color: TINTS[p.tone].bd,
-                  fontSize: 10,
+                  fontSize: 12,
                 }}
               >
                 {p.initials}
