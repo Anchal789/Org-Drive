@@ -11,8 +11,10 @@ import { db } from '@/db';
 import { uploadFoldersTable } from '@/db/schema';
 import { sendError } from '@/lib/api-response';
 import { getSessionUser } from '@/lib/session';
+import { decrypt } from '@/lib/utils';
 import { systemSettingsRepository } from '@/repositories/system-settings.repository';
 import { uploadedFilesRepository } from '@/repositories/uploaded-files.respository';
+import { uploadedFoldersRepository } from '@/repositories/uploaded-folders.respository';
 import type { UploadFilesResponse } from '@/types/files';
 
 const API_ID = Number(process.env.TELEGRAM_APP_API_ID);
@@ -28,11 +30,14 @@ export async function POST(request: NextRequest) {
     const files = formData.getAll('file') as Array<File>;
     const folderName = formData.get('folderName') as string | null;
     const fileCount = formData.get('fileCount') as number | null;
+    const folderId = formData.get('folderId') as string | null;
 
     if (!files || files.length === 0)
       return sendError('No files uploaded', 400);
 
-    let resolvedFolderId: number | null = null;
+    let resolvedFolderId: number | null = folderId
+      ? Number(decrypt(folderId))
+      : null;
 
     if (folderName) {
       const existingFolder = await db
@@ -190,6 +195,8 @@ export async function POST(request: NextRequest) {
 
               uploadedFiles.push(newFileRecord);
               await uploadedFilesRepository.uploadFiles([newFileRecord]);
+              if (resolvedFolderId)
+                await uploadedFoldersRepository.setFileCount(resolvedFolderId);
             } finally {
               await fs.unlink(tempFilePath).catch(() => {
                 void 0;

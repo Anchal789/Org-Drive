@@ -31,7 +31,7 @@ export async function POST(request: NextRequest) {
         void error;
       });
     if (errMsg?.includes('AUTH_KEY_UNREGISTERED')) {
-      return sendError('Telegram session expired. Please log in again.', 401);
+      return sendError('Telegram session expired. Please log in again.', 400);
     }
     return sendError(errMsg, 500);
   }

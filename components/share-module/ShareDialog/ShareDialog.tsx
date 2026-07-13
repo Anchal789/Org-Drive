@@ -281,6 +281,14 @@ export default function ShareDialog({
           onPermissionChange={(index, permission) =>
             dispatch({ type: 'update_access_permission', index, permission })
           }
+          onRemoveUser={(userIdToRemove: number) => {
+            dispatch({
+              type: 'set_users_with_access',
+              usersWithAccess: usersWithAccess.filter(
+                (u) => u.id !== userIdToRemove,
+              ),
+            });
+          }}
         />
 
         {isMultiShare && files && files.length > 1 && (

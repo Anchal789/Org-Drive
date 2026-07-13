@@ -8,7 +8,8 @@ import FileSelectionBar from '../FileSection/FileSelectionBar';
 import FilesContainer from '../FileSection/FilesContainer';
 import FolderContainer from '../FolderSection/FolderContainer';
 import styles from './DashGrid.module.scss';
-import LoadMore from './LoadMore';
+import LoadMoreFiles from './load-more/LoadMoreFiles';
+import LoadMoreFolder from './load-more/LoadMoreFolder';
 
 type Props = {
   files: Array<UploadedFile>;
@@ -78,6 +79,13 @@ export default function DashGrid({
                 />
               ))}
             </div>
+            <LoadMoreFolder
+              hasMoreFolders={props.hasMoreFolders}
+              loadMoreFolders={props.loadMoreFolders}
+              loadingFolders={props.loadingFolders}
+              showLessFolders={props.showLessFolders}
+              localFolders={folders.length}
+            />
           </>
         )}
 
@@ -90,17 +98,12 @@ export default function DashGrid({
               <FilesContainer files={files} />
             </div>
 
-            <LoadMore
+            <LoadMoreFiles
               hasMoreFiles={props.hasMoreFiles}
-              hasMoreFolders={props.hasMoreFolders}
               loadMoreFiles={props.loadMoreFiles}
-              loadMoreFolders={props.loadMoreFolders}
               loadingFiles={props.loadingFiles}
-              loadingFolders={props.loadingFolders}
               showLessFiles={props.showLessFiles}
-              showLessFolders={props.showLessFolders}
               localFiles={files.length}
-              localFolders={folders.length}
             />
           </>
         )}

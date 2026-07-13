@@ -10,7 +10,7 @@ export type ShareState = {
   parentFolderName: string | null;
   isLoading: boolean;
   usersWithAccess: ShareWithMePerson[];
-  usersToInvite: InviteUser[];
+  usersToInvite: Array<InviteUser & { shareId: number }>;
 };
 
 export type ShareAction =

@@ -28,3 +28,17 @@ export const bookmarkSharedItem = async (id: number, bookmark: boolean) => {
   }
   return response;
 };
+
+export const userRemoveAccess = async (id: number) => {
+  const response = await postData({
+    url: '/api/share/remove-user-access',
+    payload: { id: encrypt(String(id)) },
+  });
+
+  if (response.success) {
+    toast.success(response.message);
+  } else {
+    toast.error(response.message);
+  }
+  return response;
+};

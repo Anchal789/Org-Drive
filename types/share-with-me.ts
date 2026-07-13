@@ -5,6 +5,7 @@ export interface ShareWithMePerson {
   permission: 'owner' | 'editor' | 'viewer' | 'commenter';
   username: string;
   shareId: number;
+  photoUrl?: string;
 }
 
 export interface SharedWithMeItemsType {

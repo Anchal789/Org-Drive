@@ -1,3 +1,4 @@
+import { toast } from 'sonner'; // <-- Import toast
 import {
   Select,
   SelectContent,
@@ -10,6 +11,8 @@ import {
 import { Separator } from '@/components/ui/separator';
 import UserAvatar from '@/components/ui/user-avatar';
 import { getAvatarColor } from '@/lib/utils';
+import { userRemoveAccess } from '@/services/shared-with-me-service';
+import RemoveAccess from './RemoveAccess';
 import styles from './ShareDialog.module.scss';
 
 interface UserAccessRowProps {
@@ -19,6 +22,8 @@ interface UserAccessRowProps {
     lastName: string | null;
     username: string | null;
     photoUrl?: string | null;
+  } & {
+    shareId: number;
   };
   permission: string;
   isOwner?: boolean;
@@ -29,6 +34,7 @@ interface UserAccessRowProps {
     value: 'viewer' | 'editor' | 'owner' | 'commenter',
   ) => void;
   showSeparator?: boolean;
+  onRemoveSuccess?: (userId: number) => void;
 }
 
 export default function UserAccessRow({
@@ -39,8 +45,22 @@ export default function UserAccessRow({
   disabled = false,
   onPermissionChange,
   showSeparator = true,
+  onRemoveSuccess,
 }: UserAccessRowProps) {
   const initials = `${user.firstName?.charAt(0) ?? ''}${user.lastName?.charAt(0) ?? ''}`;
+
+  const removeAccess = async () => {
+    try {
+      await userRemoveAccess(user.shareId);
+      toast.success('Access removed successfully');
+
+      if (onRemoveSuccess) {
+        onRemoveSuccess(user.id);
+      }
+    } catch {
+      toast.error('Failed to remove access');
+    }
+  };
 
   return (
     <>
@@ -60,25 +80,30 @@ export default function UserAccessRow({
             {user.username ? `@${user.username}` : ''}
           </div>
         </div>
-        <Select
-          defaultValue={isOwner ? 'owner' : permission?.toLowerCase()}
-          onValueChange={onPermissionChange}
-          disabled={disabled || isOwner}
-        >
-          <SelectTrigger>
-            <SelectValue placeholder='Select a role' />
-          </SelectTrigger>
-          <SelectContent>
-            <SelectGroup>
-              <SelectLabel>Role</SelectLabel>
-              <SelectItem value='viewer'>Viewer</SelectItem>
-              <SelectItem value='editor'>Editor</SelectItem>
-              <SelectItem value='owner' disabled>
-                Owner
-              </SelectItem>
-            </SelectGroup>
-          </SelectContent>
-        </Select>
+        <div className={styles.personActions}>
+          <Select
+            defaultValue={isOwner ? 'owner' : permission?.toLowerCase()}
+            onValueChange={onPermissionChange}
+            disabled={disabled || isOwner}
+          >
+            <SelectTrigger>
+              <SelectValue placeholder='Select a role' />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectGroup>
+                <SelectLabel>Role</SelectLabel>
+                <SelectItem value='viewer'>Viewer</SelectItem>
+                <SelectItem value='editor'>Editor</SelectItem>
+                <SelectItem value='owner' disabled>
+                  Owner
+                </SelectItem>
+              </SelectGroup>
+            </SelectContent>
+          </Select>
+          {!(disabled || isOwner || !onRemoveSuccess) && (
+            <RemoveAccess removeAccess={removeAccess} />
+          )}
+        </div>
       </div>
       {showSeparator && <Separator />}
     </>

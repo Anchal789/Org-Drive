@@ -222,4 +222,15 @@ export const uploadedFoldersRepository = {
 
     return folders;
   },
+  async setFileCount(id: number) {
+    const currentFileCount = await db
+      .select({ fileCount: uploadFoldersTable.fileCount })
+      .from(uploadFoldersTable)
+      .where(eq(uploadFoldersTable.id, id));
+
+    return await db
+      .update(uploadFoldersTable)
+      .set({ fileCount: currentFileCount[0].fileCount + 1 })
+      .where(eq(uploadFoldersTable.id, id));
+  },
 };

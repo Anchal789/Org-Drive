@@ -10,6 +10,7 @@ type PeopleWithAccessSectionProps = {
     index: number,
     permission: ShareWithMePerson['permission'],
   ) => void;
+  onRemoveUser: (userId: number) => void;
 };
 
 export default function PeopleWithAccessSection({
@@ -17,6 +18,7 @@ export default function PeopleWithAccessSection({
   currentUserId,
   isMultiShare,
   onPermissionChange,
+  onRemoveUser,
 }: PeopleWithAccessSectionProps) {
   if (users.length === 0) return null;
 
@@ -36,6 +38,7 @@ export default function PeopleWithAccessSection({
             hideOwnerOption={isMultiShare}
             onPermissionChange={(val) => onPermissionChange(index, val)}
             showSeparator={index < users.length - 1}
+            onRemoveSuccess={onRemoveUser}
           />
         ))}
       </div>

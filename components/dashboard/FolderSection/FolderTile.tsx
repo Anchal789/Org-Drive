@@ -18,6 +18,7 @@ export default function FolderTile({
     ? `${folder.ownerFirstName?.charAt(0) ?? ''}${folder.ownerLastName?.charAt(0) ?? ''}`
     : '';
 
+  // const fileCount =
   return (
     <div
       className={`${styles.tile} ${active ? styles.tileActive : ''}`}

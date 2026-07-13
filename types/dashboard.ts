@@ -124,6 +124,7 @@ export interface UploadItem {
   folderName?: string;
   rawSize?: number;
   isFolderGroup?: false;
+  folderId?: string | null;
 }
 
 export interface FolderGroupItem {

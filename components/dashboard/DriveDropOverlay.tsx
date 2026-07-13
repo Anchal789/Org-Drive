@@ -1,6 +1,7 @@
 'use client';
 
 import { Upload, X } from 'lucide-react';
+import { useSearchParams } from 'next/navigation';
 import { useDragDropStore } from '@/store/store';
 import { Button } from '../ui/button';
 import Dropzone from '../ui/dropzone';
@@ -8,6 +9,7 @@ import styles from './DriveDropOverlay.module.scss';
 
 export default function DriveDropOverlay() {
   const { isDragging, setIsDragging } = useDragDropStore();
+  const folderId = useSearchParams().get('folderId');
   return (
     <>
       <Button
@@ -28,7 +30,7 @@ export default function DriveDropOverlay() {
         className={`${styles.overlay} ${isDragging ? styles.overlayActive : ''}`}
       >
         <div className={styles.inner}>
-          <Dropzone onDraggingAction={setIsDragging} />
+          <Dropzone onDraggingAction={setIsDragging} folderId={folderId} />
           <div className={styles.iconBox}>
             <Upload size={28} />
           </div>

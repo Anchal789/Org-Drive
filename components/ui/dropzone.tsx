@@ -7,8 +7,10 @@ import { Input } from './input';
 
 export default function Dropzone({
   onDraggingAction,
+  folderId,
 }: {
   onDraggingAction?: (dragging: boolean) => void;
+  folderId?: string | null;
 }) {
   const { setIsDragging } = useDragDropStore();
   const startUploads = useUploadStore((state) => state.startUploads);
@@ -74,7 +76,12 @@ export default function Dropzone({
       const extractedFiles = nestedFiles.flat();
 
       if (extractedFiles.length > 0) {
-        startUploads(extractedFiles, folderName, extractedFiles.length);
+        startUploads(
+          extractedFiles,
+          folderName,
+          extractedFiles.length,
+          folderId,
+        );
       }
     } catch (error: unknown) {
       const errorMessage =
@@ -105,7 +112,7 @@ export default function Dropzone({
     if (fileArray[0].webkitRelativePath) {
       folderName = fileArray[0].webkitRelativePath.split('/')[0];
     }
-    startUploads(fileArray, folderName, fileArray.length);
+    startUploads(fileArray, folderName, fileArray.length, folderId);
     e.target.value = '';
   };
 

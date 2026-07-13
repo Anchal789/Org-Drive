@@ -73,6 +73,7 @@ export const useUploadStore = create<UploadStore>((set, get) => ({
   uploads: {},
   pendingQueue: [],
   isProcessing: false,
+  folderId: null,
 
   closeWidget: () => set({ isWidgetVisible: false, uploads: {} }),
 
@@ -95,7 +96,12 @@ export const useUploadStore = create<UploadStore>((set, get) => ({
     }));
   },
 
-  startUploads: (files: File[], folderName?: string, fileCount?: number) => {
+  startUploads: (
+    files: File[],
+    folderName?: string,
+    fileCount?: number,
+    folderId?: string | null,
+  ) => {
     const newUploads: Record<string, UploadItem> = {};
     const newQueueItems: QueuedFile[] = [];
     for (const file of files) {
@@ -110,6 +116,7 @@ export const useUploadStore = create<UploadStore>((set, get) => ({
         folderName: folderName,
         rawSize: file.size,
         isFolderGroup: false,
+        folderId: folderId,
       };
       newQueueItems.push({
         file,
@@ -117,6 +124,7 @@ export const useUploadStore = create<UploadStore>((set, get) => ({
         fileCount,
         isFolder: folderName !== undefined,
         uniqueId,
+        folderId,
       });
     }
 
@@ -124,6 +132,7 @@ export const useUploadStore = create<UploadStore>((set, get) => ({
       isWidgetVisible: true,
       uploads: { ...state.uploads, ...newUploads },
       pendingQueue: [...state.pendingQueue, ...newQueueItems],
+      folderId: folderId,
     }));
 
     get().processQueue();
@@ -148,6 +157,7 @@ export const useUploadStore = create<UploadStore>((set, get) => ({
       formData.append('folderName', folderName);
       formData.append('fileCount', String(fileCount || 0));
     }
+    formData.append('folderId', state.folderId || '');
 
     try {
       const response = await fetch('/api/file/upload-files', {

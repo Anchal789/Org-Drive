@@ -1,12 +1,11 @@
 'use client';
 
-import { Clock, Folder, MoreHorizontal } from 'lucide-react';
+import { Clock, Folder } from 'lucide-react';
 import { type FunctionComponent, useMemo } from 'react';
 import { getFileExtension } from '@/lib/utils';
 import { formatBytes } from '@/store/store';
 import type { RecentLogsType } from '@/types/recent';
 import PageHeader from '../page-header/PageHeader';
-import { Button } from '../ui/button';
 import FileType from '../ui/fileType';
 import styles from './Recent.module.scss';
 
@@ -122,9 +121,9 @@ const RecentPage: FunctionComponent<{
                         {log.fileSize ? formatBytes(log.fileSize) : '--'}
                       </span>
 
-                      <Button className={styles.moreBtn}>
+                      {/* <Button className={styles.moreBtn}>
                         <MoreHorizontal size={14} />
-                      </Button>
+                      </Button> */}
                     </div>
                   );
                 })}
