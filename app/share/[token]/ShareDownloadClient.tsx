@@ -23,7 +23,7 @@ export default function ShareDownloadClient({
     if (type === 'multi')
       apiPath = `/api/file/download/multiple?ids=${ids}&userId=${userId}`;
     else if (type === 'folder')
-      apiPath = `/api/file/download/folder?ids=${ids}&userId=${userId}`;
+      apiPath = `/api/file/download/folder-files?ids=${ids}&userId=${userId}`;
     else apiPath = `/api/file/download/file?fileId=${ids}&userId=${userId}`;
 
     const a = document.createElement('a');

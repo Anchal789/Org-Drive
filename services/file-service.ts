@@ -75,7 +75,9 @@ export const downloadAllFolderFiles = async (
     return;
   }
 
-  window.location.href = `/api/file/download/folder-files?folderId=${folderId}&folderName=${folderName}`;
+  const url = `/api/file/download/folder-files?folderId=${folderId}&folderName=${folderName}`;
+
+  triggerHiddenDownload(url, `${folderName}.zip`);
 };
 
 export const trashFile = async (fileId: number, shareId?: number) => {
