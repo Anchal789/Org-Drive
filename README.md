@@ -1,6 +1,6 @@
-# TelDrive — Telegram-Powered Cloud File Storage Platform
+# OrgDrive — Telegram-Powered Cloud File Storage Platform
 
-> A high-performance, workspace-style file storage platform that uses Telegram's cloud infrastructure as a free, permanent storage backend — with optional AI-powered document search.
+> A high-performance, workspace-style file storage platform that utilizes Telegram's cloud infrastructure as a free, permanent storage backend, complete with an optional AI-powered semantic search engine.
 
 ---
 
@@ -8,7 +8,7 @@
 
 - [Overview](#overview)
 - [System Architecture](#system-architecture)
-- [Features](#features)
+- [Comprehensive Features](#comprehensive-features)
 - [Authentication](#authentication)
 - [File System Design](#file-system-design)
 - [Upload Lifecycle](#upload-lifecycle)
@@ -24,208 +24,203 @@
 
 ## Overview
 
-OrgDrive is an un-nested , highly responsive web workspace that repurposes Telegram's cloud infrastructure as a free, scalable file storage backend. It combines a Google Drive-style UI with Telegram's MTProto protocol to offer permanent, chunked file storage — without any traditional cloud storage costs.
+OrgDrive is a highly responsive web workspace that repurposes Telegram's MTProto infrastructure as a scalable file storage backend. It combines a familiar, flat UI file explorer with enterprise-grade features—offering permanent, chunked file storage without the traditional costs associated with cloud providers.
 
 **Core Concept:**
 
-- Files are stored in **Telegram channels** (free, permanent, unlimited)
-- All **metadata, folders, and user data** live in a relational SQL database
-- Authentication is handled entirely via **Telegram Login** (no passwords)
-- An **optional AI layer** enables semantic document search
+- **Storage:** Files are stored in Telegram channels (providing free, permanent, and unlimited capacity).
+- **Metadata:** All folder hierarchies, permissions, and user data are strictly managed within a relational SQL database.
+- **Security:** Authentication is handled entirely via Telegram Login, eliminating password vulnerabilities.
+- **Intelligence:** An optional AI layer enables semantic, vector-based document search.
 
 ---
 
 ## System Architecture
 
-```
-┌────────────────────────────────────────────────────────────────────────┐
-│                        CLIENT APPLICATION INTERFACE                    │
-│   • Google Drive-Style Flat UI Canvas   • Dynamic Upload Progress Loop │
-└───────────────────────────────────┬────────────────────────────────────┘
-                                    │
-                       (JSON Web Tokens & Byte Streams)
-                                    ▼
-┌────────────────────────────────────────────────────────────────────────┐
-│                        CORE APPLICATION SERVER                         │
-│   • Telegram Login Validator  • Metadata Engine  • Telemetry Aggregator│
-└────────────┬──────────────────────────────────────────────────┬────────┘
-             │                                                  │
-   (Direct File Chunks)                                 (Metadata Sync)
-             ▼                                                  ▼
-┌─────────────────────────┐                        ┌─────────────────────────┐
-│     TELDRIVE PROXY      │                        │   RELATIONAL DATABASE   │
-│ • MTProto Tunneling     │                        │ • Workspace Topologies  │
-│ • Channel Part Slicing  │                        │ • Single-Level Folders  │
-└────────────┬────────────┘                        │ • Optional AI Queue     │
-             │                                     └────────────┬────────────┘
-      (Binary Payloads)                                         │
-             ▼                                           (Vector Targets)
-┌─────────────────────────┐                                     ▼
-│   TELEGRAM API CLOUD    │                        ┌─────────────────────────┐
-│ • Permanent Storage     │                        │   OPTIONAL AI VECTOR DB │
-│ • Free Asset Hosting    │                        │ • Local Text Slices     │
-└─────────────────────────┘                        │ • Semantic Context Index│
-                                                   └─────────────────────────┘
+OrgDrive operates on a decoupled architecture, separating the web interface, metadata registry, and binary storage layers.
+
+```mermaid
+graph TD
+    Client[Client Application Interface<br/>UI Canvas & Upload Loop] -->|JSON Web Tokens & Byte Streams| Server[Core Application Server<br/>Auth, Metadata, Telemetry]
+
+    Server -->|Binary Payloads| Proxy[OrgDrive Proxy<br/>MTProto Tunneling & Chunking]
+    Server -->|Metadata Sync| DB[(Relational Database<br/>Topologies & Folders)]
+
+    Proxy -->|512KB Packets| Telegram[Telegram API Cloud<br/>Permanent Storage]
+
+    DB -->|Vector Targets| AI[(Optional AI Vector DB<br/>Semantic Context Index)]
 ```
 
-### Three Core Infrastructure Units
+### Core Infrastructure Units
 
-| Layer              | Component                 | Responsibility                                                               |
-| ------------------ | ------------------------- | ---------------------------------------------------------------------------- |
-| **Web & Server**   | Application Engine        | Frontend UI, JWT auth, metadata orchestration, storage routing               |
-| **Storage Bridge** | Teldrive Middleware Proxy | MTProto tunneling, file chunking (512KB packets), Telegram channel transfers |
-| **Data Layer**     | Relational Registry       | Folder maps, file metadata, user profiles, vector embeddings (optional)      |
+| Layer              | Component                 | Responsibility                                                                       |
+| :----------------- | :------------------------ | :----------------------------------------------------------------------------------- |
+| **Web & Server**   | Application Engine        | Frontend UI, JWT authentication, metadata orchestration, and storage routing.        |
+| **Storage Bridge** | OrgDrive Middleware Proxy | MTProto tunneling, payload chunking (512KB packets), and Telegram channel transfers. |
+| **Data Layer**     | Relational Registry       | Folder maps, file metadata, user profiles, and vector embeddings (optional).         |
 
 ---
 
-## Features
+## Comprehensive Features
 
-- **Telegram-Backed Storage** — Files are chunked and stored permanently in Telegram channels at zero cost
-- **Google Drive-Style UI** — Familiar flat file explorer with drag-and-drop support
-- **Telegram-Only Auth** — No passwords or OAuth; login via Telegram's cryptographic widget
-- **Multi-Stage Upload Telemetry** — Real-time byte-level progress tracking across all upload stages
-- **Single-Level Flat Folders** — Fast, recursion-free directory lookups
-- **Organization Analytics** — Storage usage, file type distribution, bandwidth graphs, and infrastructure health
-- **Optional AI Search** — Asynchronous document parsing and vector-based semantic search (decoupled from upload flow)
-- **Multi-Tenant Support** — Each organization maps to its own Telegram channel and bot account
+OrgDrive is built to function as a complete cloud drive replacement with a rich feature set:
+
+### File & Workspace Management
+
+- **Single-Level Flat Folders:** Enforces a one-level hierarchy (files inside folders, but no nested sub-folders) for maximum database performance and a clean, clutter-free workspace.
+- **Full CRUD Operations:** Seamlessly create folders, upload files, rename items, move files between directories, and download content to your local device.
+- **Trash & Permanent Delete:** Soft-delete functionality moves items to a dedicated Trash bin. Users can restore items or permanently delete them to wipe metadata from the database.
+- **Upload Engine (SSE):** Real-time, byte-level progress tracking across the entire upload lifecycle via Server-Sent Events, complete with background processing and cancellation.
+
+### Discovery & Organization
+
+- **Smart Search:** Instantly find files and folders by name across the entire drive using a debounced, highly responsive search bar.
+- **Bookmarks:** Star or bookmark important files and folders. Access them instantly via a dedicated "Bookmarked Items" page.
+- **Recent Logs:** A dedicated workflow hub that tracks your recent activity (uploaded, downloaded, shared, or edited files), allowing you to quickly resume tasks.
+
+### Collaboration
+
+- **Share Files & Folders:** Share any item with other registered users on the platform.
+- **Access Management (RBAC):** Granular permission controls. Assign users as Viewers, Editors, or Owners.
+- **Shared With Me:** A dedicated page where users can browse all files and folders that have been explicitly shared with them.
+- **Secure Link Generation:** Generate AES-encrypted, shareable links to instantly share files externally.
+
+### Smart Features & UI
+
+- **AI Chat (Dummy / Placeholder):** An integrated "Ask AI" chat interface designed for semantic search and document summarization (ready for LLM integration).
+- **Theming:** Full support for Light and Dark modes.
+- **Responsive Design:** Intelligently adapts to desktop, tablet, and mobile displays. Features grid/list view toggles for desktop and optimized touch-friendly tiles for mobile.
 
 ---
 
 ## Authentication
 
-TelDrive uses **Telegram Login Widget API** — no email, password, or third-party OAuth required.
+OrgDrive leverages the **Telegram Login Widget API**, eliminating the need for emails, passwords, or third-party OAuth providers. Users can log in seamlessly using:
 
-### Auth Flow
+1. **QR Code Scan** via the Telegram Mobile App.
+2. **Phone Number & OTP** sent securely to their Telegram account.
 
+```mermaid
+sequenceDiagram
+    participant User
+    participant App as OrgDrive Client
+    participant Telegram as Telegram Widget
+    participant Server as Core Server
+
+    User->>App: Opens login page (Selects QR or OTP)
+    App->>Telegram: Renders official Auth interface
+    User->>Telegram: Scans QR or enters OTP
+    Telegram-->>Server: Redirect payload (id, hash, auth_date)
+    Server->>Server: HMAC-SHA256 verification via BOT_TOKEN
+    Server-->>App: Returns signed JWT for session
 ```
-1. User opens login page
-       │
-       ▼
-2. Telegram Login Widget renders (official iframe)
-   User enters phone number → confirms in Telegram app
-       │
-       ▼
-3. Telegram sends payload to redirect URI:
-   { id, first_name, username, auth_date, hash }
-       │
-       ▼
-4. Server runs HMAC-SHA256 verification
-   using TELEGRAM_BOT_TOKEN
-       │
-       ▼
-5. Hash match? → Create/link org workspace profile
-                 → Return signed JWT for session
-```
-
-> All subsequent API requests are authenticated via the signed **JSON Web Token (JWT)**.
 
 ---
 
 ## File System Design
 
-TelDrive uses a **Strict Single-Level Folder Architecture** to eliminate recursive lookup lag.
+To eliminate recursive lookup latency, OrgDrive enforces a **Strict Single-Level Folder Architecture**.
 
-### Rules
+**Rules:**
 
-- Folders **cannot** contain other folders
-- A file's `folder_id` must point to a **terminal directory** (not another folder)
-- If `folder_id` is `null`, the file lives at the **workspace root**
+1. Folders cannot contain other folders (no sub-directories).
+2. A file's `folder_id` must point directly to a terminal directory.
+3. If `folder_id` is `null`, the file resides at the workspace root.
 
-### Database Schema
+### Database Entity Relationship
 
+```mermaid
+erDiagram
+    TENANTS ||--o{ FOLDERS : contains
+    FOLDERS ||--o{ FILES : holds
+    TENANTS {
+        uuid id
+        string org_name
+        string channel_id
+    }
+    FOLDERS {
+        uuid id
+        string display_name
+        uuid org_id
+    }
+    FILES {
+        uuid id
+        uuid folder_id
+        string name
+        int size_bytes
+        string telegram_address
+    }
 ```
-┌──────────────┐       ┌──────────────┐       ┌──────────────────────┐
-│   Tenants    │       │   Folders    │       │        Files         │
-│──────────────│       │──────────────│       │──────────────────────│
-│ id           │◄──┐   │ id           │◄──┐   │ id                   │
-│ org_name     │   │   │ display_name │   └───│ folder_id (nullable) │
-│ channel_id   │   │   │ org_id       │───┘   │ name                 │
-│ bot_account  │   └───│ created_at   │       │ size_bytes           │
-└──────────────┘       └──────────────┘       │ telegram_address     │
-                                              │ created_at           │
-                                              └──────────────────────┘
-```
 
-> The `telegram_address` field stores the pointer/reference to where the file chunks live inside the Telegram channel.
+> The `telegram_address` field acts as the pointer mapping the database record to the specific chunks residing in the Telegram channel.
 
 ---
 
 ## Upload Lifecycle
 
-Every file upload passes through a **4-stage state machine** with distinct UI states.
+Every file upload passes through a highly observable 4-stage state machine.
 
-```
-Stage 1: Local Registration        →  UI: Pulsing placeholder row (Pending)
-Stage 2: Client → Server Stream    →  UI: Live % progress counter (Uploading)
-Stage 3: Server → Telegram Cloud   →  UI: Infinite marquee "Securing in Cloud Vault..." (Indexing)
-Stage 4: Transaction Commit        →  UI: Green checkmark, file becomes interactive (Complete)
-```
-
-### Stage Details
-
-| Stage         | Action                                                                    | Visual State                         |
-| ------------- | ------------------------------------------------------------------------- | ------------------------------------ |
-| **Pending**   | File dropped, optimistic render begins                                    | Soft-pulsing placeholder row         |
-| **Uploading** | Browser streams bytes to server via HTTP POST                             | Live 0–100% byte counter             |
-| **Indexing**  | Teldrive slices file into 512KB MTProto packets and transfers to Telegram | Infinite marquee badge               |
-| **Complete**  | Final chunk written; DB record committed with Telegram address            | Solid green checkmark, file unlocked |
+| Stage            | Action                                             | Visual UI State                 |
+| :--------------- | :------------------------------------------------- | :------------------------------ |
+| **1. Pending**   | File dropped, optimistic UI render begins.         | Soft-pulsing placeholder row    |
+| **2. Uploading** | Browser streams bytes to server via HTTP POST.     | Live 0–100% byte counter        |
+| **3. Indexing**  | Middleware slices file into 512KB MTProto packets. | Infinite marquee badge          |
+| **4. Complete**  | Final chunk written; DB record committed.          | Solid green checkmark, unlocked |
 
 ---
 
 ## Analytics Engine
 
-The analytics workspace tracks organizational activity and infrastructure health — no monetization components.
+The built-in analytics workspace tracks organizational activity and infrastructure health.
 
-| Metric                     | Description                                                          |
-| -------------------------- | -------------------------------------------------------------------- |
-| **Storage Usage**          | Total bytes consumed vs. quota allocation                            |
-| **File Type Distribution** | Pie chart breakdown by category (Documents, Archives, Images, Media) |
-| **Bandwidth Graphs**       | Daily and weekly upload/download traffic                             |
-| **Infrastructure Health**  | Round-trip latency to Telegram data centers; rate-limit warnings     |
+- **Storage Usage:** Total bytes consumed vs. allocated quotas.
+- **File Type Distribution:** Categorical breakdown (Documents, Archives, Images, Media).
+- **Bandwidth Graphs:** Time-series analysis of upload and download traffic.
+- **Infrastructure Health:** Round-trip latency to Telegram data centers and rate-limit monitoring.
 
 ---
 
 ## AI Ingestion (Optional)
 
-The AI layer is **completely decoupled** from the upload flow — it never slows down file operations.
+The AI processing layer is completely decoupled from the critical upload path, ensuring file operations remain instantly responsive.
 
-```
-[Upload Complete] ──► [File Metadata Committed to DB]
-                                   │
-                    ┌──────────────┴──────────────┐
-                    ▼                             ▼
-          AI Status: DISABLED             AI Status: ENABLED
-                    │                             │
-        ┌───────────┴──────────┐    ┌─────────────┴────────────┐
-        │  Skip AI Pipeline    │    │  Queue Background Job     │
-        │  Chat UI hidden      │    │  → Download file text     │
-        │  File ready instantly│    │  → Split into paragraphs  │
-        └──────────────────────┘    │  → Generate vector embeds │
-                                    │  → Write to Vector DB     │
-                                    └──────────────────────────┘
+```mermaid
+graph LR
+    Upload[Upload Complete] --> DB[File Metadata Committed]
+    DB --> Check{AI Status}
+
+    Check -->|Disabled| Skip[Skip Pipeline<br/>File Ready Instantly]
+
+    Check -->|Enabled| Queue[Queue Background Job]
+    Queue --> Download[Download File Text]
+    Download --> Split[Split into Paragraphs]
+    Split --> Embed[Generate Vector Embeddings]
+    Embed --> VDB[(Write to Vector DB)]
 ```
 
-When enabled, users can use **"Chat with Document"** sidebar for semantic search across uploaded files.
+When enabled, users gain access to the **"Ask AI"** feature for semantic, natural-language search across their uploaded files.
 
 ---
 
 ## Environment Variables
 
+Copy the `.env.example` file to `.env` and populate the required fields.
+
 ```env
 # Telegram Configuration
 TELEGRAM_BOT_TOKEN=your_bot_token_here
-TELEGRAM_CHANNEL_ID=your_storage_channel_id
+TELEGRAM_APP_API_ID=your_telegram_app_id
+TELEGRAM_APP_API_HASH=your_telegram_app_api_hash
+TELEGRAM_STORAGE_CHANNEL_ID=your_storage_channel_id
 
 # Application
 JWT_SECRET=your_jwt_secret_key
-APP_URL=https://your-app-domain.com
 
 # Database
-DATABASE_URL=postgresql://user:password@host:5432/teldrive
+DATABASE_URL=postgresql://user:password@host:5432/orgdrive
 
-# AI (Optional)
-AI_ENABLED=false
-VECTOR_DB_URL=your_vector_db_connection_string
+NEXT_PUBLIC_PHONE_OBFUSCATION_KEY=your_encryption_decryption_key
+NEXT_PRIVATE_CRON_SECRET=your_cron_key
 ```
 
 ---
@@ -234,31 +229,28 @@ VECTOR_DB_URL=your_vector_db_connection_string
 
 ### Prerequisites
 
-- Node.js (or your chosen backend runtime)
+- Node.js (LTS recommended)
 - PostgreSQL database
-- A Telegram Bot Token (from [@BotFather](https://t.me/BotFather))
+- Telegram Bot Token (via [@BotFather](https://t.me/BotFather))
 - A dedicated Telegram Channel (for file storage)
-- Teldrive proxy daemon running on your server
 
-### Setup Steps
+### Installation
 
 ```bash
 # 1. Clone the repository
-git clone https://github.com/your-org/teldrive.git
-cd teldrive
+git clone [https://github.com/Anchal789/Org-Drive](https://github.com/Anchal789/Org-Drive)
 
 # 2. Install dependencies
 npm install
 
 # 3. Configure environment variables
 cp .env.example .env
-# Edit .env with your Telegram bot token, DB URL, etc.
 
 # 4. Run database migrations
 npm run db:migrate
 
-# 5. Start the Teldrive proxy daemon
-./teldrive-proxy --config config.yaml
+# 5. Start the Orgdrive proxy daemon (in a separate terminal)
+./orgdrive-proxy --config config.yaml
 
 # 6. Start the application
 npm run dev
@@ -268,8 +260,8 @@ npm run dev
 
 ## Project Structure
 
-```
-teldrive/
+```text
+orgdrive/
 ├── client/                  # Frontend single-page application
 │   ├── components/
 │   │   ├── FileExplorer/    # Drive-style file browser
@@ -283,7 +275,7 @@ teldrive/
 │   ├── telemetry/           # Bandwidth & storage aggregation
 │   └── ai/                  # Optional async AI ingestion queue
 │
-├── proxy/                   # Teldrive MTProto middleware daemon
+├── proxy/                   # Orgdrive MTProto middleware daemon
 │   ├── chunker/             # 512KB packet splitter
 │   └── telegram/            # MTProto channel transfer handlers
 │
@@ -292,7 +284,7 @@ teldrive/
 │   └── schema/              # Tenants, Folders, Files, Vector tables
 │
 ├── .env.example
-├── config.yaml              # Teldrive proxy configuration
+├── config.yaml              # Orgdrive proxy configuration
 └── README.md
 ```
 
@@ -300,40 +292,30 @@ teldrive/
 
 ## How Storage Works
 
-```
-Your Files (any size)
-      │
-      ▼
-Teldrive Proxy
-      │  splits into 512KB chunks
-      ▼
-Telegram MTProto Channel
-      │  stores chunks permanently (free)
-      ▼
-Database stores pointer/address
-      │  e.g. { channel: -1001234, parts: [101, 102, 103] }
-      ▼
-Download: DB fetches address → Teldrive reassembles chunks → streams to user
+```mermaid
+graph TD
+    File[Your File<br/>Any Size] --> Proxy[OrgDrive Proxy]
+    Proxy -->|Splits into 512KB chunks| Telegram[Telegram MTProto Channel]
+    Telegram -->|Permanent Free Storage| DB[(PostgreSQL Database)]
+    DB -.->|Stores pointer/address<br/>e.g. channel: -1001234, parts: 101, 102| Proxy
 ```
 
-> Telegram provides **free, permanent, unlimited** binary storage. TelDrive simply uses it as an object store — similar to how you'd use S3, but at zero cost.
+When a user initiates a download, the database fetches the pointer address, the OrgDrive proxy reassembles the chunks from Telegram, and streams the unified file back to the user.
 
 ---
 
 ## Contributing
 
-1. Fork the repository
-2. Create a feature branch: `git checkout -b feature/your-feature`
-3. Commit your changes: `git commit -m "feat: add your feature"`
-4. Push to the branch: `git push origin feature/your-feature`
-5. Open a Pull Request
+1. Fork the repository.
+2. Create a feature branch: `git checkout -b feature/your-feature-name`
+3. Commit your changes: `git commit -m "feat: implement robust feature"`
+4. Push to the branch: `git push origin feature/your-feature-name`
+5. Open a Pull Request.
 
 ---
 
 ## License
 
-MIT License — see [LICENSE](LICENSE) for details.
+This project is distributed under the MIT License. See `LICENSE` for more information.
 
----
-
-> **Note:** This project uses Telegram's infrastructure for storage. Ensure your usage complies with [Telegram's Terms of Service](https://telegram.org/tos). Use a dedicated private channel for file storage and never expose your Bot Token publicly.
+> **Disclaimer:** This project utilizes Telegram's infrastructure for storage. Ensure your usage strictly complies with [Telegram's Terms of Service](https://telegram.org/tos). It is highly recommended to use a dedicated private channel for file storage and to never expose your Bot Token publicly.
