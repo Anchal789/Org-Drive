@@ -4,10 +4,15 @@ import { getApiSession } from '@/lib/session';
 import { decrypt } from '@/lib/utils';
 import { sharedWithMeRepository } from '@/repositories/shared-with-me.repository';
 
-export async function POST(request: NextRequest) {
-  const { id } = await request.json();
+interface RemoveUserAccessBody {
+  id: string;
+}
 
-  const session = await getApiSession(request);
+export async function POST(request: NextRequest) {
+  const [{ id }, session] = await Promise.all([
+    request.json() as Promise<RemoveUserAccessBody>,
+    getApiSession(request),
+  ]);
 
   if (!session?.userId) return sendError('Unauthorized', 401);
 

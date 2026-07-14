@@ -1,5 +1,3 @@
-export const dynamic = 'force-dynamic';
-
 import Image from 'next/image';
 import NoDataImage from '@/public/assets/No-Data.svg';
 import type { UploadedFile, UploadedFolder } from '@/types/files';

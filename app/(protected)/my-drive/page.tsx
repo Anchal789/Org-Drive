@@ -1,3 +1,4 @@
+import { Suspense } from 'react';
 import DriveDropOverlay from '@/components/dashboard/DriveDropOverlay';
 import DashGridWrapper from '@/components/dashboard/GridSection/DashGridWrapper';
 import SwitchLayout from '@/components/dashboard/SwitchLayout';
@@ -7,6 +8,32 @@ import { getSessionUser } from '@/lib/session';
 import { uploadedFilesRepository } from '@/repositories/uploaded-files.respository';
 import { uploadedFoldersRepository } from '@/repositories/uploaded-folders.respository';
 import type { UploadedFile, UploadedFolder } from '@/types/files';
+
+async function fetchMoreData(type: 'files' | 'folders', offset: number) {
+  'use server';
+  const currentUser = await getSessionUser();
+  const currentUserId = Number(currentUser?.userId);
+
+  if (type === 'files') {
+    const nextFiles = (await uploadedFilesRepository.getCombinedFiles(
+      currentUserId,
+      30,
+      offset,
+    )) as Array<UploadedFile>;
+    return nextFiles;
+  }
+
+  if (type === 'folders') {
+    const nextFolders = (await uploadedFoldersRepository.getCombinedFolders(
+      currentUserId,
+      30,
+      offset,
+    )) as Array<UploadedFolder>;
+    return nextFolders;
+  }
+
+  return [];
+}
 
 export default async function Page() {
   const user = await getSessionUser();
@@ -23,35 +50,15 @@ export default async function Page() {
     0,
   )) as Array<UploadedFolder>;
 
-  async function fetchMoreData(type: 'files' | 'folders', offset: number) {
-    'use server';
-    const currentUser = await getSessionUser();
-    const currentUserId = Number(currentUser?.userId);
-
-    if (type === 'files') {
-      const nextFiles = (await uploadedFilesRepository.getCombinedFiles(
-        currentUserId,
-        30,
-        offset,
-      )) as Array<UploadedFile>;
-      return nextFiles;
-    }
-
-    if (type === 'folders') {
-      const nextFolders = (await uploadedFoldersRepository.getCombinedFolders(
-        currentUserId,
-        30,
-        offset,
-      )) as Array<UploadedFolder>;
-      return nextFolders;
-    }
-
-    return [];
-  }
-
   return (
     <>
-      <DashGridWrapper overlay={<DriveDropOverlay />}>
+      <DashGridWrapper
+        overlay={
+          <Suspense fallback={null}>
+            <DriveDropOverlay />
+          </Suspense>
+        }
+      >
         <SwitchLayout
           key={
             JSON.stringify(allFiles.map((f) => f.id)) +

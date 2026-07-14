@@ -22,8 +22,7 @@ interface UserAccessRowProps {
     lastName: string | null;
     username: string | null;
     photoUrl?: string | null;
-  } & {
-    shareId: number;
+    shareId?: number;
   };
   permission: string;
   isOwner?: boolean;
@@ -50,6 +49,7 @@ export default function UserAccessRow({
   const initials = `${user.firstName?.charAt(0) ?? ''}${user.lastName?.charAt(0) ?? ''}`;
 
   const removeAccess = async () => {
+    if (user.shareId == null) return;
     try {
       await userRemoveAccess(user.shareId);
       toast.success('Access removed successfully');

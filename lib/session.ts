@@ -1,4 +1,4 @@
-'use server';
+import 'server-only';
 import { cookies } from 'next/headers';
 import type { NextRequest } from 'next/server';
 import { TelegramClient } from 'telegram';
@@ -80,6 +80,9 @@ export async function getApiSession(
 }
 
 export async function destroySession() {
+  const session = await getSessionUser();
+  if (!session?.userId) return;
+
   const cookieStore = await cookies();
   cookieStore.delete(REFRESH_TOKEN);
   cookieStore.delete('sidebar_state');

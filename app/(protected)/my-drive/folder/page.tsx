@@ -1,5 +1,6 @@
 export const dynamic = 'force-dynamic';
 
+import { Suspense } from 'react';
 import DriveDropOverlay from '@/components/dashboard/DriveDropOverlay';
 import DashFolder from '@/components/dashboard/FolderSection/DashFolder';
 import DashGridWrapper from '@/components/dashboard/GridSection/DashGridWrapper';
@@ -31,7 +32,13 @@ export default async function FolderPage({
   );
 
   return (
-    <DashGridWrapper overlay={<DriveDropOverlay />}>
+    <DashGridWrapper
+      overlay={
+        <Suspense fallback={null}>
+          <DriveDropOverlay />
+        </Suspense>
+      }
+    >
       <DashFolder
         files={filesInFolders}
         folderName={folderName}

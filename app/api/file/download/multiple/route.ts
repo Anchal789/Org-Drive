@@ -114,11 +114,12 @@ export async function POST(request: NextRequest) {
     (async () => {
       try {
         const usedNames = new Set<string>();
+        const messagesById = new Map(
+          messages.map((m) => [Number(m.id), m] as const),
+        );
 
         for (const fileInfo of filesInfo) {
-          const msg = messages.find(
-            (m) => m.id === Number(fileInfo.telegramMessageId),
-          );
+          const msg = messagesById.get(Number(fileInfo.telegramMessageId));
           if (!msg?.media || !('document' in msg.media)) continue;
 
           let fileName = fileInfo.name || 'downloaded-file';

@@ -5,6 +5,31 @@ import { useDragDropStore, useUploadStore } from '@/store/store';
 import styles from './Component.module.scss';
 import { Input } from './input';
 
+const readDirectory = (
+  directoryEntry: FileSystemDirectoryEntry,
+): Promise<File[]> => {
+  return new Promise((resolve, reject) => {
+    const reader = directoryEntry.createReader();
+    reader.readEntries(async (entries: FileSystemEntry[]) => {
+      if (entries.some((entry) => entry.isDirectory)) {
+        reject(new Error('Nested folders are not allowed.'));
+        return;
+      }
+
+      try {
+        const filePromises = entries
+          .filter((entry): entry is FileSystemFileEntry => entry.isFile)
+          .map((entry) => new Promise<File>((res) => entry.file(res)));
+
+        const files = await Promise.all(filePromises);
+        resolve(files);
+      } catch (error) {
+        reject(error instanceof Error ? error : new Error(String(error)));
+      }
+    });
+  });
+};
+
 export default function Dropzone({
   onDraggingAction,
   folderId,
@@ -18,31 +43,6 @@ export default function Dropzone({
   const handleDrag = (value: boolean) => {
     setIsDragging(value);
     onDraggingAction?.(value);
-  };
-
-  const readDirectory = (
-    directoryEntry: FileSystemDirectoryEntry,
-  ): Promise<File[]> => {
-    return new Promise((resolve, reject) => {
-      const reader = directoryEntry.createReader();
-      reader.readEntries(async (entries: FileSystemEntry[]) => {
-        if (entries.some((entry) => entry.isDirectory)) {
-          reject(new Error('Nested folders are not allowed.'));
-          return;
-        }
-
-        try {
-          const filePromises = entries
-            .filter((entry): entry is FileSystemFileEntry => entry.isFile)
-            .map((entry) => new Promise<File>((res) => entry.file(res)));
-
-          const files = await Promise.all(filePromises);
-          resolve(files);
-        } catch (error) {
-          reject(error instanceof Error ? error : new Error(String(error)));
-        }
-      });
-    });
   };
 
   const handleDrop = async (e: React.DragEvent) => {

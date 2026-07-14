@@ -85,11 +85,19 @@ export const bookmarkRepository = {
     items: { id: number; isFile: boolean; shared: boolean }[],
     bookmarkState: boolean,
   ) {
-    const sharedIds = items.filter((i) => i.shared).map((i) => i.id);
-    const fileIds = items.filter((i) => !i.shared && i.isFile).map((i) => i.id);
-    const folderIds = items
-      .filter((i) => !i.shared && !i.isFile)
-      .map((i) => i.id);
+    const sharedIds: number[] = [];
+    const fileIds: number[] = [];
+    const folderIds: number[] = [];
+
+    for (const item of items) {
+      if (item.shared) {
+        sharedIds.push(item.id);
+      } else if (item.isFile) {
+        fileIds.push(item.id);
+      } else {
+        folderIds.push(item.id);
+      }
+    }
 
     const promises = [];
 

@@ -1,0 +1,25 @@
+.button {
+  color: var(--text-white);
+  background: var(--tg-blue);
+  border-color: var(--tg-blue);
+  font-size: var(--text-sm);
+  box-shadow: var(--shadow-sm);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-2);
+  font-weight: var(--font-semibold);
+  transition: opacity 0.2s ease-in-out;
+  border-radius: var(--radius-md);
+  width: 100%;
+}
+
+.spinner {
+  width: 16px;
+  height: 16px;
+  border: 2px solid rgba(255, 255, 255, 0.4);
+  border-top-color: #fff;
+  border-radius: 50%;
+  display: inline-block;
+  animation: spin 0.8s linear infinite;
+}

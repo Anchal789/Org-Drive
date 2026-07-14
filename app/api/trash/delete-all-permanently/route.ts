@@ -69,10 +69,7 @@ export async function DELETE(request: NextRequest) {
     if (errMsg?.includes('AUTH_KEY_UNREGISTERED')) {
       return sendError('Telegram session expired.', 401);
     }
-    return sendError(
-      'Database cleared, but failed to free Telegram space',
-      500,
-    );
+    return sendError(`Telegram Error: ${errMsg}. (Database protected)`, 500);
   } finally {
     if (client)
       await client.disconnect().catch(() => {

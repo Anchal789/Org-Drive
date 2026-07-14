@@ -9,7 +9,7 @@ import {
   Sparkles,
 } from 'lucide-react';
 import { useRouter } from 'next/navigation';
-import { useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { Switch } from '@/components/ui/switch';
 import { fetchData } from '@/lib/api-fn';
 import { encrypt } from '@/lib/utils';
@@ -56,6 +56,13 @@ export default function SmartSearchPage() {
     return [];
   });
 
+  useEffect(() => {
+    localStorage.setItem(
+      'smart_drive_recent_searches:v1',
+      JSON.stringify(recentSearches),
+    );
+  }, [recentSearches]);
+
   // ─── 1. SAVE SEARCH FUNCTION (KEEPS TOP 3) ───
   const saveRecentSearch = (term: string) => {
     const trimmed = term.trim();
@@ -65,13 +72,7 @@ export default function SmartSearchPage() {
       const filtered = prev.filter(
         (t) => t.toLowerCase() !== trimmed.toLowerCase(),
       );
-      const updated = [trimmed, ...filtered].slice(0, 3);
-      localStorage.setItem(
-        'smart_drive_recent_searches:v1',
-        JSON.stringify(updated),
-      );
-
-      return updated;
+      return [trimmed, ...filtered].slice(0, 3);
     });
   };
 

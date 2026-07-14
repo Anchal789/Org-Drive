@@ -5,12 +5,29 @@ export type SharePermission = 'viewer' | 'editor' | 'owner' | 'commenter';
 
 export type InviteUser = User & { permission: SharePermission };
 
+export type ShareApiItemRef = {
+  id?: number;
+  fileId?: number;
+  folderId?: number | null;
+  userId?: number;
+};
+
+export type ShareInvitePayload = InviteUser & { userId?: number };
+
+export type ShareApiRequestBody = {
+  usersToInvite: ShareInvitePayload[];
+  usersWithAccess: ShareWithMePerson[];
+  file?: ShareApiItemRef | null;
+  folder?: ShareApiItemRef | null;
+  files?: ShareApiItemRef[];
+};
+
 export type ShareState = {
   searchTerm: string;
   parentFolderName: string | null;
   isLoading: boolean;
   usersWithAccess: ShareWithMePerson[];
-  usersToInvite: Array<InviteUser & { shareId: number }>;
+  usersToInvite: InviteUser[];
 };
 
 export type ShareAction =

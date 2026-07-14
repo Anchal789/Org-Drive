@@ -1,5 +1,3 @@
-export const dynamic = 'force-dynamic';
-
 import type { UploadedFile, UploadedFolder } from '@/types/files';
 import FolderContainer from '../FolderSection/FolderContainer';
 import LoadMoreFiles from '../GridSection/load-more/LoadMoreFiles';

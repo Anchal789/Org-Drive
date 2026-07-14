@@ -3,6 +3,8 @@
 import { Send } from 'lucide-react';
 import type { Route } from 'next';
 import { useRouter } from 'next/navigation';
+import { cn } from '@/lib/utils';
+import styles from './TelegramButton.module.scss';
 
 export default function TelegramButton({
   children,
@@ -39,38 +41,15 @@ export default function TelegramButton({
       }
       disabled={disabled || loading}
       style={{
-        color: 'var(--text-white)',
-        background: 'var(--tg-blue)',
-        borderColor: 'var(--tg-blue)',
-        fontSize: 'var(--text-sm)',
-        boxShadow: 'var(--shadow-sm)',
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'center',
-        gap: 'var(--space-2)',
-        fontWeight: 'var(--font-semibold)',
         cursor: disabled || loading ? 'not-allowed' : 'pointer',
-        transition: 'opacity 0.2s ease-in-out',
         opacity: disabled || loading ? '0.7' : '1',
-        borderRadius: 'var(--radius-md)',
-        width: '100%',
         height: size === 'lg' ? '44px' : '36px',
       }}
-      className={className}
+      className={cn(styles.button, className)}
     >
       {loading ? (
         <>
-          <span
-            style={{
-              width: 16,
-              height: 16,
-              border: '2px solid rgba(255,255,255,0.4)',
-              borderTopColor: '#fff',
-              borderRadius: '50%',
-              display: 'inline-block',
-              animation: 'spin 0.8s linear infinite',
-            }}
-          />
+          <span className={styles.spinner} />
           {loadingText}
         </>
       ) : (

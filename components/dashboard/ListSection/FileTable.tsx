@@ -142,18 +142,16 @@ const FileTable: FunctionComponent<{
     setSelectedFiles([]);
   };
 
+  const selectedIdSet = new Set(selectedFiles.map((f) => f.id));
+
   const handleToggleSelect = (file: UploadedFile) => {
-    const isSelected = selectedIds.includes(file.id);
+    const isSelected = selectedIdSet.has(file.id);
     const updatedSelectedFiles = isSelected
       ? selectedFiles.filter((f) => f.id !== file.id)
       : [...selectedFiles, file];
 
     setSelectedFiles(updatedSelectedFiles);
   };
-
-  const selectedIds = useMemo(() => {
-    return selectedFiles.map((f) => f.id);
-  }, [selectedFiles]);
 
   useEffect(() => {
     setFileCount(files.length);
@@ -227,7 +225,7 @@ const FileTable: FunctionComponent<{
                     />
                     <FileTile
                       file={file}
-                      isSelected={selectedIds.includes(file.id)}
+                      isSelected={selectedIdSet.has(file.id)}
                     />
                   </div>
                 );

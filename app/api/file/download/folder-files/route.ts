@@ -111,26 +111,34 @@ export async function POST(request: NextRequest) {
 
     (async () => {
       try {
-        for (const fileInfo of filesInFolder) {
-          if (!fileInfo.telegramMessageId) continue;
+        const resolvedFiles = await Promise.all(
+          filesInFolder.map(async (fileInfo) => {
+            if (!fileInfo.telegramMessageId) return null;
 
-          const messages = await client?.getMessages(targetEntity, {
-            ids: [Number(fileInfo.telegramMessageId)],
-          });
-          if (!messages) continue;
+            const messages = await client?.getMessages(targetEntity, {
+              ids: [Number(fileInfo.telegramMessageId)],
+            });
+            if (!messages) return null;
 
-          const message = messages?.[0];
-          if (!message?.media || !('document' in message.media)) continue;
+            const message = messages[0];
+            if (!message?.media || !('document' in message.media)) return null;
+
+            return { fileInfo, message };
+          }),
+        );
+
+        for (const resolved of resolvedFiles) {
+          if (!resolved) continue;
 
           const chunkIterator = client?.iterDownload({
-            file: message.media,
+            file: resolved.message.media,
             requestSize: 1024 * 1024,
           });
 
           const fileNodeStream = Readable.from(chunkIterator);
 
           archive.append(fileNodeStream, {
-            name: fileInfo.name || 'unknown-file',
+            name: resolved.fileInfo.name || 'unknown-file',
           });
         }
 

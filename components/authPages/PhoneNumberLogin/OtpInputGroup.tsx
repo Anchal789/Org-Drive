@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useMemo, useRef } from 'react';
+import { useEffect, useRef } from 'react';
 import { Input } from '@/components/ui/input';
 import styles from './VerifyOtpPage.module.scss';
 
@@ -21,14 +21,10 @@ export default function OtpInputGroup({
 }: OtpInputGroupProps) {
   const inputsRef = useRef<(HTMLInputElement | null)[]>([]);
 
-  const cells = useMemo(
-    () =>
-      Array.from({ length }, (_, index) => ({
-        id: `otp-cell-${index}`,
-        index,
-      })),
-    [length],
-  );
+  const cells = Array.from({ length }, (_, index) => ({
+    id: `otp-cell-${index}`,
+    index,
+  }));
   const digits = Array.from({ length }, (_, i) => value[i] ?? '');
 
   const focusCell = (index: number) => {

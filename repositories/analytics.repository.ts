@@ -21,17 +21,18 @@ import type { Tone } from '@/types/dashboard';
 
 export const analyticsRepository = {
   async getOverviewStats(userId: number) {
-    const storageRes = await db
-      .select({
-        totalSize: sql<number>`COALESCE(SUM(${uploadedFilesTable.size}), 0)`,
-      })
-      .from(uploadedFilesTable)
-      .where(eq(uploadedFilesTable.userId, userId));
-
-    const filesRes = await db
-      .select({ count: sql<number>`COUNT(*)` })
-      .from(uploadedFilesTable)
-      .where(eq(uploadedFilesTable.userId, userId));
+    const [storageRes, filesRes] = await Promise.all([
+      db
+        .select({
+          totalSize: sql<number>`COALESCE(SUM(${uploadedFilesTable.size}), 0)`,
+        })
+        .from(uploadedFilesTable)
+        .where(eq(uploadedFilesTable.userId, userId)),
+      db
+        .select({ count: sql<number>`COUNT(*)` })
+        .from(uploadedFilesTable)
+        .where(eq(uploadedFilesTable.userId, userId)),
+    ]);
 
     return {
       totalSizeBytes: Number(storageRes[0]?.totalSize || 0),

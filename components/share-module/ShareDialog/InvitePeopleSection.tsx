@@ -3,7 +3,7 @@ import styles from './ShareDialog.module.scss';
 import UserAccessRow from './UserAccessRow';
 
 type InvitePeopleSectionProps = {
-  users: Array<InviteUser & { shareId: number }>;
+  users: InviteUser[];
   onPermissionChange: (
     index: number,
     permission: InviteUser['permission'],

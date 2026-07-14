@@ -1,11 +1,16 @@
 'use client';
 
-import { type FunctionComponent, useMemo } from 'react';
+import type { FunctionComponent } from 'react';
 import { useFileLayout, useSortByStore } from '@/store/store';
 import type { UploadedFile } from '@/types/files';
 import FilesContainer from '../FileSection/FilesContainer';
 import FileTable from '../ListSection/FileTable';
 import styles from './DashFolder.module.scss';
+
+function getModTime(item: UploadedFile) {
+  const date = item.updatedAt || item.createdAt;
+  return date ? new Date(date).getTime() : 0;
+}
 
 const LayoutForInsideFolder: FunctionComponent<{
   files: Array<UploadedFile>;
@@ -13,42 +18,35 @@ const LayoutForInsideFolder: FunctionComponent<{
   const { fileLayout, hasHydrated } = useFileLayout();
   const { sortBy } = useSortByStore();
 
-  const sortedData = useMemo(() => {
-    const getModTime = (item: UploadedFile) => {
-      const date = item.updatedAt || item.createdAt;
-      return date ? new Date(date).getTime() : 0;
-    };
+  const sortedFiles = [...files];
 
-    const sortedFiles = [...files];
+  switch (sortBy) {
+    case 'name':
+      sortedFiles.sort((a, b) => a.name.localeCompare(b.name));
+      break;
 
-    switch (sortBy) {
-      case 'name':
-        sortedFiles.sort((a, b) => a.name.localeCompare(b.name));
-        break;
+    case 'modified':
+      sortedFiles.sort((a, b) => getModTime(b) - getModTime(a));
+      break;
 
-      case 'modified':
-        sortedFiles.sort((a, b) => getModTime(b) - getModTime(a));
-        break;
+    case 'size':
+      sortedFiles.sort((a, b) => (b.size || 0) - (a.size || 0));
 
-      case 'size':
-        sortedFiles.sort((a, b) => (b.size || 0) - (a.size || 0));
+      break;
 
-        break;
+    case 'type':
+      sortedFiles.sort((a, b) => {
+        const typeA = a.mimeType || '';
+        const typeB = b.mimeType || '';
+        return typeA.localeCompare(typeB);
+      });
+      break;
 
-      case 'type':
-        sortedFiles.sort((a, b) => {
-          const typeA = a.mimeType || '';
-          const typeB = b.mimeType || '';
-          return typeA.localeCompare(typeB);
-        });
-        break;
+    default:
+      break;
+  }
 
-      default:
-        break;
-    }
-
-    return { files: sortedFiles };
-  }, [files, sortBy]);
+  const sortedData = { files: sortedFiles };
 
   if (!hasHydrated) {
     return null;

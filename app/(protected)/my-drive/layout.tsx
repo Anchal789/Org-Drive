@@ -1,3 +1,4 @@
+import { Suspense } from 'react';
 import DriveCrumb from '@/components/dashboard/DriveCrumb/DriveCrumb';
 import SearchBar from '@/components/dashboard/DriveCrumb/SearchBar';
 import styles from '@/components/dashboard/GridSection/DashGrid.module.scss';
@@ -11,7 +12,9 @@ export default function MyDriveLayout({
     <>
       <div className={styles.header}>
         <SearchBar />
-        <DriveCrumb />
+        <Suspense fallback={null}>
+          <DriveCrumb />
+        </Suspense>
       </div>
       {children}
     </>

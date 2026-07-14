@@ -1,5 +1,4 @@
 export const TG_BLUE = '#229ED9';
-export const TG_BLUE_BG = '#E1F0F9';
 
 export const TINTS = {
   blue: {

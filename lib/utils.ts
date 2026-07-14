@@ -128,6 +128,15 @@ export function getFolderTone(index: number): Tone {
   return FOLDER_TONES[index % FOLDER_TONES.length];
 }
 
+export function formatRecentLogTime(
+  date: Date,
+  mode: 'weekday' | 'time',
+): string {
+  return mode === 'weekday'
+    ? date.toLocaleDateString('en-US', { weekday: 'short' })
+    : date.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit' });
+}
+
 export const getFileExtension = (name: string) =>
   name?.split('.')?.pop() as FileKind;
 

@@ -104,7 +104,7 @@ export default function FileSelectionBar({
 
           <button
             type='button'
-            title='Clear selection'
+            aria-label='Clear selection'
             onClick={clearSelection}
             className={styles.clearBtn}
           >

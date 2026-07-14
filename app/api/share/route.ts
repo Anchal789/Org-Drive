@@ -5,6 +5,7 @@ import { sendError, sendSuccess } from '@/lib/api-response';
 import { getApiSession } from '@/lib/session';
 import { shareRepository } from '@/repositories/share.repository';
 import { sharedWithMeRepository } from '@/repositories/shared-with-me.repository';
+import type { ShareApiRequestBody, SharePermission } from '@/types/share';
 
 export async function POST(request: NextRequest) {
   const session = await getApiSession(request);
@@ -12,10 +13,10 @@ export async function POST(request: NextRequest) {
   if (!session?.userId) {
     return sendError('Access token missing or expired', 401);
   }
-  const actorId = Number(session?.userId);
+  const actorId = Number(session.userId);
 
   const { usersToInvite, usersWithAccess, file, folder, files } =
-    await request.json();
+    (await request.json()) as ShareApiRequestBody;
 
   const isMultiShare = Array.isArray(files) && files.length > 1;
 
@@ -32,7 +33,7 @@ export async function POST(request: NextRequest) {
         userId: number;
         fileId: number;
         folderId: number | null;
-        permission: 'viewer' | 'editor' | 'owner' | 'commenter';
+        permission: SharePermission;
         sharedWithUserId: number;
       }> = [];
       const fileIds = files.map((f) => Number(f.id));
@@ -74,15 +75,22 @@ export async function POST(request: NextRequest) {
       }
 
       if (usersWithAccess && usersWithAccess.length > 0) {
+        const permissionUpdates: ReturnType<
+          typeof shareRepository.updateSharedItemPermissionsBulk
+        >[] = [];
+
         for (const user of usersWithAccess) {
           if (user.permission === 'owner') continue;
-
-          await shareRepository.updateSharedItemPermissionsBulk(
-            fileIds,
-            Number(user.id),
-            user.permission,
+          permissionUpdates.push(
+            shareRepository.updateSharedItemPermissionsBulk(
+              fileIds,
+              user.id,
+              user.permission,
+            ),
           );
         }
+
+        await Promise.all(permissionUpdates);
       }
 
       if (logs.length > 0) {
@@ -112,26 +120,27 @@ export async function POST(request: NextRequest) {
   const ownerId = file?.userId || folder?.userId;
 
   const currentDbState = await sharedWithMeRepository.getUsersWithFileAccess(
-    itemId,
-    ownerId,
+    Number(itemId),
+    Number(ownerId),
   );
 
-  const recordsToUpdate = usersWithAccess.filter(
-    (frontendUser: {
-      id: number;
-      permission: 'viewer' | 'editor' | 'owner' | 'commenter';
-    }) => {
-      const dbUser = currentDbState.find((user) => user.id === frontendUser.id);
-      return dbUser && dbUser.permission !== frontendUser.permission;
-    },
-  );
+  const recordsToUpdate = usersWithAccess.filter((frontendUser) => {
+    const dbUser = currentDbState.find((user) => user.id === frontendUser.id);
+    return dbUser && dbUser.permission !== frontendUser.permission;
+  });
 
   if (usersToInvite.length === 0 && recordsToUpdate.length === 0) {
     return sendError('No changes detected', 400);
   }
 
   try {
-    const logs = [];
+    const logs: Array<{
+      userId: number;
+      fileId?: number;
+      folderId?: number | null;
+      action: string;
+      actionBy: number;
+    }> = [];
 
     if (usersToInvite.length > 0) {
       logs.push({
@@ -142,40 +151,54 @@ export async function POST(request: NextRequest) {
         actionBy: actorId,
       });
 
-      for (const user of usersToInvite) {
-        await shareRepository.uploadSharedItem(
-          ownerId,
-          actualFileId,
-          actualFolderId,
-          user.permission,
-          user.userId,
-        );
+      await Promise.all(
+        usersToInvite.map(async (user) => {
+          await shareRepository.uploadSharedItem(
+            Number(ownerId),
+            actualFileId,
+            actualFolderId,
+            user.permission,
+            user.userId ?? user.id,
+          );
 
-        logs.push({
-          userId: user.userId,
-          fileId: actualFileId || undefined,
-          folderId: actualFolderId || undefined,
-          action: 'shared',
-          actionBy: actorId,
-        });
-      }
+          logs.push({
+            userId: user.userId ?? user.id,
+            fileId: actualFileId || undefined,
+            folderId: actualFolderId || undefined,
+            action: 'shared',
+            actionBy: actorId,
+          });
+        }),
+      );
     }
 
     if (recordsToUpdate.length > 0) {
+      const updatePromises: ReturnType<
+        typeof shareRepository.updateSharedItem
+      >[] = [];
+
       for (const record of recordsToUpdate) {
-        if (record.shareId) {
-          await shareRepository.updateSharedItem(
-            record.shareId,
-            record.permission,
-          );
-        }
+        if (!record.shareId) continue;
+        updatePromises.push(
+          shareRepository.updateSharedItem(record.shareId, record.permission),
+        );
       }
+
+      await Promise.all(updatePromises);
     }
 
     if (logs.length > 0) {
       await db
         .insert(recentTable)
-        .values(logs)
+        .values(
+          logs as Array<{
+            userId: number;
+            fileId: number;
+            folderId: number | null;
+            action: string;
+            actionBy: number;
+          }>,
+        )
         .catch(() => {
           void 0;
         });
