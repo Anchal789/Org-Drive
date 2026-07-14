@@ -105,7 +105,9 @@ export default function QrCode() {
             return {
               ...prev,
               qrDataUrl: data.qrDataUrl ?? prev.qrDataUrl,
-              expiresAt: data.expiresAt ?? prev.expiresAt,
+              expiresAt: data.expiresAt
+                ? Math.max(prev.expiresAt, data.expiresAt)
+                : prev.expiresAt,
             };
           });
         } else if (data.step === 'needs_password') {

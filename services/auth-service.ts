@@ -1,4 +1,4 @@
-import { fetchData, postData } from '@/lib/api-fn';
+import { postData } from '@/lib/api-fn';
 import type { User } from '@/types/auth';
 
 export async function requestOtp(phoneNumber: string) {
@@ -60,7 +60,7 @@ export async function qrStart() {
 }
 
 export async function qrLogin(loginId: string) {
-  const res = await fetchData<{
+  const res = await postData<{
     qrDataUrl: string;
     expiresAt: number;
     step: string;
@@ -69,6 +69,7 @@ export async function qrLogin(loginId: string) {
     accessToken?: string;
   }>({
     url: `/api/auth/qr-login?loginId=${loginId}`,
+    payload: {},
   });
 
   return res;

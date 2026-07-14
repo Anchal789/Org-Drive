@@ -3,7 +3,7 @@
 import { redirect } from 'next/navigation';
 import { Api, TelegramClient } from 'telegram';
 import { StringSession } from 'telegram/sessions';
-import { destroySession } from '@/lib/session';
+import { logoutAction } from '@/actions/auth-actions';
 import { userRepository } from '@/repositories/user.repository';
 import type { SessionUser } from './../types/auth';
 
@@ -11,6 +11,9 @@ const API_ID = Number(process.env.TELEGRAM_APP_API_ID);
 const API_HASH = String(process.env.TELEGRAM_APP_API_HASH);
 
 export async function logoutUser(user: SessionUser) {
+  if (!user?.userId) {
+    throw new Error('Unauthorized');
+  }
   const userTelegramString = await userRepository.findById(
     Number(user?.userId),
   );
@@ -35,7 +38,7 @@ export async function logoutUser(user: SessionUser) {
     await client.disconnect();
   }
 
-  await destroySession();
+  await logoutAction();
 
   redirect('/login');
 }

@@ -1,6 +1,6 @@
 import { toast } from 'sonner';
+import { checkTelegramSessionValidAction } from '@/actions/session-actions';
 import { deleteData, postData } from '@/lib/api-fn';
-import { isTelegramSessionValid } from '@/lib/session';
 import { encrypt } from '@/lib/utils';
 import type { UploadedFile } from '@/types/files';
 
@@ -12,7 +12,9 @@ const triggerHiddenDownload = async (
   const id = toastId ?? toast.loading('Preparing download...');
 
   try {
-    const response = await fetch(url);
+    const response = await fetch(url, {
+      method: 'POST',
+    });
 
     if (!response.ok) {
       throw new Error('Download failed.');
@@ -46,7 +48,7 @@ const triggerHiddenDownload = async (
 };
 
 export const downloadFile = async (fileId: number, userId?: number) => {
-  const telegramSession = await isTelegramSessionValid();
+  const telegramSession = await checkTelegramSessionValidAction();
 
   if (!telegramSession.valid) {
     toast.error(telegramSession.message);
@@ -68,7 +70,7 @@ export const downloadAllFolderFiles = async (
   folderId: string,
   folderName: string,
 ) => {
-  const telegramSession = await isTelegramSessionValid();
+  const telegramSession = await checkTelegramSessionValidAction();
 
   if (!telegramSession.valid) {
     toast.error(telegramSession.message);
