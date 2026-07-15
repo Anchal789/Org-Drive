@@ -10,18 +10,21 @@ const { v4: uuidv4 } = require('uuid');
 
 const app = express();
 app.use(express.json());
-const allowedOrigins = ['http://localhost:5173', process.env.FRONTEND_URL];
+const rawFrontendUrl = process.env.FRONTEND_URL || '';
+const cleanFrontendUrl = rawFrontendUrl.replace(/\/$/, '');
+
+const allowedOrigins = ['http://localhost:5173', cleanFrontendUrl];
 
 app.use(
   cors({
     origin: (origin, callback) => {
       if (!origin || allowedOrigins.includes(origin)) {
-        callback(null, true);
+        callback(null, origin);
       } else {
         callback(new Error('Not allowed by CORS'));
       }
     },
-    methods: ['GET', 'POST', 'PUT', 'DELETE'],
+    methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
     credentials: true,
   }),
 );
