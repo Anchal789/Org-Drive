@@ -83,7 +83,7 @@ export async function finalizeLoginInternal(telegramUser: TelegramUser) {
   const response = await postData<{ accessToken: string }>({
     url: '/api/auth/finalize-login',
     payload: { user: telegramUser },
-    baseUrl: AUTH_SERVER_URL,
+    // baseUrl: AUTH_SERVER_URL,
   });
   return response;
 }
