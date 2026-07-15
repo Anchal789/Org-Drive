@@ -12,7 +12,7 @@ const cspHeader = `
   form-action 'self';
   frame-ancestors 'none';
   upgrade-insecure-requests;
-  connect-src 'self' https://org-drive.onrender.com;
+  connect-src 'self' https://org-drive.onrender.com http://localhost:3001/;
 `;
 
 const nextConfig: NextConfig = {

@@ -40,7 +40,7 @@ export async function POST(request: NextRequest) {
 
   if (entry.status === 'success' && entry.user) {
     const user = entry.user;
-    await qrStore.delete(loginId);
+    qrStore.delete(loginId); // Fixed: Removed unnecessary 'await' for Map delete
 
     const dbUser = await userRepository.upsert({
       telegramId: user.telegramId,

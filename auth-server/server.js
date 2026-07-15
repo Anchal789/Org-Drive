@@ -1,5 +1,5 @@
 // auth-server/server.js
-require('dotenv').config({ path: '../.env' }); // This reads the .env from your Next.js root!
+require('dotenv').config({ path: '../.env' });
 const express = require('express');
 const cors = require('cors');
 const QRCode = require('qrcode');
@@ -10,16 +10,30 @@ const { v4: uuidv4 } = require('uuid');
 
 const app = express();
 app.use(express.json());
-// Allow your Vercel frontend to talk to this server
-app.use(cors({ origin: '*' }));
+const rawFrontendUrl = process.env.FRONTEND_URL || '';
+const cleanFrontendUrl = rawFrontendUrl.replace(/\/$/, '');
+
+const allowedOrigins = ['http://localhost:5173', cleanFrontendUrl];
+
+app.use(
+  cors({
+    origin: (origin, callback) => {
+      if (!origin || allowedOrigins.includes(origin)) {
+        callback(null, origin);
+      } else {
+        callback(new Error('Not allowed by CORS'));
+      }
+    },
+    methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+    credentials: true,
+  }),
+);
 
 const API_ID = Number(process.env.TELEGRAM_APP_API_ID);
 const API_HASH = String(process.env.TELEGRAM_APP_API_HASH);
 
-// In-memory store that stays alive on Render
 const qrStore = new Map();
 
-// Helper to finalize login (replaces your Next.js lib helper)
 async function finalizeLogin(loginId, client) {
   const me = await client.getMe();
   const sessionString = client.session.save();
@@ -36,7 +50,6 @@ async function finalizeLogin(loginId, client) {
   });
 }
 
-// 1. START QR
 app.post('/api/auth/qr-start', async (_req, res) => {
   const client = new TelegramClient(new StringSession(''), API_ID, API_HASH, {
     connectionRetries: 5,
@@ -59,7 +72,7 @@ app.post('/api/auth/qr-start', async (_req, res) => {
       status: 'waiting',
       client,
       qrDataUrl,
-      expiresAt: Date.now() + result.expires * 1000,
+      expiresAt: result.expires * 1000,
     });
 
     client.addEventHandler(async (update) => {
@@ -84,13 +97,21 @@ app.post('/api/auth/qr-start', async (_req, res) => {
           await finalizeLogin(loginId, client);
         }
       } catch (err) {
-        if (err.message === 'SESSION_PASSWORD_NEEDED') {
+        const errMsg = err.errorMessage || err.message;
+
+        if (errMsg === 'SESSION_PASSWORD_NEEDED') {
           const pwdInfo = await client.invoke(new Api.account.GetPassword());
           const entry = qrStore.get(loginId);
-          entry.status = 'needs_password';
-          entry.passwordHint = pwdInfo.hint || null;
+          if (entry) {
+            entry.status = 'needs_password';
+            entry.passwordHint = pwdInfo.hint || null;
+          }
         } else {
-          qrStore.set(loginId, { status: 'error', error: err.message });
+          const entry = qrStore.get(loginId);
+          if (entry) {
+            entry.status = 'error';
+            entry.error = errMsg;
+          }
         }
       }
     });
@@ -100,7 +121,7 @@ app.post('/api/auth/qr-start', async (_req, res) => {
       data: {
         loginId,
         qrDataUrl,
-        expiresAt: Date.now() + result.expires * 1000,
+        expiresAt: result.expires * 1000,
       },
     });
   } catch (error) {
@@ -108,7 +129,6 @@ app.post('/api/auth/qr-start', async (_req, res) => {
   }
 });
 
-// 2. POLL LOGIN STATUS
 app.post('/api/auth/qr-login', async (req, res) => {
   const { loginId } = req.body;
   const entry = qrStore.get(loginId);
@@ -119,7 +139,6 @@ app.post('/api/auth/qr-login', async (req, res) => {
   if (entry.status === 'success') {
     const user = entry.user;
     qrStore.delete(loginId);
-    // Send the raw Telegram user data back to the frontend
     return res.json({ success: true, data: { step: 'success', user } });
   }
 
@@ -136,13 +155,13 @@ app.post('/api/auth/qr-login', async (req, res) => {
   });
 });
 
-// 3. SUBMIT PASSWORD
 app.post('/api/auth/qr-password', async (req, res) => {
   const { loginId, password } = req.body;
   const entry = qrStore.get(loginId);
 
-  if (!entry?.status !== 'needs_password')
-    return res.status(400).json({ success: false });
+  if (!entry?.status !== 'needs_password') {
+    return res.status(400).json({ success: false, message: 'Invalid state' });
+  }
 
   try {
     const passwordInfo = await entry.client.invoke(
@@ -162,6 +181,10 @@ app.post('/api/auth/qr-password', async (req, res) => {
     res.status(400).json({ success: false, message: 'Incorrect password' });
   }
 });
-
+app.get('/', (_req, res) => {
+  res.send('Auth server is running');
+});
 const PORT = process.env.PORT || 3001;
-app.listen(PORT, () => console.log(`Auth Server running on port ${PORT}`));
+app.listen(PORT, () => {
+  console.log(`Auth server is running on port ${PORT}`);
+});

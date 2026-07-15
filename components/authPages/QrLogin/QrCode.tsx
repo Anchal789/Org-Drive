@@ -205,14 +205,25 @@ export default function QrCode() {
         }>({
           url: '/api/auth/qr-password',
           payload: { loginId: state.loginId, password },
+          baseUrl: process.env.NEXT_PUBLIC_AUTH_API_URL,
         });
 
         const data = response?.data;
 
         if (response.success && data?.step === 'success' && data.user) {
-          setState({ status: 'success', user: data.user });
-          setTimeout(() => navigateToMyDrive(), 1500);
-          return null;
+          const finalizeResponse = await finalizeLoginInternal(data.user);
+
+          if (finalizeResponse.success) {
+            if (finalizeResponse.data.accessToken) {
+              useAuthStore
+                .getState()
+                .setAccessToken(finalizeResponse.data.accessToken);
+            }
+            setState({ status: 'success', user: data.user });
+            setTimeout(() => navigateToMyDrive(), 1500);
+            return null;
+          }
+          return finalizeResponse.message || 'Failed to save user data';
         }
         return data?.error ?? 'Password failed';
       } catch (err: unknown) {

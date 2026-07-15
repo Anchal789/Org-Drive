@@ -71,8 +71,8 @@ export async function qrLogin(loginId: string) {
     user: User;
     accessToken?: string;
   }>({
-    url: `/api/auth/qr-login?loginId=${loginId}`,
-    payload: {},
+    url: '/api/auth/qr-login',
+    payload: { loginId },
     baseUrl: AUTH_SERVER_URL,
   });
 
