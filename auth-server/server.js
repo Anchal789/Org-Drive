@@ -1,5 +1,5 @@
 // auth-server/server.js
-require('dotenv').config({ path: '../.env' }); // This reads the .env from your Next.js root!
+require('dotenv').config({ path: '../.env' });
 const express = require('express');
 const cors = require('cors');
 const QRCode = require('qrcode');
@@ -10,16 +10,13 @@ const { v4: uuidv4 } = require('uuid');
 
 const app = express();
 app.use(express.json());
-// Allow your Vercel frontend to talk to this server
-app.use(cors({ origin: '*' }));
+app.use(cors({ origin: true, credentials: true }));
 
 const API_ID = Number(process.env.TELEGRAM_APP_API_ID);
 const API_HASH = String(process.env.TELEGRAM_APP_API_HASH);
 
-// In-memory store that stays alive on Render
 const qrStore = new Map();
 
-// Helper to finalize login (replaces your Next.js lib helper)
 async function finalizeLogin(loginId, client) {
   const me = await client.getMe();
   const sessionString = client.session.save();
@@ -36,7 +33,6 @@ async function finalizeLogin(loginId, client) {
   });
 }
 
-// 1. START QR
 app.post('/api/auth/qr-start', async (_req, res) => {
   const client = new TelegramClient(new StringSession(''), API_ID, API_HASH, {
     connectionRetries: 5,
@@ -108,7 +104,6 @@ app.post('/api/auth/qr-start', async (_req, res) => {
   }
 });
 
-// 2. POLL LOGIN STATUS
 app.post('/api/auth/qr-login', async (req, res) => {
   const { loginId } = req.body;
   const entry = qrStore.get(loginId);
@@ -119,7 +114,6 @@ app.post('/api/auth/qr-login', async (req, res) => {
   if (entry.status === 'success') {
     const user = entry.user;
     qrStore.delete(loginId);
-    // Send the raw Telegram user data back to the frontend
     return res.json({ success: true, data: { step: 'success', user } });
   }
 
@@ -136,13 +130,13 @@ app.post('/api/auth/qr-login', async (req, res) => {
   });
 });
 
-// 3. SUBMIT PASSWORD
 app.post('/api/auth/qr-password', async (req, res) => {
   const { loginId, password } = req.body;
   const entry = qrStore.get(loginId);
 
-  if (!entry?.status !== 'needs_password')
-    return res.status(400).json({ success: false });
+  if (!entry || entry.status !== 'needs_password') {
+    return res.status(400).json({ success: false, message: 'Invalid state' });
+  }
 
   try {
     const passwordInfo = await entry.client.invoke(
