@@ -1,5 +1,7 @@
 import { postData } from '@/lib/api-fn';
-import type { User } from '@/types/auth';
+import type { TelegramUser, User } from '@/types/auth';
+
+const AUTH_SERVER_URL = process.env.NEXT_PUBLIC_AUTH_API_URL;
 
 export async function requestOtp(phoneNumber: string) {
   const res = await postData({
@@ -54,6 +56,7 @@ export async function qrStart() {
   }>({
     url: '/api/auth/qr-start',
     payload: {},
+    baseUrl: AUTH_SERVER_URL,
   });
 
   return res;
@@ -70,7 +73,17 @@ export async function qrLogin(loginId: string) {
   }>({
     url: `/api/auth/qr-login?loginId=${loginId}`,
     payload: {},
+    baseUrl: AUTH_SERVER_URL,
   });
 
   return res;
+}
+
+export async function finalizeLoginInternal(telegramUser: TelegramUser) {
+  const response = await postData<{ accessToken: string }>({
+    url: '/api/auth/finalize-login',
+    payload: { user: telegramUser },
+    baseUrl: AUTH_SERVER_URL,
+  });
+  return response;
 }

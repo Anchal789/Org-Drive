@@ -30,6 +30,7 @@ export default function TelegramButton({
   loadingText?: string;
 }) {
   const navigate = useRouter();
+  console.log(loading);
 
   return (
     <button
