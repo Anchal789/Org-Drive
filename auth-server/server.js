@@ -159,10 +159,6 @@ app.post('/api/auth/qr-password', async (req, res) => {
   const { loginId, password } = req.body;
   const entry = qrStore.get(loginId);
 
-  if (!entry?.status !== 'needs_password') {
-    return res.status(400).json({ success: false, message: 'Invalid state' });
-  }
-
   try {
     const passwordInfo = await entry.client.invoke(
       new Api.account.GetPassword(),
