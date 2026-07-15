@@ -49,7 +49,6 @@ export async function POST(request: NextRequest) {
     );
   } catch (err: unknown) {
     const errMsg = err instanceof Error ? err.message : String(err);
-    console.error('Finalize login error:', errMsg);
-    return sendError('Failed to finalize login on the server', 500);
+    return sendError(errMsg, 500);
   }
 }
