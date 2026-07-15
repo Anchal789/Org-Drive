@@ -44,38 +44,42 @@ export const sharedWithMeRepository = {
       .where(or(eq(sharedItemsTable.id, id), eq(sharedItemsTable.id, id)));
   },
   async getUsersWithFileAccess(id: number, ownerId: number) {
-    const ownerDetails = await db
-      .select({
-        id: userTable.id,
-        firstName: userTable.firstName,
-        lastName: userTable.lastName,
-        username: userTable.username,
-        permission: sql<string>`'owner'`,
-      })
-      .from(userTable)
-      .where(eq(userTable.id, ownerId))
-      .limit(1);
-
-    const sharedUsers = await db
-      .select({
-        id: userTable.id,
-        firstName: userTable.firstName,
-        lastName: userTable.lastName,
-        username: userTable.username,
-        permission: sharedItemsTable.permission,
-        shareId: sharedItemsTable.id,
-      })
-      .from(sharedItemsTable)
-      .innerJoin(userTable, eq(sharedItemsTable.sharedWithUserId, userTable.id))
-      .where(
-        and(
-          or(
-            eq(sharedItemsTable.fileId, id),
-            eq(sharedItemsTable.folderId, id),
+    const [ownerDetails, sharedUsers] = await Promise.all([
+      db
+        .select({
+          id: userTable.id,
+          firstName: userTable.firstName,
+          lastName: userTable.lastName,
+          username: userTable.username,
+          permission: sql<string>`'owner'`,
+        })
+        .from(userTable)
+        .where(eq(userTable.id, ownerId))
+        .limit(1),
+      db
+        .select({
+          id: userTable.id,
+          firstName: userTable.firstName,
+          lastName: userTable.lastName,
+          username: userTable.username,
+          permission: sharedItemsTable.permission,
+          shareId: sharedItemsTable.id,
+        })
+        .from(sharedItemsTable)
+        .innerJoin(
+          userTable,
+          eq(sharedItemsTable.sharedWithUserId, userTable.id),
+        )
+        .where(
+          and(
+            or(
+              eq(sharedItemsTable.fileId, id),
+              eq(sharedItemsTable.folderId, id),
+            ),
+            ne(userTable.id, ownerId),
           ),
-          ne(userTable.id, ownerId),
         ),
-      );
+    ]);
 
     return [...ownerDetails, ...sharedUsers];
   },

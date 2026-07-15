@@ -260,17 +260,18 @@ export const uploadedFilesRepository = {
       );
   },
   async totalStorage(userId: number) {
-    const files = await db
-      .select({
-        size: uploadedFilesTable.size,
-      })
-      .from(uploadedFilesTable)
-      .where(and(eq(uploadedFilesTable.userId, userId)));
-
-    const deletedFiles = await db
-      .select({ size: trashedTable?.size })
-      .from(trashedTable)
-      .where(eq(trashedTable.isDeleted, false));
+    const [files, deletedFiles] = await Promise.all([
+      db
+        .select({
+          size: uploadedFilesTable.size,
+        })
+        .from(uploadedFilesTable)
+        .where(and(eq(uploadedFilesTable.userId, userId))),
+      db
+        .select({ size: trashedTable?.size })
+        .from(trashedTable)
+        .where(eq(trashedTable.isDeleted, false)),
+    ]);
     const totalFiles = [...files, ...deletedFiles];
     return totalFiles;
   },
@@ -331,11 +332,19 @@ export const uploadedFilesRepository = {
   async deleteMultipleItems(
     items: { id: number; isFile: boolean; shared: boolean }[],
   ) {
-    const sharedIds = items.filter((i) => i.shared).map((i) => i.id);
-    const fileIds = items.filter((i) => !i.shared && i.isFile).map((i) => i.id);
-    const folderIds = items
-      .filter((i) => !i.shared && !i.isFile)
-      .map((i) => i.id);
+    const sharedIds: number[] = [];
+    const fileIds: number[] = [];
+    const folderIds: number[] = [];
+
+    for (const item of items) {
+      if (item.shared) {
+        sharedIds.push(item.id);
+      } else if (item.isFile) {
+        fileIds.push(item.id);
+      } else {
+        folderIds.push(item.id);
+      }
+    }
 
     const promises = [];
 
@@ -377,18 +386,20 @@ export const uploadedFilesRepository = {
     return await Promise.all(promises);
   },
   async fileFolderCount(userId: number) {
-    const [fileCount] = await db
-      .select({
-        count: count(uploadedFilesTable.id),
-      })
-      .from(uploadedFilesTable)
-      .where(eq(uploadedFilesTable.userId, userId));
-    const [folderCount] = await db
-      .select({
-        count: count(uploadFoldersTable.id),
-      })
-      .from(uploadFoldersTable)
-      .where(eq(uploadFoldersTable.userId, userId));
+    const [[fileCount], [folderCount]] = await Promise.all([
+      db
+        .select({
+          count: count(uploadedFilesTable.id),
+        })
+        .from(uploadedFilesTable)
+        .where(eq(uploadedFilesTable.userId, userId)),
+      db
+        .select({
+          count: count(uploadFoldersTable.id),
+        })
+        .from(uploadFoldersTable)
+        .where(eq(uploadFoldersTable.userId, userId)),
+    ]);
 
     return fileCount.count + folderCount.count;
   },

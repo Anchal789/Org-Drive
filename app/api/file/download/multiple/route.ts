@@ -17,11 +17,12 @@ const API_ID = Number(process.env.TELEGRAM_APP_API_ID);
 const API_HASH = String(process.env.TELEGRAM_APP_API_HASH);
 const STORAGE_CHANNEL = String(process.env.TELEGRAM_STORAGE_CHANNEL_ID);
 
-export async function GET(request: NextRequest) {
+export async function POST(request: NextRequest) {
   const { searchParams } = new URL(request.url);
   const session = await getSessionUser();
 
-  if (!session?.userId) return sendError('Unauthorized', 401);
+  if (!session?.userId && !searchParams.get('ids'))
+    return sendError('Unauthorized', 401);
   const idsParam =
     searchParams.get('ids') || decrypt(searchParams.get('token') || '');
   if (!idsParam) return sendError('No file IDs provided', 400);
@@ -36,7 +37,7 @@ export async function GET(request: NextRequest) {
 
   if (filesInfo.length === 0) return sendError('No files found', 404);
 
-  const actorId = Number(session.userId || searchParams.get('userId'));
+  const actorId = Number(session?.userId || searchParams.get('userId'));
   const logs: Array<{
     userId: number;
     fileId: number;
@@ -113,11 +114,12 @@ export async function GET(request: NextRequest) {
     (async () => {
       try {
         const usedNames = new Set<string>();
+        const messagesById = new Map(
+          messages.map((m) => [Number(m.id), m] as const),
+        );
 
         for (const fileInfo of filesInfo) {
-          const msg = messages.find(
-            (m) => m.id === Number(fileInfo.telegramMessageId),
-          );
+          const msg = messagesById.get(Number(fileInfo.telegramMessageId));
           if (!msg?.media || !('document' in msg.media)) continue;
 
           let fileName = fileInfo.name || 'downloaded-file';

@@ -15,16 +15,20 @@ globalForQRStore.qrLoginStore = store;
 
 async function cleanup() {
   const now = Date.now();
-  for (const [key, entry] of store.entries()) {
-    if (now - entry.createdAt > TTL_MS) {
+  const expiredEntries = [...store.entries()].filter(
+    ([, entry]) => now - entry.createdAt > TTL_MS,
+  );
+
+  await Promise.all(
+    expiredEntries.map(async ([key, entry]) => {
       try {
         await entry.client.disconnect();
       } catch (err) {
         void err;
       }
       store.delete(key);
-    }
-  }
+    }),
+  );
 }
 
 export const qrStore = {

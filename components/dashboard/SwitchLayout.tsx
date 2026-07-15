@@ -1,12 +1,17 @@
 'use client';
 
-import { type FunctionComponent, useMemo } from 'react';
+import type { FunctionComponent } from 'react';
 import { useIsTab } from '@/hooks/use-mobile';
 import { useFileLayout, useSortByStore } from '@/store/store';
 import type { UploadedFile, UploadedFolder } from '@/types/files';
 import DriveDataHandler from './DriveDataHandler';
 import DashGrid from './GridSection/DashGrid';
 import DashList from './ListSection/DashList';
+
+function getModTime(item: UploadedFile | UploadedFolder) {
+  const date = item.updatedAt || item.createdAt;
+  return date ? new Date(date).getTime() : 0;
+}
 
 const SwitchLayout: FunctionComponent<{
   files: Array<UploadedFile>;
@@ -20,12 +25,7 @@ const SwitchLayout: FunctionComponent<{
   const { sortBy } = useSortByStore();
   const isMobile = useIsTab();
 
-  const sortedData = useMemo(() => {
-    const getModTime = (item: UploadedFile | UploadedFolder) => {
-      const date = item.updatedAt || item.createdAt;
-      return date ? new Date(date).getTime() : 0;
-    };
-
+  const sortedData = (() => {
     const sortedFiles = [...files];
     const sortedFolders = [...folders];
 
@@ -63,7 +63,7 @@ const SwitchLayout: FunctionComponent<{
     }
 
     return { files: sortedFiles, folders: sortedFolders };
-  }, [files, folders, sortBy]);
+  })();
 
   if (!hasHydrated) {
     return null;

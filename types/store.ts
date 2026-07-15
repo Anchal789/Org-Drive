@@ -32,6 +32,7 @@ export interface QueuedFile {
   fileCount?: number;
   isFolder: boolean;
   uniqueId: string;
+  folderId?: string | null;
 }
 
 export interface UploadStore {
@@ -39,12 +40,14 @@ export interface UploadStore {
   uploads: Record<string, UploadItem>;
   pendingQueue: QueuedFile[];
   isProcessing: boolean;
+  folderId?: string | null;
   closeWidget: () => void;
   abortUpload: (uniqueId: string) => void;
   startUploads: (
     files: File[],
     folderName?: string,
     fileCount?: number,
+    folderId?: string | null,
   ) => void;
   processQueue: () => Promise<void>;
 }

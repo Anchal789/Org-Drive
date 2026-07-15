@@ -1,6 +1,9 @@
 export const dynamic = 'force-dynamic';
 
+import { Suspense } from 'react';
+import DriveDropOverlay from '@/components/dashboard/DriveDropOverlay';
 import DashFolder from '@/components/dashboard/FolderSection/DashFolder';
+import DashGridWrapper from '@/components/dashboard/GridSection/DashGridWrapper';
 import { decrypt } from '@/lib/utils';
 import { uploadedFilesRepository } from '@/repositories/uploaded-files.respository';
 import { uploadedFoldersRepository } from '@/repositories/uploaded-folders.respository';
@@ -29,13 +32,21 @@ export default async function FolderPage({
   );
 
   return (
-    <DashFolder
-      files={filesInFolders}
-      folderName={folderName}
-      folderId={Number(decryptedId)}
-      membersCount={sharedFolder.length}
-      permissions={permissions}
-      folderDetails={folderDetails}
-    />
+    <DashGridWrapper
+      overlay={
+        <Suspense fallback={null}>
+          <DriveDropOverlay />
+        </Suspense>
+      }
+    >
+      <DashFolder
+        files={filesInFolders}
+        folderName={folderName}
+        folderId={Number(decryptedId)}
+        membersCount={sharedFolder.length}
+        permissions={permissions}
+        folderDetails={folderDetails}
+      />
+    </DashGridWrapper>
   );
 }

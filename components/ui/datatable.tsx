@@ -55,6 +55,7 @@ export default function DataTable<T>({
   const isAllSelected = data.length > 0 && selectedIds.length === data.length;
   const hasSelection = selectedIds.length > 0;
   const showSelectionBar = hasSelection && !!renderSelectionActions;
+  const selectedIdSet = new Set(selectedIds);
 
   return (
     <div className={`${styles.table} ${classes?.table || ''}`}>
@@ -133,7 +134,7 @@ export default function DataTable<T>({
           ) : (
             data.map((row, rowIndex) => {
               const rowId = getRowId(row);
-              const isSelected = selectedIds.includes(rowId);
+              const isSelected = selectedIdSet.has(rowId);
 
               return (
                 <TableRow

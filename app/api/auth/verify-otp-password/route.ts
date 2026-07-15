@@ -77,7 +77,7 @@ export async function POST(request: Request) {
           : String(err);
       await client.disconnect();
       if (errMsg === 'PASSWORD_HASH_INVALID') {
-        return sendError('Incorrect password', 401);
+        return sendError('Incorrect password', 400);
       }
       throw err;
     }

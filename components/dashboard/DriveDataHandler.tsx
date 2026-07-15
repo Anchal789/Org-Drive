@@ -56,9 +56,8 @@ export default function DriveDataHandler({
       setHasMoreFiles(newFiles.length >= 30);
     } catch {
       toast.error('Failed to load more files.');
-    } finally {
-      setIsLoadingFiles(false);
     }
+    setIsLoadingFiles(false);
   };
 
   const handleShowLessFiles = () => {
@@ -81,9 +80,8 @@ export default function DriveDataHandler({
       setHasMoreFolders(newFolders.length >= 30);
     } catch {
       toast.error('Failed to load more folders.');
-    } finally {
-      setIsLoadingFolders(false);
     }
+    setIsLoadingFolders(false);
   };
 
   const handleShowLessFolders = () => {

@@ -138,49 +138,45 @@ interface ChartTooltipLabelProps {
   labelClassName?: string;
 }
 
-const ChartTooltipLabel = React.memo(
-  ({
-    hideLabel,
-    payload,
-    labelKey,
-    config,
-    label,
-    labelFormatter,
-    labelClassName,
-  }: ChartTooltipLabelProps) => {
-    if (hideLabel || !payload?.length) {
-      return null;
-    }
+function ChartTooltipLabel({
+  hideLabel,
+  payload,
+  labelKey,
+  config,
+  label,
+  labelFormatter,
+  labelClassName,
+}: ChartTooltipLabelProps) {
+  if (hideLabel || !payload?.length) {
+    return null;
+  }
 
-    const [item] = payload;
-    const key = `${labelKey ?? item?.dataKey ?? item?.name ?? 'value'}`;
-    const itemConfig = getPayloadConfigFromPayload(config, item, key);
-    const value =
-      !labelKey && typeof label === 'string'
-        ? (config[label]?.label ?? label)
-        : itemConfig?.label;
+  const [item] = payload;
+  const key = `${labelKey ?? item?.dataKey ?? item?.name ?? 'value'}`;
+  const itemConfig = getPayloadConfigFromPayload(config, item, key);
+  const value =
+    !labelKey && typeof label === 'string'
+      ? (config[label]?.label ?? label)
+      : itemConfig?.label;
 
-    if (labelFormatter) {
-      return (
-        <div className={cn('font-medium', labelClassName)}>
-          {labelFormatter(value as React.ReactNode, payload)}
-        </div>
-      );
-    }
-
-    if (!value) {
-      return null;
-    }
-
+  if (labelFormatter) {
     return (
       <div className={cn('font-medium', labelClassName)}>
-        {value as React.ReactNode}
+        {labelFormatter(value as React.ReactNode, payload)}
       </div>
     );
-  },
-);
+  }
 
-ChartTooltipLabel.displayName = 'ChartTooltipLabel';
+  if (!value) {
+    return null;
+  }
+
+  return (
+    <div className={cn('font-medium', labelClassName)}>
+      {value as React.ReactNode}
+    </div>
+  );
+}
 
 function ChartTooltipContent({
   active,

@@ -1,53 +1,55 @@
 'use client';
 
-import { Clock, Folder, MoreHorizontal } from 'lucide-react';
-import { type FunctionComponent, useMemo } from 'react';
+import { Clock, Folder } from 'lucide-react';
+import type { FunctionComponent } from 'react';
 import { getFileExtension } from '@/lib/utils';
 import { formatBytes } from '@/store/store';
 import type { RecentLogsType } from '@/types/recent';
 import PageHeader from '../page-header/PageHeader';
-import { Button } from '../ui/button';
 import FileType from '../ui/fileType';
 import styles from './Recent.module.scss';
+import RecentLogTimeLabel from './RecentLogTimeLabel';
+
+function groupLogsByDate(recentLogs: Array<RecentLogsType>) {
+  const groups: Record<string, typeof recentLogs> = {
+    Today: [],
+    Yesterday: [],
+    'Earlier this week': [],
+    Older: [],
+  };
+
+  const today = new Date();
+  today.setHours(0, 0, 0, 0);
+
+  const yesterday = new Date(today);
+  yesterday.setDate(yesterday.getDate() - 1);
+
+  const startOfWeek = new Date(today);
+  startOfWeek.setDate(today.getDate() - 6);
+
+  for (const log of recentLogs) {
+    const logDate = new Date(log.createdAt);
+    logDate.setHours(0, 0, 0, 0);
+
+    if (logDate.getTime() === today.getTime()) {
+      groups.Today.push(log);
+    } else if (logDate.getTime() === yesterday.getTime()) {
+      groups.Yesterday.push(log);
+    } else if (logDate >= startOfWeek) {
+      groups['Earlier this week'].push(log);
+    } else {
+      groups.Older.push(log);
+    }
+  }
+
+  return groups;
+}
 
 const RecentPage: FunctionComponent<{
   recentLogs: Array<RecentLogsType>;
   currentUserId: number;
 }> = ({ recentLogs, currentUserId }) => {
-  const groupedLogs = useMemo(() => {
-    const groups: Record<string, typeof recentLogs> = {
-      Today: [],
-      Yesterday: [],
-      'Earlier this week': [],
-      Older: [],
-    };
-
-    const today = new Date();
-    today.setHours(0, 0, 0, 0);
-
-    const yesterday = new Date(today);
-    yesterday.setDate(yesterday.getDate() - 1);
-
-    const startOfWeek = new Date(today);
-    startOfWeek.setDate(today.getDate() - 6);
-
-    for (const log of recentLogs) {
-      const logDate = new Date(log.createdAt);
-      logDate.setHours(0, 0, 0, 0);
-
-      if (logDate.getTime() === today.getTime()) {
-        groups.Today.push(log);
-      } else if (logDate.getTime() === yesterday.getTime()) {
-        groups.Yesterday.push(log);
-      } else if (logDate >= startOfWeek) {
-        groups['Earlier this week'].push(log);
-      } else {
-        groups.Older.push(log);
-      }
-    }
-
-    return groups;
-  }, [recentLogs]);
+  const groupedLogs = groupLogsByDate(recentLogs);
 
   return (
     <>
@@ -72,15 +74,10 @@ const RecentPage: FunctionComponent<{
                   const itemName =
                     log.fileName || log.folderName || 'Unknown File';
                   const dateObj = new Date(log.createdAt);
-                  const timeString =
+                  const timeLabelMode: 'weekday' | 'time' =
                     groupName === 'Earlier this week' || groupName === 'Older'
-                      ? dateObj.toLocaleDateString('en-US', {
-                          weekday: 'short',
-                        })
-                      : dateObj.toLocaleTimeString('en-US', {
-                          hour: 'numeric',
-                          minute: '2-digit',
-                        });
+                      ? 'weekday'
+                      : 'time';
 
                   return (
                     <div key={log.id} className={styles.row}>
@@ -103,7 +100,10 @@ const RecentPage: FunctionComponent<{
                           </span>
                           <span className={styles.showOnSmallMobile}>·</span>
                           <span className={styles.showOnSmallMobile}>
-                            {timeString}
+                            <RecentLogTimeLabel
+                              date={dateObj}
+                              mode={timeLabelMode}
+                            />
                           </span>
 
                           <span className={styles.showOnMobile}>·</span>
@@ -116,15 +116,18 @@ const RecentPage: FunctionComponent<{
                       <span
                         className={`${styles.timestamp} ${styles.hideOnSmallMobile}`}
                       >
-                        {timeString}
+                        <RecentLogTimeLabel
+                          date={dateObj}
+                          mode={timeLabelMode}
+                        />
                       </span>
                       <span className={`${styles.size} ${styles.hideOnMobile}`}>
                         {log.fileSize ? formatBytes(log.fileSize) : '--'}
                       </span>
 
-                      <Button className={styles.moreBtn}>
+                      {/* <Button className={styles.moreBtn}>
                         <MoreHorizontal size={14} />
-                      </Button>
+                      </Button> */}
                     </div>
                   );
                 })}

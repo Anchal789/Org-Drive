@@ -91,6 +91,7 @@ export default function QrCode() {
 
     let cancelled = false;
     let timeoutId: NodeJS.Timeout;
+    let navigateTimeoutId: NodeJS.Timeout;
 
     async function poll() {
       if (cancelled) return;
@@ -105,7 +106,9 @@ export default function QrCode() {
             return {
               ...prev,
               qrDataUrl: data.qrDataUrl ?? prev.qrDataUrl,
-              expiresAt: data.expiresAt ?? prev.expiresAt,
+              expiresAt: data.expiresAt
+                ? Math.max(prev.expiresAt, data.expiresAt)
+                : prev.expiresAt,
             };
           });
         } else if (data.step === 'needs_password') {
@@ -119,7 +122,7 @@ export default function QrCode() {
             useAuthStore.getState().setAccessToken(data.accessToken);
           }
           setState({ status: 'success', user: data.user });
-          setTimeout(() => navigateToMyDrive(), 1500);
+          navigateTimeoutId = setTimeout(() => navigateToMyDrive(), 1500);
         } else if (data.step === 'expired') {
           setState({ status: 'expired', loginId: currentLoginId || '' });
         } else if (data.step === 'error') {
@@ -132,10 +135,10 @@ export default function QrCode() {
         const errMsg = err instanceof Error ? err.message : String(err);
         if (!cancelled)
           setState({ status: 'error', message: errMsg ?? 'Poll error' });
-      } finally {
-        if (!cancelled) {
-          timeoutId = setTimeout(poll, POLL_INTERVAL_MS);
-        }
+      }
+
+      if (!cancelled) {
+        timeoutId = setTimeout(poll, POLL_INTERVAL_MS);
       }
     }
 
@@ -144,6 +147,7 @@ export default function QrCode() {
     return () => {
       cancelled = true;
       clearTimeout(timeoutId);
+      clearTimeout(navigateTimeoutId);
     };
   }, [state.status, currentLoginId, navigateToMyDrive]);
 

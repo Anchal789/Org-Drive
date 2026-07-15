@@ -1,5 +1,7 @@
 import { TINTS } from '@/constants/common-constants';
+import { cn } from '@/lib/utils';
 import type { BadgeProps } from '@/types/component-types';
+import styles from './Badge.module.scss';
 
 const EMPTY_STYLE: React.CSSProperties = {};
 
@@ -30,17 +32,8 @@ export default function Badge({
       data-slot='badge'
       data-tone={tone}
       data-outline={outline}
-      className={className}
+      className={cn(styles.badge, className)}
       style={{
-        display: 'inline-flex',
-        alignItems: 'center',
-        gap: '0.25rem',
-        padding: '0.125rem 0.5rem',
-        borderRadius: 'var(--radius-md)',
-        fontSize: '12px',
-        fontWeight: 500,
-        lineHeight: 1.4,
-        whiteSpace: 'nowrap',
         ...toneStyles,
         ...style,
       }}

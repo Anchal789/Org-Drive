@@ -3,6 +3,7 @@
 import { ChevronRight, File, Folder, History, Search, X } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import { useEffect, useRef, useState } from 'react';
+import Badge from '@/components/ui/badge';
 import { fetchData } from '@/lib/api-fn';
 import { encrypt } from '@/lib/utils';
 import type { UploadedFile, UploadedFolder } from '@/types/files';
@@ -64,20 +65,20 @@ export default function SearchBar({
     return [];
   });
 
+  useEffect(() => {
+    localStorage.setItem(
+      'smart_drive_recent_searches:v1',
+      JSON.stringify(recentSearches),
+    );
+  }, [recentSearches]);
+
   const saveRecentSearch = (term: string) => {
     const trimmed = term.trim();
     if (!trimmed) return;
-    setRecentSearches((prev) => {
-      const filtered = prev.filter(
-        (t) => t.toLowerCase() !== trimmed.toLowerCase(),
-      );
-      const updated = [trimmed, ...filtered].slice(0, 3);
-      localStorage.setItem(
-        'smart_drive_recent_searches:v1',
-        JSON.stringify(updated),
-      );
-      return updated;
-    });
+    const filtered = recentSearches.filter(
+      (t) => t.toLowerCase() !== trimmed.toLowerCase(),
+    );
+    setRecentSearches([trimmed, ...filtered].slice(0, 3));
   };
 
   const performSearch = async (query: string) => {
@@ -166,6 +167,7 @@ export default function SearchBar({
             type='button'
             onClick={clearSearch}
             className={styles.clearBtn}
+            aria-label='Clear search'
           >
             <X size={14} />
           </button>
@@ -289,9 +291,13 @@ export default function SearchBar({
                             <span className={styles.truncate}>{file.name}</span>
                           </div>
                         </div>
-                        <div data-menu='true'>
-                          <FileMenu file={file} />
-                        </div>
+                        {file.isDeleted ? (
+                          <Badge tone='red'>Deleted</Badge>
+                        ) : (
+                          <div data-menu='true'>
+                            <FileMenu file={file} />
+                          </div>
+                        )}
                       </button>
                     ))}
                   </div>

@@ -18,13 +18,15 @@ const API_ID = Number(process.env.TELEGRAM_APP_API_ID);
 const API_HASH = String(process.env.TELEGRAM_APP_API_HASH);
 const STORAGE_CHANNEL = String(process.env.TELEGRAM_STORAGE_CHANNEL_ID);
 
-export async function GET(request: NextRequest) {
+export async function POST(request: NextRequest) {
   const { searchParams } = new URL(request.url);
   const session = await getSessionUser();
-  const folderId = decrypt(searchParams.get('folderId') || '');
+  const folderId =
+    decrypt(searchParams.get('folderId') || '') || searchParams.get('ids');
   const folderName = searchParams.get('folderName') || 'folder';
 
-  if (!session?.userId) return sendError('Unauthorized', 401);
+  if (!session?.userId && !searchParams.get('ids'))
+    return sendError('Unauthorized', 401);
   if (!folderId) return sendError('Missing folderId', 400);
 
   const filesInFolder = (await uploadedFilesRepository.getFilesInFolder(
@@ -35,7 +37,7 @@ export async function GET(request: NextRequest) {
     return sendError('Folder is empty or not found', 404);
   }
 
-  const actorId = Number(session.userId || searchParams.get('userId'));
+  const actorId = Number(session?.userId || searchParams.get('userId'));
   const ownerId = Number(filesInFolder[0].userId);
 
   const logs = [
@@ -109,26 +111,34 @@ export async function GET(request: NextRequest) {
 
     (async () => {
       try {
-        for (const fileInfo of filesInFolder) {
-          if (!fileInfo.telegramMessageId) continue;
+        const resolvedFiles = await Promise.all(
+          filesInFolder.map(async (fileInfo) => {
+            if (!fileInfo.telegramMessageId) return null;
 
-          const messages = await client?.getMessages(targetEntity, {
-            ids: [Number(fileInfo.telegramMessageId)],
-          });
-          if (!messages) continue;
+            const messages = await client?.getMessages(targetEntity, {
+              ids: [Number(fileInfo.telegramMessageId)],
+            });
+            if (!messages) return null;
 
-          const message = messages?.[0];
-          if (!message?.media || !('document' in message.media)) continue;
+            const message = messages[0];
+            if (!message?.media || !('document' in message.media)) return null;
+
+            return { fileInfo, message };
+          }),
+        );
+
+        for (const resolved of resolvedFiles) {
+          if (!resolved) continue;
 
           const chunkIterator = client?.iterDownload({
-            file: message.media,
+            file: resolved.message.media,
             requestSize: 1024 * 1024,
           });
 
           const fileNodeStream = Readable.from(chunkIterator);
 
           archive.append(fileNodeStream, {
-            name: fileInfo.name || 'unknown-file',
+            name: resolved.fileInfo.name || 'unknown-file',
           });
         }
 

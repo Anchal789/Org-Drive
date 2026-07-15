@@ -1,25 +1,22 @@
 'use client';
 
-import { Link } from 'lucide-react';
 import type { Dispatch, SetStateAction } from 'react';
-import { useEffect, useMemo, useReducer } from 'react';
+import { useEffect, useReducer } from 'react';
 import { toast } from 'sonner';
 import { getUsersWithAccessAction } from '@/actions/share-actions';
-import { Button } from '@/components/ui/button';
-import FileType from '@/components/ui/fileType';
-import { Separator } from '@/components/ui/separator';
 import { useDebounce } from '@/hooks/use-debounce';
 import { postData } from '@/lib/api-fn';
 import { fetchFolderFromFile } from '@/lib/share';
 import { encrypt } from '@/lib/utils';
 import { useShareDialogStore } from '@/store/store';
 import type { User } from '@/types/auth';
-import type { FileKind } from '@/types/dashboard';
 import type { UploadedFile } from '@/types/files';
 import type { ShareWithMePerson } from '@/types/share-with-me';
 import InvitePeopleSection from './InvitePeopleSection';
 import PeopleWithAccessSection from './PeopleWithAccessSection';
+import SelectedItemsList from './SelectedItemsList';
 import styles from './ShareDialog.module.scss';
+import ShareDialogFooter from './ShareDialogFooter';
 import ShareHeader from './ShareHeader';
 import { initialShareState, shareReducer } from './share-reducer';
 import UserSearchBox from './UserSearchBox';
@@ -128,20 +125,18 @@ export default function ShareDialog({
     }
   }, [open]);
 
-  const filteredUsers = useMemo(() => {
-    if (!debouncedSearchTerm.trim()) return [];
-    const lowerTerm = debouncedSearchTerm.toLowerCase();
+  const filteredUsers = !debouncedSearchTerm.trim()
+    ? []
+    : allUsers.filter((user) => {
+        if (user.id === userId || user.id === activeUserId) return false;
+        if (usersWithAccess.some((wa) => wa.id === user.id)) return false;
 
-    return allUsers.filter((user) => {
-      if (user.id === userId || user.id === activeUserId) return false;
-      if (usersWithAccess.some((wa) => wa.id === user.id)) return false;
-
-      const fullName =
-        `${user.firstName || ''} ${user.lastName || ''}`.toLowerCase();
-      const userName = (user.username || '').toLowerCase();
-      return fullName.includes(lowerTerm) || userName.includes(lowerTerm);
-    });
-  }, [debouncedSearchTerm, allUsers, usersWithAccess, userId, activeUserId]);
+        const lowerTerm = debouncedSearchTerm.toLowerCase();
+        const fullName =
+          `${user.firstName || ''} ${user.lastName || ''}`.toLowerCase();
+        const userName = (user.username || '').toLowerCase();
+        return fullName.includes(lowerTerm) || userName.includes(lowerTerm);
+      });
 
   const handleInviteUser = async () => {
     try {
@@ -281,50 +276,30 @@ export default function ShareDialog({
           onPermissionChange={(index, permission) =>
             dispatch({ type: 'update_access_permission', index, permission })
           }
+          onRemoveUser={(userIdToRemove: number) => {
+            dispatch({
+              type: 'set_users_with_access',
+              usersWithAccess: usersWithAccess.filter(
+                (u) => u.id !== userIdToRemove,
+              ),
+            });
+          }}
         />
 
         {isMultiShare && files && files.length > 1 && (
-          <div className={styles.multiFilesSection}>
-            <div className={styles.sectionLabel}>Selected Items</div>
-            <div className={styles.multiFileList}>
-              {files.map((f: UploadedFile & { fileName?: string }) => {
-                const fName = f.name || f.fileName || 'Unknown file';
-                const fExt = fName.split('.').pop() as FileKind;
-                return (
-                  <div key={f.id} className={styles.multiFileItem}>
-                    <FileType kind={fExt} />
-                    <span className={styles.multiFileName}>{fName}</span>
-                  </div>
-                );
-              })}
-            </div>
-          </div>
+          <SelectedItemsList files={files} />
         )}
 
-        {/* FOOTER */}
-        <Separator />
-        <div className={styles.footer}>
-          {!isSharedFiles && (
-            <Button variant='outline' size='sm' onClick={handleCopyLink}>
-              <Link size={14} />
-              Copy link
-            </Button>
-          )}
-          <div className={styles.footerSpacer} />
-          <Button
-            variant='ghost'
-            size='sm'
-            onClick={() => {
-              setOpen(false);
-              onCancel?.();
-            }}
-          >
-            Cancel
-          </Button>
-          <Button variant='primary' size='sm' onClick={handleInviteUser}>
-            {usersToInvite.length > 0 ? 'Send invite' : 'Save changes'}
-          </Button>
-        </div>
+        <ShareDialogFooter
+          showCopyLink={!isSharedFiles}
+          onCopyLink={handleCopyLink}
+          onCancel={() => {
+            setOpen(false);
+            onCancel?.();
+          }}
+          onSubmit={handleInviteUser}
+          submitLabel={usersToInvite.length > 0 ? 'Send invite' : 'Save changes'}
+        />
       </div>
     </div>
   );

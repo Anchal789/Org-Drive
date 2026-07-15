@@ -1,7 +1,6 @@
-export const dynamic = 'force-dynamic';
-
 import type { UploadedFile, UploadedFolder } from '@/types/files';
 import FolderContainer from '../FolderSection/FolderContainer';
+import LoadMoreFiles from '../GridSection/load-more/LoadMoreFiles';
 import styles from './DashList.module.scss';
 import FileTable from './FileTable';
 
@@ -18,7 +17,7 @@ type FileTableProps = {
   hasMoreFiles: boolean;
 };
 
-export default function DashList({ files, folders }: FileTableProps) {
+export default function DashList({ files, folders, ...props }: FileTableProps) {
   return (
     <div className={styles.shell}>
       <div className={styles.main}>
@@ -36,6 +35,13 @@ export default function DashList({ files, folders }: FileTableProps) {
 
           {/* Files table */}
           <FileTable files={files} folders={folders} />
+          <LoadMoreFiles
+            hasMoreFiles={props.hasMoreFiles}
+            loadMoreFiles={props.loadMoreFiles}
+            loadingFiles={props.loadingFiles}
+            showLessFiles={props.showLessFiles}
+            localFiles={files.length}
+          />
         </div>
       </div>
     </div>

@@ -42,22 +42,6 @@ export const postData = async <T>({
   return res.data;
 };
 
-export const putData = async <T>({
-  url,
-  payload,
-  params,
-  baseUrl,
-}: {
-  url: string;
-  payload: unknown;
-  params?: Record<string, unknown>;
-  baseUrl?: string;
-}): Promise<ApiResponse<T>> => {
-  return await api
-    .put<ApiResponse<T>>(baseUrl ?? url, payload, { params })
-    .then((res) => res.data);
-};
-
 export const deleteData = async <T>({
   url,
   params,

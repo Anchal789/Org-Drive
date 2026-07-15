@@ -43,7 +43,7 @@ export async function POST(request: NextRequest) {
           ? ((err as { errorMessage?: string }).errorMessage ?? err.message)
           : String(err);
       if (errMsg === 'PASSWORD_HASH_INVALID') {
-        return sendError('Incorrect password', 401);
+        return sendError('Incorrect password', 400);
       }
       throw err;
     }

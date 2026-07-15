@@ -14,13 +14,15 @@ const API_ID = Number(process.env.TELEGRAM_APP_API_ID);
 const API_HASH = String(process.env.TELEGRAM_APP_API_HASH);
 const STORAGE_CHANNEL = String(process.env.TELEGRAM_STORAGE_CHANNEL_ID);
 
-export async function GET(request: NextRequest) {
+export async function POST(request: NextRequest) {
   const { searchParams } = new URL(request.url);
   const session = await getSessionUser();
 
-  if (!session?.userId) return sendError('Unauthorized', 401);
+  if (!session?.userId && !searchParams.get('fileId'))
+    return sendError('Unauthorized', 401);
 
-  const fileId = decrypt(searchParams.get('token') || '');
+  const fileId =
+    decrypt(searchParams.get('token') || '') || searchParams.get('fileId');
   const requestUserId = searchParams.get('userId');
 
   const fileInfo = (
@@ -32,7 +34,7 @@ export async function GET(request: NextRequest) {
 
   if (!fileInfo) return sendError('File not found in database', 404);
 
-  const actorId = Number(session.userId || requestUserId);
+  const actorId = Number(session?.userId || requestUserId);
   const ownerId = Number(fileInfo.userId);
 
   const logs = [

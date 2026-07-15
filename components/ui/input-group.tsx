@@ -45,12 +45,14 @@ function InputGroupAddon({
   className,
   align = 'inline-start',
   ...props
-}: React.ComponentProps<'fieldset'> &
+}: React.ComponentProps<'div'> &
   VariantProps<typeof inputGroupAddonVariants>) {
   return (
-    <fieldset
+    <div
       data-slot='input-group-addon'
       data-align={align}
+      role='button'
+      tabIndex={0}
       className={cn(inputGroupAddonVariants({ align }), className)}
       onClick={(e) => {
         if ((e.target as HTMLElement).closest('button')) {

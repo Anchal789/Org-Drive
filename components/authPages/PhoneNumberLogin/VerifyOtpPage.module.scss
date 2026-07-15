@@ -215,11 +215,14 @@
   margin: 0;
   font-size: 12px;
   color: v(destructive);
-  text-align: center;
   text-overflow: ellipsis;
   overflow: hidden;
-  max-width: 200px;
+  text-align: center;
   word-wrap: break-word;
+
+  @media (max-width: 448px) {
+    max-width: 200px;
+  }
 }
 
 .passwordInput {

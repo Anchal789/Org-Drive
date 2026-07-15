@@ -15,7 +15,7 @@ const API_HASH = String(process.env.TELEGRAM_APP_API_HASH);
 
 const activeRequests = new Set<string>();
 
-export async function GET(request: NextRequest) {
+export async function POST(request: NextRequest) {
   const loginId = request.nextUrl.searchParams.get('loginId');
   if (!loginId) {
     return sendError('Missing loginId parameter', 400);
@@ -78,6 +78,14 @@ export async function GET(request: NextRequest) {
     return sendError(error || 'QR Login failed', 400, { status: 'error' });
   }
 
+  if (entry.status === 'waiting') {
+    return sendSuccess({
+      step: 'waiting',
+      qrDataUrl: entry.qrDataUrl,
+      expiresAt: entry.expiresAt,
+    });
+  }
+
   if (activeRequests.has(loginId)) {
     return sendSuccess(
       { step: 'waiting' },
@@ -122,7 +130,10 @@ export async function GET(request: NextRequest) {
     try {
       await entry.client.disconnect();
     } catch {
-      // Ignore disconnect errors
+      return sendSuccess(
+        { step: 'waiting' },
+        'Connection temporary, please wait...',
+      );
     }
 
     return sendSuccess(

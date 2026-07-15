@@ -1,6 +1,6 @@
 'use client';
 
-import { useMemo, useState } from 'react';
+import { useState } from 'react';
 import {
   formatBytes,
   generateTimeBuckets,
@@ -20,16 +20,11 @@ export default function AnalyticsPage({
   const [view, setView] = useState<'overview' | 'insights'>('overview');
   const [timeframe, setTimeframe] = useState<Timeframe>('30d');
 
-  const currentUploads = useMemo(() => {
-    const cutoff = getCutoffDate(timeframe);
-    return initialData.uploadsLast90Days.filter(
-      (u) => new Date(u.createdAt) >= cutoff,
-    );
-  }, [initialData.uploadsLast90Days, timeframe]);
-
-  const uploadActivity = useMemo(() => {
-    return generateTimeBuckets(currentUploads, timeframe);
-  }, [currentUploads, timeframe]);
+  const cutoff = getCutoffDate(timeframe);
+  const currentUploads = initialData.uploadsLast90Days.filter(
+    (u) => new Date(u.createdAt) >= cutoff,
+  );
+  const uploadActivity = generateTimeBuckets(currentUploads, timeframe);
 
   const overviewProps = {
     storageUsed: {

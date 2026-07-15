@@ -10,6 +10,7 @@
   height: 280px;
   @include flex-center;
   padding: 14px;
+  background: v(background);
 }
 
 .skeleton {

@@ -1,21 +1,19 @@
 'use client';
 
-import { useEffect, useMemo } from 'react';
+import { useEffect } from 'react';
+import { Button } from '@/components/ui/button';
 import { useSelectedFilesStore } from '@/store/store';
 import type { UploadedFile } from '@/types/files';
 import FileCard from './FileCard';
 import styles from './FileCard.module.scss';
-import { Button } from '@/components/ui/button';
 
 const FilesContainer = ({ files }: { files: Array<UploadedFile> }) => {
   const { selectedFiles, setSelectedFiles, setFileCount } =
     useSelectedFilesStore();
-  const selectedIds = useMemo(() => {
-    return selectedFiles.map((f) => f.id);
-  }, [selectedFiles]);
+  const selectedIdSet = new Set(selectedFiles.map((f) => f.id));
 
   const handleToggleSelect = (file: UploadedFile) => {
-    const isSelected = selectedIds.includes(file.id);
+    const isSelected = selectedIdSet.has(file.id);
     const updatedSelectedFiles = isSelected
       ? selectedFiles.filter((f) => f.id !== file.id)
       : [...selectedFiles, file];
@@ -44,7 +42,7 @@ const FilesContainer = ({ files }: { files: Array<UploadedFile> }) => {
               }
             }}
           />
-          <FileCard file={file} isSelected={selectedIds.includes(file.id)} />
+          <FileCard file={file} isSelected={selectedIdSet.has(file.id)} />
         </div>
       ))}
     </>

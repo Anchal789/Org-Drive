@@ -8,6 +8,7 @@ import PageHeader from '../page-header/PageHeader';
 import FlexibleTile from '../responsive-list/FlexibleTile';
 import DataTable from '../ui/datatable';
 import FileType from '../ui/fileType';
+import AutoDeleteCountdown from './AutoDeleteCountdown';
 import EmptyTrashButton from './EmptyTrashButton';
 import styles from './TrashPage.module.scss';
 import TrashTableActionColumn from './TrashTableActionColumn';
@@ -63,20 +64,12 @@ const TrashPage: FunctionComponent<{
       width: '110px',
       header: 'Auto-delete',
       className: styles.metaCell,
-      cell: (file) => {
-        const autoDeleteAt =
-          new Date(file.createdAt).getTime() + 30 * 24 * 60 * 60 * 1000;
-
-        const daysLeft = Math.ceil(
-          (autoDeleteAt - Date.now()) / (1000 * 60 * 60 * 24),
-        );
-
-        return (
-          <span className={daysLeft < 10 ? styles.autoDeleteIn10Days : ''}>
-            {daysLeft > 0 ? `in ${daysLeft} days` : 'Expired'}
-          </span>
-        );
-      },
+      cell: (file) => (
+        <AutoDeleteCountdown
+          createdAt={file.createdAt}
+          expiringSoonClassName={styles.autoDeleteIn10Days}
+        />
+      ),
     },
     {
       id: 'actions',
@@ -117,52 +110,41 @@ const TrashPage: FunctionComponent<{
           </h6>
           <EmptyTrashButton isDisabled={trashedItems.length === 0} />
         </span>
-        {trashedItems.map((item) => {
-          const autoDeleteAt =
-            new Date(item.createdAt).getTime() + 30 * 24 * 60 * 60 * 1000;
-
-          const daysLeft = Math.ceil(
-            (autoDeleteAt - Date.now()) / (1000 * 60 * 60 * 24),
-          );
-          return (
-            <FlexibleTile
-              key={item.id}
-              extension={
-                item.folderId && item.fileId === null ? (
-                  <Folder
-                    size={14}
-                    fill='currentColor'
-                    className={styles.folderIcon}
-                  />
-                ) : (
-                  <FileType kind={getFileExtension(item.fileName)} />
-                )
-              }
-              name={
-                item.folderId && item.fileId === null ? (
-                  <span className={styles.fileName}>{item.folderName}</span>
-                ) : (
-                  <span className={styles.fileName}>{item.fileName}</span>
-                )
-              }
-              description={
-                <span
-                  className={
-                    daysLeft < 10
-                      ? styles.autoDeleteIn10Days
-                      : styles.autoDeleteIn30Days
-                  }
-                >
-                  {daysLeft > 0 ? `Auto-delete in ${daysLeft} days` : 'Expired'}
-                </span>
-              }
-              size={formatBytes(item?.size) || ''}
-              folder={item.folderName}
-              date={formatFileDate(item.createdAt)}
-              actions={<TrashTableActionColumn trashed={item} />}
-            />
-          );
-        })}
+        {trashedItems.map((item) => (
+          <FlexibleTile
+            key={item.id}
+            extension={
+              item.folderId && item.fileId === null ? (
+                <Folder
+                  size={14}
+                  fill='currentColor'
+                  className={styles.folderIcon}
+                />
+              ) : (
+                <FileType kind={getFileExtension(item.fileName)} />
+              )
+            }
+            name={
+              item.folderId && item.fileId === null ? (
+                <span className={styles.fileName}>{item.folderName}</span>
+              ) : (
+                <span className={styles.fileName}>{item.fileName}</span>
+              )
+            }
+            description={
+              <AutoDeleteCountdown
+                createdAt={item.createdAt}
+                expiringSoonClassName={styles.autoDeleteIn10Days}
+                normalClassName={styles.autoDeleteIn30Days}
+                labelPrefix='Auto-delete '
+              />
+            }
+            size={formatBytes(item?.size) || ''}
+            folder={item.folderName}
+            date={formatFileDate(item.createdAt)}
+            actions={<TrashTableActionColumn trashed={item} />}
+          />
+        ))}
       </div>
       <div className={styles.dataTableDesktop}>
         <DataTable

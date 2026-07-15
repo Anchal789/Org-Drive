@@ -24,6 +24,8 @@ export default function EmptyTrashButton({
       setIsDeleting(false);
       setIsOpen(false);
       router.refresh();
+    } else {
+      setIsDeleting(false);
     }
   };
 

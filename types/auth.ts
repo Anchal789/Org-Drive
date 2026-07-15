@@ -25,6 +25,8 @@ export type QRLoginEntry = {
   user: User | null;
   error: string | null;
   passwordHint: string | null;
+  qrDataUrl?: string;
+  expiresAt?: number;
 };
 
 export type OTPLoginEntry = {

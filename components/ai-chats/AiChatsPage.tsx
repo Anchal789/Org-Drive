@@ -170,7 +170,11 @@ export default function AiChatPage() {
                 · 1,284 chunks indexed
               </div>
             </div>
-            <button type='button' className={styles.iconButton}>
+            <button
+              type='button'
+              className={styles.iconButton}
+              aria-label='Add knowledge source'
+            >
               <Plus size={15} />
             </button>
           </div>
