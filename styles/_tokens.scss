@@ -1,0 +1,260 @@
+// ─── TYPOGRAPHY FOUNDATIONS ─────────────────────────────────────────────────
+:root {
+  --font-sans: var(--font-geist-sans);
+  --font-heading: var(--font-geist-sans);
+  --font-mono: var(--font-geist-mono);
+
+  --text-xs: 0.75rem;
+  --text-sm: 0.875rem;
+  --text-base: 1rem;
+  --text-lg: 1.125rem;
+  --text-xl: 1.25rem;
+  --text-2xl: 1.5rem;
+  --text-3xl: 1.875rem;
+  --text-4xl: 2.25rem;
+  --text-5xl: 3rem;
+  --sidebar-label-size: 13px;
+
+  --leading-none: 1;
+  --leading-tight: 1.25;
+  --leading-snug: 1.375;
+  --leading-normal: 1;
+  --leading-relaxed: 1.625;
+
+  --weight-normal: 400;
+  --weight-medium: 500;
+  --weight-semibold: 600;
+  --weight-bold: 700;
+
+  --tracking-tight: -0.02em;
+  --tracking-normal: 0em;
+  --tracking-wide: 0.02em;
+  --tracking-wider: 0.05em;
+
+  // Semantic role shortcuts
+  --h1-size: var(--text-4xl);
+  --h1-weight: var(--weight-bold);
+  --h1-leading: var(--leading-tight);
+  --h1-tracking: var(--tracking-tight);
+  --h1-font: var(--font-heading);
+
+  --h2-size: var(--text-3xl);
+  --h2-weight: var(--weight-semibold);
+  --h2-leading: var(--leading-tight);
+  --h2-tracking: var(--tracking-tight);
+  --h2-font: var(--font-heading);
+
+  --h3-size: var(--text-2xl);
+  --h3-weight: var(--weight-semibold);
+  --h3-leading: var(--leading-snug);
+  --h3-font: var(--font-heading);
+
+  --h4-size: var(--text-xl);
+  --h4-weight: var(--weight-semibold);
+  --h4-leading: var(--leading-snug);
+  --h4-font: var(--font-heading);
+
+  --p-size: var(--text-base);
+  --p-weight: var(--weight-normal);
+  --p-leading: var(--leading-normal);
+
+  --small-size: var(--text-sm);
+  --label-size: var(--text-sm);
+  --label-weight: var(--weight-medium);
+  --caption-size: var(--text-xs);
+  --code-size: var(--text-sm);
+  --code-font: var(--font-mono);
+}
+
+// ─── RADIUS ─────────────────────────────────────────────────────────────────
+:root {
+  --radius: 0.625rem;
+  --radius-sm: calc(var(--radius) * 0.6);
+  --radius-md: calc(var(--radius) * 0.8);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) * 1.4);
+  --radius-2xl: calc(var(--radius) * 1.8);
+  --radius-3xl: calc(var(--radius) * 2.2);
+  --radius-4xl: calc(var(--radius) * 2.6);
+  --radius-full: 9999px;
+}
+
+// ─── SHADOWS ────────────────────────────────────────────────────────────────
+:root {
+  --shadow-xs: 0 1px 2px 0 oklch(0 0 0 / 0.05);
+  --shadow-sm: 0 1px 3px 0 oklch(0 0 0 / 0.1), 0 1px 2px -1px oklch(0 0 0 / 0.1);
+  --shadow-md: 0 4px 6px -1px oklch(0 0 0 / 0.1), 0 2px 4px -2px oklch(0 0 0 / 0.1);
+  --shadow-lg: 0 10px 15px -3px oklch(0 0 0 / 0.1), 0 4px 6px -4px oklch(0 0 0 / 0.1);
+  --shadow-xl: 0 20px 25px -5px oklch(0 0 0 / 0.1), 0 8px 10px -6px oklch(0 0 0 / 0.1);
+  --shadow-2xl: 0 25px 50px -12px oklch(0 0 0 / 0.25);
+}
+
+// ─── SPACING SCALE (added — useful for SCSS) ────────────────────────────────
+:root {
+  --space-0: 0;
+  --space-1: 0.25rem;
+  --space-2: 0.5rem;
+  --space-3: 0.75rem;
+  --space-4: 1rem;
+  --space-5: 1.25rem;
+  --space-6: 1.5rem;
+  --space-8: 2rem;
+  --space-10: 2.5rem;
+  --space-12: 3rem;
+  --space-16: 4rem;
+  --space-20: 5rem;
+  --space-24: 6rem;
+}
+
+// ─── COLOR TOKENS — LIGHT (default) ─────────────────────────────────────────
+:root {
+  --background: oklch(1 0 0);
+  --foreground: oklch(0.145 0 0);
+  --card: oklch(1 0 0);
+  --card-foreground: oklch(0.145 0 0);
+  --popover: oklch(1 0 0);
+  --popover-foreground: oklch(0.145 0 0);
+
+  --primary: oklch(0.5461 0.215 262.88);
+  --primary-foreground: oklch(0.97 0.014 254.604);
+
+  --secondary: oklch(0.97 0 0);
+  --secondary-foreground: oklch(0.205 0 0);
+  --muted: oklch(0.97 0 0);
+  --muted-foreground: oklch(0.556 0 0);
+  --accent: oklch(0.97 0 0);
+  --accent-foreground: oklch(0.205 0 0);
+
+  --destructive: oklch(0.577 0.245 27.325);
+  --destructive-foreground: oklch(0.97 0.01 17);
+
+  --border: oklch(0.922 0 0);
+  --input: oklch(0.922 0 0);
+  --ring: hsl(0, 0%, 63%);
+
+  --surface: oklch(0.98 0 0);
+  --surface-foreground: var(--foreground);
+
+  --code: var(--surface);
+  --code-foreground: var(--surface-foreground);
+  --code-highlight: oklch(0.96 0 0);
+  --code-number: oklch(0.56 0 0);
+
+  --selection: oklch(0.145 0 0);
+  --selection-foreground: oklch(1 0 0);
+
+  --sidebar: oklch(0.985 0 0);
+  --sidebar-foreground: oklch(0.145 0 0);
+  --sidebar-primary: oklch(0.205 0 0);
+  --sidebar-primary-foreground: oklch(0.985 0 0);
+  --sidebar-accent: oklch(0.97 0 0);
+  --sidebar-accent-foreground: oklch(0.205 0 0);
+  --sidebar-border: oklch(0.922 0 0);
+  --sidebar-ring: oklch(0.708 0 0);
+
+  --chart-1: oklch(0.87 0 0);
+  --chart-2: oklch(0.556 0 0);
+  --chart-3: oklch(0.439 0 0);
+  --chart-4: oklch(0.371 0 0);
+  --chart-5: oklch(0.269 0 0);
+  --tg-blue: #229ed9;
+  --tg-blue-bg: #e1f0f9;
+
+  --text-primary: oklch(0.145 0 0);
+  --text-secondary: oklch(0.556 0 0);
+  --text-white: oklch(1 0 0);
+  --text-black: oklch(0 0 0);
+}
+
+// ─── TINTS ──────────────────────────────────────────────────────────────────
+:root {
+  --tint-teal-bg: #a1e0dd;
+  --tint-teal-bd: #5cc2c6;
+  --tint-teal-tx: oklch(0.3 0.065 192);
+  --tint-blue-bg: #a4e9ff;
+  --tint-blue-bd: #88aed2;
+  --tint-blue-tx: oklch(0.34 0.07 228);
+  --tint-green-bg: #d4f1d8;
+  --tint-green-bd: #8fcca0;
+  --tint-green-tx: oklch(0.36 0.075 150);
+  --tint-amber-bg: #ffdbba;
+  --tint-amber-bd: #ffaca8;
+  --tint-amber-tx: oklch(0.42 0.09 50);
+  --tint-red-bg: #ffd0d5;
+  --tint-red-bd: #ff8894;
+  --tint-red-tx: oklch(0.42 0.1 10);
+  --tint-violet-bg: #f7dff6;
+  --tint-violet-bd: #c387c2;
+  --tint-violet-tx: oklch(0.38 0.09 305);
+  --tint-pink-bg: #ffd6ee;
+  --tint-pink-bd: #fa85b9;
+  --tint-pink-tx: oklch(0.4 0.09 345);
+  --tint-sky-bg: #a4e9ff;
+  --tint-sky-bd: #5ea8e6;
+  --tint-sky-tx: oklch(0.35 0.09 230);
+  --tint-slate-bg: #d2d8d9;
+  --tint-slate-bd: #a0b5bb;
+  --tint-slate-tx: oklch(0.35 0.02 220);
+  --tint-peach-bg: #fcebf2;
+  --tint-peach-bd: #fca5d1;
+  --tint-peach-tx: oklch(0.4 0.09 15);
+  --tint-indigo-bg: #dbe4ff;
+  --tint-indigo-bd: #8ea2ff;
+  --tint-indigo-tx: oklch(0.4 0.12 275);
+  --tint-purple-bg: #eedcff;
+  --tint-purple-bd: #c39cff;
+  --tint-purple-tx: oklch(0.42 0.11 300);
+  --tint-orange-bg: #ffe0c2;
+  --tint-orange-bd: #ffb26b;
+  --tint-orange-tx: oklch(0.45 0.12 55);
+  --tint-gray-bg: #e5e7eb;
+  --tint-gray-bd: #9ca3af;
+  --tint-gray-tx: oklch(0.42 0.01 250);
+  --tint-rose-bg: #ffd7df;
+  --tint-rose-bd: #ff94a8;
+  --tint-rose-tx: oklch(0.45 0.12 15);
+  --tint-yellow-bg: #fff3bf;
+  --tint-yellow-bd: #ffd43b;
+  --tint-yellow-tx: oklch(0.52 0.1 95);
+  --tint-cyan-bg: #cffafe;
+  --tint-cyan-bd: #67e8f9;
+  --tint-cyan-tx: oklch(0.42 0.08 215);
+}
+
+// ─── DENSITY SCALING TOKENS ─────────────────────────────────────────────────
+:root {
+  --density-layout-p: 24px; /* Outer padding for main views */
+  --density-card-p: 12px 14px; /* Padding inside cards/tiles */
+  --density-row-p: 8px 12px; /* Padding for lists and nav items */
+  --density-pill-p: 8px 12px; /* Padding for org pills */
+  --density-btn-p: 10px 16px; /* Padding for primary buttons */
+
+  --density-gap-lg: 12px;
+  --density-gap-md: 10px;
+  --density-gap-sm: 8px;
+
+  --density-item-h: 40px; /* Button heights */
+  --density-icon-md: 22px; /* Logos and main icons */
+  --density-preview-h: 72px; /* File card image preview height */
+
+  --density-text-base: 13px; /* Nav item text size */
+}
+
+/* Overrides applied instantly when "Compact" is selected */
+[data-density="compact"] {
+  --density-layout-p: 16px;
+  --density-card-p: 8px 10px;
+  --density-row-p: 4px 8px;
+  --density-pill-p: 6px 10px;
+  --density-btn-p: 6px 12px;
+
+  --density-gap-lg: 8px;
+  --density-gap-md: 6px;
+  --density-gap-sm: 4px;
+
+  --density-item-h: 32px;
+  --density-icon-md: 18px;
+  --density-preview-h: 56px;
+
+  --density-text-base: 12px;
+}

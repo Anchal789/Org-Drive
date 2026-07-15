@@ -1,0 +1,75 @@
+import { Tag } from 'lucide-react';
+import Image from 'next/image';
+import type { FunctionComponent } from 'react';
+import NoDataImage from '@/public/assets/No-Data.svg';
+import type { UploadedFile, UploadedFolder } from '@/types/files';
+import FileCard from '../dashboard/FileSection/FileCard';
+import FolderContainer from '../dashboard/FolderSection/FolderContainer';
+import PageHeader from '../page-header/PageHeader';
+import styles from './Bookmark.module.scss';
+
+const BookmarkPage: FunctionComponent<{
+  bookmarkedFolders: UploadedFolder[];
+  bookmarkedFiles: UploadedFile[];
+}> = ({ bookmarkedFiles, bookmarkedFolders }) => {
+  return (
+    <>
+      <PageHeader
+        icon={<Tag size={20} />}
+        tone='amber'
+        title='Bookmark'
+        subHeading="Quick access to the files and folders you've bookmarked."
+        hideOnMobile
+      />
+      {bookmarkedFolders.length === 0 && bookmarkedFiles.length === 0 ? (
+        <div className={styles.emptyHint}>
+          <Image
+            src={NoDataImage}
+            width={350}
+            height={350}
+            alt='No data'
+            loading='eager'
+            className={styles.emptyHintImage}
+          />
+          Drag your files and folders here or use the &apos;New&apos; button to
+          upload
+        </div>
+      ) : (
+        <div className={styles.content}>
+          {bookmarkedFolders.length > 0 && (
+            <>
+              <div className={`${styles.sectionLabel} ${styles.spacedBottom}`}>
+                Folders
+              </div>
+              <div className={`${styles.grid} ${styles.grid4}`}>
+                {bookmarkedFolders.map((folder) => (
+                  <FolderContainer
+                    key={folder.id}
+                    folder={folder}
+                    layout='grid'
+                  />
+                ))}
+              </div>
+            </>
+          )}
+          {bookmarkedFiles.length > 0 && (
+            <>
+              <div
+                className={`${styles.sectionLabel} ${bookmarkedFolders.length > 0 ? styles.spaced : styles.spacedBottom}`}
+              >
+                Files
+              </div>
+              <div className={`${styles.grid} ${styles.grid4}`}>
+                {bookmarkedFiles.map((file) => (
+                  <FileCard key={file.id} file={file} />
+                ))}
+              </div>
+            </>
+          )}
+        </div>
+      )}
+    </>
+  );
+};
+
+export default BookmarkPage;

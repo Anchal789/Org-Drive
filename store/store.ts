@@ -1,0 +1,308 @@
+import { toast } from 'sonner';
+import { create } from 'zustand';
+import { persist } from 'zustand/middleware';
+import type { UploadItem } from '@/types/dashboard';
+import type { UploadedFile, UploadedFolder } from '@/types/files';
+import type {
+  AuthStateStore,
+  DragDropStore,
+  FileLayoutStore,
+  QueuedFile,
+  ShareWithMeDialogStore,
+  SortByStore,
+  UploadStore,
+} from '@/types/store';
+
+export const useAuthStore = create<AuthStateStore>()(
+  persist(
+    (set) => ({
+      accessToken: null,
+      setAccessToken: (token: string | null) => set({ accessToken: token }),
+      clearAuth: () => set({ accessToken: null }),
+    }),
+    {
+      name: 'auth-storage',
+    },
+  ),
+);
+
+export const useDragDropStore = create<DragDropStore>((set) => ({
+  isDragging: false,
+  setIsDragging: (dragging) => set({ isDragging: dragging }),
+  files: [],
+  setFiles: (files) => set({ files }),
+}));
+
+export const useFileLayout = create<FileLayoutStore>()(
+  persist(
+    (set) => ({
+      fileLayout: 'grid',
+      hasHydrated: false,
+
+      setHasHydrated: (state) => set({ hasHydrated: state }),
+
+      setFileLayout: (layout) => set({ fileLayout: layout }),
+    }),
+    {
+      name: 'fileLayout',
+
+      onRehydrateStorage: () => (state) => {
+        state?.setHasHydrated(true);
+      },
+    },
+  ),
+);
+
+export const useSortByStore = create<SortByStore>((set) => ({
+  sortBy: 'name',
+  setSortBy: (sortBy) => set({ sortBy }),
+}));
+
+export function formatBytes(bytes: number): string {
+  if (bytes === 0) return '0 B';
+  const k = 1024;
+  const sizes = ['B', 'KB', 'MB', 'GB'];
+  const i = Math.floor(Math.log(bytes) / Math.log(k));
+  return `${Number.parseFloat((bytes / k ** i).toFixed(1))} ${sizes[i]}`;
+}
+
+const activeControllers = new Map<string, AbortController>();
+
+export const useUploadStore = create<UploadStore>((set, get) => ({
+  isWidgetVisible: false,
+  uploads: {},
+  pendingQueue: [],
+  isProcessing: false,
+  folderId: null,
+
+  closeWidget: () => set({ isWidgetVisible: false, uploads: {} }),
+
+  abortUpload: (uniqueId: string) => {
+    const controller = activeControllers.get(uniqueId);
+    if (controller) {
+      controller.abort();
+      activeControllers.delete(uniqueId);
+    }
+
+    set((state) => ({
+      pendingQueue: state.pendingQueue.filter((f) => f.uniqueId !== uniqueId),
+      uploads: {
+        ...state.uploads,
+        [uniqueId]: {
+          ...state.uploads[uniqueId],
+          state: 'aborted',
+        },
+      },
+    }));
+  },
+
+  startUploads: (
+    files: File[],
+    folderName?: string,
+    fileCount?: number,
+    folderId?: string | null,
+  ) => {
+    const newUploads: Record<string, UploadItem> = {};
+    const newQueueItems: QueuedFile[] = [];
+    for (const file of files) {
+      const uniqueId = `${file.name}-${Date.now()}-${Math.random().toString(36).slice(2, 9)}`;
+      newUploads[uniqueId] = {
+        id: uniqueId,
+        name: file.name,
+        size: formatBytes(file.size),
+        state: 'queued',
+        pct: 0,
+        eta: undefined,
+        folderName: folderName,
+        rawSize: file.size,
+        isFolderGroup: false,
+        folderId: folderId,
+      };
+      newQueueItems.push({
+        file,
+        folderName,
+        fileCount,
+        isFolder: folderName !== undefined,
+        uniqueId,
+        folderId,
+      });
+    }
+
+    set((state) => ({
+      isWidgetVisible: true,
+      uploads: { ...state.uploads, ...newUploads },
+      pendingQueue: [...state.pendingQueue, ...newQueueItems],
+      folderId: folderId,
+    }));
+
+    get().processQueue();
+  },
+
+  processQueue: async () => {
+    const state = get();
+
+    if (state.isProcessing || state.pendingQueue.length === 0) return;
+
+    set({ isProcessing: true });
+
+    const { file, folderName, fileCount, uniqueId } = state.pendingQueue[0];
+
+    const controller = new AbortController();
+    activeControllers.set(file.name, controller);
+
+    const formData = new FormData();
+    formData.append('file', file);
+
+    if (folderName) {
+      formData.append('folderName', folderName);
+      formData.append('fileCount', String(fileCount || 0));
+    }
+    formData.append('folderId', state.folderId || '');
+
+    try {
+      const response = await fetch('/api/file/upload-files', {
+        method: 'POST',
+        body: formData,
+        signal: controller.signal,
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json().catch(() => null);
+        const errorMessage =
+          errorData?.message || errorData?.error || 'Server connection failed.';
+        throw new Error(errorMessage);
+      }
+      if (!response.body) throw new Error('No stream available');
+
+      const reader = response.body.getReader();
+      const decoder = new TextDecoder();
+      let buffer = '';
+
+      while (true) {
+        const { done, value } = await reader.read();
+        if (done) break;
+
+        buffer += decoder.decode(value, { stream: true });
+        const parts = buffer.split('\n');
+        buffer = parts.pop() || '';
+
+        for (const part of parts) {
+          const trimmed = part.trim();
+          if (!trimmed) continue;
+
+          let jsonString = trimmed;
+
+          if (trimmed.startsWith('data:')) {
+            jsonString = trimmed.replace('data:', '').trim();
+          } else if (
+            trimmed.startsWith('event:') ||
+            trimmed.startsWith('id:') ||
+            trimmed.startsWith('retry:')
+          ) {
+            continue;
+          }
+
+          let streamError: Error | null = null;
+
+          try {
+            const event = JSON.parse(jsonString);
+
+            if (event.type === 'file_start') {
+              set((s) => ({
+                uploads: {
+                  ...s.uploads,
+                  [uniqueId]: {
+                    ...s.uploads[uniqueId],
+                    state: 'uploading',
+                    pct: 0,
+                    eta: event.eta,
+                  },
+                },
+              }));
+            } else if (event.type === 'progress') {
+              set((s) => ({
+                uploads: {
+                  ...s.uploads,
+                  [uniqueId]: {
+                    ...s.uploads[uniqueId],
+                    pct: event.percentage,
+                    eta: event.eta,
+                  },
+                },
+              }));
+            } else if (event.type === 'complete') {
+              set((s) => ({
+                uploads: {
+                  ...s.uploads,
+                  [uniqueId]: {
+                    ...s.uploads[uniqueId],
+                    state: 'done',
+                    pct: 100,
+                    eta: undefined,
+                  },
+                },
+              }));
+            } else if (event.type === 'error') {
+              streamError = new Error(event.message);
+            }
+          } catch {
+            void 0;
+          }
+          if (streamError) {
+            throw streamError;
+          }
+        }
+      }
+    } catch (error: unknown) {
+      if (error instanceof Error && error.name !== 'AbortError') {
+        set((s) => ({
+          uploads: {
+            ...s.uploads,
+            [uniqueId]: { ...s.uploads[uniqueId], state: 'error' },
+          },
+        }));
+        toast.error(`Upload failed: ${error.message}`);
+      }
+    } finally {
+      activeControllers.delete(uniqueId);
+      set((s) => ({
+        pendingQueue: s.pendingQueue.slice(1),
+        isProcessing: false,
+      }));
+      get().processQueue();
+    }
+  },
+}));
+
+export const useShareDialogStore = create<ShareWithMeDialogStore>((set) => ({
+  open: false,
+  setOpen: (open: boolean) => set({ open }),
+  file: null,
+  folder: null,
+  setFile: (file: UploadedFile) => set({ file }),
+  files: [],
+  setFiles: (files: UploadedFile[]) => set({ files }),
+  setFolder: (folder: UploadedFolder) => set({ folder }),
+  onSuccess: () => {
+    void 0;
+  },
+  onCancel: () => {
+    set({ file: null });
+    set({ folder: null });
+    set({ files: [] });
+  },
+}));
+
+export const useSelectedFilesStore = create<{
+  selectedFiles: Array<UploadedFile>;
+  setSelectedFiles: (files: Array<UploadedFile>) => void;
+  clearSelection: () => void;
+  fileCount: number;
+  setFileCount: (count: number) => void;
+}>((set) => ({
+  selectedFiles: [],
+  setSelectedFiles: (files) => set({ selectedFiles: files }),
+  clearSelection: () => set({ selectedFiles: [] }),
+  fileCount: 0,
+  setFileCount: (count) => set({ fileCount: count }),
+}));

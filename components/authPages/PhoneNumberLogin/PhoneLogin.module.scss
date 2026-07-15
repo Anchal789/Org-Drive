@@ -1,0 +1,130 @@
+@use "../../../styles/functions" as *;
+@use "../../../styles/mixins" as *;
+
+.formWrapper {
+  @include flex(column, stretch, flex-start, 18px);
+  width: 100%;
+}
+
+.label {
+  font-size: 11px;
+  font-weight: 500; // v(weight-medium)
+  color: v(foreground);
+  margin-bottom: 6px;
+  display: block;
+}
+
+.inputGroup {
+  @include flex(row, center, flex-start);
+  border-radius: v(radius-md); // Overrides to default radius-md from Figma HTML
+  overflow: hidden;
+  border: 1.5px solid v(border); // Thicker 1.5px border
+  background: v(background);
+  @include transition(all, 150ms);
+
+  &:focus-within {
+    border-color: v(tg-blue); // Telegram Blue
+    box-shadow: rgba(34, 158, 217, 0.133) 0px 0px 0px 3px; // Native Figma Focus Ring
+    outline: none;
+  }
+}
+
+.comboboxTrigger {
+  height: 42px;
+  @include flex(row, center, flex-start, 6px);
+  border-radius: 0;
+  border: 0;
+  border-right: 1px solid v(border);
+  background: transparent;
+  padding: 0 10px;
+  font-size: 13px;
+  font-weight: v(weight-medium);
+
+  /* Increase hit area specifically for Mobile */
+  @media (max-width: 768px) {
+    height: 48px;
+    font-size: 14px;
+  }
+}
+
+.flagWrapper {
+  @include flex(row, center, flex-start, 6px);
+}
+
+.flagIcon {
+  flex-shrink: 0;
+  border-radius: 2px;
+}
+
+.comboboxContent {
+  width: 288px;
+}
+
+.comboboxSearch {
+  border-radius: 0;
+  border: 0;
+  border-bottom: 1px solid v(border);
+  box-shadow: none;
+  outline: none;
+}
+
+.listItem {
+  padding: 0;
+}
+
+.listContent {
+  @include flex(row, center, flex-start, 10px);
+}
+
+.listTitle {
+  white-space: nowrap;
+}
+
+.phoneInput {
+  border: none;
+  box-shadow: none;
+  padding: 0 12px;
+  flex: 1;
+  height: 42px;
+  font-size: 14px;
+
+  /* Matches Figma Tabular Nums */
+  @media (max-width: 768px) {
+    height: 48px;
+    font-size: 15px;
+    font-variant-numeric: tabular-nums;
+  }
+
+  &:focus-visible {
+    outline: none;
+    box-shadow: none;
+  }
+}
+
+.errorText {
+  font-size: 11px;
+  color: v(destructive);
+  margin-top: 6px;
+}
+
+.shieldHint {
+  font-size: 11px;
+  color: v(muted-foreground);
+  margin-top: 6px;
+  @include flex(row, center, flex-start, 6px);
+}
+
+/* ─── BUTTON STYLES ─── */
+.submitButton {
+  width: 100%;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+
+  @media (max-width: 768px) {
+    height: 44px; // Exact match to Figma HTML snippet
+    font-size: 14px;
+    font-weight: 600;
+  }
+}

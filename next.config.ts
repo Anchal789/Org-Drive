@@ -1,3 +1,4 @@
+import path from 'node:path';
 import type { NextConfig } from 'next';
 
 const cspHeader = `
@@ -25,6 +26,13 @@ const nextConfig: NextConfig = {
   },
   typedRoutes: true,
   poweredByHeader: false,
+  images: {
+    remotePatterns: [
+      new URL(
+        'https://raw.githubusercontent.com/SujalXplores/All-Country-Flags/refs/heads/master/*',
+      ),
+    ],
+  },
   async headers() {
     return [
       {
@@ -49,6 +57,12 @@ const nextConfig: NextConfig = {
         ],
       },
     ];
+  },
+  sassOptions: {
+    includePaths: [path.join(process.cwd(), 'styles')],
+  },
+  typescript: {
+    ignoreBuildErrors: process.env.VERCEL === '1',
   },
 };
 

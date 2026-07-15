@@ -1,0 +1,133 @@
+@use "../../../styles/functions" as *;
+
+.wrapper {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+.shell {
+  display: flex;
+  background: v(background);
+  color: v(foreground);
+  position: relative;
+  height: 100dvh;
+}
+
+.main {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  position: relative;
+}
+
+.content {
+  flex: 1;
+  overflow: auto;
+  padding: 0 24px 24px;
+
+  @media (max-width: 768px) {
+    padding: 0 16px 16px;
+  }
+}
+
+.sectionLabel {
+  font-size: 12px;
+  font-weight: v(weight-semibold);
+  color: v(muted-foreground);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  margin-top: 16px;
+  margin-bottom: 8px;
+
+  &.spaced {
+    margin-top: 24px;
+    margin-bottom: 10px;
+  }
+}
+
+.sectionHeader {
+  margin-top: 24px;
+  margin-bottom: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+
+  .sectionLabel {
+    margin: 0;
+  }
+
+  @media (max-width: 768px) {
+    margin-top: 8px;
+    margin-bottom: 8px;
+  }
+}
+
+.sectionMeta {
+  font-size: 11px;
+  color: v(muted-foreground);
+}
+
+.grid {
+  display: grid;
+  gap: 12px;
+}
+
+.grid4 {
+  grid-template-columns: repeat(4, 1fr);
+  gap: 10px;
+
+  @media (max-width: 1280px) {
+    grid-template-columns: repeat(3, 1fr);
+  }
+  @media (max-width: 1024px) {
+    grid-template-columns: repeat(2, 1fr);
+  }
+  @media (max-width: 448px) {
+    grid-template-columns: repeat(1, 1fr);
+  }
+}
+
+.gridFolder4 {
+  grid-template-columns: repeat(4, 1fr);
+  gap: 10px;
+
+  @media (max-width: 1280px) {
+    grid-template-columns: repeat(3, 1fr);
+  }
+  @media (max-width: 1024px) {
+    grid-template-columns: repeat(2, 1fr);
+  }
+  @media (max-width: 448px) {
+    grid-template-columns: repeat(1, 1fr);
+  }
+}
+
+.header {
+  @media (max-width: 768px) {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 10px 16px;
+  }
+}
+
+.emptyHint {
+  font-size: v(text-base);
+  color: v(muted-foreground);
+  font-weight: v(weight-semibold);
+  text-align: center;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+.emptyHintImage {
+  width: 20%;
+  height: auto;
+  margin-bottom: 12px;
+}

@@ -1,0 +1,42 @@
+@use "../../styles/functions" as *;
+
+.tabsWrapper {
+  width: 100%;
+}
+
+.tabsList {
+  display: flex;
+  gap: 2px;
+  padding: 3px;
+  background: v(secondary);
+  border-radius: v(radius-md);
+  height: auto;
+  width: 100%;
+}
+
+.tabTrigger {
+  flex: 1;
+  padding: 5px 0px;
+  border-radius: calc(v(radius-sm) - 2px);
+  border: none;
+  font-size: 12px;
+  font-weight: 500;
+  font-family: inherit;
+  color: v(muted-foreground);
+  background: transparent;
+  cursor: pointer;
+  height: auto;
+  transition: all 0.15s ease-in-out;
+
+  /* Bulletproof Active State */
+  &[data-state="active"] {
+    background: v(card);
+    color: v(foreground);
+    box-shadow: v(shadow-xs);
+    font-weight: 600;
+  }
+
+  &:hover:not([data-state="active"]) {
+    color: v(foreground);
+  }
+}

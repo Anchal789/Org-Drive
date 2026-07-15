@@ -1,0 +1,109 @@
+@use "@/styles/functions" as *; // Adjust path if needed
+
+/* ─── 1. AUTO-FILL GRID CONTAINER ─── */
+/* Wrap your list of tiles in this class! */
+.tileGrid {
+  display: grid;
+  /* Magic line: Auto-creates columns based on screen width. Min width 320px */
+  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+  gap: 12px;
+  width: 100%;
+}
+
+/* ─── 2. TILE COMPONENT ─── */
+.tile {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 14px;
+  border: 1px solid v(border);
+  border-radius: v(radius-xl);
+  background: v(card);
+  transition: all 0.2s ease;
+  position: relative;
+  min-width: 0; /* CRITICAL: Prevents long text from breaking the grid column */
+  cursor: pointer;
+
+  &:hover {
+    background: color-mix(in srgb, v(muted) 30%, transparent);
+  }
+
+  &.selected {
+    border-color: v(primary);
+    background: color-mix(in oklch, v(primary) 6%, v(card));
+    box-shadow: 0 0 0 1px v(primary);
+  }
+}
+
+/* ─── LEFT SLOT (Extension) ─── */
+.leading {
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 10;
+}
+
+/* ─── MIDDLE SLOT (Info) ─── */
+.content {
+  flex: 1 1 0%;
+  min-width: 0; /* CRITICAL for truncation */
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  justify-content: center;
+}
+
+.title {
+  font-size: 13px;
+  font-weight: 500;
+  color: v(foreground);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  line-height: 1.4;
+}
+
+.metaGroup {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 4px;
+  font-size: 11px;
+  color: v(muted-foreground);
+  line-height: 1.4;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.metaItem {
+  display: inline-flex;
+  align-items: center;
+}
+
+.metaDot {
+  margin: 0 2px;
+  opacity: 0.5;
+}
+
+/* ─── RIGHT SLOT (Actions) ─── */
+.trailing {
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  gap: 8px; /* Gap between Tag, Avatar, and Menu */
+  position: relative;
+  z-index: 10;
+}
+
+.clickOverlay {
+  position: absolute;
+  inset: 0;
+  width: 90%;
+  height: 100%;
+  border: none;
+  background: transparent;
+  cursor: pointer;
+  z-index: 1;
+}

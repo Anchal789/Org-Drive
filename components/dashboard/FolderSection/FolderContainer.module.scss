@@ -1,0 +1,182 @@
+@use "../../../styles/functions" as *;
+
+.folderContainer {
+  width: 100%;
+  height: 100%;
+  padding: 0;
+  cursor: pointer;
+  position: relative;
+}
+
+// ─── Folders row ──────────────────────────────────────────────────────────
+.folderChip {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  padding: 8px 10px;
+  border: 1px solid v(border);
+  border-radius: v(radius-md);
+  background: v(card);
+  width: 100%;
+  height: 100%;
+}
+
+.folderInfo {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.clickOverlay {
+  position: absolute;
+  inset: 0;
+  width: 90%;
+  height: 100%;
+  border: none;
+  background: transparent;
+  cursor: pointer;
+  z-index: 1;
+}
+
+.folderActions {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+
+  @media (max-width: 768px) {
+    justify-content: space-between;
+    align-items: normal;
+
+    .folderMenu {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+    }
+  }
+}
+
+.folderName {
+  font-size: 12px;
+  font-weight: v(weight-medium);
+  max-width: 100px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+
+  @media (max-width: 768px) {
+    font-size: 13px;
+    margin-top: 8px;
+  }
+}
+
+.starIcon {
+  color: v(tint-amber-bd);
+}
+
+.moreBtn {
+  padding-inline: 6px;
+  padding-block: 1px;
+}
+
+.moreBtn[data-state="open"] {
+  background: v(secondary);
+  color: v(muted-foreground);
+}
+
+.moreIcon {
+  color: v(muted-foreground);
+  width: 15px;
+}
+
+.preview {
+  background: v(secondary);
+  border-radius: v(radius-md);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  height: 72px;
+  cursor: pointer;
+}
+
+.fileIcon {
+  color: color-mix(in oklch, v(muted-foreground) 45%, transparent);
+}
+
+.name {
+  font-size: 12px;
+  font-weight: v(weight-medium);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.meta {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-top: 6px;
+}
+
+.metaLeft {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.modTime {
+  font-size: 10px;
+  color: v(muted-foreground);
+}
+
+.menuContent {
+  width: 184px;
+}
+
+.menuItem {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  padding: 7px 9px;
+  font-size: 13px;
+  font-weight: 500;
+}
+
+.icon {
+  color: v(muted-foreground);
+}
+
+.separator {
+  margin: 4px 6px;
+  height: 1px;
+  background: v(border);
+  width: calc(100% - 12px);
+}
+
+.deleteItem {
+  color: v(destructive);
+
+  .icon {
+    color: v(destructive);
+  }
+}
+
+.folderCard {
+  padding: 12px;
+  border: 1px solid v(border);
+  border-radius: v(radius-lg);
+  background: v(card);
+  position: relative;
+
+  .folderHeaderSm {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+}
+
+.folderCount {
+  font-size: 10px;
+  color: v(muted-foreground);
+}

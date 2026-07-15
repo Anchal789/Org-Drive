@@ -1,0 +1,76 @@
+@use "@/styles/functions" as *;
+
+.overlay {
+  position: absolute;
+  inset: 12px;
+  background: color-mix(in oklch, v(primary) 10%, v(background));
+  border: 2px dashed v(primary);
+  border-radius: v(radius-2xl);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  pointer-events: none;
+  z-index: 3;
+
+  &.overlayActive {
+    background: v(tint-peach-bg);
+  }
+
+  &:has(input:hover) {
+    background: v(tint-peach-bg);
+  }
+
+  @media (max-width: 768px) {
+    height: 50%;
+    top: 50%;
+    transform: translateY(-50%);
+  }
+}
+
+.inner {
+  text-align: center;
+  color: v(primary);
+}
+
+.closeOverlay {
+  display: none;
+
+  @media (max-width: 768px) {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    position: absolute;
+    top: 20%;
+    right: 12px;
+    cursor: pointer;
+    z-index: 100;
+    height: fit-content;
+    width: fit-content;
+  }
+}
+
+.iconBox {
+  width: 64px;
+  height: 64px;
+  border-radius: v(radius-2xl);
+  background: v(primary);
+  color: v(primary-foreground);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto;
+}
+
+.title {
+  margin-top: 14px;
+  font-weight: v(weight-bold);
+  font-size: 22px;
+  color: v(foreground);
+  letter-spacing: -0.02em;
+}
+
+.subtitle {
+  font-size: 13px;
+  color: v(muted-foreground);
+  margin-top: 4px;
+}

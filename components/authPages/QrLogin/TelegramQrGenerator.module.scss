@@ -1,0 +1,107 @@
+@use "../../../styles/functions" as *;
+@use "../../../styles/mixins" as *;
+
+.pageWrapper {
+  height: 100dvh;
+  background: v(background);
+  color: v(foreground);
+  @include flex-center;
+  padding: 32px;
+}
+
+.authCard {
+  width: 440px;
+  padding: 40px;
+  background: v(card);
+  border: 1px solid v(border);
+  border-radius: v(radius-2xl);
+  box-shadow: v(shadow-xl);
+  @include flex(column, center, center, 18px);
+}
+
+.logoRow {
+  @include flex(row, center, flex-start, 8px);
+}
+
+.brandSquare {
+  width: 36px;
+  height: 36px;
+  border-radius: 10px;
+  background: v(foreground);
+  color: v(background);
+  @include flex-center;
+  font-weight: v(weight-bold); // 700
+  font-size: 15px;
+}
+
+.dividerLine {
+  width: 24px;
+  height: 1px;
+  background: v(border);
+}
+
+.tgCircle {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: v(tg-blue);
+  color: #fff;
+  @include flex-center;
+}
+
+.textSection {
+  text-align: center;
+}
+
+.heading {
+  font-size: 22px;
+  font-weight: v(weight-semibold);
+  margin: 0 0 6px;
+  letter-spacing: v(tracking-tight);
+}
+
+.subheading {
+  font-size: 13px;
+  color: v(muted-foreground);
+  margin: 0;
+  line-height: 1.5;
+}
+
+.qrWrapper {
+  padding: 14px;
+  background: v(background);
+  border-radius: v(radius-lg);
+  border: 1px solid v(border);
+}
+
+.orDivider {
+  @include flex(row, center, center, 10px);
+  width: 100%;
+  margin: 4px 0;
+}
+
+.orLine {
+  flex: 1;
+  height: 1px;
+  background: v(border);
+}
+
+.orText {
+  font-size: 11px;
+  color: v(muted-foreground);
+  text-transform: uppercase;
+  letter-spacing: v(tracking-wider);
+  font-weight: v(weight-medium);
+}
+
+.termsText {
+  font-size: 11px;
+  color: v(muted-foreground);
+  text-align: center;
+  line-height: 1.5;
+}
+
+.termsLink {
+  color: v(foreground);
+  text-decoration: underline;
+}

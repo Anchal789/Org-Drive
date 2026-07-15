@@ -1,0 +1,299 @@
+@use "../../../styles/functions" as *;
+@use "../../../styles/mixins" as *;
+
+.pageWrapper {
+  height: 100dvh;
+  background: v(background);
+  color: v(foreground);
+  @include flex-center;
+  padding: 32px;
+  position: relative;
+
+  @media (max-width: 768px) {
+    padding: 0;
+    justify-content: flex-start;
+    flex-direction: column;
+  }
+}
+
+.authCard {
+  width: 460px;
+  padding: 36px;
+  background: v(card);
+  border: 1px solid v(border);
+  border-radius: v(radius-2xl);
+  box-shadow: v(shadow-xl);
+  @include flex(column, stretch, flex-start, 18px);
+
+  @media (max-width: 768px) {
+    width: 100%;
+    padding: 40px 24px 0px;
+    box-shadow: none;
+    border: none;
+    border-radius: 0;
+    background: transparent;
+    flex: 1 1 0%;
+    gap: 20px;
+  }
+}
+
+.backButton {
+  align-self: flex-start;
+  @include flex(row, center, flex-start, 6px);
+  font-size: 12px;
+  color: v(muted-foreground);
+  background: none;
+  border: none;
+  padding: 0;
+  cursor: pointer;
+  font-weight: v(weight-medium);
+  @include transition(color);
+
+  &:hover {
+    color: v(foreground);
+  }
+
+  @media (max-width: 768px) {
+    font-size: 13px;
+  }
+}
+
+.progressContainer {
+  @include flex(row, center, flex-start, 6px);
+}
+
+.progressSegment {
+  height: 4px;
+  flex: 1;
+  border-radius: v(radius-full);
+  background: v(secondary);
+
+  &.active {
+    background: v(tg-blue);
+  }
+}
+
+.stepLabel {
+  font-size: 11px;
+  color: v(muted-foreground);
+  margin-top: 8px;
+  font-weight: v(weight-medium);
+}
+
+.heading {
+  font-size: 22px;
+  font-weight: v(weight-semibold);
+  margin: 8px 0 6px;
+  letter-spacing: v(tracking-tight);
+
+  @media (max-width: 768px) {
+    font-size: 24px;
+    font-weight: 700;
+    line-height: 1.1;
+  }
+}
+
+.description {
+  font-size: 13px;
+  color: v(muted-foreground);
+  margin: 0;
+  line-height: 1.5;
+}
+
+.highlightText {
+  color: v(foreground);
+  font-weight: v(weight-bold);
+}
+
+.formWrapper {
+  @include flex(column, center, flex-start, 18px);
+}
+
+.passwordFormWrapper {
+  @include flex(column, stretch, flex-start, 12px);
+}
+
+.otpContainer {
+  @include flex(row, center, center, 10px);
+  padding: 8px 0;
+
+  @media (max-width: 768px) {
+    gap: 8px;
+    width: 70%;
+    justify-content: space-between;
+    padding: 0;
+  }
+
+  @media (max-width: 480px) {
+    width: 100%;
+  }
+}
+
+.otpLabel {
+  width: 56px;
+  height: 64px;
+  border: 1.5px solid v(input);
+  border-radius: v(radius-lg);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 26px;
+  font-weight: v(weight-semibold);
+  font-variant-numeric: tabular-nums;
+  background: v(background);
+  color: v(foreground);
+  position: relative;
+  cursor: text;
+  @include transition(all, 150ms);
+
+  &.active {
+    border-color: v(tg-blue);
+    box-shadow: 0 0 0 3px color-mix(in srgb, v(tg-blue) 20%, transparent);
+  }
+
+  @media (max-width: 768px) {
+    flex: 1 1 0%;
+    height: 56px;
+    width: auto;
+  }
+}
+
+.otpInput {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  background: transparent;
+  border: none;
+  outline: none;
+  text-align: center;
+  font-size: 26px;
+  font-weight: v(weight-semibold);
+  font-variant-numeric: tabular-nums;
+  color: v(foreground);
+  font-family: inherit;
+  caret-color: v(tg-blue);
+}
+
+.resendWrapper {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  color: v(muted-foreground);
+  font-size: 12px;
+  margin: 4px 0;
+}
+
+.resendContainer {
+  @include flex(row, center, center, 6px);
+  font-size: 12px;
+  color: v(muted-foreground);
+}
+
+.resendTimer {
+  color: v(foreground);
+  font-weight: v(weight-medium);
+  font-variant-numeric: tabular-nums;
+}
+
+.resendButton {
+  background: none;
+  border: none;
+  color: v(tg-blue);
+  font-weight: v(weight-medium);
+  cursor: pointer;
+  font-size: 12px;
+  padding: 0;
+
+  &:hover {
+    text-decoration: underline;
+  }
+}
+
+.errorText {
+  margin: 0;
+  font-size: 12px;
+  color: v(destructive);
+  text-overflow: ellipsis;
+  overflow: hidden;
+  text-align: center;
+  word-wrap: break-word;
+
+  @media (max-width: 448px) {
+    max-width: 200px;
+  }
+}
+
+.passwordInput {
+  padding: 12px 14px;
+  background: v(background);
+  color: v(foreground);
+  border: 1.5px solid v(input);
+  border-radius: v(radius-lg);
+  font-size: 14px;
+  font-family: inherit;
+  outline: none;
+  @include transition(border-color);
+
+  &:focus {
+    border-color: v(tg-blue);
+  }
+
+  &.error {
+    border-color: v(destructive);
+  }
+}
+
+.helpContainer {
+  font-size: 11px;
+  color: v(muted-foreground);
+  text-align: center;
+}
+
+.linkButton {
+  background: none;
+  border: none;
+  color: v(tg-blue);
+  font-weight: v(weight-medium);
+  cursor: pointer;
+  font-size: 11px;
+  padding: 0;
+
+  &:hover {
+    text-decoration: underline;
+  }
+}
+
+.submitButton {
+  width: 100%;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+
+  @media (max-width: 768px) {
+    height: 44px;
+    font-size: 14px;
+    font-weight: 600;
+  }
+}
+
+.btnIcon {
+  transform: rotate(15deg);
+}
+
+.mobileFooter {
+  display: none;
+
+  @media (max-width: 768px) {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    padding: 12px 24px 24px;
+    font-size: 11px;
+    color: v(muted-foreground);
+    text-align: center;
+  }
+}

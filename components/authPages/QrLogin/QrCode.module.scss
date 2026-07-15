@@ -1,0 +1,125 @@
+@use "../../../styles/functions" as *;
+@use "../../../styles/mixins" as *;
+
+.wrapper {
+  position: relative;
+}
+
+.qrContainer {
+  width: 280px;
+  height: 280px;
+  @include flex-center;
+  padding: 14px;
+  background: v(background);
+}
+
+.skeleton {
+  width: 100%;
+  height: 100%;
+  background: v(muted);
+  border-radius: v(radius);
+  animation: pulse 1.5s ease-in-out infinite;
+}
+
+.stateWrapper {
+  margin-top: 12px;
+  @include flex(column, center, center, 12px);
+  text-align: center;
+  color: v(muted-foreground);
+}
+
+.stateTitle {
+  margin: 0;
+  font-size: v(text-sm);
+  font-weight: v(weight-medium);
+}
+
+.btnPrimary {
+  padding: 8px 16px;
+  background: v(tg-blue);
+  color: v(background);
+  border: none;
+  border-radius: v(radius-md);
+  font-size: 13px;
+  font-weight: v(weight-medium);
+  cursor: pointer;
+  @include transition(opacity);
+
+  &:disabled {
+    opacity: 0.7;
+    cursor: not-allowed;
+  }
+}
+
+.passwordHintText {
+  text-align: center;
+  margin: 0 0 12px 0;
+  font-size: v(text-sm);
+  font-weight: v(weight-medium);
+  color: v(muted-foreground);
+}
+
+.input {
+  padding: 8px 16px;
+  background: v(muted);
+  color: v(foreground);
+  border: none;
+  border-radius: v(radius-md);
+  font-size: 13px;
+  font-weight: v(weight-medium);
+  width: 100%;
+
+  @include focus-ring(tg-blue);
+}
+
+.errorText {
+  color: v(destructive);
+  font-size: 13px;
+  margin: 0;
+  text-overflow: ellipsis;
+  overflow: hidden;
+  max-width: 200px;
+  word-wrap: break-word;
+}
+
+.successTitle {
+  font-size: v(text-sm);
+  color: v(foreground);
+  margin: 0 0 4px 0;
+}
+
+.successSubtitle {
+  font-size: 12px;
+  color: v(muted-foreground);
+  margin: 0;
+}
+
+.liveBadge {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  padding: 2px 6px;
+  background: v(tg-blue-bg);
+  color: v(tg-blue);
+  font-size: 9px;
+  font-weight: v(weight-bold);
+  letter-spacing: v(tracking-wider);
+  border-radius: 4px;
+  text-transform: uppercase;
+}
+
+.footer {
+  font-size: 11px;
+  color: v(muted-foreground);
+  @include flex-center;
+  gap: 6px;
+  margin-top: 12px;
+}
+
+.blinkDot {
+  width: 6px;
+  height: 6px;
+  border-radius: v(radius-full);
+  background: v(tint-green-bd);
+  animation: blink 1.4s steps(2) infinite;
+}

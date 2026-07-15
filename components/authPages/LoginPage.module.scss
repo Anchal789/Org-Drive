@@ -1,0 +1,210 @@
+@use "../../styles/functions" as *;
+@use "../../styles/mixins" as *;
+
+.authPage {
+  @include flex(row, stretch, flex-start);
+  height: 100dvh;
+  min-height: 100vh;
+  width: 100%;
+  background: v(background);
+  color: v(foreground);
+  position: relative;
+  overflow: hidden;
+
+  @media (max-width: 768px) {
+    flex-direction: column;
+  }
+}
+
+.pageWrapper {
+  width: 100%;
+  display: flex;
+  flex-direction: row;
+  background: v(background);
+  color: v(foreground);
+  min-height: 100dvh;
+  position: relative;
+}
+
+.formSectionWrapper {
+  flex: 1;
+  @include flex-center;
+  padding: 3rem;
+
+  @media (max-width: 1132px) {
+    padding: 1rem;
+  }
+
+  @media (max-width: 768px) {
+    padding: 40px 24px 0px;
+    align-items: flex-start;
+  }
+}
+
+.formSection {
+  flex: 1;
+  @include flex-center;
+
+  @media (max-width: 768px) {
+    padding: 4em;
+    align-items: flex-start;
+  }
+  @media (max-width: 520px) {
+    padding: 0;
+  }
+}
+
+.formContainer {
+  width: 100%;
+  max-width: 380px;
+  @include flex(column, stretch, flex-start, 18px);
+
+  @media (max-width: 768px) {
+    max-width: 100%;
+    gap: 22px;
+  }
+}
+
+.desktopHeader {
+  @media (max-width: 768px) {
+    display: none;
+  }
+}
+
+.eyebrow {
+  font-size: 11px;
+  font-weight: v(weight-semibold);
+  text-transform: uppercase;
+  letter-spacing: v(tracking-wider);
+  color: v(tg-blue);
+}
+
+.title {
+  font-size: 26px;
+  font-weight: v(weight-semibold);
+  margin: 4px 0 6px;
+  letter-spacing: v(tracking-tight);
+}
+
+.subtitle {
+  font-size: 13px;
+  color: v(muted-foreground);
+  margin: 0;
+}
+
+.mobileHeader {
+  display: none;
+
+  @media (max-width: 768px) {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    width: 100%;
+  }
+}
+
+.logoRow {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 22px;
+}
+
+.logoSquare {
+  width: 32px;
+  height: 32px;
+  border-radius: 8px;
+  background: v(foreground);
+  color: v(background);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  font-size: 13px;
+}
+
+.logoText {
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.telegramBadge {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 2px 8px;
+  border-radius: v(radius-md);
+  font-size: 11px;
+  font-weight: 500;
+  line-height: 1.4;
+  background: v(tint-sky-bg);
+  color: v(tint-sky-tx);
+  white-space: nowrap;
+  margin-bottom: 10px;
+}
+
+.badgeIcon {
+  transform: rotate(15deg);
+  flex-shrink: 0;
+}
+
+.mobileTitle {
+  font-size: 26px;
+  font-weight: 700;
+  margin: 0px 0px 8px;
+  letter-spacing: -0.02em;
+  line-height: 1.1;
+}
+
+.mobileSubtitle {
+  font-size: 13px;
+  color: v(muted-foreground);
+  margin: 0px;
+  line-height: 1.5;
+}
+
+/* ─── DIVIDER ─── */
+.dividerWrapper {
+  @include flex(row, center, center, 10px);
+  margin: 8px 0;
+}
+
+.dividerLine {
+  flex: 1;
+  height: 1px;
+  background: v(border);
+}
+
+.dividerText {
+  font-size: 11px;
+  color: v(muted-foreground);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  font-weight: 500;
+}
+
+.mobileFooter {
+  display: none;
+
+  @media (max-width: 768px) {
+    display: block;
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    padding: 12px 24px 24px;
+
+    p {
+      font-size: 10px;
+      color: v(muted-foreground);
+      text-align: center;
+      line-height: 1.5;
+      margin: 0;
+    }
+
+    span {
+      text-decoration: underline;
+      color: v(foreground);
+    }
+  }
+}

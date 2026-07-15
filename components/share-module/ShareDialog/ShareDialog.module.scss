@@ -1,0 +1,274 @@
+@use "../../../styles/functions" as *;
+
+.backdrop {
+  position: absolute;
+  inset: 0;
+  z-index: 5;
+  background: color-mix(in oklch, v(foreground) 35%, transparent);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  backdrop-filter: blur(2px);
+}
+
+.dialog {
+  width: 480px;
+  background: v(card);
+  color: v(foreground);
+  border-radius: v(radius-2xl);
+  box-shadow: v(shadow-2xl);
+  padding: 22px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  border: 1px solid v(border);
+}
+
+// ─── Header ───────────────────────────────────────────────────────────────
+.header {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+}
+
+.headerInfo {
+  flex: 1;
+  min-width: 0;
+}
+
+.headerTitle {
+  font-size: 15px;
+  font-weight: v(weight-semibold);
+}
+
+.headerSubtitle {
+  font-size: 12px;
+  color: v(muted-foreground);
+  margin-top: 2px;
+}
+
+// ─── Invite input ─────────────────────────────────────────────────────────
+.invite {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 0 12px;
+  height: 38px;
+  border: 1px solid v(border);
+  border-radius: v(radius-md);
+  background: v(background);
+}
+
+.invitePlaceholder {
+  flex: 1;
+  font-size: 13px;
+  color: v(muted-foreground);
+}
+
+// ─── Section ──────────────────────────────────────────────────────────────
+.sectionLabel {
+  font-size: 11px;
+  font-weight: v(weight-semibold);
+  color: v(muted-foreground);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  margin-bottom: 8px;
+}
+
+// ─── Person row ───────────────────────────────────────────────────────────
+.personRow {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 8px 0;
+}
+
+.personInfo {
+  flex: 1;
+  min-width: 0;
+}
+
+.personName {
+  font-size: 13px;
+  font-weight: v(weight-medium);
+}
+
+.youTag {
+  font-size: 11px;
+  color: v(muted-foreground);
+  font-weight: v(weight-normal);
+  margin-left: 4px;
+}
+
+.personUserName {
+  font-size: 11px;
+  color: v(muted-foreground);
+}
+
+// ─── Role selector ────────────────────────────────────────────────────────
+.roleSelector {
+  font-size: 12px;
+  font-weight: v(weight-medium);
+  padding: 5px 10px;
+  border: 1px solid v(border);
+  border-radius: v(radius-md);
+  color: v(muted-foreground);
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+// ─── General access ───────────────────────────────────────────────────────
+.generalAccess {
+  border-top: 1px solid v(border);
+  padding-top: 14px;
+}
+
+.generalRow {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.generalIcon {
+  width: 36px;
+  height: 36px;
+  border-radius: v(radius-full);
+  background: v(secondary);
+  color: v(foreground);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.generalInfo {
+  flex: 1;
+  min-width: 0;
+}
+
+.generalTitle {
+  font-size: 13px;
+  font-weight: v(weight-medium);
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.generalSubtitle {
+  font-size: 11px;
+  color: v(muted-foreground);
+}
+
+// ─── Footer ───────────────────────────────────────────────────────────────
+.footer {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding-top: 4px;
+}
+
+.footerSpacer {
+  flex: 1;
+}
+
+.comboboxTrigger {
+  width: 100%;
+  text-align: left;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.comboboxContent {
+  max-height: 300px;
+  overflow-y: auto;
+  background-color: v(background);
+  border-radius: v(radius);
+}
+
+.comboboxUserRow {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 4px 8px;
+  cursor: pointer;
+}
+
+.comboboxUserDetails {
+  display: flex;
+  flex-direction: column;
+}
+
+.comboboxUserName {
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: v(foreground);
+}
+
+.comboboxUserHandle {
+  font-size: 0.75rem;
+  color: v(muted-foreground);
+}
+
+.comboboxEmpty {
+  text-align: center;
+  font-size: 0.875rem;
+  color: v(muted-foreground);
+}
+
+.personsWithAccess {
+  max-height: 300px;
+  overflow-y: auto;
+}
+
+.folderIcon {
+  width: 36px; // Fixed missing px from your original code
+  height: 36px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: v(muted);
+  border-radius: v(radius-md);
+  color: v(muted-foreground);
+}
+
+// ─── Multi File Selection ────────────────────────────────────────────────
+.multiFilesSection {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.multiFileList {
+  max-height: 200px;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding-right: 4px;
+}
+
+.multiFileItem {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 8px 10px;
+  border: 1px solid v(border);
+  border-radius: v(radius-md);
+  background: v(background);
+}
+
+.multiFileName {
+  font-size: 13px;
+  font-weight: v(weight-medium);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.personActions {
+  display: flex;
+  align-items: center;
+  // gap: 6px;
+}

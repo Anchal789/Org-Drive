@@ -15,5 +15,5 @@ minimumReleaseAgeExclude:
 
 trustPolicyExclude:
   - effect@4.0.0-beta.70
-  - '@effect/platform-node-shared@4.0.0-beta.70'
+  - "@effect/platform-node-shared@4.0.0-beta.70"
   - semver@6.3.1

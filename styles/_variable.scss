@@ -1,0 +1,123 @@
+// Typography
+$font-sans:
+  "Geist",
+  ui-sans-serif,
+  system-ui,
+  -apple-system,
+  BlinkMacSystemFont,
+  "Segoe UI",
+  sans-serif;
+
+$font-heading: $font-sans;
+
+$font-mono: "JetBrains Mono", "Fira Code", ui-monospace, "Cascadia Code", "Courier New", monospace;
+
+// Font Sizes
+$text-xs: 0.75rem;
+$text-sm: 0.875rem;
+$text-base: 1rem;
+$text-lg: 1.125rem;
+$text-xl: 1.25rem;
+$text-2xl: 1.5rem;
+$text-3xl: 1.875rem;
+$text-4xl: 2.25rem;
+$text-5xl: 3rem;
+
+// Font Weights
+$weight-normal: 400;
+$weight-medium: 500;
+$weight-semibold: 600;
+$weight-bold: 700;
+
+// Line Heights
+$leading-none: 1;
+$leading-tight: 1.25;
+$leading-snug: 1.375;
+$leading-normal: 1.5;
+$leading-relaxed: 1.625;
+
+// Letter Spacing
+$tracking-tight: -0.02em;
+$tracking-normal: 0;
+$tracking-wide: 0.02em;
+$tracking-wider: 0.05em;
+
+// Radius
+$radius: 0.625rem;
+$radius-sm: calc(#{$radius} * 0.6);
+$radius-md: calc(#{$radius} * 0.8);
+$radius-lg: $radius;
+$radius-xl: calc(#{$radius} * 1.4);
+$radius-2xl: calc(#{$radius} * 1.8);
+$radius-3xl: calc(#{$radius} * 2.2);
+$radius-4xl: calc(#{$radius} * 2.6);
+$radius-full: 9999px;
+
+// Shadows
+$shadow-xs: 0 1px 2px 0 oklch(0 0 0 / 0.05);
+$shadow-sm:
+  0 1px 3px 0 oklch(0 0 0 / 0.1),
+  0 1px 2px -1px oklch(0 0 0 / 0.1);
+
+$shadow-md:
+  0 4px 6px -1px oklch(0 0 0 / 0.1),
+  0 2px 4px -2px oklch(0 0 0 / 0.1);
+
+$shadow-lg:
+  0 10px 15px -3px oklch(0 0 0 / 0.1),
+  0 4px 6px -4px oklch(0 0 0 / 0.1);
+
+$shadow-xl:
+  0 20px 25px -5px oklch(0 0 0 / 0.1),
+  0 8px 10px -6px oklch(0 0 0 / 0.1);
+
+$shadow-2xl: 0 25px 50px -12px oklch(0 0 0 / 0.25);
+
+// Tint Colors
+$tints: (
+  teal: (
+    bg: #a1e0dd,
+    border: #5cc2c6,
+    text: oklch(0.3 0.065 192)
+  ),
+  blue: (
+    bg: #a4e9ff,
+    border: #88aed2,
+    text: oklch(0.34 0.07 228)
+  ),
+  green: (
+    bg: #d4f1d8,
+    border: #8fcca0,
+    text: oklch(0.36 0.075 150)
+  ),
+  amber: (
+    bg: #ffdbba,
+    border: #ffaca8,
+    text: oklch(0.42 0.09 50)
+  ),
+  red: (
+    bg: #ffd0d5,
+    border: #ff8894,
+    text: oklch(0.42 0.1 10)
+  )
+);
+
+// Theme Colors
+$themes: (
+  blue: (
+    primary: oklch(0.5461 0.215 262.88),
+    foreground: oklch(0.97 0.014 254.604)
+  ),
+  violet: (
+    primary: oklch(0.491 0.27 292.581),
+    foreground: oklch(0.969 0.016 293.756)
+  ),
+  green: (
+    primary: oklch(0.527 0.154 150.069),
+    foreground: oklch(0.982 0.018 155.826)
+  ),
+  teal: (
+    primary: oklch(0.511 0.096 186.391),
+    foreground: oklch(0.984 0.014 180.72)
+  )
+);

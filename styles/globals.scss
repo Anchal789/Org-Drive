@@ -1,0 +1,156 @@
+@use "mixins" as *;
+@use "functions" as *;
+
+@layer base {
+  *,
+  *::before,
+  *::after {
+    box-sizing: border-box;
+  }
+
+  html {
+    font-family: var(--font-geist-mono);
+    font-size: 16px;
+    line-height: v(leading-normal);
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    text-rendering: optimizeLegibility;
+  }
+
+  body {
+    background: v(background);
+    color: v(foreground);
+    min-height: 100dvh;
+    font-family: v(--font-geist-sans);
+  }
+
+  h1 {
+    @include heading(h1);
+  }
+  h2 {
+    @include heading(h2);
+  }
+  h3 {
+    @include heading(h3);
+  }
+  h4 {
+    @include heading(h4);
+  }
+
+  p {
+    @include body-text;
+  }
+  small {
+    font-size: v(small-size);
+  }
+  code,
+  pre {
+    @include code-text;
+  }
+  a {
+    color: inherit;
+    text-decoration: none;
+  }
+
+  img,
+  video,
+  canvas,
+  svg {
+    display: block;
+    max-width: 100%;
+    height: auto;
+  }
+
+  button,
+  input,
+  textarea,
+  select {
+    font: inherit;
+    color: inherit;
+  }
+
+  button {
+    cursor: pointer;
+    background: none;
+    border: none;
+    padding: 0;
+  }
+
+  ::selection {
+    background: v(selection);
+    color: v(selection-foreground);
+  }
+}
+
+/* These don't conflict with utilities — leave them unlayered */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+::-webkit-scrollbar-track {
+  background: v(muted);
+}
+::-webkit-scrollbar-thumb {
+  background: v(muted-foreground);
+  border-radius: v(radius-full);
+  opacity: 0.5;
+  &:hover {
+    opacity: 0.8;
+  }
+}
+
+@keyframes pulse {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.5;
+  }
+}
+@keyframes blink {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.4;
+  }
+}
+@keyframes spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+@keyframes fade-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+@keyframes slide-up {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}

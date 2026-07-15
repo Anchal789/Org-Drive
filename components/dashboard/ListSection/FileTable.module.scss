@@ -1,0 +1,131 @@
+@use "@/styles/functions" as *;
+
+.table {
+  margin-top: 18px;
+}
+
+.sortable {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.fileCell {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-width: 0;
+}
+
+.fileName {
+  font-weight: v(weight-medium);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.kindCell {
+  color: v(muted-foreground);
+  text-transform: uppercase;
+  font-size: 11px;
+  font-weight: v(weight-medium);
+}
+
+.ownerCell {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.ownerName {
+  font-size: 11px;
+  color: v(muted-foreground);
+}
+
+.metaCell {
+  color: v(muted-foreground);
+  font-size: 11px;
+  font-variant-numeric: tabular-nums;
+}
+
+.actionButton {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  height: 30px;
+  padding: 0px 11px;
+  border-radius: var(--radius-md);
+  border-width: medium;
+  border-style: none;
+  border-color: currentcolor;
+  background: transparent;
+  border-image: initial;
+  cursor: pointer;
+  font-size: 12.5px;
+  font-weight: 500;
+  font-family: inherit;
+  white-space: nowrap;
+
+  transition: background-color 0.12s ease;
+
+  &:hover {
+    background: color-mix(in srgb, v(foreground) 6%, transparent) !important;
+  }
+}
+
+.actionButton-destructive {
+  color: v(destructive);
+
+  .actionIcon {
+    color: v(destructive);
+  }
+
+  &:hover {
+    background: color-mix(in srgb, v(destructive) 8%, transparent) !important;
+  }
+}
+
+.filesGridContainer {
+  margin-top: 24px;
+}
+
+.filesGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 10px;
+
+  @media (max-width: 900px) {
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  }
+
+  @media (max-width: 768px) {
+    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+  }
+}
+
+.filesGridTitle {
+  margin: 6px;
+  font-size: 11px;
+  font-weight: v(weight-semibold);
+  color: v(muted-foreground);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.cardWrapper {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  cursor: pointer;
+}
+
+.clickOverlay {
+  position: absolute;
+  inset: 0;
+  width: 90%;
+  height: 100%;
+  border: none;
+  background: transparent;
+  cursor: pointer;
+  z-index: 1;
+}

@@ -1,0 +1,145 @@
+@use "../../styles/functions" as *;
+@use "../../styles/mixins" as *;
+
+.panelWrapper {
+  flex: 1;
+  padding: 3rem;
+  @include flex(column, stretch, space-between);
+  border-right: 1px solid v(border);
+  position: relative;
+  overflow: hidden;
+  min-height: 100dvh;
+
+  /* Modern CSS blending to replace hardcoded hex + opacity strings */
+  background: linear-gradient(
+    to bottom right,
+    color-mix(in srgb, v(tg-blue) 10%, transparent),
+    color-mix(in srgb, v(tg-blue) 5%, transparent)
+  );
+
+  @media (max-width: 768px) {
+    display: none;
+  }
+}
+
+.headerRow {
+  @include flex(row, center, flex-start, 0.625rem);
+  position: relative;
+  z-index: 10;
+}
+
+.logoSquare {
+  width: 32px;
+  height: 32px;
+  border-radius: 8px;
+  background: v(foreground);
+  color: v(background);
+  @include flex-center;
+  font-size: 14px;
+  font-weight: v(weight-bold); // 700
+}
+
+.logoText {
+  font-size: 15px;
+  font-weight: v(weight-semibold); // 600
+}
+
+.mainContent {
+  max-width: 380px;
+  position: relative;
+  z-index: 10;
+}
+
+.badgeCustom {
+  margin-bottom: 14px;
+  background: #fff;
+  box-shadow: v(shadow-sm);
+  border: 1px solid color-mix(in srgb, v(tg-blue) 20%, transparent);
+}
+
+.badgeDot {
+  width: 5px;
+  height: 5px;
+  border-radius: v(radius-full);
+  background: v(tg-blue);
+  display: inline-block;
+}
+
+.badgeText {
+  color: #004260;
+}
+
+.heroTitle {
+  font-size: 2.25rem; // ~36px
+  font-weight: v(weight-bold);
+  line-height: 1.1;
+  letter-spacing: v(tracking-tight);
+  margin-bottom: 14px;
+  color: v(foreground);
+}
+
+.heroSubtitle {
+  font-size: 14px;
+  line-height: 1.6;
+  color: v(muted-foreground);
+  margin: 0;
+}
+
+.featuresList {
+  margin-top: 24px;
+  @include flex(column, stretch, flex-start, 8px);
+}
+
+.featureItem {
+  @include flex(row, center, flex-start, 8px);
+  font-size: 13px;
+  color: v(foreground);
+}
+
+.featureIconCircle {
+  width: 18px;
+  height: 18px;
+  border-radius: v(radius-full);
+  @include flex-center;
+  flex-shrink: 0;
+  background: v(tg-blue);
+}
+
+.footer {
+  font-size: 11px;
+  color: v(muted-foreground);
+  position: relative;
+  z-index: 10;
+}
+
+.footerLink {
+  text-decoration: underline;
+  cursor: pointer;
+  @include transition(color);
+
+  &:hover {
+    color: v(foreground);
+  }
+}
+
+.bgCircleLarge {
+  position: absolute;
+  right: -80px;
+  top: 64px;
+  width: 280px;
+  height: 280px;
+  border-radius: v(radius-full);
+  pointer-events: none;
+  border: 1px solid color-mix(in srgb, v(tg-blue) 13%, transparent); // Translates hex 22
+}
+
+.bgCircleSmall {
+  position: absolute;
+  right: -40px;
+  top: 128px;
+  width: 160px;
+  height: 160px;
+  border-radius: v(radius-full);
+  pointer-events: none;
+  border: 1px solid color-mix(in srgb, v(tg-blue) 20%, transparent); // Translates hex 33
+}

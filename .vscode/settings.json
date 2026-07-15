@@ -21,7 +21,7 @@
     "editor.defaultFormatter": "biomejs.biome"
   },
   "[scss]": {
-    "editor.defaultFormatter": "biomejs.biome"
+    "editor.defaultFormatter": "sibiraj-s.vscode-scss-formatter"
   },
   "css.lint.duplicateProperties": "warning",
   "css.lint.emptyRules": "warning",
@@ -30,7 +30,8 @@
   "diffEditor.ignoreTrimWhitespace": false,
   "editor.bracketPairColorization.enabled": true,
   "editor.codeActionsOnSave": {
-    "source.fixAll.biome": "explicit"
+    "source.fixAll.biome": "explicit",
+    "source.organizeImports.biome": "explicit"
   },
   "editor.detectIndentation": false,
   "editor.formatOnSave": true,
@@ -43,12 +44,13 @@
   "editor.wordWrap": "on",
   "extensions.ignoreRecommendations": false,
   "files.eol": "\n",
-  "javascript.preferences.quoteStyle": "single",
-  "javascript.updateImportsOnFileMove.enabled": "always",
+  "js/ts.preferences.quoteStyle": "single",
+  "js/ts.updateImportsOnFileMove.enabled": "always",
   "less.lint.duplicateProperties": "warning",
   "less.lint.emptyRules": "warning",
   "scss.lint.duplicateProperties": "warning",
   "scss.lint.emptyRules": "warning",
   "workbench.editor.highlightModifiedTabs": true,
-  "cSpell.words": ["EDITMSG", "turbopack", "vercel"]
+  "cSpell.words": ["EDITMSG", "turbopack", "vercel"],
+  "js/ts.tsdk.path": "node_modules\\typescript\\lib"
 }
