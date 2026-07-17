@@ -6,11 +6,16 @@
 }
 
 .qrContainer {
-  width: 280px;
-  height: 280px;
+  width: v(size-280);
+  height: v(size-280);
   @include flex-center;
-  padding: 14px;
   background: v(background);
+  border-radius: v(radius-lg);
+  border: v(size-1) solid v(border);
+}
+
+.qrImage {
+  border-radius: v(radius-lg);
 }
 
 .skeleton {
@@ -22,8 +27,8 @@
 }
 
 .stateWrapper {
-  margin-top: 12px;
-  @include flex(column, center, center, 12px);
+  margin-top: v(size-12);
+  @include flex(column, center, center, v(size-12));
   text-align: center;
   color: v(muted-foreground);
 }
@@ -35,12 +40,12 @@
 }
 
 .btnPrimary {
-  padding: 8px 16px;
+  padding: v(size-8) v(size-16);
   background: v(tg-blue);
   color: v(background);
   border: none;
   border-radius: v(radius-md);
-  font-size: 13px;
+  font-size: v(text-13);
   font-weight: v(weight-medium);
   cursor: pointer;
   @include transition(opacity);
@@ -53,19 +58,19 @@
 
 .passwordHintText {
   text-align: center;
-  margin: 0 0 12px 0;
+  margin: 0 0 v(size-12) 0;
   font-size: v(text-sm);
   font-weight: v(weight-medium);
   color: v(muted-foreground);
 }
 
 .input {
-  padding: 8px 16px;
+  padding: v(size-8) v(size-16);
   background: v(muted);
   color: v(foreground);
   border: none;
   border-radius: v(radius-md);
-  font-size: 13px;
+  font-size: v(text-13);
   font-weight: v(weight-medium);
   width: 100%;
 
@@ -74,51 +79,50 @@
 
 .errorText {
   color: v(destructive);
-  font-size: 13px;
+  font-size: v(text-13);
   margin: 0;
   text-overflow: ellipsis;
   overflow: hidden;
-  max-width: 200px;
+  max-width: v(size-200);
   word-wrap: break-word;
 }
 
 .successTitle {
   font-size: v(text-sm);
   color: v(foreground);
-  margin: 0 0 4px 0;
+  margin: 0 0 v(size-4) 0;
 }
 
 .successSubtitle {
-  font-size: 12px;
+  font-size: v(text-12);
   color: v(muted-foreground);
   margin: 0;
 }
 
 .liveBadge {
   position: absolute;
-  top: 8px;
-  right: 8px;
-  padding: 2px 6px;
+  top: v(size-8);
+  right: v(size-8);
+  padding: v(size-2) v(size-6);
   background: v(tg-blue-bg);
   color: v(tg-blue);
-  font-size: 9px;
+  font-size: v(text-9);
   font-weight: v(weight-bold);
   letter-spacing: v(tracking-wider);
-  border-radius: 4px;
+  border-radius: v(size-4);
   text-transform: uppercase;
 }
 
 .footer {
-  font-size: 11px;
+  font-size: v(text-11);
   color: v(muted-foreground);
   @include flex-center;
-  gap: 6px;
-  margin-top: 12px;
+  gap: v(size-6);
 }
 
 .blinkDot {
-  width: 6px;
-  height: 6px;
+  width: v(size-6);
+  height: v(size-6);
   border-radius: v(radius-full);
   background: v(tint-green-bd);
   animation: blink 1.4s steps(2) infinite;

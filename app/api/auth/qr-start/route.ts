@@ -1,4 +1,3 @@
-// app/api/auth/qr-start/route.ts
 import QRCode from 'qrcode';
 import { Api, TelegramClient } from 'telegram';
 import { StringSession } from 'telegram/sessions';
@@ -72,7 +71,6 @@ export async function POST() {
           throw err;
         }
 
-        // DC migration
         if (finalResult.className === 'auth.LoginTokenMigrateTo') {
           await client._switchDC(finalResult.dcId);
           try {

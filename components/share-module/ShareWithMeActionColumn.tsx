@@ -130,7 +130,6 @@ const ShareWithMeActionColumn: FunctionComponent<{
             <DropdownMenuItem
               onClick={() => {
                 setOpen(true);
-                // 3. Pass the strictly typed payloads to the store
                 if (targetFile) setFile(targetFile);
                 else if (targetFolder) setFolder(targetFolder);
               }}

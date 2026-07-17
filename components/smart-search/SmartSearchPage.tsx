@@ -16,6 +16,7 @@ import { encrypt } from '@/lib/utils';
 import type { UploadedFile, UploadedFolder } from '@/types/files';
 import FileMenu from '../dashboard/FileSection/FileMenu';
 import FolderMenu from '../dashboard/FolderSection/FolderMenu/FolderMenu';
+import { Button } from '../ui/button';
 import styles from './SmartSearch.module.scss';
 
 const SUGGESTED_SEARCHES = [
@@ -187,7 +188,7 @@ export default function SmartSearchPage() {
                 <>
                   <div className={styles.sectionTitle}>Recent searches</div>
                   {recentSearches.map((term) => (
-                    <button
+                    <Button
                       type='button'
                       key={term}
                       className={styles.resultItem}
@@ -204,7 +205,7 @@ export default function SmartSearchPage() {
                         strokeWidth={1.6}
                         className={styles.searchIcon}
                       />
-                    </button>
+                    </Button>
                   ))}
                 </>
               )}
@@ -212,14 +213,14 @@ export default function SmartSearchPage() {
               <div className={styles.suggestionsWrapper}>
                 <span className={styles.suggestionLabel}>Suggested:</span>
                 {SUGGESTED_SEARCHES.map((suggestion) => (
-                  <button
+                  <Button
                     type='button'
                     key={suggestion}
                     className={styles.suggestionChip}
                     onClick={() => handleSuggestionClick(suggestion)}
                   >
                     {suggestion}
-                  </button>
+                  </Button>
                 ))}
               </div>
             </>
@@ -233,7 +234,7 @@ export default function SmartSearchPage() {
                 <div className={styles.resultGroup}>
                   <div className={styles.sectionTitle}>Folders</div>
                   {displayFolders.map((folder) => (
-                    <button
+                    <Button
                       type='button'
                       key={folder.id}
                       className={styles.resultItem}
@@ -257,7 +258,7 @@ export default function SmartSearchPage() {
                         <span className={styles.folderName}>{folder.name}</span>
                       </div>
                       <FolderMenu folder={folder} />
-                    </button>
+                    </Button>
                   ))}
                 </div>
               )}
@@ -267,7 +268,7 @@ export default function SmartSearchPage() {
                 <div className={styles.resultGroup}>
                   <div className={styles.sectionTitle}>Files</div>
                   {displayFiles.map((file: UploadedFile) => (
-                    <button
+                    <Button
                       type='button'
                       key={file.id}
                       className={styles.resultItem}
@@ -280,7 +281,7 @@ export default function SmartSearchPage() {
                         <span className={styles.resultText}>{file.name}</span>
                       </div>
                       <FileMenu file={file} />
-                    </button>
+                    </Button>
                   ))}
                 </div>
               )}

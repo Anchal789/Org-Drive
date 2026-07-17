@@ -1,5 +1,3 @@
-// app/api/auth/qr-password/route.ts
-
 import type { NextRequest } from 'next/server';
 import { Api } from 'telegram';
 import { computeCheck } from 'telegram/Password';

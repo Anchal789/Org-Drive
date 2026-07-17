@@ -4,6 +4,7 @@ import { Send } from 'lucide-react';
 import type { Route } from 'next';
 import { useRouter } from 'next/navigation';
 import { cn } from '@/lib/utils';
+import { Button } from './button';
 import styles from './TelegramButton.module.scss';
 
 export default function TelegramButton({
@@ -32,7 +33,7 @@ export default function TelegramButton({
   const navigate = useRouter();
 
   return (
-    <button
+    <Button
       type={type}
       onClick={
         isNavigatingButton
@@ -58,6 +59,6 @@ export default function TelegramButton({
           {children}
         </>
       )}
-    </button>
+    </Button>
   );
 }

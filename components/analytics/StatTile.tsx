@@ -4,6 +4,7 @@ import { TINTS } from '@/constants/common-constants';
 import { generateSparklinePath } from '@/helpers/analytics.helper';
 import type { StatData } from '@/types/analytics';
 import Badge from '../ui/badge';
+import { Button } from '../ui/button';
 import styles from './Analytics.module.scss';
 
 export default function StatTile({
@@ -14,7 +15,7 @@ export default function StatTile({
   onClickAction?: () => void;
 }) {
   return (
-    <button
+    <Button
       type='button'
       className={`${styles.statCard} ${onClickAction ? styles.clickableStat : ''}`}
       onClick={onClickAction}
@@ -60,6 +61,6 @@ export default function StatTile({
           </svg>
         )}
       </div>
-    </button>
+    </Button>
   );
 }

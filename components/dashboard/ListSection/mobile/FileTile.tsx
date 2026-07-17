@@ -7,7 +7,7 @@ import { formatFileDate, getAvatarColor } from '@/lib/utils';
 import type { FileKind } from '@/types/dashboard';
 import type { UploadedFile } from '@/types/files';
 import FileMenu from '../../FileSection/FileMenu';
-import styles from './FileTile.module.scss'; // 1. Use the new dedicated SCSS file
+import styles from './FileTile.module.scss';
 
 const FileTile: FunctionComponent<{
   file: UploadedFile;

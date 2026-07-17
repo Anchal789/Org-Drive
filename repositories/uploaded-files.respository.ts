@@ -266,7 +266,12 @@ export const uploadedFilesRepository = {
           size: uploadedFilesTable.size,
         })
         .from(uploadedFilesTable)
-        .where(and(eq(uploadedFilesTable.userId, userId))),
+        .where(
+          and(
+            eq(uploadedFilesTable.userId, userId),
+            eq(uploadedFilesTable.isDeleted, false),
+          ),
+        ),
       db
         .select({ size: trashedTable?.size })
         .from(trashedTable)

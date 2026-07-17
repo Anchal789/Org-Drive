@@ -3,7 +3,6 @@ import { sendError, sendSuccess } from '@/lib/api-response';
 import { generateAccessToken, verifyToken } from '@/lib/jwt';
 
 export async function POST() {
-  // 1. Grab the refresh token safely from the httpOnly cookie
   const cookieStore = await cookies();
   const refreshToken = cookieStore.get('refresh_token')?.value;
 
@@ -11,7 +10,6 @@ export async function POST() {
     return sendError('No refresh token found', 401);
   }
 
-  // 2. Verify the refresh token is still valid (within the 7 days)
   const payload = await verifyToken(refreshToken);
 
   if (!payload?.userId) {
@@ -27,6 +25,5 @@ export async function POST() {
     payload.photoUrl as string,
   );
 
-  // 4. Send the new Access Token back to the frontend
   return sendSuccess({ accessToken: newAccessToken });
 }

@@ -1,5 +1,3 @@
-// app/api/auth/qr-login/route.ts
-
 import type { NextRequest } from 'next/server';
 import QRCode from 'qrcode';
 import { Api } from 'telegram';
@@ -40,7 +38,7 @@ export async function POST(request: NextRequest) {
 
   if (entry.status === 'success' && entry.user) {
     const user = entry.user;
-    qrStore.delete(loginId); // Fixed: Removed unnecessary 'await' for Map delete
+    qrStore.delete(loginId);
 
     const dbUser = await userRepository.upsert({
       telegramId: user.telegramId,

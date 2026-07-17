@@ -7,16 +7,15 @@
   height: 100%;
   padding: 0;
   text-decoration: none;
-
-  border: 1px solid v(border);
+  border: v(size-1) solid v(border);
   border-radius: v(radius-lg);
 }
 
 .panelCard {
-  @include flex(row, center, flex-start, 14px);
-  padding: 14px;
+  @include flex(row, center, flex-start, v(size-14));
+  padding: v(size-14);
   background: v(surface);
-  border: 1px solid v(border);
+  border: v(size-1) solid v(border);
   border-radius: v(radius-lg);
   cursor: pointer;
   @include transition(background);
@@ -28,13 +27,13 @@
 }
 
 .title {
-  font-size: 13px;
+  font-size: v(text-13);
   font-weight: v(weight-semibold);
 }
 
 .subtitle {
-  font-size: 11px;
+  font-size: v(text-11);
   color: v(muted-foreground);
-  margin-top: 2px;
-  line-height: 1.4;
+  margin-top: v(size-2);
+  line-height: v(leading-snug);
 }

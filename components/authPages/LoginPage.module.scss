@@ -11,15 +11,14 @@
   position: relative;
   overflow: hidden;
 
-  @media (max-width: 768px) {
+  @include breakpoint-down(md) {
     flex-direction: column;
   }
 }
 
 .pageWrapper {
   width: 100%;
-  display: flex;
-  flex-direction: row;
+  @include flex-center;
   background: v(background);
   color: v(foreground);
   min-height: 100dvh;
@@ -27,16 +26,16 @@
 }
 
 .formSectionWrapper {
-  flex: 1;
+  flex: 1 1 0%;
   @include flex-center;
-  padding: 3rem;
+  padding: v(size-48);
 
-  @media (max-width: 1132px) {
-    padding: 1rem;
+  @include breakpoint-down(xl) {
+    padding: v(size-16);
   }
 
-  @media (max-width: 768px) {
-    padding: 40px 24px 0px;
+  @include breakpoint-down(md) {
+    padding: v(size-40) v(size-24) 0;
     align-items: flex-start;
   }
 }
@@ -45,10 +44,11 @@
   flex: 1;
   @include flex-center;
 
-  @media (max-width: 768px) {
-    padding: 4em;
+  @include breakpoint-down(md) {
+    padding: v(size-64); /* replaced 4em */
     align-items: flex-start;
   }
+
   @media (max-width: 520px) {
     padding: 0;
   }
@@ -56,23 +56,23 @@
 
 .formContainer {
   width: 100%;
-  max-width: 380px;
-  @include flex(column, stretch, flex-start, 18px);
+  max-width: v(size-380);
+  @include flex(column, stretch, flex-start, v(size-18));
 
-  @media (max-width: 768px) {
+  @include breakpoint-down(md) {
     max-width: 100%;
-    gap: 22px;
+    gap: v(size-22);
   }
 }
 
 .desktopHeader {
-  @media (max-width: 768px) {
+  @include breakpoint-down(md) {
     display: none;
   }
 }
 
 .eyebrow {
-  font-size: 11px;
+  font-size: v(text-11);
   font-weight: v(weight-semibold);
   text-transform: uppercase;
   letter-spacing: v(tracking-wider);
@@ -80,14 +80,14 @@
 }
 
 .title {
-  font-size: 26px;
+  font-size: v(text-26);
   font-weight: v(weight-semibold);
-  margin: 4px 0 6px;
+  margin: v(size-4) 0 v(size-6);
   letter-spacing: v(tracking-tight);
 }
 
 .subtitle {
-  font-size: 13px;
+  font-size: v(text-13);
   color: v(muted-foreground);
   margin: 0;
 }
@@ -95,52 +95,46 @@
 .mobileHeader {
   display: none;
 
-  @media (max-width: 768px) {
-    display: flex;
-    flex-direction: column;
-    align-items: flex-start;
+  @include breakpoint-down(md) {
+    @include flex(column, flex-start, flex-start);
     width: 100%;
   }
 }
 
 .logoRow {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  margin-bottom: 22px;
+  @include flex(row, center, flex-start, v(size-8));
+  margin-bottom: v(size-22);
 }
 
 .logoSquare {
-  width: 32px;
-  height: 32px;
-  border-radius: 8px;
+  width: v(size-32);
+  height: v(size-32);
+  border-radius: v(size-8);
   background: v(foreground);
   color: v(background);
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  font-weight: 700;
-  font-size: 13px;
+  @include flex-center;
+  font-weight: v(weight-bold);
+  font-size: v(text-13);
 }
 
 .logoText {
-  font-size: 14px;
-  font-weight: 600;
+  font-size: v(text-14);
+  font-weight: v(weight-semibold);
 }
 
 .telegramBadge {
   display: inline-flex;
   align-items: center;
-  gap: 4px;
-  padding: 2px 8px;
+  gap: v(size-4);
+  padding: v(size-2) v(size-8);
   border-radius: v(radius-md);
-  font-size: 11px;
-  font-weight: 500;
-  line-height: 1.4;
+  font-size: v(text-11);
+  font-weight: v(weight-medium);
+  line-height: v(leading-snug);
   background: v(tint-sky-bg);
   color: v(tint-sky-tx);
   white-space: nowrap;
-  margin-bottom: 10px;
+  margin-bottom: v(size-10);
 }
 
 .badgeIcon {
@@ -149,56 +143,56 @@
 }
 
 .mobileTitle {
-  font-size: 26px;
-  font-weight: 700;
-  margin: 0px 0px 8px;
-  letter-spacing: -0.02em;
-  line-height: 1.1;
+  font-size: v(text-26);
+  font-weight: v(weight-bold);
+  margin: 0 0 v(size-8);
+  letter-spacing: v(tracking-tight);
+  line-height: v(leading-tight);
 }
 
 .mobileSubtitle {
-  font-size: 13px;
+  font-size: v(text-13);
   color: v(muted-foreground);
-  margin: 0px;
-  line-height: 1.5;
+  margin: 0;
+  line-height: v(leading-normal);
 }
 
 /* ─── DIVIDER ─── */
 .dividerWrapper {
-  @include flex(row, center, center, 10px);
-  margin: 8px 0;
+  @include flex(row, center, center, v(size-10));
+  margin: v(size-8) 0;
 }
 
 .dividerLine {
   flex: 1;
-  height: 1px;
+  height: v(size-1);
   background: v(border);
 }
 
 .dividerText {
-  font-size: 11px;
+  font-size: v(text-11);
   color: v(muted-foreground);
   text-transform: uppercase;
-  letter-spacing: 0.06em;
-  font-weight: 500;
+  letter-spacing: v(tracking-wider);
+  font-weight: v(weight-medium);
 }
 
 .mobileFooter {
   display: none;
 
-  @media (max-width: 768px) {
+  @include breakpoint-down(md) {
     display: block;
     position: absolute;
     bottom: 0;
     left: 0;
     right: 0;
-    padding: 12px 24px 24px;
+    padding: v(size-12) v(size-24) v(size-24);
 
     p {
-      font-size: 10px;
+      font-size: v(text-10);
       color: v(muted-foreground);
       text-align: center;
-      line-height: 1.5;
+      line-height: v(leading-normal);
       margin: 0;
     }
 
