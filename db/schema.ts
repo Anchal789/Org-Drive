@@ -76,7 +76,7 @@ export const uploadFoldersTable = pgTable('upload_folders', {
     .notNull(),
 });
 
-const permissionEnum = pgEnum('permission', [
+export const permissionEnum = pgEnum('permission', [
   'viewer',
   'owner',
   'editor',
