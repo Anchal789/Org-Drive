@@ -148,7 +148,7 @@ export const useUploadStore = create<UploadStore>((set, get) => ({
     const { file, folderName, fileCount, uniqueId } = state.pendingQueue[0];
 
     const controller = new AbortController();
-    activeControllers.set(file.name, controller);
+    activeControllers.set(uniqueId, controller);
 
     const formData = new FormData();
     formData.append('file', file);
@@ -266,7 +266,7 @@ export const useUploadStore = create<UploadStore>((set, get) => ({
     } finally {
       activeControllers.delete(uniqueId);
       set((s) => ({
-        pendingQueue: s.pendingQueue.slice(1),
+        pendingQueue: s.pendingQueue.filter((q) => q.uniqueId !== uniqueId),
         isProcessing: false,
       }));
       get().processQueue();

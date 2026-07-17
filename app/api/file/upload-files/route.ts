@@ -29,7 +29,6 @@ export async function POST(request: NextRequest) {
     const formData = await request.formData();
     const files = formData.getAll('file') as Array<File>;
     const folderName = formData.get('folderName') as string | null;
-    const fileCount = formData.get('fileCount') as number | null;
     const folderId = formData.get('folderId') as string | null;
 
     if (!files || files.length === 0)
@@ -47,7 +46,6 @@ export async function POST(request: NextRequest) {
           and(
             eq(uploadFoldersTable.name, folderName),
             eq(uploadFoldersTable.userId, Number(session.userId)),
-            eq(uploadFoldersTable.fileCount, Number(fileCount)),
           ),
         )
         .limit(1);
@@ -60,7 +58,7 @@ export async function POST(request: NextRequest) {
           .values({
             userId: Number(session.userId),
             name: folderName,
-            fileCount: Number(fileCount),
+            fileCount: 0,
           })
           .returning();
         resolvedFolderId = newFolder.id;
