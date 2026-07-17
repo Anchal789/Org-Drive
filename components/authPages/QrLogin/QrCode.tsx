@@ -15,7 +15,11 @@ import { Input } from '@/components/ui/input';
 import { useCountdown } from '@/hooks/use-countdown';
 import { postData } from '@/lib/api-fn';
 import { encrypt } from '@/lib/utils';
-import { qrLogin, qrStart } from '@/services/auth-service';
+import {
+  finalizeLoginInternal,
+  qrLogin,
+  qrStart,
+} from '@/services/auth-service';
 import { useAuthStore } from '@/store/store';
 import type { TelegramUser } from '@/types/auth';
 import styles from './QrCode.module.scss';
@@ -118,11 +122,29 @@ export default function QrCode() {
             passwordHint: data.passwordHint ?? null,
           });
         } else if (data.step === 'success' && data.user) {
-          if (data.accessToken) {
-            useAuthStore.getState().setAccessToken(data.accessToken);
+          try {
+            const finalizeResponse = await finalizeLoginInternal(data.user);
+
+            if (finalizeResponse.success) {
+              if (finalizeResponse.data.accessToken) {
+                useAuthStore
+                  .getState()
+                  .setAccessToken(finalizeResponse.data.accessToken);
+              }
+              setState({ status: 'success', user: data.user });
+              navigateTimeoutId = setTimeout(() => navigateToMyDrive(), 1500);
+            } else {
+              setState({
+                status: 'error',
+                message: finalizeResponse.message || 'Failed to save user data',
+              });
+            }
+          } catch {
+            setState({
+              status: 'error',
+              message: 'Failed to finalize login on server',
+            });
           }
-          setState({ status: 'success', user: data.user });
-          navigateTimeoutId = setTimeout(() => navigateToMyDrive(), 1500);
         } else if (data.step === 'expired') {
           setState({ status: 'expired', loginId: currentLoginId || '' });
         } else if (data.step === 'error') {
@@ -183,14 +205,25 @@ export default function QrCode() {
         }>({
           url: '/api/auth/qr-password',
           payload: { loginId: state.loginId, password },
+          baseUrl: process.env.NEXT_PUBLIC_AUTH_API_URL,
         });
 
         const data = response?.data;
 
         if (response.success && data?.step === 'success' && data.user) {
-          setState({ status: 'success', user: data.user });
-          setTimeout(() => navigateToMyDrive(), 1500);
-          return null;
+          const finalizeResponse = await finalizeLoginInternal(data.user);
+
+          if (finalizeResponse.success) {
+            if (finalizeResponse.data.accessToken) {
+              useAuthStore
+                .getState()
+                .setAccessToken(finalizeResponse.data.accessToken);
+            }
+            setState({ status: 'success', user: data.user });
+            setTimeout(() => navigateToMyDrive(), 1500);
+            return null;
+          }
+          return finalizeResponse.message || 'Failed to save user data';
         }
         return data?.error ?? 'Password failed';
       } catch (err: unknown) {
