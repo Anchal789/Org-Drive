@@ -102,14 +102,14 @@ export default function FileSelectionBar({
           {/* Selected Count */}
           <span className={styles.selectedCount}>{selectedCount} selected</span>
 
-          <button
+          <Button
             type='button'
             aria-label='Clear selection'
             onClick={clearSelection}
             className={styles.clearBtn}
           >
             <X size={14} strokeWidth={1.6} />
-          </button>
+          </Button>
 
           <div className={styles.spacer} />
 

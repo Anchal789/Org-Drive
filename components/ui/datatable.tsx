@@ -9,6 +9,7 @@ import {
   TableRow,
 } from '@/components/ui/table';
 import type { DataTableProps } from '@/types/component-types';
+import { Button } from './button';
 import styles from './Component.module.scss';
 
 const EMPTY_SELECTED_IDS: Array<string | number> = [];
@@ -81,14 +82,14 @@ export default function DataTable<T>({
                     {selectedIds.length} selected
                   </span>
 
-                  <button
+                  <Button
                     type='button'
                     onClick={clearSelection}
                     aria-label='Clear selection'
                     className={styles.clearButton}
                   >
                     <X size={14} strokeWidth={1.6} />
-                  </button>
+                  </Button>
 
                   <div className={styles.actionsGap} />
 

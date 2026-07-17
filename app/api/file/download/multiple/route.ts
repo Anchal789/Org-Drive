@@ -29,7 +29,6 @@ export async function POST(request: NextRequest) {
 
   const fileIds = idsParam.split(',').map(Number).filter(Boolean);
 
-  // Fetch all requested files from DB
   const filesInfo = await db
     .select()
     .from(uploadedFilesTable)

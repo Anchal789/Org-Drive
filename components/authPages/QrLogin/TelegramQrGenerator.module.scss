@@ -6,46 +6,46 @@
   background: v(background);
   color: v(foreground);
   @include flex-center;
-  padding: 32px;
+  padding: v(size-32);
 }
 
 .authCard {
-  width: 440px;
-  padding: 40px;
+  width: v(size-440);
+  padding: v(size-40);
   background: v(card);
-  border: 1px solid v(border);
+  border: v(size-1) solid v(border);
   border-radius: v(radius-2xl);
   box-shadow: v(shadow-xl);
-  @include flex(column, center, center, 18px);
+  @include flex(column, center, center, v(space-4-5));
 }
 
 .logoRow {
-  @include flex(row, center, flex-start, 8px);
+  @include flex(row, center, flex-start, v(size-8));
 }
 
 .brandSquare {
-  width: 36px;
-  height: 36px;
-  border-radius: 10px;
+  width: v(size-36);
+  height: v(size-36);
+  border-radius: v(size-10);
   background: v(foreground);
   color: v(background);
   @include flex-center;
-  font-weight: v(weight-bold); // 700
-  font-size: 15px;
+  font-weight: v(weight-bold);
+  font-size: v(text-15);
 }
 
 .dividerLine {
-  width: 24px;
-  height: 1px;
+  width: v(size-24);
+  height: v(size-1);
   background: v(border);
 }
 
 .tgCircle {
-  width: 36px;
-  height: 36px;
+  width: v(size-36);
+  height: v(size-36);
   border-radius: 50%;
   background: v(tg-blue);
-  color: #fff;
+  color: v(text-white);
   @include flex-center;
 }
 
@@ -54,40 +54,33 @@
 }
 
 .heading {
-  font-size: 22px;
+  font-size: v(text-22);
   font-weight: v(weight-semibold);
-  margin: 0 0 6px;
+  margin: 0 0 v(size-6);
   letter-spacing: v(tracking-tight);
 }
 
 .subheading {
-  font-size: 13px;
+  font-size: v(text-13);
   color: v(muted-foreground);
   margin: 0;
-  line-height: 1.5;
-}
-
-.qrWrapper {
-  padding: 14px;
-  background: v(background);
-  border-radius: v(radius-lg);
-  border: 1px solid v(border);
+  line-height: v(leading-normal);
 }
 
 .orDivider {
-  @include flex(row, center, center, 10px);
+  @include flex(row, center, center, v(size-10));
   width: 100%;
-  margin: 4px 0;
+  margin: v(size-4) 0;
 }
 
 .orLine {
   flex: 1;
-  height: 1px;
+  height: v(size-1);
   background: v(border);
 }
 
 .orText {
-  font-size: 11px;
+  font-size: v(text-11);
   color: v(muted-foreground);
   text-transform: uppercase;
   letter-spacing: v(tracking-wider);
@@ -95,10 +88,10 @@
 }
 
 .termsText {
-  font-size: 11px;
+  font-size: v(text-11);
   color: v(muted-foreground);
   text-align: center;
-  line-height: 1.5;
+  line-height: v(leading-normal);
 }
 
 .termsLink {

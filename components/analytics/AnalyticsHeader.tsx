@@ -2,6 +2,7 @@
 
 import { ChevronLeft, RefreshCw } from 'lucide-react';
 import type { Timeframe } from '@/types/analytics';
+import { Button } from '../ui/button';
 import styles from './Analytics.module.scss';
 
 interface AnalyticsHeaderProps {
@@ -59,14 +60,14 @@ export default function AnalyticsHeader({
       {view === 'overview' && (
         <div className={styles.filterGroup}>
           {(['24h', '7d', '30d', '90d'] as Timeframe[]).map((p) => (
-            <button
+            <Button
               type='button'
               key={p}
               onClick={() => setTimeframe(p)}
               className={`${styles.filterBtn} ${timeframe === p ? styles.filterBtnActive : ''}`}
             >
               {p}
-            </button>
+            </Button>
           ))}
         </div>
       )}

@@ -24,6 +24,7 @@ import type {
   KnowledgeDocument,
   PromptOption,
 } from '@/types/ai-chat';
+import { Button } from '../ui/button';
 import styles from './AiChatsPage.module.scss';
 
 const MOCK_DOCS: KnowledgeDocument[] = [
@@ -170,13 +171,13 @@ export default function AiChatPage() {
                 · 1,284 chunks indexed
               </div>
             </div>
-            <button
+            <Button
               type='button'
               className={styles.iconButton}
               aria-label='Add knowledge source'
             >
               <Plus size={15} />
-            </button>
+            </Button>
           </div>
 
           <div className={styles.searchBox}>
@@ -219,12 +220,12 @@ export default function AiChatPage() {
         </div>
 
         <div className={styles.sidebarFooter}>
-          <button type='button' className={styles.actionBtnPrimary}>
+          <Button type='button' className={styles.actionBtnPrimary}>
             <Plus size={14} /> Save as collection
-          </button>
-          <button type='button' className={styles.actionBtnGhost}>
+          </Button>
+          <Button type='button' className={styles.actionBtnGhost}>
             <RefreshCw size={14} /> Sync
-          </button>
+          </Button>
         </div>
       </aside>
 
@@ -241,9 +242,9 @@ export default function AiChatPage() {
               </div>
             </div>
           </div>
-          <button type='button' className={styles.actionBtnGhost}>
+          <Button type='button' className={styles.actionBtnGhost}>
             <History size={14} /> History
-          </button>
+          </Button>
         </div>
 
         <div className={styles.mobileHeader}>
@@ -270,7 +271,7 @@ export default function AiChatPage() {
           </div>
           <div className={styles.promptGrid}>
             {PROMPT_OPTIONS.map((prompt) => (
-              <button
+              <Button
                 type='button'
                 key={prompt.id}
                 className={styles.promptCard}
@@ -280,7 +281,7 @@ export default function AiChatPage() {
                   <div className={styles.promptTitle}>{prompt.title}</div>
                   <div className={styles.promptDesc}>{prompt.description}</div>
                 </div>
-              </button>
+              </Button>
             ))}
           </div>
         </div>
@@ -339,24 +340,24 @@ export default function AiChatPage() {
             />
             <div className={styles.inputActions}>
               <div className={styles.actionGroup}>
-                <button
+                <Button
                   type='button'
                   aria-label='Attach file'
                   className={styles.iconButton}
                 >
                   <Paperclip size={15} />
-                </button>
-                <button
+                </Button>
+                <Button
                   type='button'
                   aria-label='Open command palette'
                   className={styles.iconButton}
                 >
                   <SquareTerminal size={15} />
-                </button>
+                </Button>
               </div>
-              <button type='button' className={styles.sendBtn}>
+              <Button type='button' className={styles.sendBtn}>
                 <Send size={14} /> Send
-              </button>
+              </Button>
             </div>
           </div>
         </form>
@@ -377,13 +378,13 @@ export default function AiChatPage() {
               className={styles.mobileTextInput}
               placeholder='Ask the docs…'
             />
-            <button
+            <Button
               type='button'
               aria-label='Send message'
               className={styles.mobileSendBtn}
             >
               <Send size={13} />
-            </button>
+            </Button>
           </div>
         </div>
       </div>

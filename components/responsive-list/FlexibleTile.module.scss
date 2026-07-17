@@ -1,10 +1,7 @@
-@use "@/styles/functions" as *; // Adjust path if needed
+@use "@/styles/functions" as *;
 
-/* ─── 1. AUTO-FILL GRID CONTAINER ─── */
-/* Wrap your list of tiles in this class! */
 .tileGrid {
   display: grid;
-  /* Magic line: Auto-creates columns based on screen width. Min width 320px */
   grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
   gap: 12px;
   width: 100%;
@@ -21,7 +18,7 @@
   background: v(card);
   transition: all 0.2s ease;
   position: relative;
-  min-width: 0; /* CRITICAL: Prevents long text from breaking the grid column */
+  min-width: 0;
   cursor: pointer;
 
   &:hover {
@@ -35,7 +32,6 @@
   }
 }
 
-/* ─── LEFT SLOT (Extension) ─── */
 .leading {
   flex-shrink: 0;
   display: flex;
@@ -44,10 +40,9 @@
   z-index: 10;
 }
 
-/* ─── MIDDLE SLOT (Info) ─── */
 .content {
   flex: 1 1 0%;
-  min-width: 0; /* CRITICAL for truncation */
+  min-width: 0;
   display: flex;
   flex-direction: column;
   gap: 2px;
@@ -87,12 +82,11 @@
   opacity: 0.5;
 }
 
-/* ─── RIGHT SLOT (Actions) ─── */
 .trailing {
   flex-shrink: 0;
   display: flex;
   align-items: center;
-  gap: 8px; /* Gap between Tag, Avatar, and Menu */
+  gap: 8px;
   position: relative;
   z-index: 10;
 }

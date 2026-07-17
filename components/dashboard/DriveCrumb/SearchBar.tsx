@@ -1,9 +1,19 @@
 'use client';
 
-import { ChevronRight, File, Folder, History, Search, X } from 'lucide-react';
+import {
+  ChevronRight,
+  File,
+  Folder,
+  History,
+  Search,
+  Settings,
+  Sparkle,
+  X,
+} from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import { useEffect, useRef, useState } from 'react';
 import Badge from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
 import { fetchData } from '@/lib/api-fn';
 import { encrypt } from '@/lib/utils';
 import type { UploadedFile, UploadedFolder } from '@/types/files';
@@ -161,16 +171,22 @@ export default function SearchBar({
           onKeyDown={handleInputKeyDown}
           className={styles.searchInput}
         />
-
-        {searchTerm && (
-          <button
+        {searchTerm ? (
+          <Button
             type='button'
             onClick={clearSearch}
             className={styles.clearBtn}
             aria-label='Clear search'
           >
             <X size={14} />
-          </button>
+          </Button>
+        ) : (
+          <>
+            <Badge tone='violet' className={styles.badge}>
+              <Sparkle size={9} /> Smart
+            </Badge>
+            <Settings size={14} className={styles.icon} />
+          </>
         )}
       </div>
 
@@ -189,7 +205,7 @@ export default function SearchBar({
                   <div>
                     <h3 className={styles.sectionTitle}>Recent</h3>
                     {recentSearches.map((term) => (
-                      <button
+                      <Button
                         type='button'
                         key={term}
                         onClick={() => handleSuggestionClick(term)}
@@ -200,7 +216,7 @@ export default function SearchBar({
                           <span className={styles.truncate}>{term}</span>
                         </span>
                         <ChevronRight size={14} className={styles.searchIcon} />
-                      </button>
+                      </Button>
                     ))}
                   </div>
                 )}
@@ -209,14 +225,14 @@ export default function SearchBar({
                   <h3 className={styles.sectionTitle}>Suggested</h3>
                   <div className={styles.chipGroup}>
                     {SUGGESTED_SEARCHES.map((sug) => (
-                      <button
+                      <Button
                         type='button'
                         key={sug}
                         onClick={() => handleSuggestionClick(sug)}
                         className={styles.chip}
                       >
                         {sug}
-                      </button>
+                      </Button>
                     ))}
                   </div>
                 </div>
@@ -231,7 +247,7 @@ export default function SearchBar({
                   <div>
                     <h3 className={styles.sectionTitle}>Folders</h3>
                     {results?.folders?.map((folder) => (
-                      <button
+                      <Button
                         type='button'
                         key={folder.id}
                         onClick={(e) => {
@@ -260,7 +276,7 @@ export default function SearchBar({
                         <div data-menu='true'>
                           <FolderMenu folder={folder} />
                         </div>
-                      </button>
+                      </Button>
                     ))}
                   </div>
                 )}
@@ -270,7 +286,7 @@ export default function SearchBar({
                   <div>
                     <h3 className={styles.sectionTitle}>Files</h3>
                     {results?.files?.map((file) => (
-                      <button
+                      <Button
                         type='button'
                         key={file.id}
                         onClick={(e) => {
@@ -281,7 +297,6 @@ export default function SearchBar({
                             return;
                           saveRecentSearch(activeQuery);
                           setIsOpen(false);
-                          // Handle file click/preview here
                         }}
                         className={styles.listItem}
                       >
@@ -298,7 +313,7 @@ export default function SearchBar({
                             <FileMenu file={file} />
                           </div>
                         )}
-                      </button>
+                      </Button>
                     ))}
                   </div>
                 )}

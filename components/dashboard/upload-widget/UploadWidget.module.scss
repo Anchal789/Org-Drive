@@ -2,8 +2,8 @@
 
 .widget {
   position: absolute;
-  bottom: 18px;
-  right: 18px;
+  bottom: v(space-4-5);
+  right: v(space-4-5);
   width: 340px;
   background: v(card);
   border: 1px solid v(border);

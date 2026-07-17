@@ -34,7 +34,6 @@ export default function PeopleWithAccessSection({
             isOwner={person.permission?.toLowerCase() === 'owner'}
             isCurrentUser={person.id === currentUserId}
             disabled={person.id === currentUserId}
-            // Block transferring ownership when doing bulk multi-file changes
             hideOwnerOption={isMultiShare}
             onPermissionChange={(val) => onPermissionChange(index, val)}
             showSeparator={index < users.length - 1}

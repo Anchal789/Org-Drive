@@ -13,6 +13,20 @@
   --text-3xl: 1.875rem;
   --text-4xl: 2.25rem;
   --text-5xl: 3rem;
+  --text-9: 0.5625rem;
+  --text-10: 0.625rem; // 10px
+  --text-11: 0.6875rem; // 11px
+  --text-12: 0.75rem; // 12px
+  --text-13: 0.8125rem; // 13px
+  --text-14: 0.875rem; // 14px
+  --text-15: 0.9375rem; // 15px
+  --text-22: 1.375rem; // 22px
+  --text-24: 1.5rem; // 24px
+  --text-26: 1.625rem; // 26px
+  --text-36: 2.25rem; // 36px
+  --text-6xl: 3.75rem; // 60px
+  --weight-extrabold: 800;
+
   --sidebar-label-size: 13px;
 
   --leading-none: 1;
@@ -26,10 +40,11 @@
   --weight-semibold: 600;
   --weight-bold: 700;
 
+  --tracking-tighter: -0.03em;
   --tracking-tight: -0.02em;
   --tracking-normal: 0em;
   --tracking-wide: 0.02em;
-  --tracking-wider: 0.05em;
+  --tracking-wider: 0.06em;
 
   // Semantic role shortcuts
   --h1-size: var(--text-4xl);
@@ -104,6 +119,47 @@
   --space-16: 4rem;
   --space-20: 5rem;
   --space-24: 6rem;
+
+  --space-4-5: 1.125rem; // 18px
+  --space-5-5: 1.375rem; // 22px
+  --space-11: 2.75rem; // 44px
+
+  --size-1: 0.0625rem; // 1px
+  --size-1-5: 0.09375rem; // 1.5px
+  --size-2: 0.125rem; // 2px
+  --size-3: 0.1875rem; // 3px
+  --size-4: 0.25rem; // 4px
+  --size-6: 0.375rem; // 6px
+  --size-8: 0.5rem; // 8px
+  --size-10: 0.625rem; // 10px
+  --size-12: 0.75rem; // 12px
+  --size-14: 0.875rem; // 14px
+  --size-16: 1rem; // 16px
+  --size-18: 1.125rem; // 18px
+  --size-22: 1.375rem; // 22px
+  --size-24: 1.5rem; // 24px
+  --size-32: 2rem; // 32px
+  --size-40: 2.5rem; // 40px
+  --size-42: 2.625rem; // 42px
+  --size-44: 2.75rem; // 44px
+  --size-48: 3rem; // 48px
+  --size-60: 3.75rem; // 60px
+  --size-80: 5rem; // 80px
+  --size-130: 8.125rem; // 130px
+  --size-160: 10rem; // 160px
+  --size-280: 17.5rem; // 280px
+  --size-380: 23.75rem; // 380px
+  --size-20: 1.25rem; // 20px
+  --size-36: 2.25rem; // 36px
+  --size-56: 3.5rem; // 56px (OTP Box width)
+  --size-64: 4rem; // 64px (OTP Box height)
+  --size-200: 12.5rem; // 200px (Mobile error text max-width)
+  --size-440: 27.5rem; // 440px
+  --size-460: 28.75rem; // 460px (Card width)
+  --size-96: 6rem; // 96px (h-24, w-24)
+  --size-448: 28rem; // 448px (max-w-md)
+
+  --shadow-input-focus: 0 0 0 var(--size-3) color-mix(in srgb, var(--tg-blue) 15%, transparent);
 }
 
 // ─── COLOR TOKENS — LIGHT (default) ─────────────────────────────────────────
@@ -253,7 +309,7 @@
   --density-gap-sm: 4px;
 
   --density-item-h: 32px;
-  --density-icon-md: 18px;
+  --density-icon-md: v(space-4-5);
   --density-preview-h: 56px;
 
   --density-text-base: 12px;

@@ -246,6 +246,7 @@ export default function QrCode() {
               alt='Telegram QR Login'
               width={280}
               height={280}
+              className={styles.qrImage}
             />
           )}
 

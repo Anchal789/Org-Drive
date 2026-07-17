@@ -6,10 +6,10 @@
   background: v(background);
   color: v(foreground);
   @include flex-center;
-  padding: 32px;
+  padding: v(size-32);
   position: relative;
 
-  @media (max-width: 768px) {
+  @include breakpoint-down(md) {
     padding: 0;
     justify-content: flex-start;
     flex-direction: column;
@@ -17,30 +17,30 @@
 }
 
 .authCard {
-  width: 460px;
-  padding: 36px;
+  width: v(size-460);
+  padding: v(size-36);
   background: v(card);
-  border: 1px solid v(border);
+  border: v(size-1) solid v(border);
   border-radius: v(radius-2xl);
   box-shadow: v(shadow-xl);
-  @include flex(column, stretch, flex-start, 18px);
+  @include flex(column, stretch, flex-start, v(size-18));
 
-  @media (max-width: 768px) {
+  @include breakpoint-down(md) {
     width: 100%;
-    padding: 40px 24px 0px;
+    padding: v(size-40) v(size-24) 0;
     box-shadow: none;
     border: none;
     border-radius: 0;
     background: transparent;
     flex: 1 1 0%;
-    gap: 20px;
+    gap: v(size-20);
   }
 }
 
 .backButton {
   align-self: flex-start;
-  @include flex(row, center, flex-start, 6px);
-  font-size: 12px;
+  @include flex(row, center, flex-start, v(size-6));
+  font-size: v(text-12);
   color: v(muted-foreground);
   background: none;
   border: none;
@@ -53,18 +53,18 @@
     color: v(foreground);
   }
 
-  @media (max-width: 768px) {
-    font-size: 13px;
+  @include breakpoint-down(md) {
+    font-size: v(text-13);
   }
 }
 
 .progressContainer {
-  @include flex(row, center, flex-start, 6px);
+  @include flex(row, center, flex-start, v(size-6));
 }
 
 .progressSegment {
-  height: 4px;
-  flex: 1;
+  height: v(size-4);
+  flex: 1 1 0%;
   border-radius: v(radius-full);
   background: v(secondary);
 
@@ -74,30 +74,30 @@
 }
 
 .stepLabel {
-  font-size: 11px;
+  font-size: v(text-11);
   color: v(muted-foreground);
-  margin-top: 8px;
+  margin-top: v(size-8);
   font-weight: v(weight-medium);
 }
 
 .heading {
-  font-size: 22px;
+  font-size: v(text-22);
   font-weight: v(weight-semibold);
-  margin: 8px 0 6px;
+  margin: v(size-8) 0 v(size-6);
   letter-spacing: v(tracking-tight);
 
-  @media (max-width: 768px) {
-    font-size: 24px;
-    font-weight: 700;
-    line-height: 1.1;
+  @include breakpoint-down(md) {
+    font-size: v(text-24);
+    font-weight: v(weight-bold);
+    line-height: v(leading-tight);
   }
 }
 
 .description {
-  font-size: 13px;
+  font-size: v(text-13);
   color: v(muted-foreground);
   margin: 0;
-  line-height: 1.5;
+  line-height: v(leading-normal);
 }
 
 .highlightText {
@@ -106,19 +106,19 @@
 }
 
 .formWrapper {
-  @include flex(column, center, flex-start, 18px);
+  @include flex(column, center, flex-start, v(size-18));
 }
 
 .passwordFormWrapper {
-  @include flex(column, stretch, flex-start, 12px);
+  @include flex(column, stretch, flex-start, v(size-12));
 }
 
 .otpContainer {
-  @include flex(row, center, center, 10px);
-  padding: 8px 0;
+  @include flex(row, center, center, v(size-10));
+  padding: v(size-8) 0;
 
-  @media (max-width: 768px) {
-    gap: 8px;
+  @include breakpoint-down(md) {
+    gap: v(size-8);
     width: 70%;
     justify-content: space-between;
     padding: 0;
@@ -130,14 +130,14 @@
 }
 
 .otpLabel {
-  width: 56px;
-  height: 64px;
-  border: 1.5px solid v(input);
+  width: v(size-56);
+  height: v(size-64);
+  border: v(size-1-5) solid v(input);
   border-radius: v(radius-lg);
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  font-size: 26px;
+  font-size: v(text-26);
   font-weight: v(weight-semibold);
   font-variant-numeric: tabular-nums;
   background: v(background);
@@ -148,12 +148,12 @@
 
   &.active {
     border-color: v(tg-blue);
-    box-shadow: 0 0 0 3px color-mix(in srgb, v(tg-blue) 20%, transparent);
+    box-shadow: v(shadow-input-focus);
   }
 
-  @media (max-width: 768px) {
+  @include breakpoint-down(md) {
     flex: 1 1 0%;
-    height: 56px;
+    height: v(size-56);
     width: auto;
   }
 }
@@ -167,7 +167,7 @@
   border: none;
   outline: none;
   text-align: center;
-  font-size: 26px;
+  font-size: v(text-26);
   font-weight: v(weight-semibold);
   font-variant-numeric: tabular-nums;
   color: v(foreground);
@@ -176,18 +176,16 @@
 }
 
 .resendWrapper {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 6px;
+  @include flex-center;
+  gap: v(size-6);
   color: v(muted-foreground);
-  font-size: 12px;
-  margin: 4px 0;
+  font-size: v(text-12);
+  margin: v(size-4) 0;
 }
 
 .resendContainer {
-  @include flex(row, center, center, 6px);
-  font-size: 12px;
+  @include flex(row, center, center, v(size-6));
+  font-size: v(text-12);
   color: v(muted-foreground);
 }
 
@@ -203,7 +201,7 @@
   color: v(tg-blue);
   font-weight: v(weight-medium);
   cursor: pointer;
-  font-size: 12px;
+  font-size: v(text-12);
   padding: 0;
 
   &:hover {
@@ -213,7 +211,7 @@
 
 .errorText {
   margin: 0;
-  font-size: 12px;
+  font-size: v(text-12);
   color: v(destructive);
   text-overflow: ellipsis;
   overflow: hidden;
@@ -221,17 +219,17 @@
   word-wrap: break-word;
 
   @media (max-width: 448px) {
-    max-width: 200px;
+    max-width: v(size-200);
   }
 }
 
 .passwordInput {
-  padding: 12px 14px;
+  padding: v(size-12) v(size-14);
   background: v(background);
   color: v(foreground);
-  border: 1.5px solid v(input);
+  border: v(size-1-5) solid v(input);
   border-radius: v(radius-lg);
-  font-size: 14px;
+  font-size: v(text-14);
   font-family: inherit;
   outline: none;
   @include transition(border-color);
@@ -246,7 +244,7 @@
 }
 
 .helpContainer {
-  font-size: 11px;
+  font-size: v(text-11);
   color: v(muted-foreground);
   text-align: center;
 }
@@ -257,7 +255,7 @@
   color: v(tg-blue);
   font-weight: v(weight-medium);
   cursor: pointer;
-  font-size: 11px;
+  font-size: v(text-11);
   padding: 0;
 
   &:hover {
@@ -270,12 +268,12 @@
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  gap: 8px;
+  gap: v(size-8);
 
-  @media (max-width: 768px) {
-    height: 44px;
-    font-size: 14px;
-    font-weight: 600;
+  @include breakpoint-down(md) {
+    height: v(size-44);
+    font-size: v(text-14);
+    font-weight: v(weight-semibold);
   }
 }
 
@@ -286,13 +284,11 @@
 .mobileFooter {
   display: none;
 
-  @media (max-width: 768px) {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 6px;
-    padding: 12px 24px 24px;
-    font-size: 11px;
+  @include breakpoint-down(md) {
+    @include flex-center;
+    gap: v(size-6);
+    padding: v(size-12) v(size-24) v(size-24);
+    font-size: v(text-11);
     color: v(muted-foreground);
     text-align: center;
   }

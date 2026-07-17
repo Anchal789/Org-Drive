@@ -24,9 +24,7 @@ export default function TelegramQrGenerator() {
           </p>
         </div>
 
-        <div className={styles.qrWrapper}>
-          <QrCode />
-        </div>
+        <QrCode />
 
         <div className={styles.orDivider}>
           <div className={styles.orLine} />
