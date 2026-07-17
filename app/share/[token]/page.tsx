@@ -28,8 +28,6 @@ export default async function SharedLinkPage({
 
   const { type, ids, userId } = JSON.parse(shareData);
 
-  // Optional: You can do a quick DB fetch here to get the actual file names
-  // to display them beautifully on this page before downloading.
   const title =
     type === 'multi'
       ? `${ids.length} Shared Files`

@@ -33,7 +33,6 @@ export default function ShareDownloadClient({
     a.click();
     document.body.removeChild(a);
 
-    // Reset button state after a short delay
     setTimeout(() => setIsDownloading(false), 2000);
   };
 

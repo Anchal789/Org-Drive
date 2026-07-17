@@ -281,7 +281,6 @@ export default function SearchBar({
                             return;
                           saveRecentSearch(activeQuery);
                           setIsOpen(false);
-                          // Handle file click/preview here
                         }}
                         className={styles.listItem}
                       >

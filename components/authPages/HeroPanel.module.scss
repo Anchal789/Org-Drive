@@ -2,114 +2,107 @@
 @use "../../styles/mixins" as *;
 
 .panelWrapper {
-  flex: 1;
-  padding: 3rem;
-  @include flex(column, stretch, space-between);
-  border-right: 1px solid v(border);
+  flex: 1 1 0%;
+  background: linear-gradient(155deg, v(tg-blue-bg) 0%, v(surface) 65%);
+  padding: v(space-12);
+  @include flex(column, flex-start, space-between);
+  border-right: rem(1) solid v(border);
   position: relative;
   overflow: hidden;
-  min-height: 100dvh;
 
-  /* Modern CSS blending to replace hardcoded hex + opacity strings */
-  background: linear-gradient(
-    to bottom right,
-    color-mix(in srgb, v(tg-blue) 10%, transparent),
-    color-mix(in srgb, v(tg-blue) 5%, transparent)
-  );
-
-  @media (max-width: 768px) {
+  @include breakpoint-down(md) {
     display: none;
   }
 }
 
 .headerRow {
-  @include flex(row, center, flex-start, 0.625rem);
+  @include flex(row, center, flex-start, v(space-3));
   position: relative;
   z-index: 10;
 }
 
 .logoSquare {
-  width: 32px;
-  height: 32px;
-  border-radius: 8px;
+  @include flex-center;
+  width: rem(32);
+  height: rem(32);
+  border-radius: v(radius-md);
   background: v(foreground);
   color: v(background);
-  @include flex-center;
-  font-size: 14px;
-  font-weight: v(weight-bold); // 700
+  font-size: v(text-sm);
+  font-weight: v(weight-bold);
 }
 
 .logoText {
-  font-size: 15px;
-  font-weight: v(weight-semibold); // 600
+  font-size: v(text-15);
+  font-weight: v(weight-semibold);
 }
 
 .mainContent {
-  max-width: 380px;
+  max-width: rem(380);
   position: relative;
   z-index: 10;
 }
 
 .badgeCustom {
-  margin-bottom: 14px;
-  background: #fff;
-  box-shadow: v(shadow-sm);
-  border: 1px solid color-mix(in srgb, v(tg-blue) 20%, transparent);
+  padding: rem(2) v(space-2);
+  border-radius: v(radius-md);
+  background: v(background);
+  border: rem(1) solid #229ed933;
+  margin-bottom: rem(14);
 }
 
 .badgeDot {
-  width: 5px;
-  height: 5px;
+  width: rem(6);
+  height: rem(6);
   border-radius: v(radius-full);
   background: v(tg-blue);
-  display: inline-block;
 }
 
 .badgeText {
-  color: #004260;
+  font-size: v(text-2xs);
+  font-weight: v(weight-medium);
+  line-height: v(leading-snug);
+  color: v(tint-sky-tx);
+  white-space: nowrap;
 }
 
 .heroTitle {
-  font-size: 2.25rem; // ~36px
-  font-weight: v(weight-bold);
-  line-height: 1.1;
-  letter-spacing: v(tracking-tight);
-  margin-bottom: 14px;
+  @include heading(h1);
+  font-size: v(text-4xl);
+  margin: 0 0 rem(14) 0;
   color: v(foreground);
 }
 
 .heroSubtitle {
-  font-size: 14px;
-  line-height: 1.6;
+  @include body-text;
+  font-size: v(text-sm);
   color: v(muted-foreground);
   margin: 0;
 }
 
 .featuresList {
-  margin-top: 24px;
-  @include flex(column, stretch, flex-start, 8px);
+  @include flex(column, flex-start, flex-start, v(space-2));
+  margin-top: rem(22);
 }
 
 .featureItem {
-  @include flex(row, center, flex-start, 8px);
-  font-size: 13px;
+  @include flex(row, center, flex-start, v(space-2));
+  font-size: v(text-13);
   color: v(foreground);
 }
 
 .featureIconCircle {
-  width: 18px;
-  height: 18px;
-  border-radius: v(radius-full);
   @include flex-center;
-  flex-shrink: 0;
+  width: rem(18);
+  height: rem(18);
+  border-radius: v(radius-full);
   background: v(tg-blue);
+  flex-shrink: 0;
 }
 
 .footer {
-  font-size: 11px;
+  font-size: v(text-2xs);
   color: v(muted-foreground);
-  position: relative;
-  z-index: 10;
 }
 
 .footerLink {
@@ -122,24 +115,25 @@
   }
 }
 
+/* Decorative Circles */
 .bgCircleLarge {
   position: absolute;
-  right: -80px;
-  top: 64px;
-  width: 280px;
-  height: 280px;
+  right: rem(-80);
+  top: rem(60);
+  width: rem(280);
+  height: rem(280);
   border-radius: v(radius-full);
+  border: rem(1) solid color-mix(in srgb, v(tg-blue) 13%, transparent);
   pointer-events: none;
-  border: 1px solid color-mix(in srgb, v(tg-blue) 13%, transparent); // Translates hex 22
 }
 
 .bgCircleSmall {
   position: absolute;
-  right: -40px;
-  top: 128px;
-  width: 160px;
-  height: 160px;
+  right: rem(-40);
+  top: rem(130);
+  width: rem(160);
+  height: rem(160);
   border-radius: v(radius-full);
+  border: rem(1) solid color-mix(in srgb, v(tg-blue) 20%, transparent);
   pointer-events: none;
-  border: 1px solid color-mix(in srgb, v(tg-blue) 20%, transparent); // Translates hex 33
 }

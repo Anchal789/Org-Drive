@@ -1,19 +1,20 @@
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
+import styles from './NotFound.module.scss';
 
 export default function NotFound() {
   return (
-    <div className='flex min-h-[100dvh] flex-col items-center justify-center bg-background px-4 py-12 sm:px-6 lg:px-8'>
-      <div className='mx-auto flex max-w-md flex-col items-center justify-center text-center'>
+    <div className={styles.wrapper}>
+      <div className={styles.container}>
         {/* Optional: A subtle background accent or icon */}
-        <div className='flex h-24 w-24 items-center justify-center rounded-full bg-muted/50'>
+        <div className={styles.iconWrapper}>
           <svg
             xmlns='http://www.w3.org/2000/svg'
             fill='none'
             viewBox='0 0 24 24'
             strokeWidth={1.5}
             stroke='currentColor'
-            className='h-12 w-12 text-muted-foreground'
+            className={styles.icon}
             aria-hidden='true'
           >
             <path
@@ -24,25 +25,21 @@ export default function NotFound() {
           </svg>
         </div>
 
-        <h1 className='mt-6 text-5xl font-extrabold tracking-tight text-foreground sm:text-6xl'>
-          404
-        </h1>
+        <h1 className={styles.title}>404</h1>
 
-        <h2 className='mt-4 text-2xl font-semibold tracking-tight text-foreground sm:text-3xl'>
-          Page not found
-        </h2>
+        <h2 className={styles.subtitle}>Page not found</h2>
 
-        <p className='mt-4 text-muted-foreground'>
-          Oops! It seems you've wandered into an unknown directory. The page or
-          file you are looking for doesn't exist or has been moved.
+        <p className={styles.description}>
+          Oops! It seems you&apos;ve wandered into an unknown directory. The
+          page or file you are looking for doesn&apos;t exist or has been moved.
         </p>
 
-        <div className='mt-8 flex w-full flex-col gap-3 sm:flex-row sm:justify-center'>
-          <Button asChild variant='default' className='w-full sm:w-auto'>
+        <div className={styles.actionGroup}>
+          <Button asChild variant='default' className={styles.actionButton}>
             <Link href='/my-drive'>Go to My Drive</Link>
           </Button>
 
-          <Button asChild variant='outline' className='w-full sm:w-auto'>
+          <Button asChild variant='outline' className={styles.actionButton}>
             <Link href='/'>Return Home</Link>
           </Button>
         </div>

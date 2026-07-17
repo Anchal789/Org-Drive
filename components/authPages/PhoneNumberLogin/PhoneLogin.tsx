@@ -77,15 +77,20 @@ export default function PhoneLogin() {
     if (!isValid) return;
 
     const targetNumber = fullNumber(payload.dialCode, payload.phoneNumber);
-    const data = await requestOtp(targetNumber);
 
-    if (data.success) {
-      toast.success('OTP sent successfully');
-      router.push(`/verify-otp?phone=${encrypt(targetNumber)}`);
-    } else {
-      toast.error(
-        typeof data.error === 'string' ? data.error : 'Failed to send OTP',
-      );
+    try {
+      const data = await requestOtp(targetNumber);
+      if (data.success) {
+        toast.success('OTP sent successfully');
+        router.push(`/verify-otp?phone=${encrypt(targetNumber)}`);
+      } else {
+        toast.error(
+          typeof data.error === 'string' ? data.error : 'Failed to send OTP',
+        );
+      }
+    } catch (err) {
+      const errMsg = err instanceof Error ? err.message : String(err);
+      toast.error(errMsg);
     }
   };
 

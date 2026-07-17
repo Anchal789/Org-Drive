@@ -2,13 +2,13 @@
 @use "../../../styles/mixins" as *;
 
 .formWrapper {
-  @include flex(column, stretch, flex-start, 18px);
+  @include flex(column, stretch, flex-start, v(space-4-5));
   width: 100%;
 }
 
 .label {
   font-size: 11px;
-  font-weight: 500; // v(weight-medium)
+  font-weight: 500;
   color: v(foreground);
   margin-bottom: 6px;
   display: block;
@@ -16,15 +16,15 @@
 
 .inputGroup {
   @include flex(row, center, flex-start);
-  border-radius: v(radius-md); // Overrides to default radius-md from Figma HTML
+  border-radius: v(radius-md);
   overflow: hidden;
-  border: 1.5px solid v(border); // Thicker 1.5px border
+  border: 1.5px solid v(border);
   background: v(background);
   @include transition(all, 150ms);
 
   &:focus-within {
-    border-color: v(tg-blue); // Telegram Blue
-    box-shadow: rgba(34, 158, 217, 0.133) 0px 0px 0px 3px; // Native Figma Focus Ring
+    border-color: v(tg-blue);
+    box-shadow: 0 0 0 3px color-mix(in oklch, var(--ring) 25%, transparent);
     outline: none;
   }
 }
@@ -40,7 +40,6 @@
   font-size: 13px;
   font-weight: v(weight-medium);
 
-  /* Increase hit area specifically for Mobile */
   @media (max-width: 768px) {
     height: 48px;
     font-size: 14px;
@@ -123,7 +122,7 @@
   gap: 8px;
 
   @media (max-width: 768px) {
-    height: 44px; // Exact match to Figma HTML snippet
+    height: 44px;
     font-size: 14px;
     font-weight: 600;
   }

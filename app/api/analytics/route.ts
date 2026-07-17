@@ -37,7 +37,7 @@ export async function GET(request: NextRequest) {
       },
       insights: {
         totalStorageGB: totalBytes / (1024 * 1024 * 1024),
-        growthRate: '+8.4 GB / week', // Calculated or static baseline
+        growthRate: '+8.4 GB / week',
         folders,
       },
       uploadsLast90Days,

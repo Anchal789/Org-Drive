@@ -230,7 +230,7 @@
 }
 
 .card {
-  padding: 18px;
+  padding: v(space-4-5);
   border: 1px solid v(border);
   border-radius: v(radius-xl);
   background: v(card);
@@ -285,7 +285,7 @@
 .donutWrapper {
   display: flex;
   align-items: center;
-  gap: 18px;
+  gap: v(space-4-5);
 }
 
 .donutChart {
@@ -344,7 +344,7 @@
   color: v(muted-foreground);
   text-transform: uppercase;
   letter-spacing: 0.04em;
-  padding: 8px 18px 0;
+  padding: 8px v(space-4-5) 0;
 
   @media (max-width: 768px) {
     display: block;
@@ -516,7 +516,7 @@
 
 .listGrid {
   margin: 14px 28px;
-  padding: 18px;
+  padding: v(space-4-5);
   border: 1px solid v(border);
   border-radius: v(radius-xl);
   background: v(card);
