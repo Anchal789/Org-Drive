@@ -1,6 +1,6 @@
 'use client';
 
-import { useRouter } from 'next/navigation';
+import { usePathname, useRouter } from 'next/navigation';
 import { type FunctionComponent, useEffect, useState } from 'react';
 import { Button } from '@/components/ui/button';
 import {
@@ -41,6 +41,8 @@ const MoveModal: FunctionComponent<{
 
   const router = useRouter();
 
+  const pathName = usePathname();
+
   const [currentFolderId] = useState<string | null>(() => {
     if (typeof window === 'undefined') return null;
     const urlSearchParams = new URLSearchParams(window.location.search);
@@ -50,7 +52,7 @@ const MoveModal: FunctionComponent<{
   const handleMove = async () => {
     const folderIdStr = String(selectedFolder);
     const filesId = files.map((file) => file.id);
-    const response = await moveFile(filesId, folderIdStr);
+    const response = await moveFile(filesId, folderIdStr, pathName);
 
     if (response.success) {
       closeModal();

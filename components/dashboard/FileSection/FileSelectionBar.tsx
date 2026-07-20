@@ -1,7 +1,7 @@
 'use client';
 
 import { Download, Folder, Share, Sparkle, Tag, Trash2, X } from 'lucide-react';
-import { useRouter } from 'next/navigation';
+import { usePathname, useRouter } from 'next/navigation';
 import { useState } from 'react';
 import AlertModal from '@/components/ui/alert-modal';
 import { Button } from '@/components/ui/button';
@@ -38,6 +38,8 @@ export default function FileSelectionBar({
   const [openDeleteDialog, setOpenDeleteDialog] = useState<boolean>(false);
 
   const router = useRouter();
+
+  const pathName = usePathname();
 
   const selectedCount = selectedFiles.length;
   const isAllSelected = selectedCount === fileCount;
@@ -82,6 +84,7 @@ export default function FileSelectionBar({
             selectedFileObjects: selectedFiles,
             router,
             handleCloseAlertDialog,
+            pathName,
           })
         }
         onCancel={() => setOpenDeleteDialog(false)}
@@ -155,6 +158,7 @@ export default function FileSelectionBar({
                 selectedFileObjects: selectedFiles,
                 router,
                 clearSelection,
+                pathName,
               });
             }}
           >

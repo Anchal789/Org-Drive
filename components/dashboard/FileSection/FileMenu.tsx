@@ -78,6 +78,7 @@ const FileMenu: FunctionComponent<{
         folder={undefined}
         renameOpen={renameOpen}
         setRenameOpen={setRenameOpen}
+        pathName={pathName}
       />
       <DropdownMenu>
         <DropdownMenuTrigger asChild className={styles.dropdownTrigger}>

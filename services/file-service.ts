@@ -124,10 +124,14 @@ export const bookmarkItem = async (
   return response;
 };
 
-export const moveFile = async (filesId: number[], folderId: string) => {
+export const moveFile = async (
+  filesId: number[],
+  folderId: string,
+  pathName?: string,
+) => {
   const response = await postData({
     url: '/api/move-file',
-    payload: { filesId, folderId: Number(folderId) },
+    payload: { filesId, folderId: Number(folderId), pathName },
   });
 
   if (response.success) {
@@ -141,10 +145,11 @@ export const moveFile = async (filesId: number[], folderId: string) => {
 export const bookmarkMultiple = async (
   items: { id: number; isFile: boolean; shared: boolean }[],
   bookmarkState: boolean,
+  pathName?: string,
 ) => {
   const response = await postData({
     url: '/api/bookmark/all',
-    payload: { items, bookmarkState },
+    payload: { items, bookmarkState, pathName },
   });
 
   if (response.success) {
@@ -157,10 +162,11 @@ export const bookmarkMultiple = async (
 
 export const deleteMultiple = async (
   items: { id: number; isFile: boolean; shared: boolean }[],
+  pathName?: string,
 ) => {
   const response = await postData({
     url: '/api/file/delete-multiple',
-    payload: { items },
+    payload: { items, pathName },
   });
 
   if (response.success) {

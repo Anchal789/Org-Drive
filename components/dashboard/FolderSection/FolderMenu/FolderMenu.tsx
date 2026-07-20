@@ -55,7 +55,7 @@ const FolderMenu = ({
   };
 
   const handleDelete = async () => {
-    const response = await trashFolder(folder.id, folder.shareId);
+    const response = await trashFolder(folder.id, folder.shareId, pathName);
     if (response?.success) {
       router.refresh();
       setOpenDeleteDialog(false);
@@ -79,6 +79,7 @@ const FolderMenu = ({
         folder={folder}
         renameOpen={renameOpen}
         setRenameOpen={setRenameOpen}
+        pathName={pathName}
       />
       <DropdownMenu>
         <DropdownMenuTrigger asChild>

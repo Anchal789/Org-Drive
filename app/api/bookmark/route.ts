@@ -26,7 +26,10 @@ export async function POST(request: NextRequest) {
       return sendError('Failed to bookmark item', 500);
     }
 
-    revalidatePath(pathName);
+    if (pathName) {
+      revalidatePath(pathName);
+    }
+
     return sendSuccess(
       null,
       `${isFile ? 'File' : 'Folder'} ${bookmark ? 'bookmarked' : 'unbookmarked'}`,

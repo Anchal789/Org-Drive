@@ -103,7 +103,9 @@ export async function POST(request: NextRequest) {
           });
       }
 
-      revalidatePath(pathName);
+      if (pathName) {
+        revalidatePath(pathName);
+      }
       return sendSuccess(null, 'Multiple files shared successfully', 200);
     } catch {
       return sendError('Failed to process bulk sharing', 500);
@@ -205,7 +207,8 @@ export async function POST(request: NextRequest) {
           void 0;
         });
     }
-    revalidatePath(pathName);
+
+    if (pathName) revalidatePath(pathName);
 
     return sendSuccess(
       null,

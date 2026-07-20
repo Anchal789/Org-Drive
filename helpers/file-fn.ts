@@ -7,10 +7,12 @@ export const handleDeleteMultiple = async ({
   selectedFileObjects,
   router,
   handleCloseAlertDialog,
+  pathName,
 }: {
   selectedFileObjects: Array<UploadedFile & { shareId?: number }>;
   router: AppRouterInstance;
   handleCloseAlertDialog: () => void;
+  pathName: string;
 }) => {
   const payloadItems = selectedFileObjects.map((f) => ({
     id: f.shareId ? f.shareId : f.id,
@@ -18,7 +20,7 @@ export const handleDeleteMultiple = async ({
     shared: !!f.shareId || false,
   }));
 
-  const response = await deleteMultiple(payloadItems);
+  const response = await deleteMultiple(payloadItems, pathName);
 
   if (response?.success) {
     handleCloseAlertDialog();
@@ -30,10 +32,12 @@ export const handleBookmarMultiple = async ({
   selectedFileObjects,
   router,
   clearSelection,
+  pathName,
 }: {
   selectedFileObjects: Array<UploadedFile & { shareId?: number }>;
   router: AppRouterInstance;
   clearSelection: () => void;
+  pathName: string;
 }) => {
   if (selectedFileObjects.length === 0) return;
   const allAreBookmarked = selectedFileObjects.every((f) => f.bookmark);
@@ -64,7 +68,7 @@ export const handleBookmarMultiple = async ({
   }));
 
   // 6. CALL API
-  const response = await bookmarkMultiple(payloadItems, targetState);
+  const response = await bookmarkMultiple(payloadItems, targetState, pathName);
 
   if (response?.success) {
     router.refresh();
