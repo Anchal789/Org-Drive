@@ -103,10 +103,17 @@ export const bookmarkItem = async (
   id: number,
   isFile: boolean,
   bookmark: boolean,
+  pathName?: string,
 ) => {
   const response = await postData({
     url: '/api/bookmark',
-    payload: { id: encrypt(`${id}`), isFile, bookmark, shared: false },
+    payload: {
+      id: encrypt(`${id}`),
+      isFile,
+      bookmark,
+      shared: false,
+      pathName,
+    },
   });
 
   if (response.success) {

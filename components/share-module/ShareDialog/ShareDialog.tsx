@@ -1,5 +1,6 @@
 'use client';
 
+import { usePathname } from 'next/navigation';
 import type { Dispatch, SetStateAction } from 'react';
 import { useEffect, useReducer } from 'react';
 import { toast } from 'sonner';
@@ -47,6 +48,7 @@ export default function ShareDialog({
     });
 
   const debouncedSearchTerm = useDebounce(searchTerm, 300);
+  const pathName = usePathname();
 
   const isMultiShare = Array.isArray(files) && files.length > 1;
 
@@ -148,6 +150,7 @@ export default function ShareDialog({
           file: actualFile,
           folder,
           files: isMultiShare ? files : undefined,
+          pathName,
         },
       });
 
@@ -298,7 +301,9 @@ export default function ShareDialog({
             onCancel?.();
           }}
           onSubmit={handleInviteUser}
-          submitLabel={usersToInvite.length > 0 ? 'Send invite' : 'Save changes'}
+          submitLabel={
+            usersToInvite.length > 0 ? 'Send invite' : 'Save changes'
+          }
         />
       </div>
     </div>

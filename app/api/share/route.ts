@@ -1,3 +1,4 @@
+import { revalidatePath } from 'next/cache';
 import type { NextRequest } from 'next/server';
 import { db } from '@/db';
 import { recentTable } from '@/db/schema';
@@ -15,7 +16,7 @@ export async function POST(request: NextRequest) {
   }
   const actorId = Number(session.userId);
 
-  const { usersToInvite, usersWithAccess, file, folder, files } =
+  const { usersToInvite, usersWithAccess, file, folder, files, pathName } =
     (await request.json()) as ShareApiRequestBody;
 
   const isMultiShare = Array.isArray(files) && files.length > 1;
@@ -102,6 +103,7 @@ export async function POST(request: NextRequest) {
           });
       }
 
+      revalidatePath(pathName);
       return sendSuccess(null, 'Multiple files shared successfully', 200);
     } catch {
       return sendError('Failed to process bulk sharing', 500);
@@ -203,6 +205,7 @@ export async function POST(request: NextRequest) {
           void 0;
         });
     }
+    revalidatePath(pathName);
 
     return sendSuccess(
       null,

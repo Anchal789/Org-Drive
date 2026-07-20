@@ -16,10 +16,14 @@ export const trashSharedFile = async (id: number) => {
   return response;
 };
 
-export const bookmarkSharedItem = async (id: number, bookmark: boolean) => {
+export const bookmarkSharedItem = async (
+  id: number,
+  bookmark: boolean,
+  pathName?: string,
+) => {
   const response = await postData({
     url: '/api/bookmark',
-    payload: { id: encrypt(String(id)), bookmark, shared: true },
+    payload: { id: encrypt(String(id)), bookmark, shared: true, pathName },
   });
   if (response.success) {
     toast.success(response.message);

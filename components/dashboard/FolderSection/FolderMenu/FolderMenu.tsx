@@ -9,7 +9,7 @@ import {
   Trash2,
   UserMinus,
 } from 'lucide-react';
-import { useRouter } from 'next/navigation';
+import { usePathname, useRouter } from 'next/navigation';
 import { useState } from 'react';
 import RenameItem from '@/components/rename/RenameIterm';
 import AlertModal from '@/components/ui/alert-modal';
@@ -39,11 +39,16 @@ const FolderMenu = ({
   const router = useRouter();
   const [renameOpen, setRenameOpen] = useState<boolean>(false);
   const [openDeleteDialog, setOpenDeleteDialog] = useState<boolean>(false);
+  const pathName = usePathname();
 
   const handleBookmark = async () => {
     const response = folder.shareId
-      ? await bookmarkSharedItem(folder.shareId as number, !folder.bookmark)
-      : await bookmarkItem(folder.id, false, !folder.bookmark);
+      ? await bookmarkSharedItem(
+          folder.shareId as number,
+          !folder.bookmark,
+          pathName,
+        )
+      : await bookmarkItem(folder.id, false, !folder.bookmark, pathName);
     if (response?.success) {
       router.refresh();
     }
