@@ -14,6 +14,7 @@ import SearchBar from '../dashboard/DriveCrumb/SearchBar';
 import { Button } from '../ui/button';
 import { Popover, PopoverContent, PopoverTrigger } from '../ui/popover';
 import { Separator } from '../ui/separator';
+import { SidebarTrigger } from '../ui/sidebar';
 import DarkModeBtn from './DarkModeBtn';
 import DriveTopbarMobile from './DriveTopBarMobile';
 import styles from './DriveTopbar.module.scss';
@@ -36,6 +37,7 @@ export default async function DriveTopbar({
   const totalSize = filesize.reduce((a, b) => a + b.size, 0);
   return (
     <div className={styles.topbar}>
+      <SidebarTrigger />
       {!isMobile ? <SearchBar variant='desktop' /> : <DriveTopbarMobile />}
       <div className={styles.spacer} />
       {!isMobile && <Bell size={18} className={styles.icon} />}
