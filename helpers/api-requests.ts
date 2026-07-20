@@ -38,6 +38,7 @@ const customFetch = async (
   if (!isFormData && !headers.has('Content-Type')) {
     headers.set('Content-Type', 'application/json');
   }
+  headers.set('cache-control', 'no-cache');
   if (accessToken) {
     headers.set('Authorization', `Bearer ${accessToken}`);
   }
