@@ -1,3 +1,4 @@
+import { revalidatePath } from 'next/cache';
 import type { NextRequest } from 'next/server';
 import { Api } from 'telegram';
 import { computeCheck } from 'telegram/Password';
@@ -76,6 +77,8 @@ export async function POST(request: NextRequest) {
         String(dbUser.username),
         String(dbUser.photoUrl),
       );
+
+      revalidatePath('/my-drive');
 
       return sendSuccess(
         {

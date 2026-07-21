@@ -7,20 +7,26 @@ export const renameItem = async (
   newName: string,
   isFile: boolean,
   shareId?: number,
+  pathName?: string,
 ) => {
   const response = await postData({
     url: `/api/rename/${isFile ? 'file' : 'folder'}`,
-    payload: { id, newName, shareId },
+    payload: { id, newName, shareId, pathName },
   });
   return response;
 };
 
-export const trashFolder = async (id: number, shareId?: number) => {
+export const trashFolder = async (
+  id: number,
+  shareId?: number,
+  pathName?: string,
+) => {
   const response = await deleteData({
     url: '/api/folder/delete',
     params: {
       id: encrypt(String(id)),
       shareId: encrypt(String(shareId)),
+      pathName,
     },
   });
 

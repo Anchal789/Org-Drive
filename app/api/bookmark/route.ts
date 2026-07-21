@@ -1,3 +1,4 @@
+import { revalidatePath } from 'next/cache';
 import type { NextRequest } from 'next/server';
 import { sendError, sendSuccess } from '@/lib/api-response';
 import { getApiSession } from '@/lib/session';
@@ -8,7 +9,7 @@ export async function POST(request: NextRequest) {
   const session = await getApiSession(request);
 
   if (!session?.userId) return sendError('Unauthorized', 401);
-  const { id, isFile, bookmark, shared } = await request.json();
+  const { id, isFile, bookmark, shared, pathName } = await request.json();
 
   if (!id) {
     return sendError('Missing id', 400);
@@ -23,6 +24,10 @@ export async function POST(request: NextRequest) {
 
     if (!response) {
       return sendError('Failed to bookmark item', 500);
+    }
+
+    if (pathName) {
+      revalidatePath(pathName);
     }
 
     return sendSuccess(

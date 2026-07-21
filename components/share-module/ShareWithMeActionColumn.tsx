@@ -7,7 +7,7 @@ import {
   Share,
   Trash2,
 } from 'lucide-react';
-import { useRouter } from 'next/navigation';
+import { usePathname, useRouter } from 'next/navigation';
 import { type FunctionComponent, useState } from 'react';
 import { downloadFile } from '@/services/file-service';
 import { trashSharedFile } from '@/services/shared-with-me-service';
@@ -34,6 +34,8 @@ const ShareWithMeActionColumn: FunctionComponent<{
   const router = useRouter();
   const [renameOpen, setRenameOpen] = useState<boolean>(false);
   const [openDeleteDialog, setOpenDeleteDialog] = useState<boolean>(false);
+
+  const pathName = usePathname();
 
   const handleDelete = async () => {
     const response = await trashSharedFile(props.id);
@@ -93,6 +95,7 @@ const ShareWithMeActionColumn: FunctionComponent<{
           folder={targetFolder}
           renameOpen={renameOpen}
           setRenameOpen={setRenameOpen}
+          pathName={pathName}
         />
       )}
 

@@ -1,3 +1,4 @@
+import { revalidatePath } from 'next/cache';
 import type { NextRequest } from 'next/server';
 import { sendError, sendSuccess } from '@/lib/api-response';
 import { getApiSession } from '@/lib/session';
@@ -8,6 +9,9 @@ export async function DELETE(request: NextRequest) {
   const session = await getApiSession(request);
 
   if (!session?.userId) return sendError('Unauthorized', 401);
+
+  const { pathName } = await request.json();
+
   const url = new URL(request.url);
   const id = decrypt(url.searchParams.get('id') || '');
   const shareId = decrypt(url.searchParams.get('shareId') || '');
@@ -21,6 +25,10 @@ export async function DELETE(request: NextRequest) {
     );
 
     if (!deletedFolder) return sendError('Folder not found', 400);
+
+    if (pathName) {
+      revalidatePath(pathName);
+    }
     return sendSuccess(null, 'Folder moved to trash.', 200);
   } catch (err: unknown) {
     const errMsg = err instanceof Error ? err.message : String(err);

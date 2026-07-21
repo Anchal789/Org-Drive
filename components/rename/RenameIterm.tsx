@@ -33,7 +33,8 @@ const RenameItem: FunctionComponent<{
   folder?: UploadedFolder;
   setRenameOpen: Dispatch<SetStateAction<boolean>>;
   renameOpen: boolean;
-}> = ({ file, folder, setRenameOpen, renameOpen }) => {
+  pathName?: string;
+}> = ({ file, folder, setRenameOpen, renameOpen, pathName }) => {
   const router = useRouter();
   const [newNameState, setNewNameState] = useState<{
     name: string;
@@ -77,6 +78,7 @@ const RenameItem: FunctionComponent<{
       finalName,
       !!file?.id,
       file?.shareId,
+      pathName,
     );
 
     if (response.success) {

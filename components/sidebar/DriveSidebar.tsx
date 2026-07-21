@@ -3,6 +3,7 @@ import {
   SidebarContent,
   SidebarFooter,
   SidebarHeader,
+  SidebarRail,
 } from '@/components/ui/sidebar';
 import { getSessionUser } from '@/lib/session';
 import { uploadedFilesRepository } from '@/repositories/uploaded-files.respository';
@@ -13,7 +14,6 @@ import { OrgPill } from './OrgPill';
 import { StorageCard } from './SidebarFooter';
 import SidebarItem from './SidebarItem';
 import { SidebarSection } from './SidebarSection';
-import { SidebarToggleButton } from './SidebarToggleButton';
 
 const OPTIONAL_ITEMS: SidebarItemProps[] = [
   {
@@ -70,14 +70,15 @@ export default async function DriveSidebar({
 
   return (
     <Sidebar collapsible='icon' className={styles.sidebar}>
-      {/* 1. Wrap top elements in SidebarHeader */}
+      {/* <div className={styles.sidebarToggleButton}>
+        <SidebarTrigger />
+      </div> */}
       <SidebarHeader className={styles.sidebarHeader}>
-        <SidebarToggleButton />
+        {/* <SidebarToggleButton /> */}
         <OrgPill />
         <NewItemButton />
       </SidebarHeader>
 
-      {/* 2. Content wrapper stays the same */}
       <SidebarContent className={styles.contentReset}>
         <nav className={styles.nav}>
           {MAIN_ITEMS.map((item) => (
@@ -88,8 +89,8 @@ export default async function DriveSidebar({
         <SidebarSection label='AI (optional)' items={OPTIONAL_ITEMS} />
         <SidebarSection label='Admin' items={ADMIN_ITEMS} />
       </SidebarContent>
+      <SidebarRail />
 
-      {/* 3. Wrap bottom elements in SidebarFooter */}
       <SidebarFooter className={styles.footerReset}>
         <StorageCard totalSize={totalSize} />
       </SidebarFooter>
