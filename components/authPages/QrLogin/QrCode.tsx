@@ -12,6 +12,7 @@ import {
 } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
+import { Skeleton } from '@/components/ui/skeleton';
 import { useCountdown } from '@/hooks/use-countdown';
 import { postData } from '@/lib/api-fn';
 import {
@@ -252,7 +253,9 @@ export default function QrCode() {
     <>
       <div className={styles.wrapper}>
         <div className={styles.qrContainer}>
-          {state.status === 'loading' && <div className={styles.skeleton} />}
+          {state.status === 'loading' && (
+            <Skeleton className={styles.qrImage} />
+          )}
 
           {state.status === 'waiting' && state.qrDataUrl && (
             <Image
