@@ -10,7 +10,7 @@ import {
   Trash2,
 } from 'lucide-react';
 import dynamic from 'next/dynamic';
-import { useRouter } from 'next/navigation';
+import { usePathname, useRouter } from 'next/navigation';
 import type { FunctionComponent } from 'react';
 import { useEffect, useMemo, useState } from 'react';
 import AlertModal from '@/components/ui/alert-modal';
@@ -60,6 +60,7 @@ const FileTable: FunctionComponent<{
   const [openDeleteDialog, setOpenDeleteDialog] = useState<boolean>(false);
 
   const router = useRouter();
+  const pathName = usePathname();
 
   const columns: ColumnDef<UploadedFile>[] = [
     {
@@ -186,6 +187,7 @@ const FileTable: FunctionComponent<{
             selectedFileObjects,
             router,
             handleCloseAlertDialog,
+            pathName,
           })
         }
         onCancel={() => setOpenDeleteDialog(false)}
@@ -283,6 +285,7 @@ const FileTable: FunctionComponent<{
                     selectedFileObjects,
                     router,
                     clearSelection,
+                    pathName,
                   });
                 }}
               >

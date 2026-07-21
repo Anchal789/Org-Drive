@@ -20,6 +20,7 @@ export type ShareApiRequestBody = {
   file?: ShareApiItemRef | null;
   folder?: ShareApiItemRef | null;
   files?: ShareApiItemRef[];
+  pathName?: string;
 };
 
 export type ShareState = {

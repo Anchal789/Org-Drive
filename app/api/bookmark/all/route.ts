@@ -1,3 +1,4 @@
+import { revalidatePath } from 'next/cache';
 import type { NextRequest } from 'next/server';
 import { sendError, sendSuccess } from '@/lib/api-response';
 import { getApiSession } from '@/lib/session';
@@ -8,7 +9,7 @@ export async function POST(request: NextRequest) {
 
   if (!session?.userId) return sendError('Unauthorized', 401);
   try {
-    const { items, bookmarkState } = await request.json();
+    const { items, bookmarkState, pathName } = await request.json();
 
     if (!items || !Array.isArray(items)) {
       return sendError('Invalid payload', 400);
@@ -16,6 +17,9 @@ export async function POST(request: NextRequest) {
 
     await bookmarkRepository.bookmarkMultipleItems(items, bookmarkState);
 
+    if (pathName) {
+      revalidatePath(pathName);
+    }
     return sendSuccess(
       null,
       `${items.length > 1 ? 'Items' : 'Item'} ${bookmarkState ? 'bookmarked' : 'unbookmarked'} successfully`,

@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { toast } from 'sonner';
 import type { UploadedFile, UploadedFolder } from '@/types/files';
 
@@ -89,6 +89,19 @@ export default function DriveDataHandler({
     setFolderOffset(30);
     setHasMoreFolders(true);
   };
+
+  useEffect(() => {
+    setLocalFiles((prevFiles) => {
+      const serverMap = new Map(files.map((f) => [f.id, f]));
+      const updatedFiles = prevFiles.map((prevFile) =>
+        serverMap.has(prevFile.id) ? serverMap.get(prevFile.id)! : prevFile,
+      );
+      const existingIds = new Set(prevFiles.map((f) => f.id));
+      const brandNewFiles = files.filter((f) => !existingIds.has(f.id));
+
+      return [...brandNewFiles, ...updatedFiles];
+    });
+  }, [files]);
 
   return (
     <>

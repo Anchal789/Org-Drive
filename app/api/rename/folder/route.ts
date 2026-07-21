@@ -1,3 +1,4 @@
+import { revalidatePath } from 'next/cache';
 import type { NextRequest } from 'next/server';
 import { sendError, sendSuccess } from '@/lib/api-response';
 import { getApiSession } from '@/lib/session';
@@ -8,7 +9,7 @@ export async function POST(request: NextRequest) {
 
   if (!session?.userId) return sendError('Unauthorized', 401);
 
-  const { id, newName } = await request.json();
+  const { id, newName, pathName } = await request.json();
   if (!id) {
     return sendError('Missing id', 400);
   }
@@ -24,6 +25,10 @@ export async function POST(request: NextRequest) {
     );
     if (!response) {
       return sendError('Failed to rename item', 500);
+    }
+
+    if (pathName) {
+      revalidatePath(pathName);
     }
     return sendSuccess(null, 'Folder renamed successfully', 200);
   } catch (error) {

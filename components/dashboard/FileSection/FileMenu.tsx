@@ -9,7 +9,7 @@ import {
   Trash2,
   UserMinus,
 } from 'lucide-react';
-import { useRouter } from 'next/navigation';
+import { usePathname, useRouter } from 'next/navigation';
 import { type FunctionComponent, useState } from 'react';
 import RenameItem from '@/components/rename/RenameIterm';
 import AlertModal from '@/components/ui/alert-modal';
@@ -36,6 +36,8 @@ const FileMenu: FunctionComponent<{
   const [renameOpen, setRenameOpen] = useState<boolean>(false);
   const [openDeleteDialog, setOpenDeleteDialog] = useState<boolean>(false);
 
+  const pathName = usePathname();
+
   const handleDelete = async () => {
     const response = await trashFile(file.id, file.shareId);
     if (response?.success) {
@@ -46,8 +48,12 @@ const FileMenu: FunctionComponent<{
 
   const handleBookmark = async () => {
     const response = file.shareId
-      ? await bookmarkSharedItem(file.shareId as number, !file.bookmark)
-      : await bookmarkItem(file.id, true, !file.bookmark);
+      ? await bookmarkSharedItem(
+          file.shareId as number,
+          !file.bookmark,
+          pathName,
+        )
+      : await bookmarkItem(file.id, true, !file.bookmark, pathName);
     if (response?.success) {
       router.refresh();
     }
@@ -72,6 +78,7 @@ const FileMenu: FunctionComponent<{
         folder={undefined}
         renameOpen={renameOpen}
         setRenameOpen={setRenameOpen}
+        pathName={pathName}
       />
       <DropdownMenu>
         <DropdownMenuTrigger asChild className={styles.dropdownTrigger}>

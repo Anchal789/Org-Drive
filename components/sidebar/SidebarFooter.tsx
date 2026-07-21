@@ -12,13 +12,17 @@ export function StorageCard({ totalSize }: { totalSize: number }) {
   return (
     <SidebarFooter className={styles.footerReset}>
       <div className={styles.storage} data-hide-collapsed>
-        <Ring pct={64} size={44} color='var(--primary)' />
+        <Ring
+          pct={totalSize / 1024 / 1024 / 1024}
+          size={44}
+          color='var(--primary)'
+        />
         <div className={styles.storageInfo}>
           <div className={styles.storageLabel}>Telegram channel</div>
           <div className={styles.storageUsed}>
             {formatBytes(totalSize)} used
           </div>
-          <div className={styles.storageCap}>of effectively ∞</div>
+          <div className={styles.storageCap}>of 1TB</div>
         </div>
       </div>
     </SidebarFooter>
