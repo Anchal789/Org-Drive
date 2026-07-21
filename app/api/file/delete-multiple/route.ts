@@ -1,13 +1,13 @@
 import { revalidatePath } from 'next/cache';
+import { NextResponse } from 'next/server';
 import type { NextRequest } from 'next/server';
 import { sendError, sendSuccess } from '@/lib/api-response';
-import { getApiSession } from '@/lib/session';
-import { uploadedFilesRepository } from '@/repositories/uploaded-files.respository';
+import { requireApiSession } from '@/lib/require-auth';
+import { uploadedFilesRepository } from '@/repositories/uploaded-files.repository';
 
 export async function POST(request: NextRequest) {
-  const session = await getApiSession(request);
-
-  if (!session?.userId) return sendError('Unauthorized', 401);
+  const session = await requireApiSession(request);
+  if (session instanceof NextResponse) return session;
 
   try {
     const { items, pathName } = await request.json();
@@ -16,7 +16,10 @@ export async function POST(request: NextRequest) {
       return sendError('No items provided for deletion', 400);
     }
 
-    await uploadedFilesRepository.deleteMultipleItems(items);
+    await uploadedFilesRepository.deleteMultipleItems(
+      items,
+      Number(session.userId),
+    );
 
     if (pathName) {
       revalidatePath(pathName);

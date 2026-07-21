@@ -67,11 +67,16 @@ export const uploadedFoldersRepository = {
       .limit(limit)
       .offset(offset);
   },
-  async deleteFolder(id: number, shareId: number) {
+  async deleteFolder(id: number, shareId: number, actorId: number) {
     if (shareId) {
       return await db
         .delete(sharedItemsTable)
-        .where(eq(sharedItemsTable.id, shareId));
+        .where(
+          and(
+            eq(sharedItemsTable.id, shareId),
+            eq(sharedItemsTable.sharedWithUserId, actorId),
+          ),
+        );
     }
 
     const [folder] = await db
@@ -80,7 +85,12 @@ export const uploadedFoldersRepository = {
         userId: uploadFoldersTable.userId,
       })
       .from(uploadFoldersTable)
-      .where(eq(uploadFoldersTable.id, id));
+      .where(
+        and(
+          eq(uploadFoldersTable.id, id),
+          eq(uploadFoldersTable.userId, actorId),
+        ),
+      );
 
     if (!folder) return null;
     const softDeletedFiles = await db
@@ -208,11 +218,59 @@ export const uploadedFoldersRepository = {
       );
     return folders;
   },
-  async renameFolder(id: number, newName: string) {
+  async renameFolder(id: number, newName: string, actorId: number) {
+    const [existingShare] = await db
+      .select({ permission: sharedItemsTable.permission })
+      .from(sharedItemsTable)
+      .where(
+        and(
+          eq(sharedItemsTable.folderId, id),
+          eq(sharedItemsTable.sharedWithUserId, actorId),
+        ),
+      );
+    const canEdit =
+      existingShare?.permission === 'editor' ||
+      existingShare?.permission === 'owner';
+
     return await db
       .update(uploadFoldersTable)
       .set({ name: newName })
-      .where(eq(uploadFoldersTable.id, id));
+      .where(
+        and(
+          eq(uploadFoldersTable.id, id),
+          canEdit
+            ? undefined
+            : eq(uploadFoldersTable.userId, actorId),
+        ),
+      );
+  },
+  /** Returns the folder only if `userId` owns it or has an explicit share grant on it. */
+  async getAccessibleFolder(userId: number, id: number) {
+    const [folder] = await db
+      .select({
+        id: uploadFoldersTable.id,
+        userId: uploadFoldersTable.userId,
+        name: uploadFoldersTable.name,
+      })
+      .from(uploadFoldersTable)
+      .leftJoin(
+        sharedItemsTable,
+        and(
+          eq(sharedItemsTable.folderId, uploadFoldersTable.id),
+          eq(sharedItemsTable.sharedWithUserId, userId),
+        ),
+      )
+      .where(
+        and(
+          eq(uploadFoldersTable.id, id),
+          eq(uploadFoldersTable.isDeleted, false),
+          or(
+            eq(uploadFoldersTable.userId, userId),
+            sql`${sharedItemsTable.id} is not null`,
+          ),
+        ),
+      );
+    return folder ?? null;
   },
   async getCountOfFolderSharedWith(folderId: number) {
     const folders = await db
@@ -223,14 +281,9 @@ export const uploadedFoldersRepository = {
     return folders;
   },
   async setFileCount(id: number) {
-    const currentFileCount = await db
-      .select({ fileCount: uploadFoldersTable.fileCount })
-      .from(uploadFoldersTable)
-      .where(eq(uploadFoldersTable.id, id));
-
     return await db
       .update(uploadFoldersTable)
-      .set({ fileCount: currentFileCount[0].fileCount + 1 })
+      .set({ fileCount: sql`${uploadFoldersTable.fileCount} + 1` })
       .where(eq(uploadFoldersTable.id, id));
   },
 };

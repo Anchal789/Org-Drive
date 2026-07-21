@@ -4,43 +4,74 @@ import { StringSession } from 'telegram/sessions';
 import { db } from '@/db';
 import { recentTable } from '@/db/schema';
 import { sendError } from '@/lib/api-response';
+import { decrypt } from '@/lib/crypto';
+import { logger } from '@/lib/logger';
 import { getSessionUser } from '@/lib/session';
-import { decrypt } from '@/lib/utils';
 import { systemSettingsRepository } from '@/repositories/system-settings.repository';
-import { uploadedFilesRepository } from '@/repositories/uploaded-files.respository';
+import { uploadedFilesRepository } from '@/repositories/uploaded-files.repository';
 import type { UploadedFile } from '@/types/files';
 
 const API_ID = Number(process.env.TELEGRAM_APP_API_ID);
 const API_HASH = String(process.env.TELEGRAM_APP_API_HASH);
 const STORAGE_CHANNEL = String(process.env.TELEGRAM_STORAGE_CHANNEL_ID);
 
-export async function POST(request: NextRequest) {
+async function resolveFileAccess(
+  request: NextRequest,
+): Promise<{ fileId: number; actorId: number | null } | null> {
   const { searchParams } = new URL(request.url);
+  const token = searchParams.get('token');
+
+  if (token) {
+    const decrypted = decrypt(token);
+    if (!decrypted) return null;
+
+    try {
+      const payload = JSON.parse(decrypted) as {
+        type?: string;
+        ids?: number[];
+        exp?: number;
+      };
+      if (!payload.exp || Date.now() > payload.exp) return null;
+      if (payload.type !== 'file' && payload.type !== 'multi') return null;
+      const fileId = Number(payload.ids?.[0]);
+      if (!fileId) return null;
+      return { fileId, actorId: null };
+    } catch {
+      return null;
+    }
+  }
+
   const session = await getSessionUser();
+  if (!session?.userId) return null;
 
-  if (!session?.userId && !searchParams.get('fileId'))
-    return sendError('Unauthorized', 401);
+  const fileId = Number(searchParams.get('fileId'));
+  if (!fileId) return null;
 
-  const fileId =
-    decrypt(searchParams.get('token') || '') || searchParams.get('fileId');
-  const requestUserId = searchParams.get('userId');
+  return { fileId, actorId: Number(session.userId) };
+}
 
-  const fileInfo = (
-    await uploadedFilesRepository.getFile(
-      Number(requestUserId || session?.userId),
-      Number(fileId),
-    )
-  )[0] as UploadedFile;
+export async function POST(request: NextRequest) {
+  const access = await resolveFileAccess(request);
+  if (!access) return sendError('Unauthorized', 401);
 
-  if (!fileInfo) return sendError('File not found in database', 404);
+  const fileInfo = access.actorId
+    ? ((await uploadedFilesRepository.getAccessibleFile(
+        access.actorId,
+        access.fileId,
+      )) as UploadedFile | null)
+    : ((await uploadedFilesRepository.getFilesByIds([access.fileId]))[0] as
+        | UploadedFile
+        | undefined);
 
-  const actorId = Number(session?.userId || requestUserId);
+  if (!fileInfo) return sendError('File not found', 404);
+
+  const actorId = access.actorId ?? Number(fileInfo.userId);
   const ownerId = Number(fileInfo.userId);
 
   const logs = [
     {
       userId: actorId,
-      fileId: Number(fileId),
+      fileId: Number(fileInfo.id),
       folderId: Number(fileInfo.folderId),
       action: 'downloaded',
       actionBy: actorId,
@@ -50,7 +81,7 @@ export async function POST(request: NextRequest) {
   if (actorId !== ownerId) {
     logs.push({
       userId: ownerId,
-      fileId: Number(fileId),
+      fileId: Number(fileInfo.id),
       folderId: Number(fileInfo.folderId),
       action: 'downloaded',
       actionBy: actorId,
@@ -143,7 +174,9 @@ export async function POST(request: NextRequest) {
       .insert(recentTable)
       .values(logs)
       .catch((err) => {
-        void err;
+        logger.warn('Failed to record recent-activity log for file download', {
+          error: err instanceof Error ? err.message : String(err),
+        });
       });
     return new Response(stream, {
       headers: {

@@ -54,6 +54,21 @@
   flex: 1;
 }
 
+.emptyState {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  padding: 48px 16px;
+  color: v(muted-foreground);
+  text-align: center;
+  font-size: 13px;
+}
+
+.emptyStateIcon {
+  opacity: 0.5;
+}
+
 .flatHintAction {
   font-size: 11px;
   font-weight: v(weight-medium);

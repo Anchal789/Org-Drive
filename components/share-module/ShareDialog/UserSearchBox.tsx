@@ -10,7 +10,7 @@ import {
 import { InputGroupAddon } from '@/components/ui/input-group';
 import UserAvatar from '@/components/ui/user-avatar';
 import { getAvatarColor } from '@/lib/utils';
-import type { User } from '@/types/auth';
+import type { PublicUser as User } from '@/types/auth';
 import styles from './ShareDialog.module.scss';
 
 interface UserSearchBoxProps {

@@ -4,6 +4,7 @@ import { redirect } from 'next/navigation';
 import { Api, TelegramClient } from 'telegram';
 import { StringSession } from 'telegram/sessions';
 import { logoutAction } from '@/actions/auth-actions';
+import { logger } from '@/lib/logger';
 import { getSessionUser } from '@/lib/session';
 import { userRepository } from '@/repositories/user.repository';
 import type { SessionUser } from './../types/auth';
@@ -35,7 +36,13 @@ export async function logoutUser(user: SessionUser) {
     await client.connect();
     await client.invoke(new Api.auth.LogOut());
   } catch (error) {
-    void error;
+    logger.warn(
+      'Telegram LogOut call failed; local session will still be cleared',
+      {
+        userId: session.userId,
+        error: error instanceof Error ? error.message : String(error),
+      },
+    );
   } finally {
     await client.disconnect();
   }

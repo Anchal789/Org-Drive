@@ -35,7 +35,9 @@ const FileTile: FunctionComponent<{
 
       <div className={styles.info}>
         <div className={styles.name}>{file.name}</div>
-        <div className={styles.meta}>{metaText}</div>
+        <div className={styles.meta} suppressHydrationWarning>
+          {metaText}
+        </div>
       </div>
 
       <div className={styles.actions}>

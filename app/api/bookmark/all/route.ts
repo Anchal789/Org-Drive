@@ -1,13 +1,13 @@
 import { revalidatePath } from 'next/cache';
+import { NextResponse } from 'next/server';
 import type { NextRequest } from 'next/server';
 import { sendError, sendSuccess } from '@/lib/api-response';
-import { getApiSession } from '@/lib/session';
+import { requireApiSession } from '@/lib/require-auth';
 import { bookmarkRepository } from '@/repositories/bookmark.repository';
 
 export async function POST(request: NextRequest) {
-  const session = await getApiSession(request);
-
-  if (!session?.userId) return sendError('Unauthorized', 401);
+  const session = await requireApiSession(request);
+  if (session instanceof NextResponse) return session;
   try {
     const { items, bookmarkState, pathName } = await request.json();
 
@@ -15,7 +15,11 @@ export async function POST(request: NextRequest) {
       return sendError('Invalid payload', 400);
     }
 
-    await bookmarkRepository.bookmarkMultipleItems(items, bookmarkState);
+    await bookmarkRepository.bookmarkMultipleItems(
+      items,
+      bookmarkState,
+      Number(session.userId),
+    );
 
     if (pathName) {
       revalidatePath(pathName);

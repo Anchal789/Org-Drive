@@ -138,18 +138,30 @@ export const uploadedFilesRepository = {
         ),
       );
   },
-  async deleteFile(id: number, shareId: number) {
+  async deleteFile(id: number, shareId: number, actorId: number) {
     if (shareId) {
       return await db
         .delete(sharedItemsTable)
-        .where(eq(sharedItemsTable.id, shareId));
+        .where(
+          and(
+            eq(sharedItemsTable.id, shareId),
+            eq(sharedItemsTable.sharedWithUserId, actorId),
+          ),
+        );
     }
 
     const [deletedFile] = await db
       .update(uploadedFilesTable)
       .set({ isDeleted: true })
-      .where(eq(uploadedFilesTable.id, id))
+      .where(
+        and(
+          eq(uploadedFilesTable.id, id),
+          eq(uploadedFilesTable.userId, actorId),
+        ),
+      )
       .returning();
+
+    if (!deletedFile) return null;
 
     if (deletedFile.folderId) {
       await db
@@ -207,6 +219,81 @@ export const uploadedFilesRepository = {
           eq(uploadedFilesTable.userId, userId),
           eq(uploadedFilesTable.id, id),
           eq(uploadedFilesTable.isDeleted, false),
+        ),
+      );
+  },
+  /** Returns the file only if `userId` owns it or has an explicit share grant on it. */
+  async getAccessibleFile(userId: number, id: number) {
+    const [file] = await db
+      .select({
+        id: uploadedFilesTable.id,
+        userId: uploadedFilesTable.userId,
+        telegramMessageId: uploadedFilesTable.telegramMessageId,
+        documentId: uploadedFilesTable.documentId,
+        accessHash: uploadedFilesTable.accessHash,
+        name: uploadedFilesTable.name,
+        size: uploadedFilesTable.size,
+        mimeType: uploadedFilesTable.mimeType,
+        createdAt: uploadedFilesTable.createdAt,
+        updatedAt: uploadedFilesTable.updatedAt,
+        isDeleted: uploadedFilesTable.isDeleted,
+        folderId: uploadedFilesTable.folderId,
+      })
+      .from(uploadedFilesTable)
+      .leftJoin(
+        sharedItemsTable,
+        and(
+          eq(sharedItemsTable.fileId, uploadedFilesTable.id),
+          eq(sharedItemsTable.sharedWithUserId, userId),
+        ),
+      )
+      .where(
+        and(
+          eq(uploadedFilesTable.id, id),
+          eq(uploadedFilesTable.isDeleted, false),
+          or(
+            eq(uploadedFilesTable.userId, userId),
+            sql`${sharedItemsTable.id} is not null`,
+          ),
+        ),
+      );
+    return file ?? null;
+  },
+  /** Returns only the requested files that `userId` owns or has an explicit share grant on. */
+  async getAccessibleFilesByIds(userId: number, fileIds: number[]) {
+    if (!fileIds || fileIds.length === 0) return [];
+
+    return await db
+      .selectDistinct({
+        id: uploadedFilesTable.id,
+        userId: uploadedFilesTable.userId,
+        telegramMessageId: uploadedFilesTable.telegramMessageId,
+        documentId: uploadedFilesTable.documentId,
+        accessHash: uploadedFilesTable.accessHash,
+        name: uploadedFilesTable.name,
+        size: uploadedFilesTable.size,
+        mimeType: uploadedFilesTable.mimeType,
+        createdAt: uploadedFilesTable.createdAt,
+        updatedAt: uploadedFilesTable.updatedAt,
+        isDeleted: uploadedFilesTable.isDeleted,
+        folderId: uploadedFilesTable.folderId,
+      })
+      .from(uploadedFilesTable)
+      .leftJoin(
+        sharedItemsTable,
+        and(
+          eq(sharedItemsTable.fileId, uploadedFilesTable.id),
+          eq(sharedItemsTable.sharedWithUserId, userId),
+        ),
+      )
+      .where(
+        and(
+          inArray(uploadedFilesTable.id, fileIds),
+          eq(uploadedFilesTable.isDeleted, false),
+          or(
+            eq(uploadedFilesTable.userId, userId),
+            sql`${sharedItemsTable.id} is not null`,
+          ),
         ),
       );
   },
@@ -275,7 +362,12 @@ export const uploadedFilesRepository = {
       db
         .select({ size: trashedTable?.size })
         .from(trashedTable)
-        .where(eq(trashedTable.isDeleted, false)),
+        .where(
+          and(
+            eq(trashedTable.isDeleted, false),
+            eq(trashedTable.userId, userId),
+          ),
+        ),
     ]);
     const totalFiles = [...files, ...deletedFiles];
     return totalFiles;
@@ -292,9 +384,21 @@ export const uploadedFilesRepository = {
     if (!file) return null;
 
     const sharedRecords = await db
-      .select({ sharedWithUserId: sharedItemsTable.sharedWithUserId })
+      .select({
+        sharedWithUserId: sharedItemsTable.sharedWithUserId,
+        permission: sharedItemsTable.permission,
+      })
       .from(sharedItemsTable)
       .where(eq(sharedItemsTable.fileId, id));
+
+    const isOwner = file.ownerId === actorId;
+    const editorGrant = sharedRecords.find(
+      (record) =>
+        record.sharedWithUserId === actorId &&
+        (record.permission === 'editor' || record.permission === 'owner'),
+    );
+
+    if (!isOwner && !editorGrant) return null;
 
     const dashboardOwners = new Set<number>();
     dashboardOwners.add(actorId);
@@ -321,21 +425,32 @@ export const uploadedFilesRepository = {
       .where(eq(uploadedFilesTable.id, id));
   },
 
-  async moveFiles(filesId: number[], folder: number) {
+  async moveFiles(filesId: number[], folder: number, actorId: number) {
     if (folder) {
       return await db
         .update(uploadedFilesTable)
         .set({ folderId: folder })
-        .where(inArray(uploadedFilesTable.id, filesId));
+        .where(
+          and(
+            inArray(uploadedFilesTable.id, filesId),
+            eq(uploadedFilesTable.userId, actorId),
+          ),
+        );
     }
 
     return await db
       .update(uploadedFilesTable)
       .set({ folderId: null })
-      .where(inArray(uploadedFilesTable.id, filesId));
+      .where(
+        and(
+          inArray(uploadedFilesTable.id, filesId),
+          eq(uploadedFilesTable.userId, actorId),
+        ),
+      );
   },
   async deleteMultipleItems(
     items: { id: number; isFile: boolean; shared: boolean }[],
+    actorId: number,
   ) {
     const sharedIds: number[] = [];
     const fileIds: number[] = [];
@@ -356,7 +471,12 @@ export const uploadedFilesRepository = {
     if (sharedIds.length > 0) {
       return await db
         .delete(sharedItemsTable)
-        .where(inArray(sharedItemsTable.id, sharedIds));
+        .where(
+          and(
+            inArray(sharedItemsTable.id, sharedIds),
+            eq(sharedItemsTable.sharedWithUserId, actorId),
+          ),
+        );
     }
 
     let files = [];
@@ -365,7 +485,12 @@ export const uploadedFilesRepository = {
       files = await db
         .update(uploadedFilesTable)
         .set({ isDeleted: true })
-        .where(inArray(uploadedFilesTable.id, fileIds))
+        .where(
+          and(
+            inArray(uploadedFilesTable.id, fileIds),
+            eq(uploadedFilesTable.userId, actorId),
+          ),
+        )
         .returning();
 
       await db.insert(trashedTable).values(
@@ -384,7 +509,12 @@ export const uploadedFilesRepository = {
         await db
           .update(uploadFoldersTable)
           .set({ isDeleted: true })
-          .where(inArray(uploadFoldersTable.id, folderIds)),
+          .where(
+            and(
+              inArray(uploadFoldersTable.id, folderIds),
+              eq(uploadFoldersTable.userId, actorId),
+            ),
+          ),
       );
     }
 

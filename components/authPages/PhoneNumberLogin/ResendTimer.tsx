@@ -2,18 +2,19 @@
 
 import { Clock } from 'lucide-react';
 import { useEffect, useState } from 'react';
-import { Button } from '@/components/ui/button';
+import { AsyncButton } from '@/components/ui/async-button';
 import { iconsWithPaths } from '@/constants/common-constants';
 import styles from './VerifyOtpPage.module.scss';
 
 type ResendTimerProps = {
   seconds: number;
+  onResend: () => unknown | Promise<unknown>;
 };
 
 const remainingFrom = (deadline: number) =>
   Math.max(0, Math.ceil((deadline - Date.now()) / 1000));
 
-export default function ResendTimer({ seconds }: ResendTimerProps) {
+export default function ResendTimer({ seconds, onResend }: ResendTimerProps) {
   const [deadline, setDeadline] = useState(() => Date.now() + seconds * 1000);
   const [resendIn, setResendIn] = useState(() => remainingFrom(deadline));
 
@@ -23,7 +24,8 @@ export default function ResendTimer({ seconds }: ResendTimerProps) {
     return () => clearInterval(id);
   }, [resendIn, deadline]);
 
-  const handleResend = () => {
+  const handleResend = async () => {
+    await onResend();
     const next = Date.now() + seconds * 1000;
     setDeadline(next);
     setResendIn(remainingFrom(next));
@@ -41,13 +43,13 @@ export default function ResendTimer({ seconds }: ResendTimerProps) {
           </span>
         </>
       ) : (
-        <Button
+        <AsyncButton
           type='button'
           onClick={handleResend}
           className={styles.resendButton}
         >
           Resend code
-        </Button>
+        </AsyncButton>
       )}
     </div>
   );

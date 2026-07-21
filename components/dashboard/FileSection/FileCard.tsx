@@ -60,7 +60,9 @@ export default function FileCard({
               tone={getAvatarColor(file?.userId ?? '')}
               size='sm'
             />
-            <span className={styles.modTime}>{createdAt}</span>
+            <span className={styles.modTime} suppressHydrationWarning>
+              {createdAt}
+            </span>
           </div>
         </div>
       </div>

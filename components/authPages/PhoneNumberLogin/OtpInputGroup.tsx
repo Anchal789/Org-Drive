@@ -10,6 +10,8 @@ type OtpInputGroupProps = {
   disabled: boolean;
   onChangeAction: (otp: string) => void;
   onCompleteAction: () => void;
+  invalid?: boolean;
+  describedById?: string;
 };
 
 export default function OtpInputGroup({
@@ -18,6 +20,8 @@ export default function OtpInputGroup({
   disabled,
   onChangeAction,
   onCompleteAction,
+  invalid,
+  describedById,
 }: OtpInputGroupProps) {
   const inputsRef = useRef<(HTMLInputElement | null)[]>([]);
 
@@ -90,6 +94,8 @@ export default function OtpInputGroup({
     <fieldset
       className={styles.otpContainer}
       aria-label={`Verification code, ${length} digits`}
+      aria-invalid={invalid || undefined}
+      aria-describedby={describedById}
     >
       {cells.map(({ id, index }) => {
         const digit = digits[index];

@@ -28,7 +28,7 @@ export const handleDeleteMultiple = async ({
   }
 };
 
-export const handleBookmarMultiple = async ({
+export const handleBookmarkMultiple = async ({
   selectedFileObjects,
   router,
   clearSelection,

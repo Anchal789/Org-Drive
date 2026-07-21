@@ -85,6 +85,7 @@ export default function NewItemButton({
       type='button'
       className={`${styles.newButton} ${collapsed ? styles.newButtonCollapsed : ''}`}
       onClick={() => setIsDragging(!isDragging)}
+      aria-label='New'
     >
       <Plus size={16} className={styles.newButtonIcon} />
       {!collapsed && <span className={styles.newButtonText}>New</span>}

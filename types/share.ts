@@ -1,9 +1,9 @@
-import type { User } from '@/types/auth';
+import type { PublicUser } from '@/types/auth';
 import type { ShareWithMePerson } from '@/types/share-with-me';
 
 export type SharePermission = 'viewer' | 'editor' | 'owner' | 'commenter';
 
-export type InviteUser = User & { permission: SharePermission };
+export type InviteUser = PublicUser & { permission: SharePermission };
 
 export type ShareApiItemRef = {
   id?: number;

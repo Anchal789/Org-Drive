@@ -1,30 +1,29 @@
+import { NextResponse } from 'next/server';
 import type { NextRequest } from 'next/server';
 import { sendError, sendSuccess } from '@/lib/api-response';
-import { getApiSession } from '@/lib/session';
-import { decrypt } from '@/lib/utils';
-import { sharedWithMeRepository } from '@/repositories/shared-with-me.repository';
+import { requireApiSession } from '@/lib/require-auth';
+import { shareRepository } from '@/repositories/share.repository';
 
 interface RemoveUserAccessBody {
-  id: string;
+  id: number;
 }
 
 export async function POST(request: NextRequest) {
   const [{ id }, session] = await Promise.all([
     request.json() as Promise<RemoveUserAccessBody>,
-    getApiSession(request),
+    requireApiSession(request),
   ]);
 
-  if (!session?.userId) return sendError('Unauthorized', 401);
+  if (session instanceof NextResponse) return session;
 
-  const decryptedId = decrypt(id);
-
-  if (!decryptedId) {
+  if (!id) {
     return sendError('Missing id', 400);
   }
 
   try {
-    const response = await sharedWithMeRepository.deleteSharedItem(
-      Number(decryptedId),
+    const response = await shareRepository.revokeAccess(
+      Number(id),
+      Number(session.userId),
     );
 
     if (!response) {
@@ -35,5 +34,6 @@ export async function POST(request: NextRequest) {
     if (error instanceof Error) {
       return sendError(error.message, 500);
     }
+    return sendError('Internal Server Error', 500);
   }
 }

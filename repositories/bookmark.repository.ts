@@ -6,7 +6,6 @@ import {
   uploadFoldersTable,
   userTable,
 } from '@/db/schema';
-import { uploadedFiles } from '@/drizzle/schema';
 
 export const bookmarkRepository = {
   async getBookmarksFiles(userId: number) {
@@ -28,10 +27,10 @@ export const bookmarkRepository = {
         ownerFirstName: userTable.firstName,
         ownerLastName: userTable.lastName,
       })
-      .from(uploadedFiles)
+      .from(uploadedFilesTable)
       .leftJoin(userTable, eq(uploadedFilesTable.userId, userTable.id))
       .where(
-        and(eq(uploadedFiles.userId, userId), eq(uploadedFiles.bookmark, true)),
+        and(eq(uploadedFilesTable.userId, userId), eq(uploadedFilesTable.bookmark, true)),
       );
     return files;
   },
@@ -63,27 +62,39 @@ export const bookmarkRepository = {
     isFile: boolean,
     bookmark: boolean,
     shared: boolean,
+    actorId: number,
   ) {
     if (shared) {
       return await db
         .update(sharedItemsTable)
         .set({ bookmark })
-        .where(eq(sharedItemsTable.id, id));
+        .where(
+          and(
+            eq(sharedItemsTable.id, id),
+            eq(sharedItemsTable.sharedWithUserId, actorId),
+          ),
+        );
     }
     if (isFile) {
       return await db
-        .update(uploadedFiles)
+        .update(uploadedFilesTable)
         .set({ bookmark: bookmark })
-        .where(eq(uploadedFiles.id, id));
+        .where(and(eq(uploadedFilesTable.id, id), eq(uploadedFilesTable.userId, actorId)));
     }
     return await db
       .update(uploadFoldersTable)
       .set({ bookmark })
-      .where(eq(uploadFoldersTable.id, id));
+      .where(
+        and(
+          eq(uploadFoldersTable.id, id),
+          eq(uploadFoldersTable.userId, actorId),
+        ),
+      );
   },
   async bookmarkMultipleItems(
     items: { id: number; isFile: boolean; shared: boolean }[],
     bookmarkState: boolean,
+    actorId: number,
   ) {
     const sharedIds: number[] = [];
     const fileIds: number[] = [];
@@ -102,20 +113,30 @@ export const bookmarkRepository = {
     const promises = [];
 
     if (sharedIds.length > 0) {
-      return promises.push(
+      promises.push(
         await db
           .update(sharedItemsTable)
           .set({ bookmark: bookmarkState })
-          .where(inArray(sharedItemsTable.id, sharedIds)),
+          .where(
+            and(
+              inArray(sharedItemsTable.id, sharedIds),
+              eq(sharedItemsTable.sharedWithUserId, actorId),
+            ),
+          ),
       );
     }
 
     if (fileIds.length > 0) {
       promises.push(
         await db
-          .update(uploadedFiles)
+          .update(uploadedFilesTable)
           .set({ bookmark: bookmarkState })
-          .where(inArray(uploadedFiles.id, fileIds)),
+          .where(
+            and(
+              inArray(uploadedFilesTable.id, fileIds),
+              eq(uploadedFilesTable.userId, actorId),
+            ),
+          ),
       );
     }
 
@@ -124,7 +145,12 @@ export const bookmarkRepository = {
         await db
           .update(uploadFoldersTable)
           .set({ bookmark: bookmarkState })
-          .where(inArray(uploadFoldersTable.id, folderIds)),
+          .where(
+            and(
+              inArray(uploadFoldersTable.id, folderIds),
+              eq(uploadFoldersTable.userId, actorId),
+            ),
+          ),
       );
     }
 
@@ -135,9 +161,9 @@ export const bookmarkRepository = {
       .select({
         count: count(uploadedFilesTable.id),
       })
-      .from(uploadedFiles)
+      .from(uploadedFilesTable)
       .where(
-        and(eq(uploadedFiles.userId, userId), eq(uploadedFiles.bookmark, true)),
+        and(eq(uploadedFilesTable.userId, userId), eq(uploadedFilesTable.bookmark, true)),
       );
     return bookmarkCount.count;
   },

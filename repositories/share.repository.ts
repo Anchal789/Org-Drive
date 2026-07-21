@@ -20,14 +20,21 @@ export const shareRepository = {
       sharedWithUserId,
     });
   },
+  /** Only the owner who created a share grant may change its permission. */
   async updateSharedItem(
     sharedItemId: number,
     permission: 'viewer' | 'editor' | 'owner' | 'commenter',
+    ownerId: number,
   ) {
     return await db
       .update(sharedItemsTable)
       .set({ permission })
-      .where(eq(sharedItemsTable.id, sharedItemId));
+      .where(
+        and(
+          eq(sharedItemsTable.id, sharedItemId),
+          eq(sharedItemsTable.userId, ownerId),
+        ),
+      );
   },
 
   async uploadSharedItemBulk(
@@ -41,6 +48,18 @@ export const shareRepository = {
   ) {
     if (payloads.length === 0) return;
     return await db.insert(sharedItemsTable).values(payloads);
+  },
+
+  /** Lets the owner of a shared item revoke another user's access to it. */
+  async revokeAccess(shareId: number, ownerId: number) {
+    return await db
+      .delete(sharedItemsTable)
+      .where(
+        and(
+          eq(sharedItemsTable.id, shareId),
+          eq(sharedItemsTable.userId, ownerId),
+        ),
+      );
   },
 
   async updateSharedItemPermissionsBulk(

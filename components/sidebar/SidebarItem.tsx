@@ -47,6 +47,7 @@ const SidebarItem: FunctionComponent<{ item: SidebarItemProps }> = ({
     <Button
       type='button'
       title={collapsed ? item.label : undefined}
+      aria-label={collapsed ? item.label : undefined}
       className={`${styles.navItem} ${isActive ? styles.navItemActive : ''}`}
       onClick={() => {
         router.push(item.url);

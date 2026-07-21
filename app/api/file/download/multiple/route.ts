@@ -2,41 +2,73 @@ export const dynamic = 'force-dynamic';
 
 import { PassThrough, Readable } from 'node:stream';
 import { ZipArchive as Archiver } from 'archiver';
-import { inArray } from 'drizzle-orm';
 import type { NextRequest } from 'next/server';
 import { type Api, TelegramClient } from 'telegram';
 import { StringSession } from 'telegram/sessions';
 import { db } from '@/db';
-import { recentTable, uploadedFilesTable } from '@/db/schema';
+import { recentTable } from '@/db/schema';
 import { sendError } from '@/lib/api-response';
+import { decrypt } from '@/lib/crypto';
+import { logger } from '@/lib/logger';
 import { getSessionUser } from '@/lib/session';
-import { decrypt } from '@/lib/utils';
 import { systemSettingsRepository } from '@/repositories/system-settings.repository';
+import { uploadedFilesRepository } from '@/repositories/uploaded-files.repository';
 
 const API_ID = Number(process.env.TELEGRAM_APP_API_ID);
 const API_HASH = String(process.env.TELEGRAM_APP_API_HASH);
 const STORAGE_CHANNEL = String(process.env.TELEGRAM_STORAGE_CHANNEL_ID);
 
-export async function POST(request: NextRequest) {
+async function resolveFilesAccess(
+  request: NextRequest,
+): Promise<{ fileIds: number[]; actorId: number | null } | null> {
   const { searchParams } = new URL(request.url);
+  const token = searchParams.get('token');
+
+  if (token) {
+    const decrypted = decrypt(token);
+    if (!decrypted) return null;
+
+    try {
+      const payload = JSON.parse(decrypted) as {
+        type?: string;
+        ids?: number[];
+        exp?: number;
+      };
+      if (!payload.exp || Date.now() > payload.exp) return null;
+      if (payload.type !== 'multi' && payload.type !== 'file') return null;
+      const fileIds = (payload.ids ?? []).map(Number).filter(Boolean);
+      if (fileIds.length === 0) return null;
+      return { fileIds, actorId: null };
+    } catch {
+      return null;
+    }
+  }
+
   const session = await getSessionUser();
+  if (!session?.userId) return null;
 
-  if (!session?.userId && !searchParams.get('ids'))
-    return sendError('Unauthorized', 401);
-  const idsParam =
-    searchParams.get('ids') || decrypt(searchParams.get('token') || '');
-  if (!idsParam) return sendError('No file IDs provided', 400);
-
+  const idsParam = searchParams.get('ids');
+  if (!idsParam) return null;
   const fileIds = idsParam.split(',').map(Number).filter(Boolean);
+  if (fileIds.length === 0) return null;
 
-  const filesInfo = await db
-    .select()
-    .from(uploadedFilesTable)
-    .where(inArray(uploadedFilesTable.id, fileIds));
+  return { fileIds, actorId: Number(session.userId) };
+}
+
+export async function POST(request: NextRequest) {
+  const access = await resolveFilesAccess(request);
+  if (!access) return sendError('Unauthorized', 401);
+
+  const filesInfo = access.actorId
+    ? await uploadedFilesRepository.getAccessibleFilesByIds(
+        access.actorId,
+        access.fileIds,
+      )
+    : await uploadedFilesRepository.getFilesByIds(access.fileIds);
 
   if (filesInfo.length === 0) return sendError('No files found', 404);
 
-  const actorId = Number(session?.userId || searchParams.get('userId'));
+  const actorId = access.actorId ?? Number(filesInfo[0].userId);
   const logs: Array<{
     userId: number;
     fileId: number;
@@ -105,6 +137,25 @@ export async function POST(request: NextRequest) {
     const messages = await client.getMessages(targetEntity, {
       ids: messageIdsToFetch,
     });
+    const messagesById = new Map(
+      messages.map((m) => [Number(m.id), m] as const),
+    );
+
+    const hasAnyValidFile = filesInfo.some((fileInfo) => {
+      const msg = messagesById.get(Number(fileInfo.telegramMessageId));
+      return !!msg?.media && 'document' in msg.media;
+    });
+
+    if (!hasAnyValidFile) {
+      await client.disconnect().catch(() => {
+        void 0;
+      });
+      return sendError(
+        'None of the requested files could be found in storage',
+        404,
+      );
+    }
+
     const archive = new Archiver({ zlib: { level: 0 } });
     const passThrough = new PassThrough();
 
@@ -113,9 +164,6 @@ export async function POST(request: NextRequest) {
     (async () => {
       try {
         const usedNames = new Set<string>();
-        const messagesById = new Map(
-          messages.map((m) => [Number(m.id), m] as const),
-        );
 
         for (const fileInfo of filesInfo) {
           const msg = messagesById.get(Number(fileInfo.telegramMessageId));
@@ -143,7 +191,9 @@ export async function POST(request: NextRequest) {
         }
         await archive.finalize();
       } catch (err) {
-        void err;
+        logger.error('Multi-file zip archive failed mid-stream', {
+          error: err instanceof Error ? err.message : String(err),
+        });
         archive.abort();
       } finally {
         if (client)
@@ -170,8 +220,10 @@ export async function POST(request: NextRequest) {
 
     db.insert(recentTable)
       .values(logs)
-      .catch(() => {
-        void 0;
+      .catch((err) => {
+        logger.warn('Failed to record recent-activity log for zip download', {
+          error: err instanceof Error ? err.message : String(err),
+        });
       });
 
     return new Response(webStream, {

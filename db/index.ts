@@ -1,3 +1,4 @@
+import 'server-only';
 import 'dotenv/config';
 import { drizzle } from 'drizzle-orm/postgres-js';
 import postgres from 'postgres';
@@ -7,7 +8,11 @@ declare global {
   var postgresClient: postgres.Sql | undefined;
 }
 
-const connectionString = process.env.DATABASE_URL as string;
+if (!process.env.DATABASE_URL) {
+  throw new Error('Missing required env var: DATABASE_URL');
+}
+
+const connectionString = process.env.DATABASE_URL;
 
 const client =
   globalThis.postgresClient ??

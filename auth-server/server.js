@@ -12,7 +12,10 @@ app.use(express.json());
 const rawFrontendUrl = process.env.FRONTEND_URL || '';
 const cleanFrontendUrl = rawFrontendUrl.replace(/\/$/, '');
 
-const allowedOrigins = ['http://localhost:5173', cleanFrontendUrl];
+const allowedOrigins = [cleanFrontendUrl];
+if (process.env.NODE_ENV !== 'production') {
+  allowedOrigins.push('http://localhost:5173', 'http://localhost:3000');
+}
 
 app.use(
   cors({
@@ -30,8 +33,30 @@ app.use(
 
 const API_ID = Number(process.env.TELEGRAM_APP_API_ID);
 const API_HASH = String(process.env.TELEGRAM_APP_API_HASH);
+const INTERNAL_SECRET = process.env.AUTH_SERVER_INTERNAL_SECRET;
+
+if (!INTERNAL_SECRET) {
+  throw new Error('Missing required env var: AUTH_SERVER_INTERNAL_SECRET');
+}
 
 const qrStore = new Map();
+
+// In-memory sliding-window limiter — per-process, matches this service's
+// current single-instance deployment. Swap for a shared store (Redis) if
+// this is ever run behind more than one replica.
+const rateLimitBuckets = new Map();
+function checkRateLimit(key, limit, windowMs) {
+  const now = Date.now();
+  const bucket = rateLimitBuckets.get(key);
+
+  if (!bucket || now > bucket.resetAt) {
+    rateLimitBuckets.set(key, { count: 1, resetAt: now + windowMs });
+    return true;
+  }
+  if (bucket.count >= limit) return false;
+  bucket.count += 1;
+  return true;
+}
 
 async function finalizeLogin(loginId, client) {
   const me = await client.getMe();
@@ -49,7 +74,14 @@ async function finalizeLogin(loginId, client) {
   });
 }
 
-app.post('/api/auth/qr-start', async (_req, res) => {
+app.post('/api/auth/qr-start', async (req, res) => {
+  const clientIp = req.ip || req.socket?.remoteAddress || 'unknown';
+  if (!checkRateLimit(`qr-start:${clientIp}`, 10, 5 * 60 * 1000)) {
+    return res
+      .status(429)
+      .json({ success: false, message: 'Too many QR login attempts' });
+  }
+
   const client = new TelegramClient(new StringSession(''), API_ID, API_HASH, {
     connectionRetries: 5,
   });
@@ -136,9 +168,12 @@ app.post('/api/auth/qr-login', async (req, res) => {
     return res.status(410).json({ success: false, message: 'Expired' });
 
   if (entry.status === 'success') {
-    const user = entry.user;
-    qrStore.delete(loginId);
-    return res.json({ success: true, data: { step: 'success', user } });
+    // Never send the raw Telegram session string to the browser. The app
+    // server fetches it directly, server-to-server, via /internal/qr-result.
+    return res.json({
+      success: true,
+      data: { step: 'success', firstName: entry.user.firstName },
+    });
   }
 
   if (entry.status === 'needs_password') {
@@ -169,13 +204,39 @@ app.post('/api/auth/qr-password', async (req, res) => {
 
     await finalizeLogin(loginId, entry.client);
     const updated = qrStore.get(loginId);
-    qrStore.delete(loginId);
 
-    res.json({ success: true, data: { step: 'success', user: updated.user } });
+    // Never send the raw Telegram session string to the browser. The app
+    // server fetches it directly, server-to-server, via /internal/qr-result.
+    res.json({
+      success: true,
+      data: { step: 'success', firstName: updated.user.firstName },
+    });
   } catch {
     res.status(400).json({ success: false, message: 'Incorrect password' });
   }
 });
+
+// Server-to-server only: the Next.js app fetches the completed Telegram
+// session here directly, so the raw session string never transits the
+// browser. Guarded by a shared secret instead of the public CORS allowlist.
+app.get('/internal/qr-result', (req, res) => {
+  if (req.header('x-internal-secret') !== INTERNAL_SECRET) {
+    return res.status(401).json({ success: false, message: 'Unauthorized' });
+  }
+
+  const { loginId } = req.query;
+  const entry = qrStore.get(loginId);
+
+  if (!entry || entry.status !== 'success') {
+    return res
+      .status(404)
+      .json({ success: false, message: 'No completed login for this id' });
+  }
+
+  qrStore.delete(loginId);
+  res.json({ success: true, data: { user: entry.user } });
+});
+
 app.get('/', (_req, res) => {
   res.send('Auth server is running');
 });

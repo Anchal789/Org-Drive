@@ -6,34 +6,55 @@ import { toast } from 'sonner';
 import { Button } from '@/components/ui/button';
 
 export default function ShareDownloadClient({
-  ids,
+  token,
   type,
-  userId,
 }: {
-  ids: number[];
+  token: string;
   type: string;
-  userId?: number;
 }) {
   const [isDownloading, setIsDownloading] = useState(false);
 
-  const handleDownload = () => {
+  const handleDownload = async () => {
     setIsDownloading(true);
-    toast.success('Starting download...');
+    const encodedToken = encodeURIComponent(token);
     let apiPath = '';
     if (type === 'multi')
-      apiPath = `/api/file/download/multiple?ids=${ids}&userId=${userId}`;
+      apiPath = `/api/file/download/multiple?token=${encodedToken}`;
     else if (type === 'folder')
-      apiPath = `/api/file/download/folder-files?ids=${ids}&userId=${userId}`;
-    else apiPath = `/api/file/download/file?fileId=${ids}&userId=${userId}`;
+      apiPath = `/api/file/download/folder-files?token=${encodedToken}`;
+    else apiPath = `/api/file/download/file?token=${encodedToken}`;
 
-    const a = document.createElement('a');
-    a.href = apiPath;
-    a.style.display = 'none';
-    document.body.appendChild(a);
-    a.click();
-    document.body.removeChild(a);
+    try {
+      const response = await fetch(apiPath, { method: 'POST' });
+      if (!response.ok) {
+        throw new Error('Download failed.');
+      }
 
-    setTimeout(() => setIsDownloading(false), 2000);
+      const blob = await response.blob();
+      const downloadUrl = URL.createObjectURL(blob);
+      const disposition = response.headers.get('Content-Disposition');
+      const filenameMatch = disposition?.match(/filename="?([^"]+)"?/);
+      const filename = filenameMatch
+        ? decodeURIComponent(filenameMatch[1])
+        : 'download';
+
+      const a = document.createElement('a');
+      a.href = downloadUrl;
+      a.download = filename;
+      a.style.display = 'none';
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(downloadUrl);
+
+      toast.success('Download started.');
+    } catch (error) {
+      toast.error(
+        error instanceof Error ? error.message : 'Download failed.',
+      );
+    } finally {
+      setIsDownloading(false);
+    }
   };
 
   return (

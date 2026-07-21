@@ -1,3 +1,4 @@
+import { redirect } from 'next/navigation';
 import { Suspense } from 'react';
 import DriveDropOverlay from '@/components/dashboard/DriveDropOverlay';
 import DashGridWrapper from '@/components/dashboard/GridSection/DashGridWrapper';
@@ -5,8 +6,8 @@ import SwitchLayout from '@/components/dashboard/SwitchLayout';
 import UploadWidget from '@/components/dashboard/upload-widget/UploadWidget';
 import NewItemButton from '@/components/sidebar/NewItemButton';
 import { getSessionUser } from '@/lib/session';
-import { uploadedFilesRepository } from '@/repositories/uploaded-files.respository';
-import { uploadedFoldersRepository } from '@/repositories/uploaded-folders.respository';
+import { uploadedFilesRepository } from '@/repositories/uploaded-files.repository';
+import { uploadedFoldersRepository } from '@/repositories/uploaded-folders.repository';
 import type { UploadedFile, UploadedFolder } from '@/types/files';
 
 async function fetchMoreData(type: 'files' | 'folders', offset: number) {
@@ -37,7 +38,8 @@ async function fetchMoreData(type: 'files' | 'folders', offset: number) {
 
 export default async function Page() {
   const user = await getSessionUser();
-  const userId = Number(user?.userId);
+  if (!user?.userId) redirect('/login');
+  const userId = Number(user.userId);
 
   const allFiles = (await uploadedFilesRepository.getCombinedFiles(
     userId,

@@ -2,7 +2,7 @@
 
 import { X } from 'lucide-react';
 import type { FunctionComponent } from 'react';
-import { Button } from '@/components/ui/button';
+import { AsyncButton } from '@/components/ui/async-button';
 import CustomTooltip from '@/components/ui/custom-tooltip';
 
 const RemoveAccess: FunctionComponent<{
@@ -10,9 +10,14 @@ const RemoveAccess: FunctionComponent<{
 }> = ({ removeAccess }) => {
   return (
     <CustomTooltip title='Remove access'>
-      <Button variant='destructive' size='icon-sm' onClick={removeAccess}>
+      <AsyncButton
+        variant='destructive'
+        size='icon-sm'
+        onClick={removeAccess}
+        aria-label='Remove access'
+      >
         <X size={16} />
-      </Button>
+      </AsyncButton>
     </CustomTooltip>
   );
 };

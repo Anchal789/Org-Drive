@@ -2,6 +2,7 @@ import type { NextRequest } from 'next/server';
 import { TelegramClient } from 'telegram';
 import { StringSession } from 'telegram/sessions';
 import { sendError, sendSuccess } from '@/lib/api-response';
+import { checkRateLimit, getClientIp } from '@/lib/rate-limit';
 import { pendingLoginRepository } from '@/repositories/pending-login.repository';
 
 export async function POST(request: NextRequest) {
@@ -9,6 +10,18 @@ export async function POST(request: NextRequest) {
 
   if (!phoneNumber) {
     return sendError('Phone number is required', 400);
+  }
+
+  const rateLimit = checkRateLimit(
+    `request-otp:${getClientIp(request)}:${phoneNumber}`,
+    3,
+    5 * 60 * 1000,
+  );
+  if (!rateLimit.allowed) {
+    return sendError(
+      `Too many code requests. Try again in ${rateLimit.retryAfterSeconds}s.`,
+      429,
+    );
   }
 
   const stringSession = new StringSession('');

@@ -1,0 +1,43 @@
+name: CI
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+concurrency:
+  group: ci-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
+env:
+  # Dummy values so module-level env checks (db/index.ts, lib/jwt.ts,
+  # lib/crypto.ts, the QR finalize-login route) don't throw during
+  # typecheck/build. None of these need to be real — nothing in CI
+  # opens a live DB connection or calls Telegram.
+  DATABASE_URL: postgres://ci:ci@localhost:5432/ci
+  JWT_SECRET: ci-only-jwt-secret-not-for-production
+  APP_SECRET_KEY: ci-only-app-secret-not-for-production
+  AUTH_SERVER_INTERNAL_SECRET: ci-only-internal-secret-not-for-production
+
+jobs:
+  build-and-test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Lint
+        run: npm run lint
+
+      - name: Typecheck
+        run: npx tsc --noEmit -p tsconfig.json
+
+      - name: Build
+        run: npm run build

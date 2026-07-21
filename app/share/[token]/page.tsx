@@ -1,6 +1,25 @@
 import { FileIcon, FolderIcon } from 'lucide-react';
-import { decrypt } from '@/lib/utils';
+import type { Metadata } from 'next';
+import { decrypt } from '@/lib/crypto';
 import ShareDownloadClient from './ShareDownloadClient';
+
+export const metadata: Metadata = {
+  title: 'Shared file - Org Drive',
+  robots: { index: false, follow: false },
+};
+
+function InvalidLink() {
+  return (
+    <div className='flex h-screen w-full items-center justify-center bg-background text-foreground'>
+      <div className='text-center'>
+        <h1 className='text-2xl font-bold mb-2'>Invalid Link</h1>
+        <p className='text-muted-foreground'>
+          This share link is broken or has expired.
+        </p>
+      </div>
+    </div>
+  );
+}
 
 export default async function SharedLinkPage({
   params,
@@ -14,19 +33,16 @@ export default async function SharedLinkPage({
   try {
     shareData = decrypt(decodedToken) || '';
   } catch {
-    return (
-      <div className='flex h-screen w-full items-center justify-center bg-background text-foreground'>
-        <div className='text-center'>
-          <h1 className='text-2xl font-bold mb-2'>Invalid Link</h1>
-          <p className='text-muted-foreground'>
-            This share link is broken or has expired.
-          </p>
-        </div>
-      </div>
-    );
+    return <InvalidLink />;
   }
 
-  const { type, ids, userId } = JSON.parse(shareData);
+  if (!shareData) return <InvalidLink />;
+
+  const { type, ids, exp } = JSON.parse(shareData);
+
+  if (!exp || Date.now() > exp) {
+    return <InvalidLink />;
+  }
 
   const title =
     type === 'multi'
@@ -52,7 +68,7 @@ export default async function SharedLinkPage({
         </p>
 
         {/* Client component to handle the actual hidden download */}
-        <ShareDownloadClient ids={ids} userId={userId} type={type} />
+        <ShareDownloadClient token={decodedToken} type={type} />
       </div>
     </div>
   );

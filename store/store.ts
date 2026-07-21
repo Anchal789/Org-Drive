@@ -1,6 +1,7 @@
 import { toast } from 'sonner';
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
+import { logger } from '@/lib/logger';
 import type { UploadItem } from '@/types/dashboard';
 import type { UploadedFile, UploadedFolder } from '@/types/files';
 import type {
@@ -13,18 +14,16 @@ import type {
   UploadStore,
 } from '@/types/store';
 
-export const useAuthStore = create<AuthStateStore>()(
-  persist(
-    (set) => ({
-      accessToken: null,
-      setAccessToken: (token: string | null) => set({ accessToken: token }),
-      clearAuth: () => set({ accessToken: null }),
-    }),
-    {
-      name: 'auth-storage',
-    },
-  ),
-);
+// Deliberately NOT persisted to localStorage: the access token must only
+// ever live in memory, since localStorage is readable by any script running
+// on the page (XSS). A hard refresh starts with no token; the customFetch
+// 401 interceptor below transparently re-mints one from the httpOnly
+// refresh cookie on the first request that needs it.
+export const useAuthStore = create<AuthStateStore>()((set) => ({
+  accessToken: null,
+  setAccessToken: (token: string | null) => set({ accessToken: token }),
+  clearAuth: () => set({ accessToken: null }),
+}));
 
 export const useDragDropStore = create<DragDropStore>((set) => ({
   isDragging: false,
@@ -245,8 +244,14 @@ export const useUploadStore = create<UploadStore>((set, get) => ({
             } else if (event.type === 'error') {
               streamError = new Error(event.message);
             }
-          } catch {
-            void 0;
+          } catch (parseError) {
+            logger.warn('Failed to parse upload SSE event line', {
+              jsonString,
+              error:
+                parseError instanceof Error
+                  ? parseError.message
+                  : String(parseError),
+            });
           }
           if (streamError) {
             throw streamError;

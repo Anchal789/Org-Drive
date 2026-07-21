@@ -15,6 +15,13 @@
       "when": 1781172669667,
       "tag": "0001_powerful_franklin_richards",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1784611031474,
+      "tag": "0002_add_indexes_and_qr_login_results",
+      "breakpoints": true
     }
   ]
 }

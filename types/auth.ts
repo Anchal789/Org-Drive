@@ -53,6 +53,15 @@ export type User = {
   updatedAt: Date;
 };
 
+/** Safe-to-expose-to-clients subset of User — never includes session/credential fields. */
+export type PublicUser = {
+  id: number;
+  firstName: string | null;
+  lastName: string | null;
+  username: string | null;
+  photoUrl: string | null;
+};
+
 export type PendingLogin = {
   id: number;
   phone: string;

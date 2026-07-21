@@ -6,6 +6,7 @@ import {
   useState,
 } from 'react';
 import { toast } from 'sonner';
+import { AsyncButton } from '@/components/ui/async-button';
 import { Button } from '@/components/ui/button';
 import {
   Dialog,
@@ -62,18 +63,26 @@ const RenameItem: FunctionComponent<{
   }
 
   const handleRename = async () => {
-    if (!newNameState.name) {
+    const trimmedName = newNameState.name.trim();
+
+    if (trimmedName.length > 200) {
       setNewNameState({
-        name: '',
+        name: newNameState.name,
+        error: 'File name must be 200 characters or fewer',
+      });
+      return;
+    }
+    if (!trimmedName) {
+      setNewNameState({
+        name: newNameState.name,
         error: 'Name cannot be empty',
       });
       return;
     }
 
-    const finalName = `${newNameState.name}${file ? `.${fileExtension}` : ''}`;
+    const finalName = `${trimmedName}${file ? `.${fileExtension}` : ''}`;
 
-    let response: Awaited<ReturnType<typeof renameItem>>;
-    response = await renameItem(
+    const response = await renameItem(
       folder?.id || file?.id || 0,
       finalName,
       !!file?.id,
@@ -109,18 +118,16 @@ const RenameItem: FunctionComponent<{
                 id='name'
                 name='name'
                 value={newNameState.name}
+                aria-invalid={!!newNameState.error}
+                aria-describedby={
+                  newNameState.error ? 'rename-error' : undefined
+                }
                 onChange={(event) => {
-                  if (event.target.value) {
-                    setNewNameState({
-                      name: event.target.value,
-                      error: null,
-                    });
-                  } else {
-                    setNewNameState({
-                      name: '',
-                      error: 'Name cannot be empty',
-                    });
-                  }
+                  const value = event.target.value;
+                  setNewNameState({
+                    name: value,
+                    error: value.trim() ? null : 'Name cannot be empty',
+                  });
                 }}
               />
               {fileExtension && (
@@ -129,16 +136,16 @@ const RenameItem: FunctionComponent<{
                 </InputGroupAddon>
               )}
             </InputGroup>
-            <FieldError>{newNameState.error}</FieldError>
+            <FieldError id='rename-error'>{newNameState.error}</FieldError>
           </Field>
         </FieldGroup>
         <DialogFooter>
           <DialogClose asChild>
             <Button variant='destructive'>Cancel</Button>
           </DialogClose>
-          <Button variant='primary' onClick={handleRename}>
+          <AsyncButton variant='primary' onClick={handleRename}>
             Save changes
-          </Button>
+          </AsyncButton>
         </DialogFooter>
       </DialogContent>
     </Dialog>
