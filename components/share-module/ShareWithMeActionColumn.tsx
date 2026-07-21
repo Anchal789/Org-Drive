@@ -14,7 +14,7 @@ import { trashSharedFile } from '@/services/shared-with-me-service';
 import { useShareDialogStore } from '@/store/store';
 import type { UploadedFile, UploadedFolder } from '@/types/files';
 import type { SharedWithMeItemsType } from '@/types/share-with-me';
-import RenameItem from '../rename/RenameIterm';
+import RenameItem from '../rename/RenameItem';
 import AlertModal from '../ui/alert-modal';
 import { Button } from '../ui/button';
 import {
@@ -101,7 +101,11 @@ const ShareWithMeActionColumn: FunctionComponent<{
 
       <DropdownMenu>
         <DropdownMenuTrigger asChild>
-          <Button type='button' className={styles.moreBtn}>
+          <Button
+            type='button'
+            className={styles.moreBtn}
+            aria-label={`More actions for ${props.fileName || props.folderName}`}
+          >
             <MoreHorizontal size={14} className={styles.moreIcon} />
           </Button>
         </DropdownMenuTrigger>
@@ -121,7 +125,7 @@ const ShareWithMeActionColumn: FunctionComponent<{
               <DropdownMenuItem
                 onClick={() => {
                   const fileId = props.fileId;
-                  if (fileId) downloadFile(fileId, props.userId);
+                  if (fileId) downloadFile(fileId);
                 }}
                 className={styles.menuItem}
               >

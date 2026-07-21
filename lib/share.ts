@@ -1,6 +1,6 @@
 'use server';
 
-import { uploadedFoldersRepository } from '@/repositories/uploaded-folders.respository';
+import { uploadedFoldersRepository } from '@/repositories/uploaded-folders.repository';
 import { getSessionUser } from './session';
 
 export async function fetchFolderFromFile(userId: number, id: number) {

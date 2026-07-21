@@ -24,7 +24,6 @@ import {
 } from '@/components/ui/field';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { fetchData } from '@/lib/api-fn';
-import { decrypt } from '@/lib/utils';
 import { moveFile } from '@/services/file-service';
 import type { UploadedFile } from '@/types/files';
 import styles from './MoveModal.module.scss';
@@ -46,7 +45,7 @@ const MoveModal: FunctionComponent<{
   const [currentFolderId] = useState<string | null>(() => {
     if (typeof window === 'undefined') return null;
     const urlSearchParams = new URLSearchParams(window.location.search);
-    return decrypt(urlSearchParams.get('folderId') || '');
+    return urlSearchParams.get('folderId');
   });
 
   const handleMove = async () => {

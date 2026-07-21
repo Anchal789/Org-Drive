@@ -1,11 +1,11 @@
 export const dynamic = 'force-dynamic';
 
+import { NextResponse } from 'next/server';
 import type { NextRequest } from 'next/server';
 import { TelegramClient } from 'telegram';
 import { StringSession } from 'telegram/sessions';
 import { sendError, sendSuccess } from '@/lib/api-response';
-import { getApiSession } from '@/lib/session';
-import { decrypt } from '@/lib/utils';
+import { requireApiSession } from '@/lib/require-auth';
 import { systemSettingsRepository } from '@/repositories/system-settings.repository';
 import { trashedItemsRepository } from '@/repositories/trashed-items.repository';
 
@@ -15,15 +15,12 @@ const STORAGE_CHANNEL = String(process.env.TELEGRAM_STORAGE_CHANNEL_ID);
 
 export async function DELETE(request: NextRequest) {
   const { searchParams } = new URL(request.url);
-  const trashId = decrypt(searchParams.get('id') || '');
+  const trashId = searchParams.get('id');
 
   if (!trashId) return sendError('Missing id', 400);
 
-  const session = await getApiSession(request);
-
-  if (!session?.userId) {
-    return sendError('Access token missing or expired', 401);
-  }
+  const session = await requireApiSession(request);
+  if (session instanceof NextResponse) return session;
 
   const telegramMessageIds = await trashedItemsRepository.permanentlyDeleteItem(
     Number(session.userId),

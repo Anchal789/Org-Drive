@@ -7,7 +7,7 @@ import {
   User,
 } from 'lucide-react';
 import UserAvatar from '@/components/ui/user-avatar';
-import { uploadedFilesRepository } from '@/repositories/uploaded-files.respository';
+import { uploadedFilesRepository } from '@/repositories/uploaded-files.repository';
 import { formatBytes } from '@/store/store';
 import type { SessionUser } from '@/types/auth';
 import SearchBar from '../dashboard/DriveCrumb/SearchBar';

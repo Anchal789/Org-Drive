@@ -11,7 +11,7 @@ import {
 } from 'lucide-react';
 import { usePathname, useRouter } from 'next/navigation';
 import { useState } from 'react';
-import RenameItem from '@/components/rename/RenameIterm';
+import RenameItem from '@/components/rename/RenameItem';
 import AlertModal from '@/components/ui/alert-modal';
 import { Button } from '@/components/ui/button';
 import {
@@ -22,7 +22,6 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 import { Separator } from '@/components/ui/separator';
-import { encrypt } from '@/lib/utils';
 import { bookmarkItem, downloadAllFolderFiles } from '@/services/file-service';
 import { trashFolder } from '@/services/folder-service';
 import { bookmarkSharedItem } from '@/services/shared-with-me-service';
@@ -87,6 +86,7 @@ const FolderMenu = ({
             type='button'
             className={styles.moreBtn}
             onClick={(e) => e.stopPropagation()}
+            aria-label={`More actions for ${folder.name}`}
           >
             <MoreHorizontal size={14} className={styles.moreIcon} />
           </Button>
@@ -106,8 +106,7 @@ const FolderMenu = ({
             <DropdownMenuItem
               onClick={(e) => {
                 e.stopPropagation();
-                const encryptedId = encrypt(folder.id.toString());
-                downloadAllFolderFiles(encryptedId, folder.name);
+                downloadAllFolderFiles(folder.id, folder.name);
               }}
               className={styles.menuItem}
             >

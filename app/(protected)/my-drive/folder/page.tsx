@@ -1,12 +1,13 @@
 export const dynamic = 'force-dynamic';
 
+import { redirect } from 'next/navigation';
 import { Suspense } from 'react';
 import DriveDropOverlay from '@/components/dashboard/DriveDropOverlay';
 import DashFolder from '@/components/dashboard/FolderSection/DashFolder';
 import DashGridWrapper from '@/components/dashboard/GridSection/DashGridWrapper';
-import { decrypt } from '@/lib/utils';
-import { uploadedFilesRepository } from '@/repositories/uploaded-files.respository';
-import { uploadedFoldersRepository } from '@/repositories/uploaded-folders.respository';
+import { getSessionUser } from '@/lib/session';
+import { uploadedFilesRepository } from '@/repositories/uploaded-files.repository';
+import { uploadedFoldersRepository } from '@/repositories/uploaded-folders.repository';
 import type { UploadedFile } from '@/types/files';
 
 export default async function FolderPage({
@@ -15,7 +16,16 @@ export default async function FolderPage({
   searchParams: { folderId: string; folderName: string };
 }) {
   const { folderId, folderName } = await searchParams;
-  const decryptedId = decrypt(folderId);
+  const session = await getSessionUser();
+  if (!session?.userId) redirect('/login');
+
+  const decryptedId = Number(folderId);
+
+  const accessibleFolder = await uploadedFoldersRepository.getAccessibleFolder(
+    Number(session.userId),
+    decryptedId,
+  );
+  if (!accessibleFolder) redirect('/my-drive');
 
   const filesInFolders = (await uploadedFilesRepository.getFilesInFolder(
     Number(decryptedId),

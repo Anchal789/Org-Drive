@@ -57,6 +57,7 @@ export default function DriveTopbarMobile() {
         size={'icon'}
         className={styles.listButton}
         onClick={() => setOpenMobile(!openMobile)}
+        aria-label={openMobile ? 'Close navigation menu' : 'Open navigation menu'}
       >
         <List size={20} className={styles.listButtonIcon} />
       </Button>

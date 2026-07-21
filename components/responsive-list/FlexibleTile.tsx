@@ -68,7 +68,11 @@ export default function FlexibleTile({
         {metaItems.length > 0 && (
           <div className={styles.metaGroup}>
             {metaItems.map((item, index) => (
-              <span key={item.key} className={styles.metaItem}>
+              <span
+                key={item.key}
+                className={styles.metaItem}
+                suppressHydrationWarning={item.key === 'date'}
+              >
                 {item.value}
                 {index < metaItems.length - 1 && (
                   <span className={styles.metaDot}>·</span>

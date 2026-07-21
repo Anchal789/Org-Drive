@@ -10,6 +10,7 @@ export function OrgPill() {
     <Button
       type='button'
       className={`${styles.orgPill} ${collapsed ? styles.orgPillCollapsed : ''}`}
+      aria-label={collapsed ? 'Zuru Tech' : undefined}
     >
       <div className={styles.orgLogo}>Z</div>
       {!collapsed && <span className={styles.orgName}>Zuru Tech</span>}

@@ -24,7 +24,7 @@ import {
 } from '@/components/ui/item';
 import TelegramButton from '@/components/ui/telegram-button';
 import { countryWithPhoneCode } from '@/constants/country-with-phonecode';
-import { encrypt } from '@/lib/utils';
+import { obfuscate } from '@/lib/obfuscate';
 import { requestOtp } from '@/services/auth-service';
 import type { CountryType } from '@/types/auth';
 import styles from './PhoneLogin.module.scss';
@@ -82,7 +82,7 @@ export default function PhoneLogin() {
       const data = await requestOtp(targetNumber);
       if (data.success) {
         toast.success('OTP sent successfully');
-        router.push(`/verify-otp?phone=${encrypt(targetNumber)}`);
+        router.push(`/verify-otp?phone=${obfuscate(targetNumber)}`);
       } else {
         toast.error(
           typeof data.error === 'string' ? data.error : 'Failed to send OTP',
@@ -168,6 +168,7 @@ export default function PhoneLogin() {
             render={({ field }) => (
               <Input
                 {...field}
+                id='phoneNumber'
                 onChange={(event) => {
                   const value = event.target.value
                     .replace(/\D/g, '')
@@ -176,13 +177,19 @@ export default function PhoneLogin() {
                 }}
                 className={styles.phoneInput}
                 placeholder='347 821 4498'
+                aria-invalid={!!errors.phoneNumber}
+                aria-describedby={
+                  errors.phoneNumber ? 'phoneNumber-error' : undefined
+                }
               />
             )}
           />
         </div>
 
         {errors.phoneNumber && (
-          <p className={styles.errorText}>{errors.phoneNumber.message}</p>
+          <p id='phoneNumber-error' className={styles.errorText}>
+            {errors.phoneNumber.message}
+          </p>
         )}
 
         <div className={styles.shieldHint}>

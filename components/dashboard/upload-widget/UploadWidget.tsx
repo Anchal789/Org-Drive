@@ -120,7 +120,14 @@ function UploadItemRow({
         </div>
       </div>
 
-      <Button onClick={() => onAbort(item)}>
+      <Button
+        onClick={() => onAbort(item)}
+        aria-label={
+          item.state === 'uploading' || item.state === 'queued'
+            ? `Cancel upload of ${item.name}`
+            : `Dismiss ${item.name}`
+        }
+      >
         {item.state === 'done' ? (
           <Check size={13} color='var(--muted-foreground)' />
         ) : item.state === 'uploading' || item.state === 'queued' ? (
@@ -250,14 +257,19 @@ export default function UploadWidget() {
             {estimateMinutes}m {estimateSeconds}s left
           </span>
         )}
-        <Button onClick={() => setCollapseWidget(!collapseWidget)}>
+        <Button
+          onClick={() => setCollapseWidget(!collapseWidget)}
+          aria-label={
+            collapseWidget ? 'Expand upload panel' : 'Collapse upload panel'
+          }
+        >
           {collapseWidget ? (
             <ChevronUp size={14} color='var(--muted-foreground)' />
           ) : (
             <ChevronDown size={14} color='var(--muted-foreground)' />
           )}
         </Button>
-        <Button onClick={closeWidget}>
+        <Button onClick={closeWidget} aria-label='Close upload panel'>
           <X size={14} color='var(--muted-foreground)' />
         </Button>
       </div>

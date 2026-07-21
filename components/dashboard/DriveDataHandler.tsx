@@ -90,18 +90,23 @@ export default function DriveDataHandler({
     setHasMoreFolders(true);
   };
 
+  // `files`/`folders` only ever reflect the first page from the server. When
+  // they change (e.g. after router.refresh() following a delete/move/rename),
+  // reset back to that fresh first page instead of merging it into whatever
+  // "load more" pages were previously appended — merging can't tell a
+  // deleted/moved item apart from one the server prop simply doesn't cover,
+  // which is what let removed items keep rendering indefinitely.
   useEffect(() => {
-    setLocalFiles((prevFiles) => {
-      const serverMap = new Map(files.map((f) => [f.id, f]));
-      const updatedFiles = prevFiles.map((prevFile) =>
-        serverMap.has(prevFile.id) ? serverMap.get(prevFile.id)! : prevFile,
-      );
-      const existingIds = new Set(prevFiles.map((f) => f.id));
-      const brandNewFiles = files.filter((f) => !existingIds.has(f.id));
-
-      return [...brandNewFiles, ...updatedFiles];
-    });
+    setLocalFiles(files);
+    setFileOffset(30);
+    setHasMoreFiles(files.length >= 30);
   }, [files]);
+
+  useEffect(() => {
+    setLocalFolders(folders);
+    setFolderOffset(30);
+    setHasMoreFolders(folders.length >= 30);
+  }, [folders]);
 
   return (
     <>

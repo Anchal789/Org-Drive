@@ -52,6 +52,7 @@ export const sharedWithMeRepository = {
           lastName: userTable.lastName,
           username: userTable.username,
           permission: sql<string>`'owner'`,
+          shareId: sql<number | null>`null`,
         })
         .from(userTable)
         .where(eq(userTable.id, ownerId))
@@ -83,8 +84,15 @@ export const sharedWithMeRepository = {
 
     return [...ownerDetails, ...sharedUsers];
   },
-  async deleteSharedItem(id: number) {
-    return await db.delete(sharedItemsTable).where(eq(sharedItemsTable.id, id));
+  async deleteSharedItem(id: number, actorId: number) {
+    return await db
+      .delete(sharedItemsTable)
+      .where(
+        and(
+          eq(sharedItemsTable.id, id),
+          eq(sharedItemsTable.sharedWithUserId, actorId),
+        ),
+      );
   },
   async getSharedWithMeFileCount(userId: number) {
     const [sharedWithMeFileCount] = await db

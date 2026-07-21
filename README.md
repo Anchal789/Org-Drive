@@ -219,7 +219,7 @@ JWT_SECRET=your_jwt_secret_key
 # Database
 DATABASE_URL=postgresql://user:password@host:5432/orgdrive
 
-NEXT_PUBLIC_PHONE_OBFUSCATION_KEY=your_encryption_decryption_key
+APP_SECRET_KEY=your_encryption_decryption_key
 NEXT_PRIVATE_CRON_SECRET=your_cron_key
 ```
 

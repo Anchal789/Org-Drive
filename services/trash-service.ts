@@ -1,11 +1,10 @@
 import { toast } from 'sonner';
 import { deleteData, postData } from '@/lib/api-fn';
-import { encrypt } from '@/lib/utils';
 
 export const restoreFile = async (trashId: number) => {
   const response = await postData({
     url: '/api/trash/restore',
-    payload: { id: encrypt(String(trashId)) },
+    payload: { id: trashId },
   });
 
   if (response.success) {
@@ -19,7 +18,7 @@ export const restoreFile = async (trashId: number) => {
 export const permanentDeleteFile = async (trashId: number) => {
   try {
     const response = await deleteData({
-      url: `/api/trash/delete-permanently?id=${encrypt(String(trashId))}`,
+      url: `/api/trash/delete-permanently?id=${trashId}`,
     });
 
     if (response.success) {

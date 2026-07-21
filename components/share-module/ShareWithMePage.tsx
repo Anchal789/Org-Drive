@@ -1,3 +1,5 @@
+'use client';
+
 import { ChevronDown, Folder, Users } from 'lucide-react';
 import type { FunctionComponent } from 'react';
 import { TINTS } from '@/constants/common-constants';
@@ -93,7 +95,9 @@ const columns: ColumnDef<SharedWithMeItemsType>[] = [
     width: '130px',
     header: 'Date shared',
     className: styles.metaCell,
-    cell: (item) => <span>{formatFileDate(item.sharedDate)}</span>,
+    cell: (item) => (
+      <span suppressHydrationWarning>{formatFileDate(item.sharedDate)}</span>
+    ),
   },
   {
     id: 'permission',

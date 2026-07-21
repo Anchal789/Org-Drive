@@ -14,9 +14,7 @@ import { useRouter } from 'next/navigation';
 import { useEffect, useRef, useState } from 'react';
 import Badge from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import { fetchData } from '@/lib/api-fn';
-import { encrypt } from '@/lib/utils';
-import type { UploadedFile, UploadedFolder } from '@/types/files';
+import { useFileSearch } from '@/hooks/use-file-search';
 import FileMenu from '../FileSection/FileMenu';
 import FolderMenu from '../FolderSection/FolderMenu/FolderMenu';
 import styles from './SearchBar.module.scss';
@@ -36,16 +34,25 @@ export default function SearchBar({
   const router = useRouter();
 
   const [isOpen, setIsOpen] = useState(false);
-  const [searchTerm, setSearchTerm] = useState('');
-  const [activeQuery, setActiveQuery] = useState('');
-  const [results, setResults] = useState<{
-    files: Array<UploadedFile>;
-    folders: Array<UploadedFolder>;
-  }>({ files: [], folders: [] });
-  const [isSearching, setIsSearching] = useState(false);
-
-  const searchTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const comboboxRef = useRef<HTMLDivElement>(null);
+
+  const {
+    searchTerm,
+    activeQuery,
+    results,
+    isSearching,
+    recentSearches,
+    saveRecentSearch,
+    handleInputChange: onInputChange,
+    handleSuggestionClick,
+    handleInputKeyDown,
+    clearSearch,
+  } = useFileSearch();
+
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setIsOpen(true);
+    onInputChange(e);
+  };
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
@@ -59,90 +66,6 @@ export default function SearchBar({
     document.addEventListener('mousedown', handleClickOutside);
     return () => document.removeEventListener('mousedown', handleClickOutside);
   }, []);
-
-  const [recentSearches, setRecentSearches] = useState<string[]>(() => {
-    if (typeof window === 'undefined') return [];
-    const savedSearches = window.localStorage.getItem(
-      'smart_drive_recent_searches:v1',
-    );
-    if (savedSearches) {
-      try {
-        return JSON.parse(savedSearches) as string[];
-      } catch {
-        return [];
-      }
-    }
-    return [];
-  });
-
-  useEffect(() => {
-    localStorage.setItem(
-      'smart_drive_recent_searches:v1',
-      JSON.stringify(recentSearches),
-    );
-  }, [recentSearches]);
-
-  const saveRecentSearch = (term: string) => {
-    const trimmed = term.trim();
-    if (!trimmed) return;
-    const filtered = recentSearches.filter(
-      (t) => t.toLowerCase() !== trimmed.toLowerCase(),
-    );
-    setRecentSearches([trimmed, ...filtered].slice(0, 3));
-  };
-
-  const performSearch = async (query: string) => {
-    if (!query.trim()) {
-      setResults({ files: [], folders: [] });
-      setIsSearching(false);
-      return;
-    }
-    setIsSearching(true);
-    try {
-      const response = await fetchData<{
-        files: Array<UploadedFile>;
-        folders: Array<UploadedFolder>;
-      }>({
-        url: `/api/search?q=${encodeURIComponent(query)}`,
-      });
-      if (response.success && response.data) {
-        setResults(response.data);
-      }
-    } catch (error) {
-      void error;
-    }
-    setIsSearching(false);
-  };
-
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const val = e.target.value;
-    setSearchTerm(val);
-    setIsOpen(true);
-
-    if (searchTimerRef.current) clearTimeout(searchTimerRef.current);
-    searchTimerRef.current = setTimeout(() => {
-      setActiveQuery(val);
-      performSearch(val);
-    }, 300);
-  };
-
-  const handleSuggestionClick = (suggestion: string) => {
-    setSearchTerm(suggestion);
-    saveRecentSearch(suggestion);
-    if (searchTimerRef.current) clearTimeout(searchTimerRef.current);
-    setActiveQuery(suggestion);
-    performSearch(suggestion);
-  };
-
-  const handleInputKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
-    if (e.key === 'Enter') saveRecentSearch(searchTerm);
-  };
-
-  const clearSearch = () => {
-    setSearchTerm('');
-    setActiveQuery('');
-    setResults({ files: [], folders: [] });
-  };
 
   const isIdle = !activeQuery.trim();
 
@@ -258,7 +181,7 @@ export default function SearchBar({
                             return;
                           saveRecentSearch(activeQuery);
                           router.push(
-                            `/my-drive/folder?folderId=${encrypt(String(folder.id))}&folderName=${folder.name}`,
+                            `/my-drive/folder?folderId=${folder.id}&folderName=${encodeURIComponent(folder.name)}`,
                           );
                           setIsOpen(false);
                         }}

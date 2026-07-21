@@ -35,9 +35,7 @@ export default function DriveDropOverlay() {
             <Upload size={28} />
           </div>
           <div className={styles.title}>Drop to upload</div>
-          <div className={styles.subtitle}>
-            3 files · ~14 MB · into Engineering
-          </div>
+          <div className={styles.subtitle}>Release to add your files here</div>
         </div>
       </div>
     </>

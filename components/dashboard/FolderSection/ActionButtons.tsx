@@ -4,7 +4,6 @@ import { Download, Share } from 'lucide-react';
 import type { FunctionComponent } from 'react';
 import { Button } from '@/components/ui/button';
 import { useIsTab } from '@/hooks/use-mobile';
-import { encrypt } from '@/lib/utils';
 import { downloadAllFolderFiles } from '@/services/file-service';
 import { useShareDialogStore } from '@/store/store';
 import type { UploadedFolder } from '@/types/files';
@@ -16,7 +15,6 @@ export const ActionButtons: FunctionComponent<{
   folderDetails: UploadedFolder;
 }> = ({ folderId, folderName, folderDetails }) => {
   const { setOpen, setFolder } = useShareDialogStore();
-  const encryptedId = encrypt(folderId.toString());
 
   const isTab = useIsTab();
   return (
@@ -37,7 +35,7 @@ export const ActionButtons: FunctionComponent<{
         variant='outline'
         size='sm'
         onClick={() =>
-          downloadAllFolderFiles(encryptedId, folderDetails?.name || folderName)
+          downloadAllFolderFiles(folderId, folderDetails?.name || folderName)
         }
         className={styles.btn}
       >

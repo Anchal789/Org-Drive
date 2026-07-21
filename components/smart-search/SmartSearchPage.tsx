@@ -9,11 +9,10 @@ import {
   Sparkles,
 } from 'lucide-react';
 import { useRouter } from 'next/navigation';
-import { useEffect, useRef, useState } from 'react';
+import { useState } from 'react';
 import { Switch } from '@/components/ui/switch';
-import { fetchData } from '@/lib/api-fn';
-import { encrypt } from '@/lib/utils';
-import type { UploadedFile, UploadedFolder } from '@/types/files';
+import { useFileSearch } from '@/hooks/use-file-search';
+import type { UploadedFile } from '@/types/files';
 import FileMenu from '../dashboard/FileSection/FileMenu';
 import FolderMenu from '../dashboard/FolderSection/FolderMenu/FolderMenu';
 import { Button } from '../ui/button';
@@ -28,113 +27,19 @@ const SUGGESTED_SEARCHES = [
 
 export default function SmartSearchPage() {
   const router = useRouter();
-
-  const [searchTerm, setSearchTerm] = useState('');
-  const [activeQuery, setActiveQuery] = useState('');
   const [isSmartMode, setIsSmartMode] = useState(true);
-  const [results, setResults] = useState<{
-    files: Array<UploadedFile>;
-    folders: Array<UploadedFolder>;
-  }>({ files: [], folders: [] });
-  const [isSearching, setIsSearching] = useState(false);
 
-  const searchTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
-
-  const [recentSearches, setRecentSearches] = useState<string[]>(() => {
-    if (typeof window === 'undefined') return [];
-
-    const savedSearches = window.localStorage.getItem(
-      'smart_drive_recent_searches:v1',
-    );
-    if (savedSearches) {
-      try {
-        return JSON.parse(savedSearches) as string[];
-      } catch (e: unknown) {
-        void e;
-        return [];
-      }
-    }
-    return [];
-  });
-
-  useEffect(() => {
-    localStorage.setItem(
-      'smart_drive_recent_searches:v1',
-      JSON.stringify(recentSearches),
-    );
-  }, [recentSearches]);
-
-  // ─── 1. SAVE SEARCH FUNCTION (KEEPS TOP 3) ───
-  const saveRecentSearch = (term: string) => {
-    const trimmed = term.trim();
-    if (!trimmed) return;
-
-    setRecentSearches((prev) => {
-      const filtered = prev.filter(
-        (t) => t.toLowerCase() !== trimmed.toLowerCase(),
-      );
-      return [trimmed, ...filtered].slice(0, 3);
-    });
-  };
-
-  // ─── 2. PERFORM SEARCH API CALL ───
-  const performSearch = async (query: string) => {
-    if (!query.trim()) {
-      setResults({ files: [], folders: [] });
-      setIsSearching(false);
-      return;
-    }
-
-    setIsSearching(true);
-
-    try {
-      const response = await fetchData<{
-        files: Array<UploadedFile>;
-        folders: Array<UploadedFolder>;
-      }>({
-        url: `/api/search?q=${encodeURIComponent(query)}`,
-      });
-
-      if (response.success && response.data) {
-        setResults(response.data);
-      }
-    } catch (error: unknown) {
-      void error;
-    }
-    setIsSearching(false);
-  };
-
-  // ─── HANDLERS ───
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const val = e.target.value;
-    setSearchTerm(val);
-
-    if (searchTimerRef.current) {
-      clearTimeout(searchTimerRef.current);
-    }
-
-    searchTimerRef.current = setTimeout(() => {
-      setActiveQuery(val);
-      performSearch(val);
-    }, 300);
-  };
-
-  const handleSuggestionClick = (suggestion: string) => {
-    setSearchTerm(suggestion);
-    saveRecentSearch(suggestion);
-
-    if (searchTimerRef.current) {
-      clearTimeout(searchTimerRef.current);
-    }
-    setActiveQuery(suggestion);
-    performSearch(suggestion);
-  };
-
-  const handleInputKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
-    if (e.key === 'Enter') {
-      saveRecentSearch(searchTerm);
-    }
-  };
+  const {
+    searchTerm,
+    activeQuery,
+    results,
+    isSearching,
+    recentSearches,
+    saveRecentSearch,
+    handleInputChange,
+    handleSuggestionClick,
+    handleInputKeyDown,
+  } = useFileSearch();
 
   const isIdle = !activeQuery.trim();
   const displayFolders = results.folders.slice(0, 6);
@@ -249,7 +154,7 @@ export default function SmartSearchPage() {
                         }
                         saveRecentSearch(activeQuery);
                         router.push(
-                          `/my-drive/folder?folderId=${encrypt(String(folder.id))}&folderName=${folder.name}`,
+                          `/my-drive/folder?folderId=${folder.id}&folderName=${encodeURIComponent(folder.name)}`,
                         );
                       }}
                     >

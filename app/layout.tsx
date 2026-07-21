@@ -2,6 +2,7 @@ import type { Metadata } from 'next';
 import { Geist, Geist_Mono } from 'next/font/google';
 import '@/styles/main.scss';
 import './globals.css';
+import { OfflineBanner } from '@/components/ui/offline-banner';
 import { Toaster } from '@/components/ui/sonner';
 import { Providers } from '@/providers/theme-providers';
 
@@ -33,6 +34,7 @@ export default function RootLayout({
     >
       <body className='antialiased'>
         <Providers>
+          <OfflineBanner />
           {children}
           <Toaster />
         </Providers>

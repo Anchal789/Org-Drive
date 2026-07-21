@@ -1,7 +1,6 @@
 import { toast } from 'sonner';
 import { checkTelegramSessionValidAction } from '@/actions/session-actions';
 import { deleteData, postData } from '@/lib/api-fn';
-import { encrypt } from '@/lib/utils';
 import type { UploadedFile } from '@/types/files';
 
 const triggerHiddenDownload = async (
@@ -47,7 +46,7 @@ const triggerHiddenDownload = async (
   }
 };
 
-export const downloadFile = async (fileId: number, userId?: number) => {
+export const downloadFile = async (fileId: number) => {
   const telegramSession = await checkTelegramSessionValidAction();
 
   if (!telegramSession.valid) {
@@ -55,19 +54,13 @@ export const downloadFile = async (fileId: number, userId?: number) => {
     return;
   }
 
-  const encryptedFileId = encrypt(String(fileId));
-  let url = `/api/file/download/file?token=${encodeURIComponent(encryptedFileId)}`;
-
-  if (userId) {
-    const encryptedUserId = encrypt(String(userId));
-    url += `&u=${encodeURIComponent(encryptedUserId)}`;
-  }
+  const url = `/api/file/download/file?fileId=${fileId}`;
 
   triggerHiddenDownload(url);
 };
 
 export const downloadAllFolderFiles = async (
-  folderId: string,
+  folderId: number,
   folderName: string,
 ) => {
   const telegramSession = await checkTelegramSessionValidAction();
@@ -77,17 +70,22 @@ export const downloadAllFolderFiles = async (
     return;
   }
 
-  const url = `/api/file/download/folder-files?folderId=${folderId}&folderName=${folderName}`;
+  const url = `/api/file/download/folder-files?folderId=${folderId}&folderName=${encodeURIComponent(folderName)}`;
 
   triggerHiddenDownload(url, `${folderName}.zip`);
 };
 
-export const trashFile = async (fileId: number, shareId?: number) => {
+export const trashFile = async (
+  fileId: number,
+  shareId?: number,
+  pathName?: string,
+) => {
   const response = await deleteData({
     url: '/api/file/delete-file',
     params: {
-      fileId: encrypt(String(fileId)),
-      shareId: encrypt(String(shareId)),
+      fileId,
+      shareId,
+      pathName,
     },
   });
 
@@ -108,7 +106,7 @@ export const bookmarkItem = async (
   const response = await postData({
     url: '/api/bookmark',
     payload: {
-      id: encrypt(`${id}`),
+      id,
       isFile,
       bookmark,
       shared: false,
@@ -186,19 +184,17 @@ export const downloadMultiple = (selectedFiles: UploadedFile[]) => {
   }
 
   if (filesToDownload.length === 1) {
-    const encryptedFileId = encrypt(String(filesToDownload[0].id));
     triggerHiddenDownload(
-      `/api/file/download/file?token=${encodeURIComponent(encryptedFileId)}`,
+      `/api/file/download/file?fileId=${filesToDownload[0].id}`,
     );
     toast.success(`Downloading "${filesToDownload[0].name}"...`);
     return;
   }
 
   const idString = filesToDownload.map((f) => f.id).join(',');
-  const encryptedIds = encrypt(idString);
 
   triggerHiddenDownload(
-    `/api/file/download/multiple?token=${encodeURIComponent(encryptedIds)}`,
+    `/api/file/download/multiple?ids=${encodeURIComponent(idString)}`,
   );
   toast.success(`Zipping ${filesToDownload.length} files...`);
 };

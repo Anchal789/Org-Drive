@@ -4,11 +4,15 @@ import { Download, Folder, Share, Sparkle, Tag, Trash2, X } from 'lucide-react';
 import { usePathname, useRouter } from 'next/navigation';
 import { useState } from 'react';
 import AlertModal from '@/components/ui/alert-modal';
+import { AsyncButton } from '@/components/ui/async-button';
 import { Button } from '@/components/ui/button';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Dialog } from '@/components/ui/dialog';
 import { Separator } from '@/components/ui/separator';
-import { handleBookmarMultiple, handleDeleteMultiple } from '@/helpers/file-fn';
+import {
+  handleBookmarkMultiple,
+  handleDeleteMultiple,
+} from '@/helpers/file-fn';
 import { downloadMultiple } from '@/services/file-service';
 import { useSelectedFilesStore, useShareDialogStore } from '@/store/store';
 import type { UploadedFile, UploadedFolder } from '@/types/files';
@@ -151,19 +155,19 @@ export default function FileSelectionBar({
           >
             <Folder size={14} /> <span className={styles.btnText}>Move</span>
           </Button>
-          <Button
+          <AsyncButton
             className={styles.actionButton}
-            onClick={() => {
-              handleBookmarMultiple({
+            onClick={() =>
+              handleBookmarkMultiple({
                 selectedFileObjects: selectedFiles,
                 router,
                 clearSelection,
                 pathName,
-              });
-            }}
+              })
+            }
           >
             <Tag size={14} /> <span className={styles.btnText}>Bookmark</span>
-          </Button>
+          </AsyncButton>
           <Separator orientation='vertical' className={styles.divider} />
 
           <Button className={styles.actionButton}>

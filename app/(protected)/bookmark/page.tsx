@@ -1,26 +1,30 @@
 export const dynamic = 'force-dynamic';
 
+import { redirect } from 'next/navigation';
 import BookmarkPage from '@/components/bookmark/BookmarkPage';
 import { getSessionUser } from '@/lib/session';
 import { bookmarkRepository } from '@/repositories/bookmark.repository';
 import { sharedWithMeRepository } from '@/repositories/shared-with-me.repository';
-import { uploadedFilesRepository } from '@/repositories/uploaded-files.respository';
-import { uploadedFoldersRepository } from '@/repositories/uploaded-folders.respository';
+import { uploadedFilesRepository } from '@/repositories/uploaded-files.repository';
+import { uploadedFoldersRepository } from '@/repositories/uploaded-folders.repository';
 import type { UploadedFile, UploadedFolder } from '@/types/files';
 import type { SharedWithMeItemsType } from '@/types/share-with-me';
 
 const Bookmark = async () => {
   const user = await getSessionUser();
+  if (!user?.userId) redirect('/login');
+  const userId = Number(user.userId);
+
   const bookmarkedFiles = (await bookmarkRepository.getBookmarksFiles(
-    Number(user?.userId),
+    userId,
   )) as Array<UploadedFile>;
 
   const bookmarkedFolders = (await bookmarkRepository.getBookmarksFolders(
-    Number(user?.userId),
+    userId,
   )) as UploadedFolder[];
 
   const sharedItems = (await sharedWithMeRepository.getSharedWithMeFiles(
-    Number(user?.userId),
+    userId,
   )) as Array<SharedWithMeItemsType>;
 
   const sharedFileIds = sharedItems
@@ -37,7 +41,7 @@ const Bookmark = async () => {
 
   const sharedFolders = (await uploadedFoldersRepository.getFoldersByIds(
     sharedFolderIds,
-    Number(user?.userId),
+    userId,
   )) as Array<UploadedFolder>;
 
   bookmarkedFiles.push(...sharedFiles);

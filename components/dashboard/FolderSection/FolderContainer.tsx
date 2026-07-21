@@ -7,7 +7,7 @@ import { Button } from '@/components/ui/button';
 import UserAvatar from '@/components/ui/user-avatar';
 import { TINTS } from '@/constants/common-constants';
 import { useIsTab } from '@/hooks/use-mobile';
-import { encrypt, getAvatarColor, getFolderTone } from '@/lib/utils';
+import { getAvatarColor, getFolderTone } from '@/lib/utils';
 import type { UploadedFolder } from '@/types/files';
 import styles from './FolderContainer.module.scss';
 import FolderMenu from './FolderMenu/FolderMenu';
@@ -22,7 +22,8 @@ const FolderContainer: FunctionComponent<{
 }> = ({ folder, layout }) => {
   const router = useRouter();
   const isMobile = useIsTab();
-  const folderId = encrypt(folder.id.toString());
+  const folderId = folder.id;
+  const encodedFolderName = encodeURIComponent(folder.name);
 
   const ownerInitials = folder
     ? `${folder.ownerFirstName?.charAt(0) ?? ''}${folder.ownerLastName?.charAt(0) ?? ''}`
@@ -45,14 +46,14 @@ const FolderContainer: FunctionComponent<{
             }
 
             router.push(
-              `/my-drive/folder?folderId=${folderId}&folderName=${folder.name}`,
+              `/my-drive/folder?folderId=${folderId}&folderName=${encodedFolderName}`,
             );
           }}
           onKeyDown={(e) => {
             if (e.key === 'Enter' || e.key === ' ') {
               e.preventDefault();
               router.push(
-                `/my-drive/folder?folderId=${folderId}&folderName=${folder.name}`,
+                `/my-drive/folder?folderId=${folderId}&folderName=${encodedFolderName}`,
               );
             }
           }}
@@ -99,14 +100,14 @@ const FolderContainer: FunctionComponent<{
             }
 
             router.push(
-              `/my-drive/folder?folderId=${folderId}&folderName=${folder.name}`,
+              `/my-drive/folder?folderId=${folderId}&folderName=${encodedFolderName}`,
             );
           }}
           onKeyDown={(e) => {
             if (e.key === 'Enter' || e.key === ' ') {
               e.preventDefault();
               router.push(
-                `/my-drive/folder?folderId=${folderId}&folderName=${folder.name}`,
+                `/my-drive/folder?folderId=${folderId}&folderName=${encodedFolderName}`,
               );
             }
           }}
@@ -132,14 +133,14 @@ const FolderContainer: FunctionComponent<{
               return;
             }
             router.push(
-              `/my-drive/folder?folderId=${folderId}&folderName=${folder.name}`,
+              `/my-drive/folder?folderId=${folderId}&folderName=${encodedFolderName}`,
             );
           }}
           onKeyDown={(e) => {
             if (e.key === 'Enter' || e.key === ' ') {
               e.preventDefault();
               router.push(
-                `/my-drive/folder?folderId=${folderId}&folderName=${folder.name}`,
+                `/my-drive/folder?folderId=${folderId}&folderName=${encodedFolderName}`,
               );
             }
           }}

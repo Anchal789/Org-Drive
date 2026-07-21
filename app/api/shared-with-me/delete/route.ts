@@ -1,22 +1,22 @@
+import { NextResponse } from 'next/server';
 import type { NextRequest } from 'next/server';
 import { sendError, sendSuccess } from '@/lib/api-response';
-import { getApiSession } from '@/lib/session';
-import { decrypt } from '@/lib/utils';
+import { requireApiSession } from '@/lib/require-auth';
 import { sharedWithMeRepository } from '@/repositories/shared-with-me.repository';
 
 export async function DELETE(request: NextRequest) {
-  const session = await getApiSession(request);
-
-  if (!session?.userId) return sendError('Unauthorized', 401);
+  const session = await requireApiSession(request);
+  if (session instanceof NextResponse) return session;
 
   const url = new URL(request.url);
-  const id = decrypt(url.searchParams.get('id') || '');
+  const id = url.searchParams.get('id');
 
   if (!id) return sendError('File not found', 400);
 
   try {
     const deletedItem = await sharedWithMeRepository.deleteSharedItem(
       Number(id),
+      Number(session.userId),
     );
 
     if (!deletedItem) return sendError('Item not found', 400);

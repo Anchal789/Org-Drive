@@ -6,7 +6,7 @@ import {
   SidebarRail,
 } from '@/components/ui/sidebar';
 import { getSessionUser } from '@/lib/session';
-import { uploadedFilesRepository } from '@/repositories/uploaded-files.respository';
+import { uploadedFilesRepository } from '@/repositories/uploaded-files.repository';
 import type { SidebarItemProps } from '@/types/component-types';
 import styles from './DriveSidebar.module.scss';
 import NewItemButton from './NewItemButton';

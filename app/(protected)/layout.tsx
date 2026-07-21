@@ -8,7 +8,7 @@ import { TooltipProvider } from '@/components/ui/tooltip';
 import { getSessionUser } from '@/lib/session';
 import { bookmarkRepository } from '@/repositories/bookmark.repository';
 import { sharedWithMeRepository } from '@/repositories/shared-with-me.repository';
-import { uploadedFilesRepository } from '@/repositories/uploaded-files.respository';
+import { uploadedFilesRepository } from '@/repositories/uploaded-files.repository';
 import { userRepository } from '@/repositories/user.repository';
 import styles from './layout.module.scss';
 

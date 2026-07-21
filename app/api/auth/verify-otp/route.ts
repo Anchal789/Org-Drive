@@ -3,9 +3,10 @@ import { Api, TelegramClient } from 'telegram';
 import { StringSession } from 'telegram/sessions';
 import { sendError, sendSuccess } from '@/lib/api-response';
 import { generateAccessToken } from '@/lib/jwt';
+import { checkRateLimit, getClientIp } from '@/lib/rate-limit';
 import { createSession } from '@/lib/session';
 import { pendingLoginRepository } from '@/repositories/pending-login.repository';
-import { userRepository } from '@/repositories/user.repository';
+import { toPublicUser, userRepository } from '@/repositories/user.repository';
 import type { UpsertUserInput } from '@/types/auth';
 
 const API_ID = Number(process.env.TELEGRAM_APP_API_ID);
@@ -40,6 +41,18 @@ export async function POST(request: NextRequest) {
 
   if (!phoneNumber || !otpCode) {
     return sendError('Missing phoneNumber or otpCode', 400);
+  }
+
+  const rateLimit = checkRateLimit(
+    `verify-otp:${getClientIp(request)}:${phoneNumber}`,
+    5,
+    10 * 60 * 1000,
+  );
+  if (!rateLimit.allowed) {
+    return sendError(
+      `Too many attempts. Try again in ${rateLimit.retryAfterSeconds}s.`,
+      429,
+    );
   }
 
   const savedData = await pendingLoginRepository.findByPhone(phoneNumber);
@@ -113,7 +126,7 @@ export async function POST(request: NextRequest) {
     return sendSuccess(
       {
         step: 'success',
-        user: dbUser,
+        user: toPublicUser(dbUser),
         accessToken,
       },
       'Login completed successfully',
