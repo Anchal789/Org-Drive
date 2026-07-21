@@ -1,7 +1,18 @@
 import { eq } from 'drizzle-orm';
 import { db } from '@/db';
 import { userTable } from '@/db/schema';
-import type { UpsertUserInput, User } from '@/types/auth';
+import type { PublicUser, UpsertUserInput, User } from '@/types/auth';
+
+/** Strips session/credential fields before a user record ever reaches a client response. */
+export function toPublicUser(user: User): PublicUser {
+  return {
+    id: user.id,
+    firstName: user.firstName,
+    lastName: user.lastName,
+    username: user.username,
+    photoUrl: user.photoUrl,
+  };
+}
 
 export const userRepository = {
   async findByTelegramId(telegramId: string): Promise<User | null> {
@@ -61,8 +72,18 @@ export const userRepository = {
   async delete(id: number): Promise<void> {
     await db.delete(userTable).where(eq(userTable.id, id));
   },
-  async getUsers(): Promise<User[]> {
-    return await db.select().from(userTable);
+  /** Public directory listing — never select telegramSessionString/telegramId/phone, these are private credentials. */
+  async getUsers(limit = 500): Promise<PublicUser[]> {
+    return await db
+      .select({
+        id: userTable.id,
+        firstName: userTable.firstName,
+        lastName: userTable.lastName,
+        username: userTable.username,
+        photoUrl: userTable.photoUrl,
+      })
+      .from(userTable)
+      .limit(limit);
   },
   async getUserFirstName(id: number): Promise<string | null> {
     const user = await db

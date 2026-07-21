@@ -24,7 +24,11 @@ export default function DashList({ files, folders, ...props }: FileTableProps) {
         <div className={styles.content}>
           {/* Folders row */}
           <div className={styles.sectionLabel}>Folders · {folders?.length}</div>
-          <div className={styles.foldersGrid}>
+          <div
+            className={
+              folders.length === 0 ? styles.emptyHint : styles.foldersGrid
+            }
+          >
             {folders.length === 0 && (
               <div className={styles.emptyHint}>No folders</div>
             )}

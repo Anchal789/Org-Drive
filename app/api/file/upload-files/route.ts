@@ -10,16 +10,21 @@ import { StringSession } from 'telegram/sessions';
 import { db } from '@/db';
 import { uploadFoldersTable } from '@/db/schema';
 import { sendError } from '@/lib/api-response';
+import { logger } from '@/lib/logger';
 import { getSessionUser } from '@/lib/session';
-import { decrypt } from '@/lib/utils';
 import { systemSettingsRepository } from '@/repositories/system-settings.repository';
-import { uploadedFilesRepository } from '@/repositories/uploaded-files.respository';
-import { uploadedFoldersRepository } from '@/repositories/uploaded-folders.respository';
+import { uploadedFilesRepository } from '@/repositories/uploaded-files.repository';
+import { uploadedFoldersRepository } from '@/repositories/uploaded-folders.repository';
 import type { UploadFilesResponse } from '@/types/files';
 
 const API_ID = Number(process.env.TELEGRAM_APP_API_ID);
 const API_HASH = String(process.env.TELEGRAM_APP_API_HASH);
 const STORAGE_CHANNEL = String(process.env.TELEGRAM_STORAGE_CHANNEL_ID);
+
+// Telegram bot uploads are capped at 2GB; reject earlier files over that
+// before ever buffering them into memory or writing a temp file.
+const MAX_FILE_SIZE_BYTES = 2 * 1024 * 1024 * 1024;
+const MAX_FILES_PER_REQUEST = 50;
 
 export async function POST(request: NextRequest) {
   try {
@@ -34,9 +39,32 @@ export async function POST(request: NextRequest) {
     if (!files || files.length === 0)
       return sendError('No files uploaded', 400);
 
-    let resolvedFolderId: number | null = folderId
-      ? Number(decrypt(folderId))
-      : null;
+    if (files.length > MAX_FILES_PER_REQUEST) {
+      return sendError(
+        `Too many files in one request (max ${MAX_FILES_PER_REQUEST})`,
+        400,
+      );
+    }
+
+    const oversizedFile = files.find((f) => f.size > MAX_FILE_SIZE_BYTES);
+    if (oversizedFile) {
+      return sendError(
+        `"${oversizedFile.name}" exceeds the 2GB upload limit`,
+        400,
+      );
+    }
+
+    let resolvedFolderId: number | null = null;
+    if (folderId) {
+      const targetFolder = await uploadedFoldersRepository.getAccessibleFolder(
+        Number(session.userId),
+        Number(folderId),
+      );
+      if (!targetFolder) {
+        return sendError('Folder not found', 404);
+      }
+      resolvedFolderId = targetFolder.id;
+    }
 
     if (folderName) {
       const existingFolder = await db
@@ -207,7 +235,10 @@ export async function POST(request: NextRequest) {
           if (err instanceof Error) {
             sendEvent('error', { message: err.message });
           } else {
-            void err;
+            logger.error('Upload stream threw a non-Error value', {
+              error: String(err),
+            });
+            sendEvent('error', { message: 'Upload failed unexpectedly' });
           }
         } finally {
           if (client)

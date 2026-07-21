@@ -1,3 +1,5 @@
+'use client';
+
 import { ChevronDown, Folder, Shield, Trash2 } from 'lucide-react';
 import type { FunctionComponent } from 'react';
 import { formatFileDate, getFileExtension } from '@/lib/utils';
@@ -15,7 +17,7 @@ import TrashTableActionColumn from './TrashTableActionColumn';
 
 const TrashPage: FunctionComponent<{
   trashedItems: Array<TrashInterface>;
-}> = async ({ trashedItems }) => {
+}> = ({ trashedItems }) => {
   const columns: ColumnDef<TrashInterface>[] = [
     {
       id: 'name',
@@ -57,7 +59,9 @@ const TrashPage: FunctionComponent<{
       width: '130px',
       header: 'Deleted',
       className: styles.metaCell,
-      cell: (file) => <span>{formatFileDate(file.createdAt)}</span>,
+      cell: (file) => (
+        <span suppressHydrationWarning>{formatFileDate(file.createdAt)}</span>
+      ),
     },
     {
       id: 'autodelete',
@@ -110,6 +114,12 @@ const TrashPage: FunctionComponent<{
           </h6>
           <EmptyTrashButton isDisabled={trashedItems.length === 0} />
         </span>
+        {trashedItems.length === 0 && (
+          <div className={styles.emptyState}>
+            <Trash2 size={32} className={styles.emptyStateIcon} />
+            <p>Trash is empty</p>
+          </div>
+        )}
         {trashedItems.map((item) => (
           <FlexibleTile
             key={item.id}

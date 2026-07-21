@@ -14,13 +14,15 @@ export const fetchData = async <T>({
   url,
   params,
   baseUrl,
+  signal,
 }: {
   url: string;
   params?: Record<string, unknown>;
   baseUrl?: string;
+  signal?: AbortSignal;
 }): Promise<ApiResponse<T>> => {
   return await api
-    .get<ApiResponse<T>>(getFullUrl(url, baseUrl), { params })
+    .get<ApiResponse<T>>(getFullUrl(url, baseUrl), { params, signal })
     .then((res) => res.data);
 };
 

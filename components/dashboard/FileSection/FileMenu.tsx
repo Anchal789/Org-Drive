@@ -11,7 +11,7 @@ import {
 } from 'lucide-react';
 import { usePathname, useRouter } from 'next/navigation';
 import { type FunctionComponent, useState } from 'react';
-import RenameItem from '@/components/rename/RenameIterm';
+import RenameItem from '@/components/rename/RenameItem';
 import AlertModal from '@/components/ui/alert-modal';
 import { Button } from '@/components/ui/button';
 import {
@@ -82,7 +82,11 @@ const FileMenu: FunctionComponent<{
       />
       <DropdownMenu>
         <DropdownMenuTrigger asChild className={styles.dropdownTrigger}>
-          <Button type='button' className={styles.moreBtn}>
+          <Button
+            type='button'
+            className={styles.moreBtn}
+            aria-label={`More actions for ${file.name}`}
+          >
             <MoreHorizontal size={14} className={styles.moreIcon} />
           </Button>
         </DropdownMenuTrigger>

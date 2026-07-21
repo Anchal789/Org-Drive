@@ -1,4 +1,8 @@
+'use client';
+
+import { useVirtualizer } from '@tanstack/react-virtual';
 import { X } from 'lucide-react';
+import { useRef } from 'react';
 import { Checkbox } from '@/components/ui/checkbox';
 import {
   Table,
@@ -8,11 +12,17 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table';
+import { useScrollParent } from '@/hooks/use-scroll-parent';
 import type { DataTableProps } from '@/types/component-types';
 import { Button } from './button';
 import styles from './Component.module.scss';
 
 const EMPTY_SELECTED_IDS: Array<string | number> = [];
+
+// Table rows are single-line (every TableCell forces `whitespace-nowrap`),
+// so a fixed estimate is accurate without per-row measurement.
+const ROW_HEIGHT_PX = 42;
+const VIRTUALIZE_THRESHOLD = 50;
 
 type ExtendedDataTableProps<T> = DataTableProps<T> & {
   renderSelectionActions?: (
@@ -58,8 +68,34 @@ export default function DataTable<T>({
   const showSelectionBar = hasSelection && !!renderSelectionActions;
   const selectedIdSet = new Set(selectedIds);
 
+  const wrapperRef = useRef<HTMLDivElement>(null);
+  const scrollParent = useScrollParent(wrapperRef);
+  const shouldVirtualize = data.length > VIRTUALIZE_THRESHOLD && !!scrollParent;
+
+  const rowVirtualizer = useVirtualizer({
+    count: data.length,
+    getScrollElement: () => scrollParent,
+    estimateSize: () => ROW_HEIGHT_PX,
+    overscan: 8,
+    enabled: shouldVirtualize,
+  });
+
+  const virtualRows = shouldVirtualize
+    ? rowVirtualizer.getVirtualItems()
+    : null;
+  const topSpacer = virtualRows?.[0]?.start ?? 0;
+  const bottomSpacer = virtualRows?.length
+    ? rowVirtualizer.getTotalSize() - virtualRows[virtualRows.length - 1].end
+    : 0;
+  const visibleRows = virtualRows
+    ? virtualRows.map((virtualRow) => ({
+        row: data[virtualRow.index],
+        rowIndex: virtualRow.index,
+      }))
+    : data.map((row, rowIndex) => ({ row, rowIndex }));
+
   return (
-    <div className={`${styles.table} ${classes?.table || ''}`}>
+    <div className={`${styles.table} ${classes?.table || ''}`} ref={wrapperRef}>
       <Table>
         <TableHeader className={classes?.header}>
           <TableRow notApplyBackground className={classes?.header}>
@@ -133,45 +169,57 @@ export default function DataTable<T>({
               </TableCell>
             </TableRow>
           ) : (
-            data.map((row, rowIndex) => {
-              const rowId = getRowId(row);
-              const isSelected = selectedIdSet.has(rowId);
+            <>
+              {topSpacer > 0 && (
+                <tr aria-hidden style={{ height: topSpacer }}>
+                  <td colSpan={columns.length + (enableSelection ? 1 : 0)} />
+                </tr>
+              )}
+              {visibleRows.map(({ row, rowIndex }) => {
+                const rowId = getRowId(row);
+                const isSelected = selectedIdSet.has(rowId);
 
-              return (
-                <TableRow
-                  key={rowId}
-                  className={`${classes?.row || ''} ${
-                    isSelected ? styles.selectedRow : ''
-                  }`}
-                >
-                  {enableSelection && (
-                    <TableCell className={styles.checkboxCell}>
-                      <Checkbox
-                        checked={isSelected}
-                        onCheckedChange={(checked) =>
-                          handleSelectRow(rowId, !!checked)
-                        }
-                      />
-                    </TableCell>
-                  )}
-
-                  {columns.map((col) => {
-                    const headerText =
-                      typeof col.header === 'string' ? col.header : '';
-
-                    return (
-                      <TableCell
-                        key={`${rowId}-${col.id}`}
-                        className={col.className}
-                        data-label={headerText}
-                      >
-                        {col.cell(row, rowIndex)}
+                return (
+                  <TableRow
+                    key={rowId}
+                    className={`${classes?.row || ''} ${
+                      isSelected ? styles.selectedRow : ''
+                    }`}
+                  >
+                    {enableSelection && (
+                      <TableCell className={styles.checkboxCell}>
+                        <Checkbox
+                          checked={isSelected}
+                          onCheckedChange={(checked) =>
+                            handleSelectRow(rowId, !!checked)
+                          }
+                        />
                       </TableCell>
-                    );
-                  })}
-                </TableRow>
-              );
-            })
+                    )}
+
+                    {columns.map((col) => {
+                      const headerText =
+                        typeof col.header === 'string' ? col.header : '';
+
+                      return (
+                        <TableCell
+                          key={`${rowId}-${col.id}`}
+                          className={col.className}
+                          data-label={headerText}
+                        >
+                          {col.cell(row, rowIndex)}
+                        </TableCell>
+                      );
+                    })}
+                  </TableRow>
+                );
+              })}
+              {bottomSpacer > 0 && (
+                <tr aria-hidden style={{ height: bottomSpacer }}>
+                  <td colSpan={columns.length + (enableSelection ? 1 : 0)} />
+                </tr>
+              )}
+            </>
           )}
         </TableBody>
       </Table>

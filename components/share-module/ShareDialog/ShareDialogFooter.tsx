@@ -1,13 +1,14 @@
 import { Link } from 'lucide-react';
+import { AsyncButton } from '@/components/ui/async-button';
 import { Button } from '@/components/ui/button';
 import { Separator } from '@/components/ui/separator';
 import styles from './ShareDialog.module.scss';
 
 interface ShareDialogFooterProps {
   showCopyLink: boolean;
-  onCopyLink: () => void;
+  onCopyLink: () => unknown | Promise<unknown>;
   onCancel: () => void;
-  onSubmit: () => void;
+  onSubmit: () => unknown | Promise<unknown>;
   submitLabel: string;
 }
 
@@ -23,18 +24,18 @@ export default function ShareDialogFooter({
       <Separator />
       <div className={styles.footer}>
         {showCopyLink && (
-          <Button variant='outline' size='sm' onClick={onCopyLink}>
+          <AsyncButton variant='outline' size='sm' onClick={onCopyLink}>
             <Link size={14} />
             Copy link
-          </Button>
+          </AsyncButton>
         )}
         <div className={styles.footerSpacer} />
         <Button variant='ghost' size='sm' onClick={onCancel}>
           Cancel
         </Button>
-        <Button variant='primary' size='sm' onClick={onSubmit}>
+        <AsyncButton variant='primary' size='sm' onClick={onSubmit}>
           {submitLabel}
-        </Button>
+        </AsyncButton>
       </div>
     </>
   );

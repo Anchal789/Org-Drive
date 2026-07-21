@@ -21,7 +21,7 @@ import FileType from '@/components/ui/fileType';
 import { Separator } from '@/components/ui/separator';
 import UserAvatar from '@/components/ui/user-avatar';
 import { TINTS } from '@/constants/common-constants';
-import { handleBookmarMultiple, handleDeleteMultiple } from '@/helpers/file-fn';
+import { handleBookmarkMultiple, handleDeleteMultiple } from '@/helpers/file-fn';
 import { useIsDesktop } from '@/hooks/use-mobile';
 import { formatFileDate, getAvatarColor, getFileExtension } from '@/lib/utils';
 import { downloadMultiple } from '@/services/file-service';
@@ -111,7 +111,9 @@ const FileTable: FunctionComponent<{
       width: '110px',
       header: 'Modified',
       className: styles.metaCell,
-      cell: (file) => formatFileDate(file.createdAt),
+      cell: (file) => (
+        <span suppressHydrationWarning>{formatFileDate(file.createdAt)}</span>
+      ),
     },
     {
       id: 'size',
@@ -281,7 +283,7 @@ const FileTable: FunctionComponent<{
               <Button
                 className={styles.actionButton}
                 onClick={() => {
-                  handleBookmarMultiple({
+                  handleBookmarkMultiple({
                     selectedFileObjects,
                     router,
                     clearSelection,

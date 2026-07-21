@@ -29,7 +29,7 @@ export default function DriveCrumb() {
                 type='button'
                 className={styles.parentLink}
                 onClick={() => {
-                  router.replace('/my-drive');
+                  router.push('/my-drive');
                 }}
               >
                 My drive
@@ -53,6 +53,8 @@ export default function DriveCrumb() {
               variant={fileLayout === 'list' ? 'primary' : 'ghost'}
               size='icon'
               onClick={() => handleChangeDriveLayout('list')}
+              aria-label='List view'
+              aria-pressed={fileLayout === 'list'}
             >
               <List size={16} />
             </Button>
@@ -61,6 +63,8 @@ export default function DriveCrumb() {
               variant={fileLayout === 'grid' ? 'primary' : 'ghost'}
               size='icon'
               onClick={() => handleChangeDriveLayout('grid')}
+              aria-label='Grid view'
+              aria-pressed={fileLayout === 'grid'}
             >
               <LayoutGrid size={16} />
             </Button>

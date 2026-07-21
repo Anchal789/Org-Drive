@@ -6,10 +6,16 @@ import {
   uploadFoldersTable,
 } from '@/db/schema';
 
+const SEARCH_RESULT_LIMIT = 50;
+
+/** Escapes ILIKE wildcard characters so a literal `%`/`_`/`\` in the query matches literally. */
+export const escapeLikePattern = (value: string) =>
+  value.replace(/\\/g, '\\\\').replace(/%/g, '\\%').replace(/_/g, '\\_');
+
 export const searchRepository = {
   async searchFilesAndFolders(userId: number, searchQuery: string) {
     // Format the query for SQL wildcard search (e.g., "%report%")
-    const query = `%${searchQuery}%`;
+    const query = `%${escapeLikePattern(searchQuery)}%`;
 
     // 1. Search Owned Files
     const ownedFilesPromise = db
@@ -20,7 +26,8 @@ export const searchRepository = {
           eq(uploadedFilesTable.userId, userId),
           ilike(uploadedFilesTable.name, query),
         ),
-      );
+      )
+      .limit(SEARCH_RESULT_LIMIT);
 
     // 2. Search Owned Folders
     const ownedFoldersPromise = db
@@ -31,7 +38,8 @@ export const searchRepository = {
           eq(uploadFoldersTable.userId, userId),
           ilike(uploadFoldersTable.name, query),
         ),
-      );
+      )
+      .limit(SEARCH_RESULT_LIMIT);
 
     // 3. Search Shared Files
     const sharedFilesPromise = db
@@ -48,7 +56,8 @@ export const searchRepository = {
           eq(sharedItemsTable.sharedWithUserId, userId),
           ilike(uploadedFilesTable.name, query),
         ),
-      );
+      )
+      .limit(SEARCH_RESULT_LIMIT);
 
     // 4. Search Shared Folders
     const sharedFoldersPromise = db
@@ -65,7 +74,8 @@ export const searchRepository = {
           eq(sharedItemsTable.sharedWithUserId, userId),
           ilike(uploadFoldersTable.name, query),
         ),
-      );
+      )
+      .limit(SEARCH_RESULT_LIMIT);
 
     // Execute all 4 queries simultaneously
     const [ownedFiles, ownedFolders, sharedFilesRaw, sharedFoldersRaw] =

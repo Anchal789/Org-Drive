@@ -31,8 +31,7 @@ const BookmarkPage: FunctionComponent<{
             loading='eager'
             className={styles.emptyHintImage}
           />
-          Drag your files and folders here or use the &apos;New&apos; button to
-          upload
+          Nothing bookmarked yet — tag a file or folder to find it here fast
         </div>
       ) : (
         <div className={styles.content}>

@@ -68,6 +68,7 @@ const TrashTableActionColumn: FunctionComponent<{
             type='button'
             onClick={handleRestore}
             className={styles.iconButton}
+            aria-label='Restore'
           >
             <RefreshCw size={14} className={styles.icon} />
           </Button>
@@ -82,6 +83,7 @@ const TrashTableActionColumn: FunctionComponent<{
               });
             }}
             className={styles.iconButton}
+            aria-label='Delete permanently'
           >
             <X size={14} className={styles.icon} />
           </Button>

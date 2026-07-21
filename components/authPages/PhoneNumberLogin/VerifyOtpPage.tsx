@@ -2,13 +2,14 @@
 
 import { ChevronLeftIcon, Shield } from 'lucide-react';
 import { useRouter, useSearchParams } from 'next/navigation';
-import { useReducer } from 'react';
+import { useEffect, useReducer } from 'react';
 import { Controller, useForm } from 'react-hook-form';
+import { toast } from 'sonner';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import TelegramButton from '@/components/ui/telegram-button';
-import { decrypt } from '@/lib/utils';
-import { verifyOtp, verifyOtpPassword } from '@/services/auth-service';
+import { deobfuscate } from '@/lib/obfuscate';
+import { requestOtp, verifyOtp, verifyOtpPassword } from '@/services/auth-service';
 import { useAuthStore } from '@/store/store';
 import OtpInputGroup from './OtpInputGroup';
 import ResendTimer from './ResendTimer';
@@ -22,7 +23,7 @@ const RESEND_SECONDS = 60;
 export default function VerifyOtpPage() {
   const router = useRouter();
   const searchParams = useSearchParams();
-  const phoneNumber = decrypt(searchParams.get('phone') ?? '');
+  const phoneNumber = deobfuscate(searchParams.get('phone') ?? '');
 
   const [state, dispatch] = useReducer(verifyReducer, initialVerifyState);
   const { status, serverError, passwordHint } = state;
@@ -37,9 +38,11 @@ export default function VerifyOtpPage() {
     mode: 'onChange',
   });
 
-  if (!phoneNumber) {
-    router.replace('/login');
-  }
+  useEffect(() => {
+    if (!phoneNumber) {
+      router.replace('/login');
+    }
+  }, [phoneNumber, router]);
 
   async function submitOtp(values: { otp: string }) {
     dispatch({ type: 'submit_start' });
@@ -153,16 +156,32 @@ export default function VerifyOtpPage() {
                     otpForm.setValue('otp', otp, { shouldValidate: true })
                   }
                   onCompleteAction={() => otpForm.handleSubmit(submitOtp)()}
+                  invalid={!!(otpForm.formState.errors.otp || serverError)}
+                  describedById={
+                    otpForm.formState.errors.otp || serverError
+                      ? 'otp-error'
+                      : undefined
+                  }
                 />
               )}
             />
 
             <div className={styles.resendWrapper}>
-              <ResendTimer seconds={RESEND_SECONDS} />
+              <ResendTimer
+                seconds={RESEND_SECONDS}
+                onResend={async () => {
+                  const response = await requestOtp(String(phoneNumber));
+                  if (response.success) {
+                    toast.success('A new code was sent');
+                  } else {
+                    toast.error(response.message ?? 'Failed to resend code');
+                  }
+                }}
+              />
             </div>
 
             {(otpForm.formState.errors.otp || serverError) && (
-              <p className={styles.errorText}>
+              <p id='otp-error' className={styles.errorText}>
                 {otpForm.formState.errors.otp?.message ?? serverError}
               </p>
             )}
@@ -196,16 +215,25 @@ export default function VerifyOtpPage() {
               render={({ field }) => (
                 <Input
                   {...field}
+                  id='password'
                   type='password'
                   placeholder='Your Telegram password'
                   disabled={passwordForm.formState.isSubmitting}
                   className={`${styles.passwordInput} ${passwordForm.formState.errors.password ? styles.error : ''}`}
+                  aria-invalid={
+                    !!(passwordForm.formState.errors.password || serverError)
+                  }
+                  aria-describedby={
+                    passwordForm.formState.errors.password || serverError
+                      ? 'password-error'
+                      : undefined
+                  }
                 />
               )}
             />
 
             {(passwordForm.formState.errors.password || serverError) && (
-              <p className={styles.errorText}>
+              <p id='password-error' className={styles.errorText}>
                 {passwordForm.formState.errors.password?.message ?? serverError}
               </p>
             )}

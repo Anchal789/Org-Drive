@@ -14,6 +14,7 @@ export function SidebarToggleButton() {
       variant='secondary'
       onClick={toggleSidebar}
       className={styles.sidebarToggleButton}
+      aria-label={collapsed ? 'Expand sidebar' : 'Collapse sidebar'}
     >
       {collapsed ? (
         <ChevronRightIcon size={14} />

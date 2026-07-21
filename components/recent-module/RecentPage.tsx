@@ -2,6 +2,8 @@
 
 import { Clock, Folder } from 'lucide-react';
 import type { FunctionComponent } from 'react';
+import { useMemo } from 'react';
+import { useIsClient } from '@/hooks/use-is-client';
 import { getFileExtension } from '@/lib/utils';
 import { formatBytes } from '@/store/store';
 import type { RecentLogsType } from '@/types/recent';
@@ -49,7 +51,17 @@ const RecentPage: FunctionComponent<{
   recentLogs: Array<RecentLogsType>;
   currentUserId: number;
 }> = ({ recentLogs, currentUserId }) => {
-  const groupedLogs = groupLogsByDate(recentLogs);
+  // Which bucket ("Today"/"Yesterday"/etc) a log falls into depends on the
+  // viewer's local wall-clock day, which can differ from the server's at
+  // render time (different timezone, or a request landing right at a day
+  // boundary) — grouping only after mount keeps server and client markup
+  // identical during hydration.
+  const isClient = useIsClient();
+  const groupedLogs = useMemo(
+    () => (isClient ? groupLogsByDate(recentLogs) : {}),
+    [isClient, recentLogs],
+  );
+  const hasAnyActivity = recentLogs.length > 0;
 
   return (
     <>
@@ -61,6 +73,12 @@ const RecentPage: FunctionComponent<{
         hideOnMobile={true}
       />
       <div className={styles.wrapper}>
+        {!hasAnyActivity && (
+          <div className={styles.emptyState}>
+            <Clock size={32} className={styles.emptyStateIcon} />
+            <p>No recent activity yet</p>
+          </div>
+        )}
         {Object.entries(groupedLogs).map(([groupName, logs]) => {
           if (logs.length === 0) return null;
 

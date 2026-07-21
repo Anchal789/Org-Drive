@@ -1,5 +1,4 @@
 import { type ClassValue, clsx } from 'clsx';
-import CryptoJS from 'crypto-js';
 import { twMerge } from 'tailwind-merge';
 import type { FileKind, Tone } from '@/types/dashboard';
 
@@ -7,48 +6,6 @@ export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
 }
 
-const SECRET_KEY = process.env.NEXT_PUBLIC_PHONE_OBFUSCATION_KEY;
-
-if (!SECRET_KEY) {
-  throw new Error(
-    'Missing required env var: NEXT_PUBLIC_PHONE_OBFUSCATION_KEY',
-  );
-}
-
-export function encrypt(text: string) {
-  if (!SECRET_KEY) {
-    throw new Error(
-      'Missing required env var: NEXT_PUBLIC_PHONE_OBFUSCATION_KEY',
-    );
-  }
-  const cipherText = CryptoJS.AES.encrypt(text, SECRET_KEY).toString();
-
-  return cipherText.replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '');
-}
-
-export function decrypt(safeCipherText: string) {
-  if (!SECRET_KEY) {
-    throw new Error(
-      'Missing required env var: NEXT_PUBLIC_PHONE_OBFUSCATION_KEY',
-    );
-  }
-  let cipherText = safeCipherText.replace(/-/g, '+').replace(/_/g, '/');
-
-  while (cipherText.length % 4) {
-    cipherText += '=';
-  }
-
-  try {
-    const bytes = CryptoJS.AES.decrypt(cipherText, SECRET_KEY);
-    const decryptedText = bytes.toString(CryptoJS.enc.Utf8);
-
-    if (!decryptedText) return null;
-
-    return decryptedText;
-  } catch {
-    return null;
-  }
-}
 export const formatFileDate = (date: string | Date): string => {
   const targetDate = new Date(date);
   const now = new Date();
@@ -71,7 +28,7 @@ export const formatFileDate = (date: string | Date): string => {
     return `Today ${targetDate.toLocaleTimeString('en-US', {
       hour: 'numeric',
       minute: '2-digit',
-      hour12: false,
+      hourCycle: 'h23',
     })}`;
   }
   if (isYesterday) {

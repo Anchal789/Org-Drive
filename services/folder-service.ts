@@ -1,6 +1,5 @@
 import { toast } from 'sonner';
 import { deleteData, postData } from '@/lib/api-fn';
-import { encrypt } from '@/lib/utils';
 
 export const renameItem = async (
   id: number,
@@ -24,8 +23,8 @@ export const trashFolder = async (
   const response = await deleteData({
     url: '/api/folder/delete',
     params: {
-      id: encrypt(String(id)),
-      shareId: encrypt(String(shareId)),
+      id,
+      shareId,
       pathName,
     },
   });

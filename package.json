@@ -1,5 +1,5 @@
 {
-  "name": "next-js-boilerplate",
+  "name": "org-drive",
   "version": "1.0.0",
   "packageManager": "pnpm@10.17.1",
   "private": true,
@@ -7,9 +7,9 @@
     "next.js",
     "tailwindcss",
     "biome",
-    "boilerplate"
+    "drive"
   ],
-  "description": "Next.js boilerplate with Tailwind CSS, Biome",
+  "description": "Org Drive — Telegram-backed file storage and sharing app",
   "engines": {
     "node": ">=22"
   },
@@ -30,6 +30,7 @@
   },
   "dependencies": {
     "@base-ui/react": "1.5.0",
+    "@tanstack/react-virtual": "3.14.7",
     "archiver": "8.0.0",
     "bcryptjs": "3.0.3",
     "class-variance-authority": "0.7.1",
@@ -43,7 +44,6 @@
     "lucide-react": "1.17.0",
     "next": "16.2.6",
     "next-themes": "0.4.6",
-    "pg": "8.21.0",
     "postgres": "3.4.9",
     "qrcode": "1.5.4",
     "radix-ui": "1.4.3",
@@ -52,7 +52,6 @@
     "react-hook-form": "7.76.1",
     "recharts": "3.9.1",
     "server-only": "0.0.1",
-    "shadcn": "4.8.3",
     "sonner": "2.0.7",
     "tailwind-merge": "3.6.0",
     "telegram": "2.26.22",
@@ -67,7 +66,6 @@
     "@types/bcryptjs": "2.4.6",
     "@types/crypto-js": "4.2.2",
     "@types/node": "25.8.0",
-    "@types/pg": "8.20.0",
     "@types/qrcode": "1.5.6",
     "@types/react": "19.2.15",
     "@types/react-dom": "19.2.3",
@@ -78,6 +76,7 @@
     "postcss": "8.5.14",
     "react-doctor": "0.5.1",
     "sass": "1.101.0",
+    "shadcn": "4.8.3",
     "tailwindcss": "4.3.0",
     "tailwindcss-animate": "1.0.7",
     "tsx": "4.22.4",

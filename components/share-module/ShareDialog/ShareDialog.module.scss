@@ -1,18 +1,31 @@
 @use "../../../styles/functions" as *;
 
 .backdrop {
-  position: absolute;
+  position: fixed;
   inset: 0;
   z-index: 5;
   background: color-mix(in oklch, v(foreground) 35%, transparent);
-  display: flex;
-  align-items: center;
-  justify-content: center;
   backdrop-filter: blur(2px);
 }
 
+// DialogPrimitive.Overlay and DialogPrimitive.Content are portal siblings,
+// not parent/child, so the overlay's flex-centering can't position the
+// dialog — the dialog must position (and center) itself.
+//
+// Centered via fixed + inset + auto margins rather than the usual
+// top/left 50% + transform: translate(-50%,-50%) — a `transform` on this
+// element would make it the containing block for any descendant
+// `position: fixed/absolute` floating UI (e.g. the invite Combobox's
+// popover), breaking their coordinates relative to the real viewport.
 .dialog {
+  position: fixed;
+  inset: 0;
+  margin: auto;
   width: 480px;
+  height: fit-content;
+  max-height: 85vh;
+  overflow-y: auto;
+  z-index: 6;
   background: v(card);
   color: v(foreground);
   border-radius: v(radius-2xl);

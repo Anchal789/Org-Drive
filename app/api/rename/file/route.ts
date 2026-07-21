@@ -1,22 +1,24 @@
 import { revalidatePath } from 'next/cache';
 import type { NextRequest } from 'next/server';
+import { NextResponse } from 'next/server';
 import { sendError, sendSuccess } from '@/lib/api-response';
-import { getApiSession } from '@/lib/session';
-import { uploadedFilesRepository } from '@/repositories/uploaded-files.respository';
+import { requireApiSession } from '@/lib/require-auth';
+import { uploadedFilesRepository } from '@/repositories/uploaded-files.repository';
 
 export async function POST(request: NextRequest) {
-  const user = await getApiSession(request);
+  const user = await requireApiSession(request);
+  if (user instanceof NextResponse) return user;
 
-  if (!user?.userId) {
-    return sendError('Access token missing or expired', 401);
-  }
-
-  const { id, newName, pathName } = await request.json();
+  const { id, newName: rawNewName, pathName } = await request.json();
+  const newName = typeof rawNewName === 'string' ? rawNewName.trim() : '';
 
   if (!id) return sendError('Missing id', 400);
-  if (!newName) return sendError('Missing new name', 400);
+  if (!newName) return sendError('Name cannot be empty', 400);
+  if (newName.length > 255) {
+    return sendError('File name must be 255 characters or fewer', 400);
+  }
 
-  const actorId = Number(user?.userId);
+  const actorId = Number(user.userId);
 
   try {
     const response = await uploadedFilesRepository.renameFile(

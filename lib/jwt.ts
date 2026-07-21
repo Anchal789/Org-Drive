@@ -1,4 +1,9 @@
+import 'server-only';
 import { jwtVerify, SignJWT } from 'jose';
+
+if (!process.env.JWT_SECRET) {
+  throw new Error('Missing required env var: JWT_SECRET');
+}
 
 const secret = new TextEncoder().encode(process.env.JWT_SECRET);
 

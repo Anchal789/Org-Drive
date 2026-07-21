@@ -1,16 +1,17 @@
 'use client';
 
 import { usePathname } from 'next/navigation';
+import { Dialog as DialogPrimitive } from 'radix-ui';
 import type { Dispatch, SetStateAction } from 'react';
 import { useEffect, useReducer } from 'react';
 import { toast } from 'sonner';
 import { getUsersWithAccessAction } from '@/actions/share-actions';
+import { createShareLinkToken } from '@/actions/share-link-actions';
 import { useDebounce } from '@/hooks/use-debounce';
 import { postData } from '@/lib/api-fn';
 import { fetchFolderFromFile } from '@/lib/share';
-import { encrypt } from '@/lib/utils';
 import { useShareDialogStore } from '@/store/store';
-import type { User } from '@/types/auth';
+import type { PublicUser } from '@/types/auth';
 import type { UploadedFile } from '@/types/files';
 import type { ShareWithMePerson } from '@/types/share-with-me';
 import InvitePeopleSection from './InvitePeopleSection';
@@ -27,7 +28,7 @@ export default function ShareDialog({
   allUsers,
 }: {
   userId: number;
-  allUsers: Array<User>;
+  allUsers: Array<PublicUser>;
 }) {
   const { open, setOpen, file, folder, files, onSuccess, onCancel } =
     useShareDialogStore();
@@ -68,31 +69,39 @@ export default function ShareDialog({
   const activeUserId = activeItem?.userId;
 
   useEffect(() => {
-    if (open && actualFile?.folderId && !isMultiShare) {
-      dispatch({ type: 'set_loading', isLoading: true });
-      fetchFolderFromFile(
-        Number(actualFile.userId),
-        Number(actualFile.folderId),
-      )
-        .then((result) =>
-          dispatch({
-            type: 'set_parent_folder_name',
-            parentFolderName: result?.name ?? null,
-          }),
-        )
-        .catch((err: unknown) => {
-          void err;
-        })
-        .finally(() => dispatch({ type: 'set_loading', isLoading: false }));
-    }
+    if (!(open && actualFile?.folderId && !isMultiShare)) return;
+
+    let cancelled = false;
+    dispatch({ type: 'set_loading', isLoading: true });
+    fetchFolderFromFile(Number(actualFile.userId), Number(actualFile.folderId))
+      .then((result) => {
+        if (cancelled) return;
+        dispatch({
+          type: 'set_parent_folder_name',
+          parentFolderName: result?.name ?? null,
+        });
+      })
+      .catch((err: unknown) => {
+        void err;
+      })
+      .finally(() => {
+        if (!cancelled) dispatch({ type: 'set_loading', isLoading: false });
+      });
+
+    return () => {
+      cancelled = true;
+    };
   }, [open, actualFile, isMultiShare]);
 
   useEffect(() => {
     if (!open) return;
 
+    let cancelled = false;
+
     if (isMultiShare && files && files.length > 0) {
       Promise.all(files.map((f) => getUsersWithAccessAction(f.id, f.userId)))
         .then((results) => {
+          if (cancelled) return;
           const mergedUsers = new Map<number, ShareWithMePerson>();
           for (const user of results.flat()) {
             if (!mergedUsers.has(user.id)) {
@@ -108,17 +117,24 @@ export default function ShareDialog({
         .catch((err: unknown) => {
           void err;
         });
-      return;
+      return () => {
+        cancelled = true;
+      };
     }
 
     if (!activeId || !activeUserId) return;
     getUsersWithAccessAction(activeId, activeUserId)
-      .then((users) =>
-        dispatch({ type: 'set_users_with_access', usersWithAccess: users }),
-      )
+      .then((users) => {
+        if (cancelled) return;
+        dispatch({ type: 'set_users_with_access', usersWithAccess: users });
+      })
       .catch((err: unknown) => {
         void err;
       });
+
+    return () => {
+      cancelled = true;
+    };
   }, [open, activeId, activeUserId, isMultiShare, files]);
 
   useEffect(() => {
@@ -204,7 +220,11 @@ export default function ShareDialog({
         return toast.error('Failed to copy link');
       }
 
-      const token = encrypt(JSON.stringify(payload));
+      const token = await createShareLinkToken({
+        type: payload.type,
+        ids: payload.ids,
+        userId: payload.userId,
+      });
 
       const url = `${window.location.origin}/share/${token}`;
 
@@ -231,81 +251,95 @@ export default function ShareDialog({
   }
 
   return (
-    <div className={styles.backdrop}>
-      <div className={styles.dialog}>
-        <ShareHeader
-          activeName={activeName}
-          isSharingFolder={isSharingFolder}
-          fileName={actualFile?.name || actualFile?.fileName}
-          folderId={actualFile?.folderId}
-          isLoading={isLoading}
-          parentFolderName={parentFolderName}
-          onClose={() => {
-            setOpen(false);
-            onCancel?.();
-          }}
-          isMultiShare={isMultiShare}
-          multiFileCount={files?.length}
-        />
+    <DialogPrimitive.Root
+      open={open}
+      onOpenChange={(nextOpen) => {
+        if (!nextOpen) {
+          setOpen(false);
+          onCancel?.();
+        }
+      }}
+    >
+      <DialogPrimitive.Portal>
+        <DialogPrimitive.Overlay className={styles.backdrop} />
+        <DialogPrimitive.Content className={styles.dialog}>
+          <DialogPrimitive.Title className='sr-only'>
+            {activeName ? `Share "${activeName}"` : 'Share'}
+          </DialogPrimitive.Title>
+          <ShareHeader
+            activeName={activeName}
+            isSharingFolder={isSharingFolder}
+            fileName={actualFile?.name || actualFile?.fileName}
+            folderId={actualFile?.folderId}
+            isLoading={isLoading}
+            parentFolderName={parentFolderName}
+            onClose={() => {
+              setOpen(false);
+              onCancel?.();
+            }}
+            isMultiShare={isMultiShare}
+            multiFileCount={files?.length}
+          />
 
-        <UserSearchBox
-          filteredUsers={filteredUsers}
-          searchTerm={searchTerm}
-          setSearchTerm={setSearchTerm}
-          onSelectUsers={(selected) => {
-            dispatch({
-              type: 'set_users_to_invite',
-              usersToInvite: selected.map((u) => ({
-                ...u,
-                permission: 'viewer',
-              })),
-            });
-          }}
-        />
+          <UserSearchBox
+            filteredUsers={filteredUsers}
+            searchTerm={searchTerm}
+            setSearchTerm={setSearchTerm}
+            onSelectUsers={(selected) => {
+              dispatch({
+                type: 'set_users_to_invite',
+                usersToInvite: selected.map((u) => ({
+                  ...u,
+                  permission: 'viewer',
+                })),
+              });
+            }}
+          />
 
-        {/* USERS TO INVITE */}
-        <InvitePeopleSection
-          users={usersToInvite}
-          onPermissionChange={(index, permission) =>
-            dispatch({ type: 'update_invite_permission', index, permission })
-          }
-        />
+          {/* USERS TO INVITE */}
+          <InvitePeopleSection
+            users={usersToInvite}
+            onPermissionChange={(index, permission) =>
+              dispatch({ type: 'update_invite_permission', index, permission })
+            }
+          />
 
-        {/* EXISTING ACCESS */}
-        <PeopleWithAccessSection
-          users={usersWithAccess}
-          currentUserId={userId}
-          isMultiShare={isMultiShare}
-          onPermissionChange={(index, permission) =>
-            dispatch({ type: 'update_access_permission', index, permission })
-          }
-          onRemoveUser={(userIdToRemove: number) => {
-            dispatch({
-              type: 'set_users_with_access',
-              usersWithAccess: usersWithAccess.filter(
-                (u) => u.id !== userIdToRemove,
-              ),
-            });
-          }}
-        />
+          {/* EXISTING ACCESS */}
+          <PeopleWithAccessSection
+            users={usersWithAccess}
+            currentUserId={userId}
+            isMultiShare={isMultiShare}
+            onPermissionChange={(index, permission) =>
+              dispatch({ type: 'update_access_permission', index, permission })
+            }
+            onRemoveUser={(userIdToRemove: number) => {
+              dispatch({
+                type: 'set_users_with_access',
+                usersWithAccess: usersWithAccess.filter(
+                  (u) => u.id !== userIdToRemove,
+                ),
+              });
+            }}
+          />
 
-        {isMultiShare && files && files.length > 1 && (
-          <SelectedItemsList files={files} />
-        )}
+          {isMultiShare && files && files.length > 1 && (
+            <SelectedItemsList files={files} />
+          )}
 
-        <ShareDialogFooter
-          showCopyLink={!isSharedFiles}
-          onCopyLink={handleCopyLink}
-          onCancel={() => {
-            setOpen(false);
-            onCancel?.();
-          }}
-          onSubmit={handleInviteUser}
-          submitLabel={
-            usersToInvite.length > 0 ? 'Send invite' : 'Save changes'
-          }
-        />
-      </div>
-    </div>
+          <ShareDialogFooter
+            showCopyLink={!isSharedFiles}
+            onCopyLink={handleCopyLink}
+            onCancel={() => {
+              setOpen(false);
+              onCancel?.();
+            }}
+            onSubmit={handleInviteUser}
+            submitLabel={
+              usersToInvite.length > 0 ? 'Send invite' : 'Save changes'
+            }
+          />
+        </DialogPrimitive.Content>
+      </DialogPrimitive.Portal>
+    </DialogPrimitive.Root>
   );
 }

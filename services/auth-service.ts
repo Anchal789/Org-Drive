@@ -1,5 +1,5 @@
 import { postData } from '@/lib/api-fn';
-import type { TelegramUser, User } from '@/types/auth';
+import type { PublicUser, User } from '@/types/auth';
 
 const AUTH_SERVER_URL = process.env.NEXT_PUBLIC_AUTH_API_URL;
 
@@ -64,12 +64,11 @@ export async function qrStart() {
 
 export async function qrLogin(loginId: string) {
   const res = await postData<{
-    qrDataUrl: string;
-    expiresAt: number;
+    qrDataUrl?: string;
+    expiresAt?: number;
     step: string;
-    passwordHint: string;
-    user: User;
-    accessToken?: string;
+    passwordHint?: string;
+    firstName?: string | null;
   }>({
     url: '/api/auth/qr-login',
     payload: { loginId },
@@ -79,11 +78,13 @@ export async function qrLogin(loginId: string) {
   return res;
 }
 
-export async function finalizeLoginInternal(telegramUser: TelegramUser) {
-  const response = await postData<{ accessToken: string }>({
+export async function finalizeLoginInternal(loginId: string) {
+  const response = await postData<{
+    user: PublicUser;
+    accessToken: string;
+  }>({
     url: '/api/auth/finalize-login',
-    payload: { user: telegramUser },
-    // baseUrl: AUTH_SERVER_URL,
+    payload: { loginId },
   });
   return response;
 }

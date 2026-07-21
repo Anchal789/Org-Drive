@@ -14,14 +14,12 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { useCountdown } from '@/hooks/use-countdown';
 import { postData } from '@/lib/api-fn';
-import { encrypt } from '@/lib/utils';
 import {
   finalizeLoginInternal,
   qrLogin,
   qrStart,
 } from '@/services/auth-service';
 import { useAuthStore } from '@/store/store';
-import type { TelegramUser } from '@/types/auth';
 import styles from './QrCode.module.scss';
 
 const POLL_INTERVAL_MS = 2000;
@@ -32,7 +30,7 @@ type AuthState =
   | { status: 'expired'; loginId: string }
   | { status: 'waiting'; loginId: string; qrDataUrl: string; expiresAt: number }
   | { status: 'needs_password'; loginId: string; passwordHint: string | null }
-  | { status: 'success'; user: TelegramUser };
+  | { status: 'success'; firstName: string | null };
 
 export default function QrCode() {
   const router = useRouter();
@@ -65,11 +63,10 @@ export default function QrCode() {
         expiresAt: data.expiresAt,
       });
 
-      const encryptedLoginId = encrypt(data.loginId);
       window.history.replaceState(
         null,
         '',
-        `/qr-login?loginId=${encryptedLoginId}`,
+        `/qr-login?loginId=${encodeURIComponent(data.loginId)}`,
       );
     } catch (err: unknown) {
       const errMsg = err instanceof Error ? err.message : String(err);
@@ -90,12 +87,21 @@ export default function QrCode() {
     router.replace('/my-drive');
   }, [router]);
 
+  // Separate from the polling effect below: that effect's cleanup runs the
+  // instant `state.status` changes (including the change to 'success' that
+  // this very transition causes), which would otherwise cancel a
+  // navigate-after-delay timeout stored in its own scope before it fires.
+  useEffect(() => {
+    if (state.status !== 'success') return;
+    const id = setTimeout(() => navigateToMyDrive(), 1500);
+    return () => clearTimeout(id);
+  }, [state.status, navigateToMyDrive]);
+
   useEffect(() => {
     if (state.status !== 'waiting' || !currentLoginId) return;
 
     let cancelled = false;
     let timeoutId: NodeJS.Timeout;
-    let navigateTimeoutId: NodeJS.Timeout;
 
     async function poll() {
       if (cancelled) return;
@@ -121,9 +127,12 @@ export default function QrCode() {
             loginId: currentLoginId || '',
             passwordHint: data.passwordHint ?? null,
           });
-        } else if (data.step === 'success' && data.user) {
+        } else if (data.step === 'success') {
           try {
-            const finalizeResponse = await finalizeLoginInternal(data.user);
+            const finalizeResponse = await finalizeLoginInternal(
+              currentLoginId || '',
+            );
+            if (cancelled) return;
 
             if (finalizeResponse.success) {
               if (finalizeResponse.data.accessToken) {
@@ -131,8 +140,10 @@ export default function QrCode() {
                   .getState()
                   .setAccessToken(finalizeResponse.data.accessToken);
               }
-              setState({ status: 'success', user: data.user });
-              navigateTimeoutId = setTimeout(() => navigateToMyDrive(), 1500);
+              setState({
+                status: 'success',
+                firstName: finalizeResponse.data.user.firstName,
+              });
             } else {
               setState({
                 status: 'error',
@@ -140,10 +151,12 @@ export default function QrCode() {
               });
             }
           } catch {
-            setState({
-              status: 'error',
-              message: 'Failed to finalize login on server',
-            });
+            if (!cancelled) {
+              setState({
+                status: 'error',
+                message: 'Failed to finalize login on server',
+              });
+            }
           }
         } else if (data.step === 'expired') {
           setState({ status: 'expired', loginId: currentLoginId || '' });
@@ -169,9 +182,8 @@ export default function QrCode() {
     return () => {
       cancelled = true;
       clearTimeout(timeoutId);
-      clearTimeout(navigateTimeoutId);
     };
-  }, [state.status, currentLoginId, navigateToMyDrive]);
+  }, [state.status, currentLoginId]);
 
   const restart = () => {
     startedRef.current = false;
@@ -201,7 +213,7 @@ export default function QrCode() {
         const response = await postData<{
           step?: string;
           error?: string;
-          user?: TelegramUser;
+          firstName?: string | null;
         }>({
           url: '/api/auth/qr-password',
           payload: { loginId: state.loginId, password },
@@ -210,8 +222,8 @@ export default function QrCode() {
 
         const data = response?.data;
 
-        if (response.success && data?.step === 'success' && data.user) {
-          const finalizeResponse = await finalizeLoginInternal(data.user);
+        if (response.success && data?.step === 'success') {
+          const finalizeResponse = await finalizeLoginInternal(state.loginId);
 
           if (finalizeResponse.success) {
             if (finalizeResponse.data.accessToken) {
@@ -219,8 +231,10 @@ export default function QrCode() {
                 .getState()
                 .setAccessToken(finalizeResponse.data.accessToken);
             }
-            setState({ status: 'success', user: data.user });
-            setTimeout(() => navigateToMyDrive(), 1500);
+            setState({
+              status: 'success',
+              firstName: finalizeResponse.data.user.firstName,
+            });
             return null;
           }
           return finalizeResponse.message || 'Failed to save user data';
@@ -295,9 +309,7 @@ export default function QrCode() {
 
           {state.status === 'success' && (
             <div className={styles.stateWrapper}>
-              <p className={styles.successTitle}>
-                Welcome, {state.user.firstName}!
-              </p>
+              <p className={styles.successTitle}>Welcome, {state.firstName}!</p>
               <p className={styles.successSubtitle}>Redirecting…</p>
             </div>
           )}

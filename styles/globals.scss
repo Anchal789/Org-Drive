@@ -82,6 +82,27 @@
   }
 }
 
+/* Base UI's Portal (Combobox/Select/Popover/etc.) renders an unstyled wrapper
+ * div around whatever floating content it mounts, relying entirely on that
+ * content's own z-index to stack correctly. A z-index only wins comparisons
+ * against siblings within the SAME stacking context — a plain `position:
+ * static` wrapper never establishes one, so any explicitly-positioned
+ * element elsewhere on the page (e.g. a fixed-position dialog) always
+ * paints above it regardless of the popup's own z-index. Anchoring the
+ * portal wrapper itself to the viewport fixes this for every Base UI popup
+ * app-wide, not just the one that happened to expose it.
+ */
+[data-base-ui-portal] {
+  position: fixed;
+  inset: 0;
+  z-index: 2147483647;
+  pointer-events: none;
+
+  > * {
+    pointer-events: auto;
+  }
+}
+
 /* These don't conflict with utilities — leave them unlayered */
 ::-webkit-scrollbar {
   width: 8px;
